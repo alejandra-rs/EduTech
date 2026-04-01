@@ -1,9 +1,12 @@
+import boto3
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, views
 from .models import Post, PDFAttachment, YoutubeVideo
 from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer
+from edutech import settings
 
 
 class PostListView(generics.ListAPIView):
@@ -38,7 +41,7 @@ class PDFUploadView(generics.GenericAPIView):
 class VideoUploadView(generics.GenericAPIView):
     serializer_class = VideoUploadSerializer
     def post(self, request, *args, **kwargs):
-        serializer = VideoUploadSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -55,4 +58,4 @@ class VideoUploadView(generics.GenericAPIView):
             vid=serializer.validated_data['vid'],
         )
 
-        return Response(VideoUploadSerializer(post).data, status=status.HTTP_201_CREATED)
+        return Response(PostSerializer(post, context={'request': request}).data, status=status.HTTP_201_CREATED)

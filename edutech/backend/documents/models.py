@@ -52,10 +52,6 @@ class YoutubeVideo(models.Model):
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='video')
     vid = models.URLField()
 
-    def clean(self):
-        super().clean()
-        # TODO: check that it matches with a valid youtube video URL
-
 
 class Like(models.Model):
     user = models.ForeignKey('users.Student', on_delete=models.CASCADE)
