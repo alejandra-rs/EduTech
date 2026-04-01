@@ -1,17 +1,18 @@
 import boto3
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status, generics, views
 from .models import Post, PDFAttachment, YoutubeVideo
 from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer
+from .filters import PostFilter
 from edutech import settings
 
 
 class PostListView(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    filterset_class = PostFilter
 
 
 class PDFUploadView(generics.GenericAPIView):
