@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Esta ruta captura el nombre de la asignatura de la URL
-    path('<str:subject>/', views.subject, name='subject'),
+    path('years/', views.YearListCreate.as_view(), name='list_years'),
+    path('', views.CourseListCreate.as_view(), name='list_courses'),
 ]

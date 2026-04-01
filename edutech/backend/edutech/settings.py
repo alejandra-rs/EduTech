@@ -29,11 +29,13 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = env('SECRET_KEY')
 
+# CORS Settings
+CORS_ALLOWED_ORIGINS = [ "http://localhost:3000", ]
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend']
 
 # Application definition
 
@@ -54,8 +56,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -91,6 +93,15 @@ DATABASES = { 'default': env.db(), }
 
 # R2 Storage Configuration
 
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_S3_ENDPOINT_URL = env('R2_ENDPOINT_URL')
 AWS_ACCESS_KEY_ID = env('R2_ACCESS_KEY_ID')
@@ -99,6 +110,7 @@ AWS_STORAGE_BUCKET_NAME = env('R2_BUCKET_NAME')
 AWS_S3_REGION_NAME = 'auto'
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = True
+AWS_SIGNATURE_VERSION = 's3v4'
 
 
 # Password validation
@@ -116,11 +128,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 

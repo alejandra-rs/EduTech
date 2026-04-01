@@ -1,6 +1,11 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from rest_framework import generics
+from .models import Course, Year
+from .serializers import CourseSerializer, YearSerializer
 
-# Create your views here.
-def subject(request, subject):
-    return HttpResponse(f'{subject}')
+class YearListCreate(generics.ListCreateAPIView):
+    queryset = Year.objects.all()
+    serializer_class = YearSerializer
+
+class CourseListCreate(generics.ListCreateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
