@@ -41,6 +41,7 @@ class PDFUploadView(generics.GenericAPIView):
 
 class VideoUploadView(generics.GenericAPIView):
     serializer_class = VideoUploadSerializer
+
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():

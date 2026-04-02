@@ -31,7 +31,7 @@ class Post(models.Model):
 
     def clean(self):
         super().clean()
-        n_contents = sum(hasattr(self, code.lower()) for code, label in self.CONTENT_TYPES)
+        n_contents = sum(hasattr(self, code.lower()) for code, _ in self.CONTENT_TYPES)
 
         if (self.pk and n_contents == 0) or n_contents > 1:
             raise ValidationError("Una publicación debe contener 1 contenido asociado.")
@@ -49,7 +49,7 @@ class PDFAttachment(models.Model):
 
 
 class YoutubeVideo(models.Model):
-    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='video')
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='vid')
     vid = models.URLField()
 
 
