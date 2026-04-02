@@ -1,14 +1,14 @@
-import VisorVideo from './components/VisorVideo'
+import Descargar from './components/Descargar'
 
 export default function App() {
-  const miVideo = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
 
   return (
-    <div className="min-h-screen w-full bg-zinc-100 p-4 md:p-10 flex flex-col items-center">
+    <div className="min-h-screen w-full bg-gray-100 p-10 flex flex-col items-center">
 
-      <div className="w-full max-w-4xl">
-        <VisorVideo videoUrl={miVideo} />
-      </div>
+        <Descargar 
+          pdfUrl="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" 
+          fileName="PDF_de_prueba.pdf" 
+        />
 
     </div>
   )
