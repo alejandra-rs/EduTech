@@ -12,7 +12,6 @@ export const WidgetCourse = ({ courseName = "Curso", semester = "Semestre", clas
         </div>
       </div>
       <div className="inline-flex items-center gap-2.5">
-        <UserGroupIcon className="w-6 h-6 text-gray-700" />
         <div className="flex items-center text-black font-medium italic text-xl">
           {semester}
         </div>
