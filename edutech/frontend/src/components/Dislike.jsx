@@ -20,10 +20,9 @@ export const DislikeButton = ({ initialDislikes = 0 }) => {
         className={`
           transition-all duration-200 
           ${animate ? 'scale-125' : 'scale-100'}
-          /* COLOR: base suave, hover negro, activo negro */
           ${active ? 'text-black' : 'text-gray-400 hover:text-black/80'}
-          p-1.5 rounded-full /* Un pequeño padding para que el hover se vea mejor */
-          hover:bg-gray-100/50 /* Fondo muy sutil en hover */
+          p-1.5 rounded-full
+          hover:bg-gray-100/50
         `}
       >
         <HandThumbDownIcon className="w-7 h-7" />
