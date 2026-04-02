@@ -1,6 +1,4 @@
-// components/Like.jsx
 import { useState } from 'react';
-// Usaremos la versión SOLID de Heroicons, pero con color suave base
 import { HandThumbUpIcon } from '@heroicons/react/24/solid';
 
 const LikeButton = ({ initialLikes = 0 }) => {
