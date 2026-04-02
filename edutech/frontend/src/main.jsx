@@ -1,10 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css' // Asegúrate de importar tus estilos de Tailwind
-import CargarPublicacionPDF from './pages/CargarPublicacionPDF'
+import './index.css'
+import TodosCursos from './pages/AllCourses.jsx'
 
-createRoot(document.getElementById('root')).render(
+const root = createRoot(document.getElementById('root'))
+root.render(
   <StrictMode>
-    <CargarPublicacionPDF />
+    <TodosCursos />
   </StrictMode>,
 )

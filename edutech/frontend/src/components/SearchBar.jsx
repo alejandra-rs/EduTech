@@ -2,7 +2,7 @@ import React from 'react';
 
 const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600" }) => {
   return (
-    <form className="max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>   
+    <form className="max-w-2xl mx-auto" onSubmit={(e) => e.preventDefault()}>   
       <label htmlFor="search" className="sr-only">Search</label>
       <div className="relative w-full">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
