@@ -1,18 +1,19 @@
-import { useState } from 'react';
-import Layout from './components/Layout'
-import Comentario from './components/Comentario'
+import VisorPDF from './components/VisorPDF'
 
 export default function App() {
+  const pdfPrueba = "https://arxiv.org/pdf/2203.15556.pdf";
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <Layout>
-      <div className="max-w-4xl mx-auto">
-        <p className="text-gray-700 text-lg text-center mt-10 mb-8">
-          ¡Genial! Tu estructura de componentes ya está funcionando con un Layout maestro.
-        </p>
-        <Comentario />
+    <div className="min-h-screen w-full bg-gray-100 p-4 md:p-10 flex flex-col items-center">
+      
+      <h1 className="text-2xl font-bold text-gray-800 mb-8">
+        Vista Previa (Proporción A4)
+      </h1>
+
+      <div className="w-full max-w-3xl">
+        <VisorPDF pdfUrl={pdfPrueba} />
       </div>
-    </Layout>
+
     </div>
   )
 }
