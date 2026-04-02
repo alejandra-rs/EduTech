@@ -9,7 +9,8 @@ const NotebookFooter = () => {
   ];
 
   return (
-    <footer className="w-full mt-20 font-mono">
+    /* Eliminado: mt-20 */
+    <footer className="w-full font-mono shrink-0">
       <div className="flex ml-8 space-x-1 items-end h-12">
         {tabs.map((tab, index) => {
           const isActive = activeTab === index;
@@ -33,7 +34,7 @@ const NotebookFooter = () => {
         })}
       </div>
 
-      <div className="bg-white shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)] p-8 min-h-[150px] relative overflow-hidden">
+      <div className="bg-white shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)] p-6 min-h-[100px] relative overflow-hidden">
         <div 
           className="absolute inset-0 opacity-10 pointer-events-none" 
           style={{ 
@@ -42,7 +43,6 @@ const NotebookFooter = () => {
             backgroundPosition: '0 1.5rem'
           }}
         ></div>
-
         <div className="absolute left-10 top-0 bottom-0 w-px bg-red-300 opacity-40"></div>
       </div>
     </footer>
