@@ -49,7 +49,6 @@ export default function CargarPublicacionPDF() {
           </div>
         </main>
 
-        {/* 3. FOOTER */}
         <PublicacionFooter />
         
       </div>
