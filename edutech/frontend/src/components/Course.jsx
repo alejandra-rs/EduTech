@@ -25,7 +25,7 @@ export const WidgetCourse = ({
         </div>
 
         <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2 text-black/60 font-bold text-sm uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-black/60 font-bolad text-sm uppercase tracking-wider">
             <span>{semester}</span>
           </div>
           
