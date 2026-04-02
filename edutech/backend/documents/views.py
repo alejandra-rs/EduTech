@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status, generics, views
+from courses.models import Course
 from .models import Post, PDFAttachment, YoutubeVideo
 from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer
 from .filters import PostFilter
@@ -13,6 +14,12 @@ class PostListView(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filterset_class = PostFilter
+
+    def list(self, request, *args, **kwargs):
+        course_id = request.query_params.get('course')
+        if course_id is not None:
+            get_object_or_404(Course, pk=course_id)  # 404 if course doesn't exist
+        return super().list(request, *args, **kwargs)
 
 
 class PDFUploadView(generics.GenericAPIView):

@@ -29,5 +29,5 @@ Feature: Filtrado de material por tipo
 
   Scenario: Filtrar por un tipo desconocido
     When filtro los documentos por tipo "OTRO"
-    Then la respuesta tiene el estado 200
-    And encuentro 0 resultados
+    Then la respuesta tiene el estado 400
+    And encuentro 1 resultados

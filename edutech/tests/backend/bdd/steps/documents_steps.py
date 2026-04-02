@@ -188,7 +188,7 @@ def step_post_existe_en_bd(context, post_type, title):
 @then('el archivo aparece listado en los documentos de la asignatura')
 def step_post_en_lista(context):
     respuesta = context.client.get('/documents/')
-    data = respuesta.data.get('results', respuesta.data)
+    data = respuesta.data
     assert len(data) >= 1, 'La lista de documentos está vacía'
 
 @then('el post de tipo "VID" existe en la base de datos')
@@ -204,14 +204,14 @@ def step_error_vid(context):
 
 @then('la respuesta contiene {count:d} documentos')
 def step_cantidad_documentos(context, count):
-    data = context.response.data.get('results', context.response.data)
+    data = context.response.data
     assert len(data) == count, (
         f'Se esperaban {count} documentos, se encontraron {len(data)}'
     )
 
 @then('los títulos incluyen "{title1}" y "{title2}"')
 def step_titulos_incluyen(context, title1, title2):
-    data = context.response.data.get('results', context.response.data)
+    data = context.response.data
     titulos = [d['title'] for d in data]
     assert title1 in titulos, f'"{title1}" no está en {titulos}'
     assert title2 in titulos, f'"{title2}" no está en {titulos}'

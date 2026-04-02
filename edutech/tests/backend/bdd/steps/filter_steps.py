@@ -66,22 +66,18 @@ def step_filtra_por_tipo(context, post_type):
 def step_filtra_pdf_y_vid(context):
     context.response = context.client.get('/documents/?post_type=PDF&post_type=VID')
 
-@when('filtro los documentos por tipo "OTRO"')
-def step_filtra_otro(context):
-    context.response = context.client.get('/documents/?post_type=OTRO')
-
 
 
 @then('encuentro {count:d} resultados')
 def step_n_resultados(context, count):
-    data = context.response.data.get('results', context.response.data)
+    data = context.response.data
     assert len(data) == count, (
         f'Se esperaban {count} resultados, se encontraron {len(data)}'
     )
 
 @then('los títulos de los resultados contienen "{search_term}"')
 def step_titulos_contienen(context, search_term):
-    data = context.response.data.get('results', context.response.data)
+    data = context.response.data
     for item in data:
         assert search_term.lower() in item['title'].lower(), (
             f'El título "{item["title"]}" no contiene "{search_term}"'
@@ -89,7 +85,7 @@ def step_titulos_contienen(context, search_term):
 
 @then('todos los resultados son de tipo "{post_type}"')
 def step_todos_del_tipo(context, post_type):
-    data = context.response.data.get('results', context.response.data)
+    data = context.response.data
     for item in data:
         assert item['post_type'] == post_type, (
             f'Se encontró un post de tipo "{item["post_type"]}", '
@@ -98,7 +94,7 @@ def step_todos_del_tipo(context, post_type):
 
 @then('los resultados incluyen PDFs y vídeos')
 def step_incluye_pdfs_y_videos(context):
-    data = context.response.data.get('results', context.response.data)
+    data = context.response.data
     tipos = {item['post_type'] for item in data}
     assert 'PDF' in tipos, 'No hay PDFs en los resultados'
     assert 'VID' in tipos, 'No hay vídeos en los resultados'
