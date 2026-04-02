@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './prueba.jsx'
+import SearchBar from './components/SearchBar.jsx'
 //import { WidgetCourse } from './components/Course.jsx'
 
 /*
@@ -16,6 +16,6 @@ root.render(
 const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>
-    <App />
+    <SearchBar />
   </StrictMode>,
 )
