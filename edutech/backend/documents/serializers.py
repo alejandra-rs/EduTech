@@ -24,13 +24,13 @@ class YoutubeVideoSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     pdf = PDFAttachmentSerializer(read_only=True)
-    video = YoutubeVideoSerializer(read_only=True)
+    vid = YoutubeVideoSerializer(read_only=True)
 
     class Meta:
         model = Post
         fields = ['id', 'title', 'description', 'post_type',
                   'course', 'student', 'created_at',
-                  'pdf', 'video']
+                  'pdf', 'vid']
 
 
 class PDFUploadSerializer(serializers.Serializer):

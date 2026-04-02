@@ -66,7 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'edutech.urls'
+ROOT_URLCONF = 'backend.edutech.urls'
 
 TEMPLATES = [
     {
@@ -83,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'edutech.wsgi.application'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],

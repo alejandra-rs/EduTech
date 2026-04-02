@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.db import IntegrityError
+from users.models import Student
 from courses.models import Course, Year, Subscription
-from tests.config import make_student, make_year, make_course
+from ..config import make_student, make_year, make_course
 
 
 class YearModelTest(TestCase):

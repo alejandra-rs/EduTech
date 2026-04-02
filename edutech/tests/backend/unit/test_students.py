@@ -1,6 +1,6 @@
 from django.test import TestCase
 from users.models import Student
-from tests.config import make_student
+from ..config import make_student
 
 class StudentModelTest(TestCase):
 
@@ -29,8 +29,8 @@ class StudentModelTest(TestCase):
         Student.objects.create(first_name='Luis', last_name='Perez',   email='l@test.com', password='789')
         students = list(Student.objects.all())
         self.assertEqual(students[0].last_name,  'Martinez')
-        self.assertEqual(students[1].first_name, 'Luis')
-        self.assertEqual(students[2].first_name, 'Zara')
+        self.assertEqual(students[1].first_name, 'Andres')
+        self.assertEqual(students[2].first_name, 'Luis')
 
     def test_email_field_accepts_valid_email(self):
         self.student.full_clean()

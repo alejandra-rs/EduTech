@@ -2,7 +2,7 @@ from django.test import override_settings
 from unittest.mock import patch, MagicMock
 from rest_framework.test import APITestCase
 from documents.models import Post, PDFAttachment, YoutubeVideo
-from tests.conftest import TEST_STORAGES, make_student, make_course, make_pdf_file
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -42,8 +42,8 @@ class PDFDownloadViewTest(APITestCase):
         post = self._create_pdf_post()
         self.client.get(f'/documents/download/pdf/{post.pk}')
 
-        _, kwargs = mock_boto3.call_args
-        self.assertEqual(kwargs[0], 's3')
+        args, kwargs = mock_boto3.call_args
+        self.assertEqual(args[0], 's3')
         for kwarg in ('endpoint_url', 'aws_access_key_id',
                       'aws_secret_access_key', 'region_name'):
             self.assertIn(kwarg, kwargs)

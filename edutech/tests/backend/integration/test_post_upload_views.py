@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 from rest_framework.test import APITestCase
 from documents.models import Post, PDFAttachment, YoutubeVideo
-from tests.config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -34,7 +34,7 @@ class PDFUploadViewTest(APITestCase):
     def test_upload_returns_full_post_serializer_shape(self):
         response = self._post()
         for key in ('id', 'title', 'description', 'post_type',
-                    'course', 'student', 'created_at', 'pdf', 'video'):
+                    'course', 'student', 'created_at', 'pdf', 'vid'):
             self.assertIn(key, response.data)
 
     def test_upload_non_pdf_returns_400(self):

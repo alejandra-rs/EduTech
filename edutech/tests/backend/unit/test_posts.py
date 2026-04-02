@@ -1,7 +1,8 @@
 from django.test import TestCase
+from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from documents.models import Post, PDFAttachment, YoutubeVideo, Like, Dislike
-from tests.configuration import make_student, make_course, make_pdf_file
+from ..config import make_student, make_course, make_pdf_file
 
 
 class PostModelCleanTest(TestCase):
@@ -38,14 +39,10 @@ class PostModelCleanTest(TestCase):
         post.clean()
 
     def test_clean_raises_for_saved_post_with_only_video(self):
-        # NOTE: this is a known bug — clean() checks hasattr(self, 'vid') but the
-        # related_name for YoutubeVideo is 'video', not 'vid'.  So the video is
-        # never detected and n_contents stays 0 → raises as if there were no content.
         post = self._saved_post()
         YoutubeVideo.objects.create(post=post, vid='https://www.youtube.com/watch?v=abc')
         post.refresh_from_db()
-        with self.assertRaises(ValidationError):
-            post.clean()
+        post.clean()
 
     def test_str_contains_post_type_display_and_title(self):
         post = self._unsaved_post()

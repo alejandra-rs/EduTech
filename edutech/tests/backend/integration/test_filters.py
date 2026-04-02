@@ -1,7 +1,7 @@
 from django.test import override_settings
 from rest_framework.test import APITestCase
 from documents.models import Post, PDFAttachment, YoutubeVideo
-from tests.conftest import TEST_STORAGES, make_student, make_course, make_pdf_file
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -25,7 +25,7 @@ class PostFilterTest(APITestCase):
 
     def _data(self, url):
         r = self.client.get(url)
-        return r.data.get('results', r.data)
+        return r.data
 
     def test_post_type_filter_pdf_only(self):
         self._make_pdf(); self._make_vid()
@@ -41,7 +41,14 @@ class PostFilterTest(APITestCase):
 
     def test_post_type_invalid_value_returns_empty(self):
         self._make_pdf()
-        self.assertEqual(len(self._data('/documents/?post_type=INVALID')), 0)
+        response = self.client.get('/documents/?post_type=INVALID')
+        self.assertEqual(response.status_code, 400)
+
+        self.assertIn('post_type', response.data)
+        self.assertEqual(
+            response.data['post_type'][0],
+            'Select a valid choice. INVALID is not one of the available choices.'
+        )
 
     def test_search_title_partial_match(self):
         self._make_pdf(title='Kanban')

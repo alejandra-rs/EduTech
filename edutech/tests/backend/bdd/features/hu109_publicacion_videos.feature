@@ -15,19 +15,19 @@ Feature: Subida de vídeos de YouTube
     And el post de tipo "VID" existe en la base de datos
 
   Scenario: Subir un enlace de YouTube a un vídeo inexistente
-    Given el vídeo de YouTube no existe
+    Given que el vídeo de YouTube no existe
     When el estudiante intenta subir el vídeo de YouTube "https://www.youtube.com/watch?v=invalido"
     Then la respuesta tiene el estado 400
     And el error hace referencia al campo "vid"
-    And no se ha creado ningún post en la base de datos
+    And no se guarda el archivo
 
   Scenario: Subir un enlace que no es de YouTube
     Given que el vídeo de YouTube no existe
     When el estudiante intenta subir un link no válido "https://www.google.com"
     Then la respuesta tiene el estado 400
-    And no se ha creado ningún post en la base de datos
+    And no se guarda el archivo
 
   Scenario: Intentar subir un vídeo sin proporcionar URL
     When el estudiante intenta subir un vídeo sin proporcionar URL
     Then la respuesta tiene el estado 400
-    And no se ha creado ningún post en la base de datos
+    And no se guarda el archivo

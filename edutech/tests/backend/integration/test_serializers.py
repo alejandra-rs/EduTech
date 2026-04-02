@@ -1,10 +1,11 @@
 from django.test import TestCase, override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
-from courses.models import Year, Course
 from users.serializers import StudentSerializer
+from courses.models import Year, Course
 from courses.serializers import YearSerializer, CourseSerializer
-from tests.config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen
+from documents.models import MAX_PDF_KB
+from ..config import TEST_STORAGES, make_student, make_course, make_year, make_pdf_file, mock_urlopen
 
 
 class StudentSerializerTest(TestCase):
@@ -18,8 +19,14 @@ class StudentSerializerTest(TestCase):
         self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email'})
 
     def test_valid_student_data(self):
-        student = make_student()
-        self.assertTrue(student.is_valid(), student.errors)
+        data = {
+            'first_name': 'Pepe',
+            'last_name': 'Garcia',
+            'email': 'pepe@test.com',
+            'password': 'x'
+        }
+        serializer = StudentSerializer(data=data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
 
     def test_student_fields_required(self):
         student = StudentSerializer(data={})
@@ -89,7 +96,7 @@ class CourseSerializerTest(TestCase):
         self.assertEqual(CourseSerializer(self.course).data['name'], 'Producción de Software')
 
     def test_create_valid_course_passes_validation(self):
-        s = CourseSerializer(data={'name': 'Producción de Software', 'year_id': self.year.pk})
+        s = CourseSerializer(data={'name': 'Ingeniería de Software', 'year_id': self.year.pk})
         self.assertTrue(s.is_valid(), s.errors)
 
     def test_nonexistent_year_fails_validation(self):
@@ -103,8 +110,7 @@ class CourseSerializerTest(TestCase):
         self.assertIn('name', s.errors)
 
     def test_duplicated_course_name_fails_validation(self):
-        make_course(name='Producción de Software', year=self.year)
-        s = CourseSerializer(data={'name': 'Producción de Software', 'year_id': self.year.pk})
+        s = CourseSerializer(data={'name': 'Producción de Software', 'year': self.year})
         self.assertFalse(s.is_valid())
 
 

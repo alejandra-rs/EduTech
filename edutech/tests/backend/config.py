@@ -1,5 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import MagicMock
+from users.models import Student
+from courses.models import Year, Course
 
 TEST_STORAGES = {
     'default':     {'BACKEND': 'django.core.files.storage.InMemoryStorage'},

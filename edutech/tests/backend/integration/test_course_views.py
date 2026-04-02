@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from courses.models import Course, Year
-from tests.conftest import make_student, make_year, make_course
+from ..config import make_student, make_year, make_course
 
 
 class YearListCreateViewTest(APITestCase):
