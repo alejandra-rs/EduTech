@@ -1,22 +1,38 @@
-import { AcademicCapIcon, UserGroupIcon } from '@heroicons/react/24/solid'
+import { useState } from 'react';
+import { HandThumbUpIcon } from '@heroicons/react/24/solid';
 
-export const WidgetCourse = ({ courseName = "Curso", semester = "Semestre", className = "" }) => {
+export const LikeButton = ({ initialLikes = 0 }) => {
+  const [likes, setLikes] = useState(initialLikes);
+  const [active, setActive] = useState(false);
+  const [animate, setAnimate] = useState(false);
+
+  const handleLike = () => {
+    setActive(!active);
+    setLikes(active ? likes - 1 : likes + 1);
+    
+    // Disparamos la animación de salto
+    setAnimate(true);
+    setTimeout(() => setAnimate(false), 200);
+  };
+
   return (
-    <div className={`flex flex-col w-144 h-26 items-center justify-center gap-4 p-5 bg-gray-300 rounded-xl ${className}`}>
-      <div className="inline-flex items-center gap-2.5">
-        <div className="relative w-14 h-14 flex items-center justify-center">
-          <AcademicCapIcon className="w-8 h-8 text-black" />
-        </div>
-        <div className="flex items-center text-black font-medium italic text-xl">
-          {courseName}
-        </div>
-      </div>
-      <div className="inline-flex items-center gap-2.5">
-        <UserGroupIcon className="w-6 h-6 text-gray-700" />
-        <div className="flex items-center text-black font-medium italic text-xl">
-          {semester}
-        </div>
-      </div>
+    <div className="flex items-center gap-2 font-bold">
+      <button
+        onClick={(e) => {
+          e.stopPropagation(); // Evita que el click afecte al padre (WidgetCourse)
+          handleLike();
+        }}
+        className={`
+          transition-all duration-200 ease-in-out
+          ${animate ? 'scale-125 -translate-y-1' : 'scale-100'}
+          ${active ? 'text-black' : 'text-gray-400'}
+        `}
+      >
+        <HandThumbUpIcon className="w-6 h-6" />
+      </button>
+      <span className="text-black">{likes}</span>
     </div>
-  )
-}
+  );
+};
+
+export default LikeButton;
