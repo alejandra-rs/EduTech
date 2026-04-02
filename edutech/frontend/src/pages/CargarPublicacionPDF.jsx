@@ -5,24 +5,12 @@ import PublicacionFooter from '../components/PublicacionFooter';
 export default function CargarPublicacionPDF() {
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
-      
-      {/* 1. HEADER: Sidebar lateral */}
       <Header />
-
-      {/* 2. CONTENEDOR DERECHO */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        
-        {/* ÁREA DE TRABAJO */}
-        {/* Cambiamos items-start para que el visor no se estire y p-4/p-8 para responsive */}
         <main className="flex-1 flex flex-col lg:flex-row gap-8 p-4 md:p-8 lg:p-12 overflow-y-auto items-start">
-          
-          {/* Columna del Visor: Ocupa menos espacio (25-30%) */}
           <div className="w-full lg:w-[37%] xl:w-[32%] shrink-0">
             <VisorPDF />
           </div>
-
-          {/* Columna del Formulario: Ocupa el resto del espacio disponible */}
-          {/* Eliminamos max-w-xl para que pueda crecer */}
           <div className="flex-1 w-full">
             <form className="space-y-6 w-full">
               
