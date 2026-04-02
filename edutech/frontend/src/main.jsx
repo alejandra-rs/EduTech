@@ -1,21 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import Course from './components/Subject.jsx'
-import { WidgetCourse } from './components/Course.jsx'
-
-/*
-const root = createRoot(document.getElementById('root'))
-root.render(
-  <StrictMode>
-    <WidgetCourse />
-  </StrictMode>,
-)
-*/
+import LikeButton from './components/Like.jsx'
+import DislikeButton from './components/Dislike.jsx'
 
 const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>
-    <WidgetCourse />
+    <div className="min-h-screen bg-white p-10 flex gap-10 items-start">
+      <LikeButton initialLikes={10} />
+      <DislikeButton initialDislikes={2} />
+    </div>
   </StrictMode>,
 )
