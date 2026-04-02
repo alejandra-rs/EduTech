@@ -1,0 +1,31 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+
+# Entornos virtuales (¡Pesan muchísimo y cada PC debe tener el suyo!)
+.venv/
+venv/
+env/
+.env
+
+# Archivos compilados de Python (Se autogeneran solos, no sirven en GitHub)
+__pycache__/
+*.pyc
+*.pyo
+
+# Bases de datos locales
+db.sqlite3
+
+# Variables de entorno y secretos (AQUÍ ES DONDE ESTÁ LA MAGIA)
+.env
+
+# Archivos de tu editor de código (PyCharm, VSCode, etc.)
+.idea/
+.PyCharm/
+.VSCode/
+__pycache__/
+__pycache__
+# Archivos multimedia subidos por los usuarios (fotos, pdfs, etc.)
+media/
