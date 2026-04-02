@@ -2,9 +2,8 @@ import { useState } from 'react';
 import UserAvatar from './UserAvatar';
 import HamburgerButton from './HamburgerButton';
 
-export default function Header({ userProfilePic, userName }) {
+export default function Header({ isOpen, setIsOpen, userProfilePic, userName }) {
   
-  const [isOpen, setIsOpen] = useState(false);
   
   return (
     
