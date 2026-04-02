@@ -34,7 +34,7 @@ const LabelVideo = () => (
     </div>
 );
 
-export function PostCard({ description, title, type = 'pdf', fileUrl, date }) {
+export function PostCard({ title, type = 'pdf', fileUrl, date }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full">
       
@@ -55,7 +55,7 @@ export function PostCard({ description, title, type = 'pdf', fileUrl, date }) {
           </span>
         </div>
 
-        {type === "pdf" ? ( <LabelPDF /> ):( <LabelVideo /> )}
+        {type === "pdf" ?  <LabelPDF /> :<LabelVideo /> }
 
 
       </div>
