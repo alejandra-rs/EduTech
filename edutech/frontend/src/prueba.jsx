@@ -1,4 +1,5 @@
 import Header from './components/Header'
+import Comentario from './components/Comentario'
 
 export default function App() {
   return (
@@ -8,6 +9,7 @@ export default function App() {
         <p className="text-gray-700 text-lg text-center mt-10">
           ¡Genial! Tu estructura de componentes ya está funcionando.
         </p>
+        <Comentario />
       </main>
     </div>
   )
