@@ -1,12 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import CargarPublicacionVideo from './pages/CargarPublicacionVideo'
+import VistaPreviaDocumento from './pages/VistaPreviaDocumento'
 import App from './prueba'
 
 const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>
-    <App />
+    <VistaPreviaDocumento />
   </StrictMode>,
 )

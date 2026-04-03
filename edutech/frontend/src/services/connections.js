@@ -42,4 +42,8 @@ export const getSuscritions = async (userId) => {
     const response = await fetch(`${BASE_URL}/subscriptions?user_id=${userId}`);
     if (!response.ok) throw new Error('Error al obtener las suscripciones');
     return await response.json();
+  } catch (error) {
+    console.error('Error en getSuscritions:', error);
+    throw error;
   }
+};
