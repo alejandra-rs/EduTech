@@ -25,10 +25,12 @@ const SubjectDetail = () => {
   };
 
   const dummyPosts = [
-    { id: 1, title: "Apuntes Tema 1", type: "pdf", date: "2026-03-20", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-    { id: 2, title: "Resumen Final", type: "pdf", date: "2026-03-22", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-    { id: 3, title: "Guía de estudio", type: "pdf", date: "2026-03-23", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-    { id: 4, title: "Examen 2025", type: "pdf", date: "2026-03-24", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+    { id: 1, title: "Apuntes Tema 1", type: "pdf", date: "2026-03-20", fileUrl: "https://www.w3.org/dummy.pdf" },
+    { id: 2, title: "Resumen Final", type: "pdf", date: "2026-03-22", fileUrl: "https://www.w3.org/dummy2.pdf" },
+    { id: 3, title: "Guía de estudio", type: "pdf", date: "2026-03-23", fileUrl: "https://www.w3.org/dummy3.pdf" },
+    { id: 4, title: "Examen 2025", type: "pdf", date: "2026-03-24", fileUrl: "https://www.w3.org/dummy4.pdf" },
+    { id: 5, title: "Explicación Tema 2", type: "video", date: "2026-03-21", fileUrl: "https://www.youtube.com/watch?v=7iobxzd_2wY&t=1s" },
+    { id: 6, title: "Ejercicios Resueltos", type: "video", date: "2026-03-25", fileUrl: "https://youtu.be/7iobxzd_2wY?si=W8AwakVp7J0a2XL_" },
   ];
 
   const filteredPosts = dummyPosts.filter(post => {
@@ -42,8 +44,8 @@ const SubjectDetail = () => {
         <div className="px-12 pt-10 pb-6 flex justify-between items-center">
           <div onClick={() => navigate(-1)} className="group flex items-center gap-4 cursor-pointer">
             <span className="text-4xl font-light group-hover:-translate-x-2 transition-transform">{'<'}</span>
-            <h1 className="text-5xl font-bold text-gray-800 uppercase tracking-tight">
-              {subjectId || "CALCULO"}
+            <h1 className="text-5xl font-bold text-gray-800 uppercase tracking-tight group-hover:text-black transition-colors group-hover:scale-105 group-hover:-translate-x-1 duration-300">
+              {subjectId}
             </h1>
           </div>
           <div className="flex items-center gap-4">
