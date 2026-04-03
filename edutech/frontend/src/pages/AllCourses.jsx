@@ -1,4 +1,4 @@
-import Layout from '../components/Layout';
+import React from 'react';
 import SearchBar from '../components/SearchBar';
 import { WidgetCourse } from '../components/Course';
 import NotebookFooter from '../components/Footer';
@@ -19,29 +19,31 @@ const Courses = () => {
   }, []);
 
   return (
-      <div className="flex flex-col flex-grow w-full">
-        <div className="px-8 pt-8 pb-10"> 
-      
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-12 gap-y-6 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
+      <div className="flex-grow overflow-y-auto custom-scrollbar px-8 pt-12 pb-10">
+        <div className="mb-10 w-full">
+          <SearchBar placeholder="Buscar curso..." color="bg-slate-800" />
+        </div>
 
-            {courses.map((course) => (
-              
-              <Link 
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-12 gap-y-6 w-full max-w-7xl mx-auto">
+           {courses.map((course) => (
+            <Link 
                 to={`/${course.id}/asignaturas`} 
                 key={course.id}
                 className="block transition-transform hover:scale-[1.02]" 
               >
-                <WidgetCourse 
-                  courseName={course.year}
-                  className="max-w-none w-full h-full"
-                />
-                
-              </Link>
-                ))}
-          </div>
+              <WidgetCourse 
+                courseName={course.year}
+                className="max-w-none w-full"
+              />
+            </Link>
+          ))}
         </div>
-          <NotebookFooter />
       </div>
+      <div className="shrink-0"> 
+        <NotebookFooter />
+      </div>
+    </div>
   );
 };
 
