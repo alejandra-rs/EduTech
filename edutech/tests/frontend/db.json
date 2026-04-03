@@ -11,9 +11,9 @@
     { "id": 3, "first_name": "Marta", "last_name": "Díaz", "email": "marta@example.com", "password": "hashed_password_3" }
   ],
   "courses": [
-    { "id": 1, "name": "Matemáticas Discretas", "year_id": 1 },
-    { "id": 2, "name": "Estructura de Datos", "year_id": 2 },
-    { "id": 3, "name": "Ingeniería de Software", "year_id": 3 }
+    { "id": 1, "name": "Matemáticas Discretas", "year_id": 1 , "quarter": 1},
+    { "id": 2, "name": "Estructura de Datos", "year_id": 2 , "quarter": 2},
+    { "id": 3, "name": "Ingeniería de Software", "year_id": 3 , "quarter": 1}
   ],
   "subscriptions": [
     { "id": 1, "user_id": 1, "assignment_id": 1 },

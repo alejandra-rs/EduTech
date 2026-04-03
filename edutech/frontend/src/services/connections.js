@@ -11,9 +11,13 @@ export const getYears = async () => {
   }
 };
 
-export const getCourses = async (yearId) => {
+export const getCourses = async (yearId, quarter) => {
+  let fetchUrl = `${BASE_URL}/courses?year_id=${yearId}`;
+  if (quarter) {
+    fetchUrl += `&quarter=${quarter}`;
+  }
   try {
-    const response = await fetch(`${BASE_URL}/courses?year_id=${yearId}`);
+    const response = await fetch(fetchUrl);
     if (!response.ok) throw new Error('Error al obtener las asignaturas');
     return await response.json();
   } catch (error) {
@@ -33,3 +37,9 @@ export const getPosts = async (courseId) => {
   } 
 };
 
+export const getSuscritions = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/subscriptions?user_id=${userId}`);
+    if (!response.ok) throw new Error('Error al obtener las suscripciones');
+    return await response.json();
+  }
