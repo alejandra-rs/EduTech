@@ -2,15 +2,13 @@ import React from 'react';
 import Layout from '../components/Layout';
 import WidgetSubject from '../components/Subject';
 import NotebookFooter from '../components/Footer';
+import { Link } from 'react-router-dom';
 
 const Subject = () => {
   const cuatri1 = Array(10).fill({ subjectName: "Asignatura", courseName: "Curso" });
   const cuatri2 = Array(10).fill({ subjectName: "Asignatura", courseName: "Curso" });
-
   return (
-    <Layout>
       <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
-
         <div className="px-12 pt-10 flex items-center gap-4 shrink-0">
           <button className="text-4xl font-light hover:scale-110 transition-transform">{'<'}</button>
           <h1 className="text-5xl font-bold text-gray-800">Asignatura</h1>
@@ -23,12 +21,17 @@ const Subject = () => {
 
             <div className="flex-grow overflow-y-auto pr-2 space-y-4 custom-scrollbar">
               {cuatri1.map((sub, index) => (
+              <Link
+                to={`/${sub.subjectId}/post`}
+                className="block transition-transform hover:scale-[1.02]"
+              >
                 <WidgetSubject 
-                  key={index}
-                  subjectName={`${sub.subjectName} ${index + 1}`}
-                  courseName={sub.courseName}
-                  className="w-full shadow-sm"
+                key={index}
+                subjectName={`${sub.subjectName} ${index + 1}`}
+                courseName={sub.courseName}
+                className="w-full shadow-sm"
                 />
+              </Link>
               ))}
             </div>
           </div>
@@ -54,7 +57,6 @@ const Subject = () => {
           <NotebookFooter />
         </div>
       </div>
-    </Layout>
   );
 };
 
