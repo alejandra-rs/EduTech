@@ -1,11 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import CargarPublicacionPDF from './pages/CargarPublicacionPDF'
+import CargarPublicacionVideo from './pages/CargarPublicacionVideo'
 
 const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>
-    <CargarPublicacionPDF />
+    <CargarPublicacionVideo />
   </StrictMode>,
 )
