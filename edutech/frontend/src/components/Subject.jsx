@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { AcademicCapIcon, BellIcon } from '@heroicons/react/24/outline';
-import { UserGroupIcon } from '@heroicons/react/24/solid';
+import { AcademicCapIcon } from '@heroicons/react/24/outline';
+import BellButton from './BellButton';
 
 export const WidgetSubject = ({ 
   subjectName = "Subject", 
@@ -11,8 +11,7 @@ export const WidgetSubject = ({
 }) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
-  const handleBellClick = (e) => {
-    e.stopPropagation();
+  const toggleSubscription = () => {
     const newState = !isSubscribed;
     setIsSubscribed(newState);
     if (onSubscribe) onSubscribe(newState);
@@ -38,17 +37,10 @@ export const WidgetSubject = ({
           </h3>
         </div>
 
-        <button 
-          onClick={handleBellClick}
-          className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all
-            ${isSubscribed 
-              ? 'bg-yellow-100 text-yellow-600 shadow-inner' 
-              : 'bg-gray-50 text-gray-400 hover:bg-gray-200 hover:text-gray-600'
-            }`}
-          title={isSubscribed ? "Anular suscripción" : "Suscribirme"}
-        >
-          <BellIcon className={`w-6 h-6 ${isSubscribed ? 'fill-current' : ''}`} />
-        </button>
+        <BellButton 
+          isSubscribed={isSubscribed} 
+          onClick={toggleSubscription} 
+        />
       </div>
 
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-400 group-hover:w-2 transition-all" />
