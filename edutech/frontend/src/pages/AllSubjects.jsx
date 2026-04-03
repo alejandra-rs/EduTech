@@ -12,16 +12,19 @@ const Subject = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
-
-      <div className="px-12 pt-10 flex items-center gap-4 shrink-0">
-        <button 
+      <div className="px-12 pt-10 shrink-0">
+        <div 
           onClick={() => navigate('/')} 
-          className="text-4xl font-light hover:scale-110 transition-transform"
+          className="group flex items-center gap-4 cursor-pointer w-fit"
         >
-          {'<'}
-        </button>
-        
-        <h1 className="text-5xl font-bold text-gray-800">Curso {id}</h1>
+          <span className="text-4xl font-light group-hover:scale-125 group-hover:-translate-x-1 transition-all duration-200 text-gray-600">
+            {'<'}
+          </span>
+          
+          <h1 className="text-5xl font-bold text-gray-800 group-hover:text-black transition-colors group-hover:scale-105 group-hover:-translate-x-1 duration-300">
+            Curso {id}
+          </h1>
+        </div>
       </div>
 
       <div className="flex-grow px-12 py-8 flex flex-col lg:flex-row gap-8 justify-center items-start overflow-hidden">

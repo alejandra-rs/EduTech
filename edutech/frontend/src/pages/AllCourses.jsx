@@ -5,15 +5,14 @@ import NotebookFooter from '../components/Footer';
 import { Link } from 'react-router-dom';
 
 const Courses = () => {
-  // Ahora solo nos importa el nombre del curso (1º, 2º, 3º...)
   const dummyCourses = Array.from({ length: 4 }).map((_, index) => ({
     id: index + 1,
     courseName: `${index + 1}º CURSO`,
   }));
 
   return (
-    <div className="flex flex-col flex-grow w-full">
-      <div className="px-8 pt-8 pb-10"> 
+    <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
+      <div className="flex-grow overflow-y-auto custom-scrollbar px-8 pt-12 pb-10">
         <div className="mb-10 w-full">
           <SearchBar placeholder="Buscar curso..." color="bg-slate-800" />
         </div>
@@ -33,7 +32,7 @@ const Courses = () => {
           ))}
         </div>
       </div>
-      <div className="mt-auto">
+      <div className="shrink-0"> 
         <NotebookFooter />
       </div>
     </div>
