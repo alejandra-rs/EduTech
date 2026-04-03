@@ -14,11 +14,31 @@ const PdfPreview = ({ fileUrl }) => (
   </div>
 );
 
-const VideoPreview = ({ fileUrl }) => (
-  <div className="w-full h-48 border-b border-gray-200 bg-gray-100 shrink-0">
-    <iframe src={fileUrl} className="w-full h-full" title="Video preview" />
-  </div>
-);
+const VideoPreview = ({ fileUrl }) => {
+  const getEmbedUrl = (url) => {
+    if (!url) return '';
+    if (url.includes('embed/')) return url;
+
+    const videoId = url.split('v=')[1]?.split('&')[0];
+    const shortId = url.split('youtu.be/')[1]?.split('?')[0];
+
+    const finalId = videoId || shortId;
+
+    return finalId ? `https://www.youtube.com/embed/${finalId}` : url;
+  };
+
+  return (
+    <div className="w-full h-48 border-b border-gray-200 bg-gray-100 shrink-0">
+      <iframe 
+        src={getEmbedUrl(fileUrl)} 
+        className="w-full h-full" 
+        title="Video preview"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
+  );
+};
 
 const LabelPDF = () => (
     <div className="w-16 h-12 bg-red-600 rounded-md shadow-md flex items-center justify-center border-2 border-red-700 relative">
