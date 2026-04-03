@@ -3,7 +3,7 @@ import SearchBar from '../components/SearchBar';
 import WidgetCourse from '../components/Course';
 import NotebookFooter from '../components/Footer';
 
-const TodosCursos = () => {
+const Courses = () => {
   const dummyCourses = Array(8).fill({
     courseName: "Curso",
     semester: "Semestre"
@@ -34,4 +34,4 @@ const TodosCursos = () => {
   );
 };
 
-export default TodosCursos;
+export default Courses;
