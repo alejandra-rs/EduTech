@@ -11,7 +11,18 @@ const SubjectDetail = () => {
   const { subjectId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('pdf');
-  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const [isSubscribed, setIsSubscribed] = useState(() => {
+    const saved = localStorage.getItem(`sub-${subjectId}`);
+    return saved === 'true';
+  });
+
+
+  const handleToggleSubscription = () => {
+    const newState = !isSubscribed;
+    setIsSubscribed(newState);
+    localStorage.setItem(`sub-${subjectId}`, newState);
+  };
 
   const dummyPosts = [
     { id: 1, title: "Apuntes Tema 1", type: "pdf", date: "2026-03-20", fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
@@ -43,7 +54,7 @@ const SubjectDetail = () => {
             </button>
             <BellButton 
               isSubscribed={isSubscribed} 
-              onClick={() => setIsSubscribed(!isSubscribed)} 
+              onClick={handleToggleSubscription}
             />
           </div>
         </div>
