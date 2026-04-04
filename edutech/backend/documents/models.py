@@ -54,30 +54,39 @@ class YoutubeVideo(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey('users.Student', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-
     def __str__(self):
         return f'{self.user} {self.post}'
+
+    def clean(self):
+        if Dislike.objects.filter(user=self.user, post=self.post).exists():
+            raise ValidationError("No puedes dar like y dislike al mismo tiempo.")
 
     class Meta:
         unique_together = (('user', 'post'),)
         indexes = [
             models.Index(fields=['user', 'post']),
         ]
+    user = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+
+
 
 class Dislike(models.Model):
-    user = models.ForeignKey('users.Student', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-
     def __str__(self):
         return f'{self.user} {self.post}'
+
+    def clean(self):
+        if Like.objects.filter(user=self.user, post=self.post).exists():
+            raise ValidationError("No puedes dar like y dislike al mismo tiempo.")
 
     class Meta:
         unique_together = (('user', 'post'),)
         indexes = [
             models.Index(fields=['user', 'post']),
         ]
+    user = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+
 
 
 class Comment(models.Model):

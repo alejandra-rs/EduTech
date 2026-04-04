@@ -1,12 +1,15 @@
 import boto3
+from absl.flags import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status, generics, views
 from courses.models import Course
-from .models import Post, PDFAttachment, YoutubeVideo
-from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer
+from users.models import Student
+from .models import Post, PDFAttachment, YoutubeVideo, Like, Dislike, Comment
+from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer, CommentListSerializer, \
+    LikeSerializer, DislikeSerializer
 from .filters import PostFilter
 
 
@@ -98,3 +101,82 @@ class PDFDownloadView(views.APIView):
         )
 
         return HttpResponseRedirect(url)
+
+
+class CommentCreateView(views.APIView):
+    def post(self, request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        user = get_object_or_404(Student, pk=request.data.get('user'))
+        message = request.data.get('message', '').strip()
+        if not message:
+            return Response({"detail": "El mensaje no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
+        comment = Comment.objects.create(user=user, post=post, message=message)
+        return Response(CommentListSerializer(comment).data, status=status.HTTP_201_CREATED)
+
+
+class LikeView(views.APIView):
+    serializer_class = LikeSerializer
+
+    def get(self, request):
+        user = request.query_params.get('user')
+        post = request.query_params.get('post')
+
+        like = Like.objects.filter(user=user, post=post).first()
+        if like:
+            return Response({"id": like.id}, status=status.HTTP_200_OK)
+        return Response({}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = get_object_or_404(Student, pk=request.data.get('user'))
+        post = get_object_or_404(Post, pk=request.data.get('post'))
+        like_exists = Like.objects.filter(user=user, post=post).first()
+        if like_exists:
+            return Response({"detail": "Ya existe un like para este usuario en este post."}, status=status.HTTP_200_OK)
+        like = Like(user=user, post=post)
+        try:
+            like.full_clean()
+        except ValidationError as e:
+            return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+        like.save()
+        return Response({"id": like.id}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, pk):
+        like = get_object_or_404(Like, pk=pk)
+        count, _ = like.delete()
+        if count == 0:
+            return Response({"detail": "No se ha podido anular el like"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"detail": "Like eliminado con éxito"}, status=status.HTTP_200_OK)
+
+
+class DislikeView(views.APIView):
+    serializer_class = DislikeSerializer
+
+    def get(self, request, pk=None):
+        user = request.query_params.get('user')
+        post = request.query_params.get('post')
+
+        dislike = Dislike.objects.filter(user=user, post=post).first()
+        if dislike:
+            return Response({"id": dislike.id}, status=status.HTTP_200_OK)
+        return Response({}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user = get_object_or_404(Student, pk=request.data.get('user'))
+        post = get_object_or_404(Post, pk=request.data.get('post'))
+        dislike_exists = Dislike.objects.filter(user=user, post=post).first()
+        if dislike_exists:
+            return Response({"detail": "Ya existe un dislike para este usuario en este post."}, status=status.HTTP_200_OK)
+        dislike = Dislike(user=user, post=post)
+        try:
+            dislike.full_clean()
+        except ValidationError as e:
+            return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+        dislike.save()
+        return Response({"id": dislike.id}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, pk):
+        dislike = get_object_or_404(Dislike, pk=pk)
+        count, _ = dislike.delete()
+        if count == 0:
+            return Response({"detail": "No se ha podido anular el dislike"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"detail": "Dislike eliminado con éxito"}, status=status.HTTP_200_OK)
