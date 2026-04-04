@@ -14,7 +14,7 @@ class CourseSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Course
-        fields = ['id', 'name', 'year', 'year_id']
+        fields = ['id', 'name', 'year', 'year_id', 'semester']
         validators = [
             UniqueTogetherValidator(
                 queryset=Course.objects.all(),

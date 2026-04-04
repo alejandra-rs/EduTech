@@ -1,9 +1,11 @@
 from rest_framework import serializers
-from .models import Post, PDFAttachment, YoutubeVideo
+from .models import Post, PDFAttachment, YoutubeVideo, Comment
 from courses.models import Course
 from users.models import Student
+from users.serializers import StudentSerializer
 import urllib.request
 import urllib.parse
+
 
 class PDFAttachmentSerializer(serializers.ModelSerializer):
     download_url = serializers.SerializerMethodField()
@@ -25,6 +27,7 @@ class YoutubeVideoSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     pdf = PDFAttachmentSerializer(read_only=True)
     vid = YoutubeVideoSerializer(read_only=True)
+    student = StudentSerializer(read_only=True)
 
     class Meta:
         model = Post
@@ -60,3 +63,11 @@ class VideoUploadSerializer(serializers.Serializer):
                return video
        except Exception:
            raise serializers.ValidationError('El vídeo de YouTube no existe o no es válido.')
+
+
+class CommentListSerializer(serializers.ModelSerializer):
+    user = StudentSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'message', 'user']
