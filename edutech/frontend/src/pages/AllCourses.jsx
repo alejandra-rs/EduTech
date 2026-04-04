@@ -12,7 +12,7 @@ const Courses = () => {
       .then(data => {
         setYears(data);
       })
-      .catch(error => {
+      .catch((error) => {
         //TODO show error message to user
       });
   }, []);
@@ -38,9 +38,6 @@ const Courses = () => {
             </Link>
           ))}
         </div>
-      </div>
-      <div className="shrink-0"> 
-        <NotebookFooter />
       </div>
     </div>
   );

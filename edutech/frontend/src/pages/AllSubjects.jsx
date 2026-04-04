@@ -24,9 +24,6 @@ const Subject = () => {
           yearId={id}
         />
       </div>
-      <div className="shrink-0">
-        <NotebookFooter />
-      </div>
     </div>
   );
 };

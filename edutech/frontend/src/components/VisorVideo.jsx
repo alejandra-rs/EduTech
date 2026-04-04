@@ -16,8 +16,8 @@ export default function VisorVideo({ videoUrl }) {
   const embedUrl = getEmbedUrl(videoUrl);
 
   return (
-    <div className="w-full flex justify-center items-start p-2">
-      <div className="w-full max-w-4xl aspect-video h-auto bg-black border border-zinc-300 rounded-lg overflow-hidden shadow-lg relative">
+    <div className="w-full flex justify-center items-start">
+      <div className="w-full aspect-video h-auto bg-black border border-zinc-300 rounded-lg overflow-hidden shadow-lg relative">
         
         {embedUrl ? (
           <iframe

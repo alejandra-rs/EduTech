@@ -15,12 +15,48 @@ const SubjectDetail = ({subjectId}) => {
   const [activeTabs, setActiveTabs] = useState([]);
 
   const dummyPosts = [
-    { id: 1, title: "Apuntes Tema 1", type: "pdf", date: "2026-03-20", fileUrl: "https://www.w3.org/dummy.pdf" },
-    { id: 2, title: "Resumen Final", type: "pdf", date: "2026-03-22", fileUrl: "https://www.w3.org/dummy2.pdf" },
-    { id: 3, title: "Guía de estudio", type: "pdf", date: "2026-03-23", fileUrl: "https://www.w3.org/dummy3.pdf" },
-    { id: 4, title: "Examen 2025", type: "pdf", date: "2026-03-24", fileUrl: "https://www.w3.org/dummy4.pdf" },
-    { id: 5, title: "Explicación Tema 2", type: "video", date: "2026-03-21", fileUrl: "https://www.youtube.com/watch?v=7iobxzd_2wY&t=1s" },
-    { id: 6, title: "Ejercicios Resueltos", type: "video", date: "2026-03-25", fileUrl: "https://youtu.be/7iobxzd_2wY?si=W8AwakVp7J0a2XL_" },
+    {
+      id: 1,
+      title: "Apuntes Tema 1",
+      type: "pdf",
+      date: "2026-03-20",
+      fileUrl: "https://www.w3.org/dummy.pdf",
+    },
+    {
+      id: 2,
+      title: "Resumen Final",
+      type: "pdf",
+      date: "2026-03-22",
+      fileUrl: "https://www.w3.org/dummy2.pdf",
+    },
+    {
+      id: 3,
+      title: "Guía de estudio",
+      type: "pdf",
+      date: "2026-03-23",
+      fileUrl: "https://www.w3.org/dummy3.pdf",
+    },
+    {
+      id: 4,
+      title: "Examen 2025",
+      type: "pdf",
+      date: "2026-03-24",
+      fileUrl: "https://www.w3.org/dummy4.pdf",
+    },
+    {
+      id: 5,
+      title: "Explicación Tema 2",
+      type: "video",
+      date: "2026-03-21",
+      fileUrl: "https://www.youtube.com/watch?v=7iobxzd_2wY&t=1s",
+    },
+    {
+      id: 6,
+      title: "Ejercicios Resueltos",
+      type: "video",
+      date: "2026-03-25",
+      fileUrl: "https://youtu.be/7iobxzd_2wY?si=W8AwakVp7J0a2XL_",
+    },
   ];
 
   const filteredPosts = dummyPosts.filter((post) => {
@@ -35,7 +71,13 @@ const SubjectDetail = ({subjectId}) => {
           PageName={subjectId || "CALCULO"}
           onBack={() => navigate(-1)}
         >
-          <PlusCircleIcon className="w-10 h-10" />
+          <button
+            onClick={() => navigate(`/${id}/${subjectId}/upload`)}
+            className="text-gray-700 hover:text-blue-600 transition-all duration-200 transform active:scale-75 hover:scale-110"
+            title="Subir nuevo recurso"
+          >
+            <PlusCircleIcon className="w-10 h-10" />
+          </button>
           <BellButton
             isSubscribed={isSubscribed}
             onClick={handleToggleSubscription}
@@ -56,9 +98,6 @@ const SubjectDetail = ({subjectId}) => {
 
             <PostGrid posts={filteredPosts} />
           </div>
-        </div>
-        <div className="shrink-0">
-          <NotebookFooter />
         </div>
       </div>
     </div>
