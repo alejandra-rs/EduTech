@@ -28,7 +28,7 @@ export default function Layout({ children }) {
     ];
 
   return (
-    <div className="flex h-screen w-full bg-slate-200 overflow-hidden">
+    <div className="flex h-screen w-full  bg-transparent overflow-hidden">
       <Header
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -37,20 +37,16 @@ export default function Layout({ children }) {
       />
       <div className="flex flex-1 flex-col relative overflow-hidden">
         <main
-          className={`flex-1 bg-white overflow-y-auto custom-scrollbar 
+          className={`flex-1overflow-y-auto custom-scrollbar 
              transition-all duration-300`}
         >
-          <div className="min-h-full flex flex-col pb-10">
-            <div className="flex-1">{children}</div>
-            <div
-              className="h-10 shrink-0 pointer-events-none"
-              aria-hidden="true"
-            />{" "}
+          <div className="min-h-full flex flex-col">
+            <div className="flex-1 bg-white">{children}</div>
+            <div className="sticky bottom-0 left-0 w-full">
+              <NotebookFooter tabs={currentTabs} />
+            </div>
           </div>
         </main>
-        <div className="absolute bottom-0 left-0 w-full z-20 bg-transparent">
-          <NotebookFooter tabs={currentTabs} />
-        </div>
       </div>
     </div>
   );
