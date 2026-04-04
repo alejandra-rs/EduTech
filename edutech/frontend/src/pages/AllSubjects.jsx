@@ -6,11 +6,10 @@ import { TitlePage } from "../components/TitlePage.jsx";
 const Subject = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log(id);
 
   return (
     <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
-      <TitlePage PageName="Cursos" onBack={() => navigate("/")} />
+      <TitlePage PageName="Cursos" onBack={() => navigate(-1)} />
       <div className="flex-grow px-12 py-8 flex flex-col lg:flex-row gap-8 justify-center items-start overflow-hidden">
         <Quarter
           quarter={1}

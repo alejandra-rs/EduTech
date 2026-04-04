@@ -1,24 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 import BellButton from "./BellButton";
 
-export const WidgetSubject = ({ subjectName, onNavigate, className = "" }) => {
-
-  const [isSubscribed, setIsSubscribed] = useState(() => {
-    const saved = localStorage.getItem(`sub-${subjectName}`);
-    return saved === "true";
-  });
-
-  const toggleSubscription = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const newState = !isSubscribed;
-    setIsSubscribed(newState);
-
-    localStorage.setItem(`sub-${subjectName}`, newState);
-  };
-
+export const WidgetSubject = ({ subjectName, subjectId, onNavigate, className = "" }) => {
   return (
     <div
       onClick={onNavigate}
@@ -29,14 +13,14 @@ export const WidgetSubject = ({ subjectName, onNavigate, className = "" }) => {
           <AcademicCapIcon className="w-7 h-7 text-gray-700" />
         </div>
         <div className="flex flex-col flex-grow min-w-0">
-          <span className="text-xs font-medium italic text-gray-500">
-            {subjectName}
-          </span>
-          <h3 className="text-xl font-bold text-black truncate">
+          <h3 className="text-lg font-bold text-black truncate">
             {subjectName}
           </h3>
+          <span className="text-xs font-medium italic text-gray-500">
+            {subjectName.split(" ").map((word) => word.charAt(0).toUpperCase())}
+          </span>
         </div>
-        <BellButton isSubscribed={isSubscribed} onClick={toggleSubscription} />
+        <BellButton subjectId={subjectId} />
       </div>
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-400 group-hover:w-2 transition-all" />
     </div>

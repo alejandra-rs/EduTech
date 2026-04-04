@@ -8,22 +8,11 @@ import PostGrid from "../components/PostGrid";
 import NotebookFooter from "../components/Footer";
 import { TitlePage } from "../components/TitlePage";
 
-const SubjectDetail = () => {
+const SubjectDetail = ({subjectId}) => {
   const { subjectId } = useParams();
   const navigate = useNavigate();
 
   const [activeTabs, setActiveTabs] = useState([]);
-
-  const [isSubscribed, setIsSubscribed] = useState(() => {
-    const saved = localStorage.getItem(`sub-${subjectId}`);
-    return saved === "true";
-  });
-
-  const handleToggleSubscription = () => {
-    const newState = !isSubscribed;
-    setIsSubscribed(newState);
-    localStorage.setItem(`sub-${subjectId}`, newState);
-  };
 
   const dummyPosts = [
     { id: 1, title: "Apuntes Tema 1", type: "pdf", date: "2026-03-20", fileUrl: "https://www.w3.org/dummy.pdf" },

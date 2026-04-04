@@ -1,4 +1,3 @@
-import React from 'react';
 import SearchBar from '../components/SearchBar';
 import { WidgetCourse } from '../components/Course';
 import NotebookFooter from '../components/Footer';
@@ -6,12 +5,12 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import  { getYears } from '@services/connections';
 const Courses = () => {
-  const [courses, setCourses] = useState([]);
+  const [years, setYears] = useState([]);
 
   useEffect(() => {
     getYears()
       .then(data => {
-        setCourses(data);
+        setYears(data);
       })
       .catch(error => {
         //TODO show error message to user
@@ -26,14 +25,14 @@ const Courses = () => {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-12 gap-y-6 w-full max-w-7xl mx-auto">
-           {courses.map((course) => (
+           {years.map((year) => (
             <Link 
-                to={`/${course.id}/asignaturas`} 
-                key={course.id}
+                to={`/${year.id}/asignaturas`} 
+                key={year.id}
                 className="block transition-transform hover:scale-[1.02]" 
               >
               <WidgetCourse 
-                courseName={course.year + "º Curso"}
+                courseName={year.year + "º Curso"}
                 className="max-w-none w-full"
               />
             </Link>

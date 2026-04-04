@@ -25,6 +25,7 @@ export function Quarter({ quarter, title, navigate, yearId }) {
             <WidgetSubject
               key={sub.id}
               subjectName={sub.name}
+              subjectId={sub.id}
               className="w-full shadow-sm"
               onNavigate={() => navigate(`/${yearId}/${sub.id}/post`)}
             />
