@@ -21,7 +21,7 @@ class PostListView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         course_id = request.query_params.get('course')
         if course_id is not None:
-            get_object_or_404(Course, pk=course_id)  # 404 if course doesn't exist
+            get_object_or_404(Course, pk=course_id)
         return super().list(request, *args, **kwargs)
 
 
@@ -104,9 +104,11 @@ class PDFDownloadView(views.APIView):
 
 
 class CommentCreateView(views.APIView):
-    def post(self, request, post_id):
-        post = get_object_or_404(Post, pk=post_id)
-        user = get_object_or_404(Student, pk=request.data.get('user'))
+    serializer_class = CommentListSerializer
+
+    def post(self, request):
+        post = get_object_or_404(Post, pk=request.query_params.get('post'))
+        user = get_object_or_404(Student, pk=request.query_params.get('user'))
         message = request.data.get('message', '').strip()
         if not message:
             return Response({"detail": "El mensaje no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
