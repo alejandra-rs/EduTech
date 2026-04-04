@@ -1,4 +1,3 @@
-import Header from '../components/Header';
 import VisorPDF from '../components/VisorPDF';
 import Descargar from '../components/Descargar';
 import Like from '../components/Like';
@@ -6,7 +5,7 @@ import Dislike from '../components/Dislike';
 import Views from '../components/Views';
 import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
-import Input from '../components/input';
+import Input from '../components/Input';
 
 export default function VistaPreviaDocumento() {
   const asignaturaNombre = "Asignatura";
@@ -34,13 +33,12 @@ export default function VistaPreviaDocumento() {
           </form>
         </div>
       </div>
-      <Header />
       <div className="flex-1 flex flex-col h-full overflow-hidden bg-transparent">
         <div className="w-full shrink-0">
           <TitlePage PageName={asignaturaNombre} onBack={handleBack} />
         </div>
         <div className="flex-1 flex flex-col lg:flex-row w-full h-full overflow-hidden">
-          <div className="w-full h-[60vh] lg:h-full lg:w-[40%] xl:w-[45%] flex items-center justify-center p-2 lg:p-6 shrink-0 bg-transparent overflow-hidden">
+          <div className="w-full h-[60vh] lg:h-full lg:w-[30%] xl:w-[35%] flex items-center justify-center p-2 lg:p-6 shrink-0 bg-transparent overflow-hidden">
             <div className="w-full h-full flex items-center justify-center">
               <VisorPDF />
             </div>
