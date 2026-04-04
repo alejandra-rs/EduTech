@@ -6,7 +6,6 @@ import { TitlePage } from "../components/TitlePage.jsx";
 const Subject = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log(id);
 
   return (
     <div className="flex flex-col w-full">
