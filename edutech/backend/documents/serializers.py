@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, PDFAttachment, YoutubeVideo, Comment
+from .models import Post, PDFAttachment, YoutubeVideo, Comment, Like, Dislike
 from courses.models import Course
 from users.models import Student
 from users.serializers import StudentSerializer
@@ -8,14 +8,9 @@ import urllib.parse
 
 
 class PDFAttachmentSerializer(serializers.ModelSerializer):
-    download_url = serializers.SerializerMethodField()
-
     class Meta:
         model = PDFAttachment
-        fields = ['id', 'file', 'download_url']
-
-    def get_download_url(self, instance):
-        return instance.file.url if instance.file else None
+        fields = ['id', 'file']
 
 
 class YoutubeVideoSerializer(serializers.ModelSerializer):
@@ -24,16 +19,33 @@ class YoutubeVideoSerializer(serializers.ModelSerializer):
         fields = ['id', 'vid']
 
 
+class CommentListSerializer(serializers.ModelSerializer):
+    user = StudentSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'message', 'user']
+
+
 class PostSerializer(serializers.ModelSerializer):
     pdf = PDFAttachmentSerializer(read_only=True)
     vid = YoutubeVideoSerializer(read_only=True)
     student = StudentSerializer(read_only=True)
+    likes = serializers.SerializerMethodField()
+    dislikes = serializers.SerializerMethodField()
+    comments = CommentListSerializer(source='comment_set', many=True, read_only=True)
+
+    def get_likes(self, obj):
+        return obj.like_set.count()
+
+    def get_dislikes(self, obj):
+        return obj.dislike_set.count()
 
     class Meta:
         model = Post
         fields = ['id', 'title', 'description', 'post_type',
                   'course', 'student', 'created_at',
-                  'pdf', 'vid']
+                  'pdf', 'vid', 'likes', 'dislikes', 'comments']
 
 
 class PDFUploadSerializer(serializers.Serializer):
@@ -65,9 +77,13 @@ class VideoUploadSerializer(serializers.Serializer):
            raise serializers.ValidationError('El vídeo de YouTube no existe o no es válido.')
 
 
-class CommentListSerializer(serializers.ModelSerializer):
-    user = StudentSerializer(read_only=True)
-
+class LikeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Comment
-        fields = ['id', 'message', 'user']
+        model = Like
+        fields = ['user', 'post']
+
+
+class DislikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dislike
+        fields = ['user', 'post']
