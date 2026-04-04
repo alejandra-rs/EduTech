@@ -9,7 +9,7 @@ import NotebookFooter from "../components/Footer";
 import { TitlePage } from "../components/TitlePage";
 
 const SubjectDetail = () => {
-  const { subjectId } = useParams();
+  const { id, subjectId } = useParams();
   const navigate = useNavigate();
 
   const [activeTabs, setActiveTabs] = useState([]);
@@ -46,7 +46,13 @@ const SubjectDetail = () => {
           PageName={subjectId || "CALCULO"}
           onBack={() => navigate(-1)}
         >
-          <PlusCircleIcon className="w-10 h-10" />
+          <button 
+            onClick={() => navigate(`/${id}/${subjectId}/upload`)}
+            className="text-gray-700 hover:text-blue-600 transition-all duration-200 transform active:scale-75 hover:scale-110"
+            title="Subir nuevo recurso"
+          >
+            <PlusCircleIcon className="w-10 h-10" />
+          </button>
           <BellButton
             isSubscribed={isSubscribed}
             onClick={handleToggleSubscription}

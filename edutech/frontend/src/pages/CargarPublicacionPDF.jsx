@@ -1,7 +1,7 @@
 import Header from '../components/Header';
 import VisorPDF from '../components/VisorPDF';
 import PublicacionFooter from '../components/PublicacionFooter';
-import Input from '../components/input';
+import Input from '../components/Input';
 
 export default function CargarPublicacionPDF() {
   return (
