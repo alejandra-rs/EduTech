@@ -74,39 +74,39 @@
   ],
   "courses_sub": [
     {
-      "id": 1,
-      "user_id": 1,
-      "course_id": 1
-    },
-    {
-      "id": 2,
-      "user_id": 1,
-      "course_id": 2
-    },
-    {
       "id": 3,
-      "user_id": 2,
-      "course_id": 3
+      "user": 2,
+      "course": 3
     },
     {
-      "user_id": 1,
-      "course_id": 1,
+      "user": 1,
+      "course": 1,
       "id": 4
     },
     {
-      "user_id": 1,
-      "course_id": 1,
+      "user": 1,
+      "course": 1,
       "id": 5
     },
     {
-      "user_id": 1,
-      "course_id": 1,
+      "user": 1,
+      "course": 1,
       "id": 6
     },
     {
-      "user_id": 1,
-      "course_id": 1,
+      "user": 1,
+      "course": 1,
       "id": 7
+    },
+    {
+      "user": 1,
+      "course": 3,
+      "id": 8
+    },
+    {
+      "user": 1,
+      "course": 1,
+      "id": 9
     }
   ],
   "documents": [

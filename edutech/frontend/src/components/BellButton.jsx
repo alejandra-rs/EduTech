@@ -1,20 +1,21 @@
 import { BellIcon } from '@heroicons/react/24/outline';
 
 import React, { useState, useEffect } from 'react';
-import { isSubscribed as checkSubscription, getUserId, unsuscribe, subscribeToCourse } from "@services/connections.js";
-import { data } from 'react-router-dom';
+import { checkSubscription, getUserId, unsubscribe, subscribeToCourse } from "@services/connections.js";
 
-const BellButton = ({ subjectId, className = "" }) => {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-const [userId, setUserId] = useState(null); 
+const BellButton = ({ subjectId }) => {
+  const [subscriptionId, setSubscriptionId] = useState(null);
+  const [userId, setUserId] = useState(null); 
+
+  const isSubscribed = subscriptionId !== null;
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         const idReal = await getUserId(); 
         setUserId(idReal); 
-        const status = await checkSubscription(idReal, subjectId); 
-        setIsSubscribed(status);
+        const subId = await checkSubscription(idReal, subjectId); 
+        setSubscriptionId(subId);
       } catch (error) {
         console.error("Error al comprobar suscripción:", error);
       }
@@ -29,17 +30,20 @@ const [userId, setUserId] = useState(null);
     e.preventDefault();
     e.stopPropagation();
     if (!userId) return;
-    const newState = !isSubscribed;
-    setIsSubscribed(newState); 
+    const previousSubscriptionId = subscriptionId;
+
     try {
-      if (newState) {
-        await subscribeToCourse(userId, subjectId);
+      if (isSubscribed) {
+        setSubscriptionId(null);
+        await unsubscribe(previousSubscriptionId);
       } else {
-        await unsuscribe(userId, subjectId); 
+        setSubscriptionId("temp");
+        const newSubscription = await subscribeToCourse(userId, subjectId);
+        setSubscriptionId(newSubscription.id);
       }
     } catch (error) {
       console.error("Error al hacer toggle:", error);
-      setIsSubscribed(!newState); 
+      setSubscriptionId(previousSubscriptionId); 
     }
   };
   return (
@@ -49,7 +53,7 @@ const [userId, setUserId] = useState(null);
         ${isSubscribed 
           ? 'bg-yellow-100 text-yellow-600 shadow-inner' 
           : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-        } ${className}`}
+        }`}
     >
       <BellIcon className={`w-6 h-6 ${isSubscribed ? 'fill-current' : ''}`} />
     </button>

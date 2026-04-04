@@ -7,8 +7,9 @@ import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import NotebookFooter from "../components/Footer";
 import { TitlePage } from "../components/TitlePage";
+import { getPosts } from "@services/connections";
 
-const SubjectDetail = ({subjectId}) => {
+const SubjectDetail = () => {
   const { subjectId } = useParams();
   const navigate = useNavigate();
 
@@ -67,10 +68,7 @@ const SubjectDetail = ({subjectId}) => {
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       <div className="shrink-0 bg-white ">
-        <TitlePage
-          PageName={subjectId || "CALCULO"}
-          onBack={() => navigate(-1)}
-        >
+        <TitlePage PageName= "Asignaturas" onBack={() => navigate(-1)} >
           <button
             onClick={() => navigate(`/${id}/${subjectId}/upload`)}
             className="text-gray-700 hover:text-blue-600 transition-all duration-200 transform active:scale-75 hover:scale-110"
@@ -78,10 +76,7 @@ const SubjectDetail = ({subjectId}) => {
           >
             <PlusCircleIcon className="w-10 h-10" />
           </button>
-          <BellButton
-            isSubscribed={isSubscribed}
-            onClick={handleToggleSubscription}
-          />
+          <BellButton subjectId={subjectId} />
         </TitlePage>
         <SearchBar
           placeholder="Buscar en esta asignatura..."
