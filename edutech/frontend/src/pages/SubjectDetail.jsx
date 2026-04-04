@@ -5,9 +5,11 @@ import SearchBar from "../components/SearchBar";
 import BellButton from "../components/BellButton";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
+import NotebookFooter from "../components/Footer";
+import { TitlePage } from "../components/TitlePage";
 
 const SubjectDetail = () => {
-  const { subjectId } = useParams();
+  const { id, subjectId } = useParams();
   const navigate = useNavigate();
 
   const [activeTabs, setActiveTabs] = useState([]);
@@ -75,37 +77,27 @@ const SubjectDetail = () => {
 
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
-      <div className="shrink-0 bg-white z-20">
-        <div className="px-12 pt-10 pb-6 flex justify-between items-center">
-          <div
-            onClick={() => navigate(-1)}
-            className="group flex items-center gap-4 cursor-pointer"
+      <div className="shrink-0 bg-white ">
+        <TitlePage
+          PageName={subjectId || "CALCULO"}
+          onBack={() => navigate(-1)}
+        >
+          <button
+            onClick={() => navigate(`/${id}/${subjectId}/upload`)}
+            className="text-gray-700 hover:text-blue-600 transition-all duration-200 transform active:scale-75 hover:scale-110"
+            title="Subir nuevo recurso"
           >
-            <span className="text-4xl font-light group-hover:-translate-x-2 transition-transform">
-              {"<"}
-            </span>
-            <h1 className="text-5xl font-bold text-gray-800 uppercase tracking-tight group-hover:text-black transition-colors group-hover:scale-105 group-hover:-translate-x-1 duration-300">
-              {subjectId}
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="text-gray-700 hover:text-blue-600 transition-colors">
-              <PlusCircleIcon className="w-10 h-10" />
-            </button>
-            <BellButton
-              isSubscribed={isSubscribed}
-              onClick={handleToggleSubscription}
-            />
-          </div>
-        </div>
-        <div className="px-12 pb-6">
-          <div className="max-w-4xl mx-auto">
-            <SearchBar
-              placeholder="Buscar en esta asignatura..."
-              color="bg-slate-800"
-            />
-          </div>
-        </div>
+            <PlusCircleIcon className="w-10 h-10" />
+          </button>
+          <BellButton
+            isSubscribed={isSubscribed}
+            onClick={handleToggleSubscription}
+          />
+        </TitlePage>
+        <SearchBar
+          placeholder="Buscar en esta asignatura..."
+          color="bg-slate-800"
+        />
       </div>
 
       <div className="flex-grow overflow-y-auto custom-scrollbar flex flex-col">
@@ -115,15 +107,7 @@ const SubjectDetail = () => {
               <Tabs activeTabs={activeTabs} onTabChange={setActiveTabs} />
             </div>
 
-            <div className="mb-20">
-              {filteredPosts.length > 0 ? (
-                <PostGrid posts={filteredPosts} />
-              ) : (
-                <div className="text-center py-20 text-gray-400 italic">
-                  No hay recursos que coincidan con los filtros seleccionados.
-                </div>
-              )}
-            </div>
+            <PostGrid posts={filteredPosts} />
           </div>
         </div>
       </div>

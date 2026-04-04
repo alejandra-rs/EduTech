@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { AcademicCapIcon } from '@heroicons/react/24/outline';
-import BellButton from './BellButton';
+import React, { useState, useEffect } from "react";
+import { AcademicCapIcon } from "@heroicons/react/24/outline";
+import BellButton from "./BellButton";
 
-export const WidgetSubject = ({ subjectName, courseName, onNavigate, className = "" }) => {
+export const WidgetSubject = ({ subjectName, onNavigate, className = "" }) => {
+
   const [isSubscribed, setIsSubscribed] = useState(() => {
     const saved = localStorage.getItem(`sub-${subjectName}`);
-    return saved === 'true';
+    return saved === "true";
   });
 
   const toggleSubscription = (e) => {
     e.preventDefault();
-    e.stopPropagation(); 
-    
+    e.stopPropagation();
+
     const newState = !isSubscribed;
     setIsSubscribed(newState);
-    
+
     localStorage.setItem(`sub-${subjectName}`, newState);
   };
 
   return (
-    <div 
+    <div
       onClick={onNavigate}
       className={`group relative w-full max-w-[350px] h-[110px] bg-white rounded-[18px] border-2 border-solid border-black/20 shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.98] overflow-hidden ${className}`}
     >
@@ -28,8 +29,12 @@ export const WidgetSubject = ({ subjectName, courseName, onNavigate, className =
           <AcademicCapIcon className="w-7 h-7 text-gray-700" />
         </div>
         <div className="flex flex-col flex-grow min-w-0">
-          <span className="text-xs font-medium italic text-gray-500">{courseName}</span>
-          <h3 className="text-xl font-bold text-black truncate">{subjectName}</h3>
+          <span className="text-xs font-medium italic text-gray-500">
+            {subjectName}
+          </span>
+          <h3 className="text-xl font-bold text-black truncate">
+            {subjectName}
+          </h3>
         </div>
         <BellButton isSubscribed={isSubscribed} onClick={toggleSubscription} />
       </div>

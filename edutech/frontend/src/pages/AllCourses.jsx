@@ -1,9 +1,10 @@
 import React from "react";
 import SearchBar from "../components/SearchBar";
 import { WidgetCourse } from "../components/Course";
+import NotebookFooter from "../components/Footer";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getYears } from "../services/connections";
+import { getYears } from "@services/connections";
 const Courses = () => {
   const [courses, setCourses] = useState([]);
 
@@ -32,7 +33,7 @@ const Courses = () => {
               className="block transition-transform hover:scale-[1.02]"
             >
               <WidgetCourse
-                courseName={course.year}
+                courseName={course.year + "º Curso"}
                 className="max-w-none w-full"
               />
             </Link>
