@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../components/SearchBar";
@@ -8,12 +7,29 @@ import PostGrid from "../components/PostGrid";
 import NotebookFooter from "../components/Footer";
 import { TitlePage } from "../components/TitlePage";
 import { getPosts } from "@services/connections";
+import { useState, useEffect } from 'react';
 
 const SubjectDetail = () => {
-  const { subjectId } = useParams();
+  const { id, subjectId } = useParams();
   const navigate = useNavigate();
 
+  const [posts, setPosts] = useState([]);
   const [activeTabs, setActiveTabs] = useState([]);
+
+  useEffect(() => {
+    const cargarPosts = async () => {
+      try {
+        const data = await getPosts(subjectId);
+        setPosts(data);
+      } catch (error) {
+        console.error("Error al cargar los documentos de la asignatura", error);
+      }
+    };
+
+    if (subjectId) {
+      cargarPosts();
+    }
+  }, [subjectId]);
 
   const dummyPosts = [
     {
@@ -47,22 +63,26 @@ const SubjectDetail = () => {
     {
       id: 5,
       title: "Explicación Tema 2",
-      type: "video",
+      type: "vid",
       date: "2026-03-21",
       fileUrl: "https://www.youtube.com/watch?v=7iobxzd_2wY&t=1s",
     },
     {
       id: 6,
       title: "Ejercicios Resueltos",
-      type: "video",
+      type: "vid",
       date: "2026-03-25",
       fileUrl: "https://youtu.be/7iobxzd_2wY?si=W8AwakVp7J0a2XL_",
     },
   ];
 
-  const filteredPosts = dummyPosts.filter((post) => {
+  const filteredPosts = posts.filter((post) => {
     if (activeTabs.length === 0) return true;
-    return activeTabs.includes(post.type);
+    const traductorTipos = {
+      "PDF": "pdf",
+      "VID": "video"
+    };
+    return activeTabs.includes(traductorTipos[post.post_type]); 
   });
 
   return (
