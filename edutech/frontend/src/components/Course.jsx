@@ -1,8 +1,7 @@
-import { AcademicCapIcon, UserGroupIcon } from '@heroicons/react/24/solid';
+import { AcademicCapIcon } from '@heroicons/react/24/solid';
 
 export const WidgetCourse = ({ 
   courseName = "Curso", 
-  semester = "Semestre", 
   onNavigate,
   className = "" 
 }) => {
@@ -25,11 +24,7 @@ export const WidgetCourse = ({
         </div>
 
         <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2 text-black/60 font-bolad text-sm uppercase tracking-wider">
-            <span>{semester}</span>
-          </div>
-          
-          <h3 className="text-2xl font-black text-black italic leading-tight truncate">
+          <h3 className="text-2xl font-black text-black italic leading-tight truncate uppercase tracking-tight">
             {courseName}
           </h3>
         </div>

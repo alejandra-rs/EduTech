@@ -1,0 +1,4 @@
+{
+  "/courses/sub": "/courses_sub",
+  "/courses/sub/:id": "/courses_sub/:id"
+}

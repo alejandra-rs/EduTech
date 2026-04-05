@@ -1,0 +1,179 @@
+{
+  "years": [
+    {
+      "id": 1,
+      "year": 1
+    },
+    {
+      "id": 2,
+      "year": 2
+    },
+    {
+      "id": 3,
+      "year": 3
+    },
+    {
+      "id": 4,
+      "year": 4
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "first_name": "Laura",
+      "last_name": "García",
+      "email": "laura@example.com",
+      "password": "hashed_password_1",
+      "picture": "http://localhost:8000/media/profile_pics/laura.jpg"
+    },
+    {
+      "id": 2,
+      "first_name": "Carlos",
+      "last_name": "López",
+      "email": "carlos@example.com",
+      "password": "hashed_password_2",
+      "picture": "http://localhost:8000/media/profile_pics/laura.jpg"
+    },
+    {
+      "id": 3,
+      "first_name": "Marta",
+      "last_name": "Díaz",
+      "email": "marta@example.com",
+      "password": "hashed_password_3",
+      "picture": "http://localhost:8000/media/profile_pics/laura.jpg"
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "name": "Matemáticas Discretas",
+      "year": {
+        "year_id": 1,
+        "year": 1
+      },
+      "quarter": 1
+    },
+    {
+      "id": 2,
+      "name": "Estructura de Datos",
+      "year": {
+        "year_id": 2,
+        "year": 2
+      },
+      "quarter": 2
+    },
+    {
+      "id": 3,
+      "name": "Ingeniería de Software",
+      "year": {
+        "year_id": 3,
+        "year": 3
+      },
+      "quarter": 1
+    }
+  ],
+  "courses_sub": [
+    {
+      "id": 3,
+      "user": 2,
+      "course": 3
+    },
+    {
+      "user": 1,
+      "course": "1",
+      "id": 9
+    },
+    {
+      "user": 1,
+      "course": "3",
+      "id": 10
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "course": 1,
+      "student": 1,
+      "title": "Apuntes Tema 1 y 2 resueltos",
+      "description": "Dejo por aquí mis apuntes pasados a limpio para el parcial.",
+      "post_type": "PDF",
+      "created_at": "2024-03-10T10:30:00Z",
+      "pdf": {
+        "id": 1,
+        "file": "http://localhost:8000/documents/apuntes_tema_1.pdf"
+      },
+      "vid": null,
+      "likes": 2,
+      "dislikes": 0,
+      "comments": [
+        {
+          "id": 1,
+          "user_name": "Carlos López",
+          "profile_pic": "http://localhost:8000/media/profile_pics/laura.jpg",
+          "post_id": 1,
+          "message": "¡Mil gracias! Me salvaste la vida con estos apuntes."
+        },
+        {
+          "id": 2,
+          "user_name": "Laura García",
+          "profile_pic": "http://localhost:8000/media/profile_pics/laura.jpg",
+          "post_id": 2,
+          "message": "Buenísimo el vídeo, aunque en el minuto 5 se lía un poco."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "course": 2,
+      "student": {
+        "id": 2,
+        "first_name": "Carlos",
+        "last_name": "López",
+        "email": "carlos@example.com",
+        "picture": "http://localhost:8000/media/profile_pics/laura.jpg"
+      },
+      "title": "Explicación de Árboles Binarios",
+      "description": "Este vídeo me ayudó muchísimo a entender cómo recorrer los árboles.",
+      "post_type": "VID",
+      "created_at": "2024-03-12T16:45:00Z",
+      "pdf": null,
+      "vid": {
+        "id": 1,
+        "vid": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      }
+    }
+  ],
+  "likes": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "post_id": 1
+    },
+    {
+      "id": 2,
+      "user_id": 3,
+      "post_id": 1
+    }
+  ],
+  "dislikes": [
+    {
+      "id": 1,
+      "user_id": 3,
+      "post_id": 2
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "post_id": 1,
+      "comment": "¡Mil gracias! Me salvaste la vida con estos apuntes."
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "post_id": 2,
+      "comment": "Buenísimo el vídeo, aunque en el minuto 5 se lía un poco."
+    }
+  ]
+}

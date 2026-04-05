@@ -1,51 +1,36 @@
-import Header from '../components/Header';
 import VisorPDF from '../components/VisorPDF';
-import PublicacionFooter from '../components/PublicacionFooter';
+import Input from '../components/Input';
+import { TitlePage } from '../components/TitlePage'; 
 
 export default function CargarPublicacionPDF() {
+  const handleBack = () => window.history.back();
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
-      <Header />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <main className="flex-1 flex flex-col lg:flex-row gap-8 p-4 md:p-8 lg:p-12 overflow-y-auto items-start">
-          <div className="w-full lg:w-[37%] xl:w-[32%] shrink-0">
+        <div className="w-full shrink-0 bg-transparent">
+          <TitlePage PageName="Cargar Publicación" onBack={handleBack} />
+        </div>
+        <main className="flex-1 flex flex-col lg:flex-row gap-8 px-4 md:px-8 lg:px-12 pt-4 pb-12 overflow-y-auto items-start">
+          <div className="w-full lg:w-[23%] xl:w-[28%] aspect-[1/1.4142] shrink-0">
             <VisorPDF />
           </div>
-          <div className="flex-1 w-full">
-            <form className="space-y-6 w-full">
+          <div className="flex-1 w-full pl-0 lg:pl-8">
+            <form className="space-y-6 w-full" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-1 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Subir archivo</label>
-                  <input type="text" placeholder="Value" className="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Título</label>
-                  <input type="text" placeholder="Value" className="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción</label>
-                  <textarea 
-                    placeholder="Value..." 
-                    rows="8" 
-                    className="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none resize-none transition-all"
-                  ></textarea>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Ruta</label>
-                  <input type="text" placeholder="Value/Value/Value..." className="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all" />
-                </div>
+                <Input label="Subir archivo" type="file" />
+                <Input label="Título" placeholder="Introduce el título de la publicación" />
+                <Input label="Descripción" placeholder="Escribe una breve descripción..." rows={8} />
               </div>
               <div className="pt-4">
-                <button className="w-full bg-[#2d2d2d] hover:bg-black text-white text-sm py-4 rounded-lg transition-all duration-200 flex justify-center items-center font-bold uppercase tracking-[0.2em] shadow-lg">
-                  Publicar
+                <button 
+                  type="submit"
+                  className="w-full bg-[#2d2d2d] hover:bg-black text-white text-sm py-4 rounded-lg transition-all duration-200 flex justify-center items-center font-bold uppercase tracking-[0.2em] shadow-lg"
+                >Publicar
                 </button>
               </div>
             </form>
           </div>
         </main>
-
-        <PublicacionFooter />
-        
       </div>
     </div>
   );
