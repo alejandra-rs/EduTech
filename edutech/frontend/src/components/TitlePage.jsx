@@ -1,18 +1,25 @@
-export function TitlePage({ PageName, onBack, children }) {
+export function TitlePage({ PageName, onBack, backLabel = "Volver", children }) {
   return (
-    <div className="px-12 pt-10 shrink-0 flex">
-      <div
-        onClick={onBack}
-        className="flex-1 group flex items-center gap-4 cursor-pointer w-fit"
-      >
-        <span className="text-4xl font-light group-hover:scale-125 group-hover:-translate-x-1 transition-all duration-200 text-gray-600">
+    <div className="relative px-12 pt-10 pb-4 shrink-0 flex items-center min-h-[100px]">
+      <div onClick={onBack} className="group flex items-center gap-2 cursor-pointer z-20">
+        <span className="text-2xl font-light text-gray-400 group-hover:text-black group-hover:-translate-x-1 transition-all duration-200">
           {"<"}
         </span>
-        <h1 className="text-5xl font-bold text-gray-800 group-hover:text-black transition-colors group-hover:scale-105 group-hover:-translate-x-1 duration-300">
+        <span className="text-sm font-medium text-gray-400 group-hover:text-black transition-colors uppercase tracking-wider">
+          {backLabel}
+        </span>
+      </div>
+
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none w-full max-w-[50%]">
+        <h1 className="text-3xl font-bold text-gray-800 text-center truncate">
           {PageName}
         </h1>
+        <div className="h-1 w-12 bg-indigo-500 rounded-full mt-1"></div>
       </div>
-      <div className=" flex gap-4">{children}</div>
+
+      <div className="ml-auto flex items-center gap-4 z-20">
+        {children}
+      </div>
     </div>
   );
 }
