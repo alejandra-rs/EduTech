@@ -11,13 +11,13 @@ export default function Layout({ accounts, instance, children }) {
 
   const tabs_config = {
     default: [
-      { label: "Mis asignaturas", color: "bg-red-400", path: "/" },
-      { label: "Mi espacio", color: "bg-yellow-400", path: "/" },
+      { label: "Mis asignaturas", color: "bg-red-400" },
+      { label: "Mi espacio", color: "bg-yellow-400" },
       { label: "Todos", color: "bg-green-400", path: "/" },
     ],
     upload: [
-      { label: "PDF", color: "bg-red-400", subPath: "PDF" },
-      { label: "Video", color: "bg-blue-400", subPath: "Video" },
+      { label: "PDF", color: "bg-red-400", path: "PDF" },
+      { label: "Video", color: "bg-blue-400", path: "Video" },
     ],
   };
 
@@ -53,7 +53,7 @@ export default function Layout({ accounts, instance, children }) {
           <div className="min-h-full flex flex-col">
             <div className="flex-1 bg-white">{children}</div>
             <div className="sticky bottom-0 left-0 w-full z-10">
-              <NotebookFooter tabs={currentTabs || []} />
+              <NotebookFooter tabs={currentTabs} />
             </div>
           </div>
         </main>
