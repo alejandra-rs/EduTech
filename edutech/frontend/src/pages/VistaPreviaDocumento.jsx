@@ -7,7 +7,6 @@ import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
 import ReportButton from '../components/ReportButton';
 import ModalComentario from '../components/PopUp';
-import { useState } from 'react';
 import { getDocument } from '@services/connections';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
