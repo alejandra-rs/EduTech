@@ -24,6 +24,8 @@ class Post(models.Model):
     description = models.TextField()
 
     post_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
+    views = models.PositiveIntegerField(default=0)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

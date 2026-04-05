@@ -27,25 +27,26 @@ class CommentListSerializer(serializers.ModelSerializer):
         fields = ['id', 'message', 'user']
 
 
+class PostPreviewSerializer(serializers.ModelSerializer):
+    pdf = PDFAttachmentSerializer(read_only=True)
+    vid = YoutubeVideoSerializer(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'post_type', 'created_at',
+                  'pdf', 'vid', 'views']
+
+
 class PostSerializer(serializers.ModelSerializer):
     pdf = PDFAttachmentSerializer(read_only=True)
     vid = YoutubeVideoSerializer(read_only=True)
     student = StudentSerializer(read_only=True)
-    likes = serializers.SerializerMethodField()
-    dislikes = serializers.SerializerMethodField()
-    comments = CommentListSerializer(source='comment_set', many=True, read_only=True)
-
-    def get_likes(self, obj):
-        return obj.like_set.count()
-
-    def get_dislikes(self, obj):
-        return obj.dislike_set.count()
 
     class Meta:
         model = Post
         fields = ['id', 'title', 'description', 'post_type',
                   'course', 'student', 'created_at',
-                  'pdf', 'vid', 'likes', 'dislikes', 'comments']
+                  'pdf', 'vid', 'views']
 
 
 class PDFUploadSerializer(serializers.Serializer):

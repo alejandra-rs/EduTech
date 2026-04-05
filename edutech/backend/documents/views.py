@@ -3,19 +3,20 @@ from absl.flags import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
+from django.db.models import F
 from rest_framework.response import Response
 from rest_framework import status, generics, views
 from courses.models import Course
 from users.models import Student
 from .models import Post, PDFAttachment, YoutubeVideo, Like, Dislike, Comment
 from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer, CommentListSerializer, \
-    LikeSerializer, DislikeSerializer
+                         LikeSerializer, DislikeSerializer, PostPreviewSerializer
 from .filters import PostFilter
 
 
 class PostListView(generics.ListAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostPreviewSerializer
     filterset_class = PostFilter
 
     def list(self, request, *args, **kwargs):
@@ -25,10 +26,18 @@ class PostListView(generics.ListAPIView):
         return super().list(request, *args, **kwargs)
 
 
+class PostDetailView(views.APIView):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        Post.objects.filter(pk=pk).update(views=F('views') + 1)
+        post.refresh_from_db()
+        return Response(PostSerializer(post).data)
+
+
 class PDFUploadView(generics.GenericAPIView):
     serializer_class = PDFUploadSerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -52,7 +61,7 @@ class PDFUploadView(generics.GenericAPIView):
 class VideoUploadView(generics.GenericAPIView):
     serializer_class = VideoUploadSerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -103,8 +112,13 @@ class PDFDownloadView(views.APIView):
         return HttpResponseRedirect(url)
 
 
-class CommentCreateView(views.APIView):
+class CommentView(views.APIView):
     serializer_class = CommentListSerializer
+
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        comments = Comment.objects.filter(post=post)
+        return Response(CommentListSerializer(comments, many=True).data)
 
     def post(self, request):
         post = get_object_or_404(Post, pk=request.query_params.get('post'))
@@ -153,7 +167,7 @@ class LikeView(views.APIView):
 class DislikeView(views.APIView):
     serializer_class = DislikeSerializer
 
-    def get(self, request, pk=None):
+    def get(self, request):
         user = request.query_params.get('user')
         post = request.query_params.get('post')
 
