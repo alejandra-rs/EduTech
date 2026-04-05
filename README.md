@@ -96,7 +96,7 @@ edutech/
     └── frontend/            # Mock server (db.json)
 ```
 
-- Componentes ([/components](./edutech/frontend/src/components)): [Componentes.md](./doc/Componentes.md).
+- Componentes ([/components](./edutech/frontend/src/components)): [Components.md](./doc/Components.md).
 
 - Páginas ([/pages](./edutech/frontend/src/pages)): [Pages.md](./doc/Pages.md).
 
