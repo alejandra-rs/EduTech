@@ -72,7 +72,7 @@ export default function ReportComment() {
                         type="submit"
                         className="flex-1 py-3 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors shadow-lg"
                     >
-                        Eviar Reporte
+                        Reportar Comentario
                     </button>
                     </div>
                 </form>
