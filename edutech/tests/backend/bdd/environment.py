@@ -19,6 +19,8 @@ def before_scenario(context, scenario):
 
     context.client = APIClient()
     context.patches = []
+    from django.core import mail
+    mail.outbox = []
 
 def after_scenario(context, scenario):
     for p in getattr(context, 'patches', []):

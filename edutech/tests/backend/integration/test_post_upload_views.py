@@ -2,7 +2,7 @@ from django.test import override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 from rest_framework.test import APITestCase
-from documents.models import Post, PDFAttachment, YoutubeVideo
+from documents.models import Post, PDFAttachment, YoutubeVideo, MAX_PDF_SIZE
 from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen
 
 
@@ -15,11 +15,11 @@ class PDFUploadViewTest(APITestCase):
 
     def _post(self, file=None, **overrides):
         payload = {
-            'title':       'My Doc',
+            'title': 'My Doc',
             'description': 'A description',
-            'course':      self.course.pk,
-            'student':     self.student.pk,
-            'file':        file or make_pdf_file(),
+            'course': self.course.pk,
+            'student': self.student.pk,
+            'file': file or make_pdf_file(),
         }
         payload.update(overrides)
         return self.client.post('/documents/upload/pdf/', payload, format='multipart')
@@ -27,9 +27,9 @@ class PDFUploadViewTest(APITestCase):
     def test_upload_valid_pdf_returns_201(self):
         response = self._post()
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Post.objects.count(),          1)
+        self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(PDFAttachment.objects.count(), 1)
-        self.assertEqual(response.data['post_type'],   'PDF')
+        self.assertEqual(response.data['post_type'], 'PDF')
 
     def test_upload_returns_full_post_serializer_shape(self):
         response = self._post()
@@ -43,7 +43,7 @@ class PDFUploadViewTest(APITestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_upload_oversized_pdf_returns_400(self):
-        big = make_pdf_file(size_bytes=601 * 1024)
+        big = make_pdf_file(size_bytes=(MAX_PDF_SIZE + 1) * 1024)
         response = self._post(file=big)
         self.assertEqual(response.status_code, 400)
 
@@ -70,11 +70,11 @@ class VideoUploadViewTest(APITestCase):
 
     def _post(self, vid='https://www.youtube.com/watch?v=dQw4w9WgXcQ', **overrides):
         data = {
-            'title':       'My Video',
+            'title': 'My Video',
             'description': 'Desc',
-            'course':      self.course.pk,
-            'student':     self.student.pk,
-            'vid':         vid,
+            'course': self.course.pk,
+            'student': self.student.pk,
+            'vid': vid,
         }
         data.update(overrides)
         return self.client.post('/documents/upload/video/', data, format='json')
@@ -83,9 +83,9 @@ class VideoUploadViewTest(APITestCase):
     def test_upload_valid_video_returns_201(self, _):
         response = self._post()
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Post.objects.count(),         1)
+        self.assertEqual(Post.objects.count(), 1)
         self.assertEqual(YoutubeVideo.objects.count(), 1)
-        self.assertEqual(response.data['post_type'],  'VID')
+        self.assertEqual(response.data['post_type'], 'VID')
 
     @patch('documents.serializers.urllib.request.urlopen', side_effect=Exception('bad'))
     def test_upload_invalid_youtube_url_returns_400(self, _):

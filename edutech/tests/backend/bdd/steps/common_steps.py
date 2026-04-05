@@ -1,17 +1,17 @@
 from behave import given, then
 
 @given('que existe el curso "{year}"')
-def step_existe_year(context, year):
+def step_year_exists(context, year):
     from courses.models import Year
     context.year = Year.objects.get_or_create(year=int(year))[0]
 
 @given('que existe la asignatura "{name}" para ese año')
-def step_existe_curso(context, name):
+def step_course_exists(context, name):
     from courses.models import Course
-    context.course = Course.objects.get_or_create(name=name, year=context.year)[0]
+    context.course = Course.objects.get_or_create(name=name, year=context.year, defaults={'semester': 1})[0]
 
 @given('que existe el estudiante "{full_name}"')
-def step_existe_estudiante(context, full_name):
+def step_student_exists(context, full_name):
     from users.models import Student
     first, last = full_name.split(' ', 1)
     context.student = Student.objects.get_or_create(
@@ -22,14 +22,14 @@ def step_existe_estudiante(context, full_name):
 
 
 @then('la respuesta tiene el estado {code:d}')
-def step_estado_respuesta(context, code):
+def step_response_status(context, code):
     assert context.response.status_code == code, (
         f'Se esperaba {code}, se obtuvo {context.response.status_code}. '
         f'Cuerpo: {getattr(context.response, "data", context.response.content)}'
     )
 
 @then('no se guarda el archivo')
-def step_no_post_creado(context):
+def step_post_not_created(context):
     from documents.models import Post
     count = Post.objects.count()
     assert count == 0, f'Se esperaba 0 posts, pero hay {count}'

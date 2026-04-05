@@ -18,7 +18,7 @@ def make_year(year=3):
     return Year.objects.create(year=year)
 
 def make_course(name='Producción de Software', year=None):
-    return Course.objects.create(name=name, year=year or make_year())
+    return Course.objects.create(name=name, year=year or make_year(), semester=1)
 
 def make_pdf_file(size_bytes=1024, name='test.pdf'):
     return SimpleUploadedFile(name, b'%PDF-' + b'x' * size_bytes,

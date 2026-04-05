@@ -34,7 +34,7 @@ class CourseListCreateViewTest(APITestCase):
         self.year = Year.objects.create(year=3)
 
     def test_list_courses_returns_nested_year(self):
-        Course.objects.create(name='Producción de Software', year=self.year)
+        Course.objects.create(name='Producción de Software', year=self.year, semester=1)
         response = self.client.get('/courses/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('year', response.data[0])
@@ -43,15 +43,19 @@ class CourseListCreateViewTest(APITestCase):
 
     def test_create_course_returns_201(self):
         response = self.client.post(
-            '/courses/', {'name': 'Producción de Software', 'year_id': self.year.pk}, format='json'
+            '/courses/',
+            {'name': 'Producción de Software', 'year_id': self.year.pk, 'semester': 1},
+            format='json'
         )
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Course.objects.count(), 1)
 
     def test_create_duplicate_course_raises_400(self):
-        Course.objects.create(name='Producción de Software', year=self.year)
+        Course.objects.create(name='Producción de Software', year=self.year, semester=1)
         response = self.client.post(
-            '/courses/', {'name': 'Producción de Software', 'year_id': self.year.pk}, format='json'
+            '/courses/',
+            {'name': 'Producción de Software', 'year_id': self.year.pk, 'semester': 1},
+            format='json'
         )
         self.assertEqual(response.status_code, 400)
 

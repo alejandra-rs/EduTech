@@ -31,3 +31,9 @@ Feature: Subida de vídeos de YouTube
     When el estudiante intenta subir un vídeo sin proporcionar URL
     Then la respuesta tiene el estado 400
     And no se guarda el archivo
+
+  Scenario: Subir un vídeo sin indicar título
+    When el estudiante intenta subir el vídeo de YouTube "https://www.youtube.com/watch?v=dQw4w9WgXcQ" sin título
+    Then la respuesta tiene el estado 400
+    And el error hace referencia al campo "title"
+    And no se guarda el archivo

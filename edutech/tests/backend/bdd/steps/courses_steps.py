@@ -5,7 +5,7 @@ def step_create_courses_on_year(context, name1, name2, year):
     from courses.models import Year, Course
     curso = Year.objects.get(year=int(year))
     for nombre in (name1, name2):
-        Course.objects.get_or_create(name=nombre, year=curso)
+        Course.objects.get_or_create(name=nombre, year=curso, semester=1)
 
 @when('pido las asignaturas del curso "{year}"')
 def step_find_courses_by_year(context, year):

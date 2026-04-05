@@ -16,7 +16,7 @@ class StudentSerializerTest(TestCase):
         self.assertIn('first_name', data)
         self.assertIn('last_name', data)
         self.assertIn('email', data)
-        self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email'})
+        self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email', 'picture'})
 
     def test_valid_student_data(self):
         data = {
@@ -48,7 +48,7 @@ class YearSerializerTest(TestCase):
     def test_output_year_fields(self):
         year = make_year(3)
         data = YearSerializer(year).data
-        self.assertIn('id',   data)
+        self.assertIn('id', data)
         self.assertIn('year', data)
         self.assertEqual(set(data.keys()), {'id', 'year'})
 
@@ -96,11 +96,11 @@ class CourseSerializerTest(TestCase):
         self.assertEqual(CourseSerializer(self.course).data['name'], 'Producción de Software')
 
     def test_create_valid_course_passes_validation(self):
-        s = CourseSerializer(data={'name': 'Ingeniería de Software', 'year_id': self.year.pk})
+        s = CourseSerializer(data={'name': 'Ingeniería de Software', 'year_id': self.year.pk, 'semester': 1})
         self.assertTrue(s.is_valid(), s.errors)
 
     def test_nonexistent_year_fails_validation(self):
-        s = CourseSerializer(data={'name': 'Producción de Software', 'year_id': 99999})
+        s = CourseSerializer(data={'name': 'Producción de Software', 'year_id': 99999, 'semester': 1})
         self.assertFalse(s.is_valid())
         self.assertIn('year_id', s.errors)
 
@@ -110,7 +110,7 @@ class CourseSerializerTest(TestCase):
         self.assertIn('name', s.errors)
 
     def test_duplicated_course_name_fails_validation(self):
-        s = CourseSerializer(data={'name': 'Producción de Software', 'year': self.year})
+        s = CourseSerializer(data={'name': 'Producción de Software', 'year': self.year, 'semester': 1})
         self.assertFalse(s.is_valid())
 
 
@@ -123,11 +123,11 @@ class PDFUploadSerializerTest(TestCase):
 
     def _valid_data(self, file=None):
         return {
-            'title':       'My Doc',
+            'title': 'My Doc',
             'description': 'A description',
-            'course':      self.course.pk,
-            'student':     self.student.pk,
-            'file':        file or make_pdf_file(),
+            'course': self.course.pk,
+            'student': self.student.pk,
+            'file': file or make_pdf_file(),
         }
 
     def _serializer(self, data):
@@ -177,11 +177,11 @@ class VideoUploadSerializerTest(TestCase):
 
     def _valid_data(self, vid='https://www.youtube.com/watch?v=dQw4w9WgXcQ'):
         return {
-            'title':       'My Video',
+            'title': 'My Video',
             'description': 'Desc',
-            'course':      self.course.pk,
-            'student':     self.student.pk,
-            'vid':         vid,
+            'course': self.course.pk,
+            'student': self.student.pk,
+            'vid': vid,
         }
 
     def _serializer(self, data):

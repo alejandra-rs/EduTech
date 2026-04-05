@@ -2,6 +2,7 @@ from behave import given, when, then
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from unittest.mock import patch, MagicMock
+from documents.models import MAX_PDF_SIZE
 
 TEST_STORAGES = {
     'default':     {'BACKEND': 'django.core.files.storage.InMemoryStorage'},
@@ -41,7 +42,7 @@ def step_oembed_fail(context):
     context.patches.append(p)
 
 @given('que el curso "{name}" tiene los materiales "{title1}" y "{title2}"')
-def step_curso_con_materiales(context, name, title1, title2):
+def step_course_with_content(context, name, title1, title2):
     from courses.models import Course
     from documents.models import Post, PDFAttachment
     curso = Course.objects.get(name=name, year=context.year)
@@ -54,7 +55,7 @@ def step_curso_con_materiales(context, name, title1, title2):
             PDFAttachment.objects.create(post=post, file=_pdf_file())
 
 @given('que existe un post PDF con título "{title}"')
-def step_crea_post_pdf(context, title):
+def step_create_pdf_post(context, title):
     from documents.models import Post, PDFAttachment
     with override_settings(STORAGES=TEST_STORAGES):
         post = Post.objects.create(
@@ -65,7 +66,7 @@ def step_crea_post_pdf(context, title):
     context.post = post
 
 @given('que existe un post de tipo vídeo con título "{title}"')
-def step_crea_post_video(context, title):
+def step_create_vid_post(context, title):
     from documents.models import Post, YoutubeVideo
     post = Post.objects.create(
         course=context.course, student=context.student,
@@ -75,17 +76,31 @@ def step_crea_post_video(context, title):
     context.post = post
 
 @given('que el servicio de almacenamiento devuelve una URL')
-def step_almacenamiento_url(context):
+def step_url_storage(context):
     mock_s3 = MagicMock()
     mock_s3.generate_presigned_url.return_value = FAKE_PRESIGNED_URL
     p = patch('documents.views.boto3.client', return_value=mock_s3)
     p.start()
     context.patches.append(p)
 
+@given('que existe un post con título "{title}" en la asignatura')
+def step_create_post_in_course(context, title):
+    from documents.models import Post, PDFAttachment
+    from django.core.files.uploadedfile import SimpleUploadedFile
+    from django.test import override_settings
+    archivo = SimpleUploadedFile('doc.pdf', b'%PDF-' + b'x' * 1024, content_type='application/pdf')
+    with override_settings(STORAGES=TEST_STORAGES):
+        post = Post.objects.create(
+            course=context.course, student=context.student,
+            title=title, description='D', post_type='PDF',
+        )
+        PDFAttachment.objects.create(post=post, file=archivo)
+    context.post = post
+
 
 
 @when('el estudiante sube un PDF válido con título "{title}"')
-def step_sube_pdf_valido(context, title):
+def step_upload_valid_pdf(context, title):
     archivo = _pdf_file()
     with override_settings(STORAGES=TEST_STORAGES):
         context.response = context.client.post('/documents/upload/pdf/', {
@@ -95,8 +110,8 @@ def step_sube_pdf_valido(context, title):
         }, format='multipart')
 
 @when('el estudiante intenta subir un PDF que sobrepasa los 600KB')
-def step_sube_pdf_grande(context):
-    archivo = _pdf_file(size=601 * 1024)
+def step_upload_wrong_size(context):
+    archivo = _pdf_file(size=(MAX_PDF_SIZE + 1) * 1024)
     with override_settings(STORAGES=TEST_STORAGES):
         context.response = context.client.post('/documents/upload/pdf/', {
             'title': 'Prueba', 'description': 'D',
@@ -105,7 +120,7 @@ def step_sube_pdf_grande(context):
         }, format='multipart')
 
 @when('el estudiante intenta subir un archivo llamado "{filename}"')
-def step_sube_extension_incorrecta(context, filename):
+def step_upload_wrong_extension(context, filename):
     archivo = SimpleUploadedFile(filename, b'datos', content_type='application/octet-stream')
     with override_settings(STORAGES=TEST_STORAGES):
         context.response = context.client.post('/documents/upload/pdf/', {
@@ -115,14 +130,14 @@ def step_sube_extension_incorrecta(context, filename):
         }, format='multipart')
 
 @when('el estudiante intenta subir un post sin adjuntar ningún archivo')
-def step_sube_sin_archivo(context):
+def step_upload_no_file(context):
     context.response = context.client.post('/documents/upload/pdf/', {
         'title': 'Prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
     }, format='multipart')
 
 @when('el estudiante sube el vídeo de YouTube "{url}"')
-def step_sube_video_valido(context, url):
+def step_upload_valid_video(context, url):
     context.response = context.client.post('/documents/upload/video/', {
         'title': 'Vídeo de prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
@@ -130,7 +145,7 @@ def step_sube_video_valido(context, url):
     }, format='json')
 
 @when('el estudiante intenta subir el vídeo de YouTube "{url}"')
-def step_intenta_video_yt(context, url):
+def step_upload_video(context, url):
     context.response = context.client.post('/documents/upload/video/', {
         'title': 'Vídeo de prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
@@ -138,7 +153,7 @@ def step_intenta_video_yt(context, url):
     }, format='json')
 
 @when('el estudiante intenta subir un link no válido "{url}"')
-def step_sube_link_invalido(context, url):
+def step_upload_invalid_link(context, url):
     context.response = context.client.post('/documents/upload/video/', {
         'title': 'Prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
@@ -146,81 +161,77 @@ def step_sube_link_invalido(context, url):
     }, format='json')
 
 @when('el estudiante intenta subir un vídeo sin proporcionar URL')
-def step_sube_sin_url(context):
+def step_upload_without_url(context):
     context.response = context.client.post('/documents/upload/video/', {
         'title': 'Prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
     }, format='json')
 
 @when('pido el material de la asignatura "{name}"')
-def step_pido_material_curso(context, name):
+def step_get_course_content(context, name):
     from courses.models import Course
     curso = Course.objects.get(name=name, year=context.year)
-    # Requiere añadir filtro 'course' a PostFilter para funcionar correctamente
     context.response = context.client.get(f'/documents/?course={curso.pk}')
 
 @when('pido el material de la asignatura con id {course_id:d}')
-def step_pido_material_id(context, course_id):
-    # Requiere validación de existencia del curso en la vista para devolver 404
+def step_get_with_course_id(context, course_id):
     context.response = context.client.get(f'/documents/?course={course_id}')
 
 @when('solicito descargar el PDF del post')
-def step_descarga_pdf(context):
-    context.response = context.client.get(
-        f'/documents/download/pdf/{context.post.pk}'
-    )
+def step_download_pdf(context):
+    context.response = context.client.get(f'/documents/download/pdf/{context.post.pk}')
 
 @when('solicito descargar el post con id {post_id:d}')
-def step_descarga_post_id(context, post_id):
-    context.response = context.client.get(
-        f'/documents/download/pdf/{post_id}'
-    )
+def step_download_pdf_with_id(context, post_id):
+    context.response = context.client.get(f'/documents/download/pdf/{post_id}')
+
+@when('el estudiante intenta subir el vídeo de YouTube "{url}" sin título')
+def step_upload_video_without_title(context, url):
+    context.response = context.client.post('/documents/upload/video/', {
+        'description': 'D',
+        'course': context.course.pk, 'student': context.student.pk,
+        'vid': url,
+    }, format='json')
 
 
 
 @then('el archivo de tipo "{post_type}" con título "{title}" aparece en la base de datos')
-def step_post_existe_en_bd(context, post_type, title):
+def step_post_registered(context, post_type, title):
     from documents.models import Post
     assert Post.objects.filter(post_type=post_type, title=title).exists(), (
         f'No existe ningún post de tipo {post_type} con título "{title}"'
     )
 
 @then('el archivo aparece listado en los documentos de la asignatura')
-def step_post_en_lista(context):
+def step_post_in_course_documents(context):
     respuesta = context.client.get('/documents/')
     data = respuesta.data
     assert len(data) >= 1, 'La lista de documentos está vacía'
 
 @then('el post de tipo "VID" existe en la base de datos')
-def step_post_vid_existe(context):
+def step_video_post_exists(context):
     from documents.models import Post
     assert Post.objects.filter(post_type='VID').exists()
 
 @then('el error hace referencia al campo "vid"')
-def step_error_vid(context):
-    assert 'vid' in context.response.data, (
-        f'Se esperaba error en "vid", se obtuvo: {context.response.data}'
-    )
+def step_error_in_video(context):
+    assert 'vid' in context.response.data, f'Se esperaba error en "vid", se obtuvo: {context.response.data}'
 
 @then('la respuesta contiene {count:d} documentos')
-def step_cantidad_documentos(context, count):
+def step_document_count(context, count):
     data = context.response.data
-    assert len(data) == count, (
-        f'Se esperaban {count} documentos, se encontraron {len(data)}'
-    )
+    assert len(data) == count, f'Se esperaban {count} documentos, se encontraron {len(data)}'
 
 @then('los títulos incluyen "{title1}" y "{title2}"')
-def step_titulos_incluyen(context, title1, title2):
+def step_include_titles(context, title1, title2):
     data = context.response.data
     titulos = [d['title'] for d in data]
     assert title1 in titulos, f'"{title1}" no está en {titulos}'
     assert title2 in titulos, f'"{title2}" no está en {titulos}'
 
 @then('la respuesta redirige con un código 302')
-def step_redirige_302(context):
-    assert context.response.status_code == 302, (
-        f'Se esperaba 302, se obtuvo {context.response.status_code}'
-    )
+def step_redirect(context):
+    assert context.response.status_code == 302, f'Se esperaba 302, se obtuvo {context.response.status_code}'
 
 @then('la cabecera Location contiene la URL')
 def step_location_url(context):
@@ -228,3 +239,7 @@ def step_location_url(context):
         f'Se esperaba {FAKE_PRESIGNED_URL}, '
         f'se obtuvo {context.response.get("Location")}'
     )
+
+@then('el error hace referencia al campo "title"')
+def step_error_title(context):
+    assert 'title' in context.response.data, f'Se esperaba error en "title", se obtuvo: {context.response.data}'

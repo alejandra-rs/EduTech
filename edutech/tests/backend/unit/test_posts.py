@@ -46,9 +46,9 @@ class PostModelCleanTest(TestCase):
 
     def test_str_contains_post_type_display_and_title(self):
         post = self._unsaved_post()
-        self.assertIn('PDF',  str(post))
+        self.assertIn('PDF', str(post))
         self.assertIn('Documento PDF', str(post))
-        self.assertIn('T',             str(post))
+        self.assertIn('T', str(post))
 
 
 
@@ -56,8 +56,8 @@ class LikeDislikeConstraintTest(TestCase):
 
     def setUp(self):
         self.student = make_student()
-        self.course  = make_course()
-        self.post    = Post.objects.create(
+        self.course = make_course()
+        self.post = Post.objects.create(
             course=self.course, student=self.student,
             title='T', description='D', post_type='PDF',
         )
@@ -71,3 +71,17 @@ class LikeDislikeConstraintTest(TestCase):
         Dislike.objects.create(user=self.student, post=self.post)
         with self.assertRaises(IntegrityError):
             Dislike.objects.create(user=self.student, post=self.post)
+
+    def test_like_clean_raises_when_dislike_exists(self):
+        from django.core.exceptions import ValidationError
+        Dislike.objects.create(user=self.student, post=self.post)
+        like = Like(user=self.student, post=self.post)
+        with self.assertRaises(ValidationError):
+            like.clean()
+
+    def test_dislike_clean_raises_when_like_exists(self):
+        from django.core.exceptions import ValidationError
+        Like.objects.create(user=self.student, post=self.post)
+        dislike = Dislike(user=self.student, post=self.post)
+        with self.assertRaises(ValidationError):
+            dislike.clean()
