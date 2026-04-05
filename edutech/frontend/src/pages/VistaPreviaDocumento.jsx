@@ -6,6 +6,7 @@ import Views from '../components/Views';
 import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
+import ReportButton from '../components/ReportButton';
 
 export default function VistaPreviaDocumento() {
   const asignaturaNombre = "Asignatura";
@@ -60,6 +61,7 @@ export default function VistaPreviaDocumento() {
                   <div className="flex items-center gap-8">
                     <Like />
                     <Dislike />
+                    <ReportButton />
                   </div>
                 </div>
               </section>

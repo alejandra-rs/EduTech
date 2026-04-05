@@ -5,6 +5,7 @@ import Views from '../components/Views';
 import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
+import ReportButton from '../components/ReportButton';
 
 export default function VistaPreviaVideo() {
   const asignaturaNombre = "Asignatura";
@@ -47,7 +48,10 @@ export default function VistaPreviaVideo() {
             <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-none">Título</h1>
               <div className="flex flex-col items-end gap-2">
-                <Views />
+                <div className="flex items-center gap-4">
+                  <Views />
+                  <ReportButton />
+                </div>
                 <div className="flex items-center gap-6">
                   <Like />
                   <Dislike />
