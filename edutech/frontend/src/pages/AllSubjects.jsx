@@ -9,7 +9,11 @@ const Subject = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
-      <TitlePage PageName="Cursos" onBack={() => navigate(-1)} />
+      <TitlePage 
+        PageName={`${id}º Curso`} 
+        backLabel="Cursos"       
+        onBack={() => navigate(-1)} 
+      />
       <div className="flex-grow px-12 py-8 flex flex-col lg:flex-row gap-8 justify-center items-start overflow-hidden">
         <Quarter
           quarter={1}
