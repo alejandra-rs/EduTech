@@ -36,9 +36,6 @@ export default function CargarPublicacionVideo() {
                 />
               </div>
             </div>
-            <div className="w-full">
-              <Input label="Ruta" placeholder="Value/Value/Value" />
-            </div>
             <div className="pt-4">
               <button
                 type="submit"
