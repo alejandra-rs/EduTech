@@ -54,9 +54,12 @@ const LabelVideo = () => (
     </div>
 );
 
-export function PostCard({ title, type, fileUrl, date }) {
+export function PostCard({ title, type, fileUrl, date, onClick }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full">
+    <div 
+      onClick={onClick}
+      className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full cursor-pointer"
+    >
       
       {type === "PDF" ? (
         <PdfPreview fileUrl={fileUrl} />

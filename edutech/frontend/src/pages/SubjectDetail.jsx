@@ -13,6 +13,14 @@ const SubjectDetail = () => {
   const { id, subjectId } = useParams();
   const navigate = useNavigate();
 
+  const handlePostClick = (post) => {
+  if (post.post_type === "PDF") {
+    navigate(`/${id}/${subjectId}/documento/${post.id}`);
+  } else if (post.post_type === "VID") {
+    navigate(`/${id}/${subjectId}/video/${post.id}`);
+  }
+};
+
   const [posts, setPosts] = useState([]);
   const [activeTabs, setActiveTabs] = useState([]);
 
@@ -111,7 +119,10 @@ const SubjectDetail = () => {
               <Tabs activeTabs={activeTabs} onTabChange={setActiveTabs} />
             </div>
 
-            <PostGrid posts={filteredPosts} />
+            <PostGrid 
+              posts={filteredPosts} 
+              onPostClick={handlePostClick} 
+            />
           </div>
         </div>
       </div>
