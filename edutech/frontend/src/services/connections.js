@@ -50,6 +50,16 @@ export const getPosts = async (courseId) => {
   }
 };
 
+export const getDocument = async (postId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/${postId}`);
+    if (!response.ok) throw new Error("Error al obtener el documento");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getDocument:", error);
+    throw error;
+  }
+};
 
 export const getUserId = async () => {
   return 1;
