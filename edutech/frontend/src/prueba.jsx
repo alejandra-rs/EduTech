@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Layout from "./components/Layout";
 import Courses from "./pages/AllCourses";
 import { BrowserRouter, Routes, Route } from "react-router-dom";

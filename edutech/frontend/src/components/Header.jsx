@@ -1,4 +1,3 @@
-import { useMsal } from "@azure/msal-react";
 import UserAvatar from "./UserAvatar";
 import HamburgerButton from "./HamburgerButton";
 import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
