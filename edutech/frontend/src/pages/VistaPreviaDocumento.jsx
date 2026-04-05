@@ -7,7 +7,6 @@ import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
 import ReportButton from '../components/ReportButton';
 import ModalComentario from '../components/PopUp';
-import { useState } from 'react';
 import { getDocument } from '@services/connections';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -20,12 +19,14 @@ export default function VistaPreviaDocumento() {
   const [likes, setLikes] = useState(null);
   const [dislikes, setDislikes] = useState(null);
   const [views, setViews] = useState(null);
-
+  
   useEffect(() => {
     const cargarDocumento = async () => {
       try {
         const data = await getDocument(postId);
         setDocument(data);
+        console.log(data.title);
+        console.log(data.description);
         setComments(data.comments);
         setLikes(data.likes);
         setDislikes(data.dislikes);
@@ -38,6 +39,7 @@ export default function VistaPreviaDocumento() {
       cargarDocumento();
     }
   }, [postId]);
+  
 
   const asignaturaNombre = "Asignatura";
   const handleBack = () => window.history.back();
@@ -67,11 +69,10 @@ export default function VistaPreviaDocumento() {
           <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-transparent">
             <div className="p-8 md:p-12 lg:pl-2 lg:pr-16 space-y-12 bg-transparent">
               <section className="flex flex-col bg-transparent">
-                <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">Título</h1>
+                <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">{document?.title}</h1>
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Descripción:</h2>
                 <p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-none">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
-                  tempor incididunt ut labore et dolore magna aliqua.
+                  {document?.description}
                 </p>
                 <div className="mb-10 w-full"> 
                   <Descargar />

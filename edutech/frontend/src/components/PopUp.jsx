@@ -1,4 +1,4 @@
-import Input from './components/input';
+import Input from './Input';
 
 export default function ModalComentario({ isOpen, onClose, onSubmit }) {
   if (!isOpen) return null;
