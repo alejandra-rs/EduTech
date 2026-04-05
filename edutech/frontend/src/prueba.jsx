@@ -1,7 +1,10 @@
 import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Courses from "./pages/AllCourses";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
+import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
+import VistaPreviaVideo from "./pages/VistaPreviaVideo";
 import SubjectDetail from "./pages/SubjectDetail";
 import CargarPublicacionPDF from "./pages/CargarPublicacionPDF";
 import Subject from "./pages/AllSubjects";
@@ -41,7 +44,23 @@ export default function App() {
                 />
                 <Route
                   path="/:id/:subjectId/upload"
+                  element={<Navigate to="PDF" replace />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/PDF"
                   element={<CargarPublicacionPDF />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/Video"
+                  element={<CargarPublicacionVideo />}
+                />
+                <Route
+                  path="/:id/:subjectId/documento/:postId"
+                  element={<VistaPreviaDocumento />}
+                />
+                <Route
+                  path="/:id/:subjectId/video/:postId"
+                  element={<VistaPreviaVideo />}
                 />
               </Routes>
             </Layout>

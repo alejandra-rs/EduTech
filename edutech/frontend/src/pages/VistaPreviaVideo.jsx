@@ -6,34 +6,26 @@ import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
 import ReportButton from '../components/ReportButton';
+import { useState } from 'react';
+import ModalComentario from '../components/PopUp';
 
 export default function VistaPreviaVideo() {
   const asignaturaNombre = "Asignatura";
   const handleBack = () => window.history.back();
   const videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleCommentSubmit = () => {
+    console.log("Comentario de video enviado");
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="flex h-screen w-full bg-white overflow-hidden font-sans">
-      <input type="checkbox" id="modal-comentario" className="peer hidden" />
-      <div className="fixed inset-0 z-50 hidden peer-checked:flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-        <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 animate-in fade-in zoom-in duration-200">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-gray-800">Nuevo Comentario</h3>
-            <label htmlFor="modal-comentario" className="text-gray-400 hover:text-black text-3xl cursor-pointer">&times;</label>
-          </div>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <Input label="Tu mensaje" placeholder="Escribe lo que piensas..." rows={5} />
-            <div className="mt-8 flex gap-3">
-              <label htmlFor="modal-comentario" className="flex-1 py-3 text-center rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 cursor-pointer transition-colors">
-                Cancelar
-              </label>
-              <button type="submit" className="flex-1 py-3 rounded-xl bg-[#2d2d2d] text-white font-semibold hover:bg-black transition-colors shadow-lg">
-                Publicar
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <ModalComentario 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSubmit={handleCommentSubmit} 
+      />
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <div className="w-full shrink-0">
           <TitlePage PageName={asignaturaNombre} onBack={handleBack} />
@@ -69,10 +61,12 @@ export default function VistaPreviaVideo() {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <h2 className="text-4xl font-bold text-gray-800">Comentarios:</h2>
-                  <label 
-                    htmlFor="modal-comentario" 
-                    className="text-4xl font-light text-gray-400 hover:text-black hover:scale-110 transition-all cursor-pointer select-none"
-                  >+</label>
+                  <span 
+                      onClick={() => setIsModalOpen(true)} 
+                      className="text-4xl font-light text-gray-400 hover:text-black hover:scale-125 transition-all p-2 cursor-pointer select-none"
+                    >
+                      +
+                    </span>
                 </div>
                 <span className="text-xl text-gray-400 font-medium">(3)</span>
               </div>

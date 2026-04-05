@@ -1,4 +1,5 @@
 import { Button } from "flowbite-react";
+import { HandThumbUpIcon, HandThumbDownIcon, EyeIcon } from '@heroicons/react/24/solid';
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString("es-ES", {
@@ -54,33 +55,46 @@ const LabelVideo = () => (
     </div>
 );
 
-export function PostCard({ title, type, fileUrl, date, onClick }) {
+export function PostCard({ title, type, fileUrl, date, onClick, stats }) {
   return (
     <div 
       onClick={onClick}
       className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full cursor-pointer"
     >
-      
-      {type === "PDF" ? (
-        <PdfPreview fileUrl={fileUrl} />
-      ) : (
-        <VideoPreview fileUrl={fileUrl} />
-      )}
+      {type === "PDF" ? <PdfPreview fileUrl={fileUrl} /> : <VideoPreview fileUrl={fileUrl} />}
 
-      <div className="p-5 flex flex-col gap-3 flex-1">
-        
-        <div className="flex justify-between items-start gap-2">
-          <h5 className="text-xl font-bold text-gray-900 leading-tight">
-            {title || "Título del recurso"}
+      <div className="p-5 flex flex-col flex-1">
+        <div className="flex justify-between items-start gap-2 mb-4">
+          <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2">
+            {title}
           </h5>
           <span className="text-xs text-gray-500 whitespace-nowrap mt-1">
             {formatDate(date)}
           </span>
         </div>
 
-        {type === "PDF" ?  <LabelPDF /> :<LabelVideo /> }
+        <div className="flex justify-between items-end mt-auto">
+          
+          <div>
+            {type === "PDF" ? <LabelPDF /> : <LabelVideo />}
+          </div>
 
+          <div className="flex flex-col gap-1.5 items-end">
+            <div className="flex items-center gap-2 text-gray-500">
+              <span className="text-xs font-bold text-gray-600">{stats?.views || 0}</span>
+              <EyeIcon className="w-4 h-4 text-gray-400" />
+            </div>
+            <div className="flex items-center gap-2 text-gray-500">
+              <span className="text-xs font-bold text-gray-600">{stats?.likes || 0}</span>
+              <HandThumbUpIcon className="w-4 h-4 text-gray-400" />
+            </div>
+            <div className="flex items-center gap-2 text-gray-500">
+              <span className="text-xs font-bold text-gray-600">{stats?.dislikes || 0}</span>
+              <HandThumbDownIcon className="w-4 h-4 text-gray-400" />
+            </div>
+          </div>
 
+        </div>
       </div>
     </div>
   );

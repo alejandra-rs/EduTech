@@ -1,10 +1,21 @@
 import VisorVideo from "../components/VisorVideo";
 import Input from "../components/Input";
+import { TitlePage } from "../components/TitlePage";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function CargarPublicacionVideo() {
+  const navigate = useNavigate();
+  const { id, subjectId } = useParams();
+
+  const handleBack = () => {
+    navigate(`/${id}/${subjectId}/post`);
+  };
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
       <div className="flex-1 flex flex-col h-full overflow-hidden">
+        <div className="w-full shrink-0 bg-transparent">
+          <TitlePage PageName="Cargar Publicación" onBack={handleBack} />
+        </div>
         <main className="flex-1 p-6 md:p-10 lg:p-14 overflow-y-auto">
           <form
             className="w-full space-y-8"
