@@ -96,25 +96,11 @@ edutech/
     └── frontend/            # Mock server (db.json)
 ```
 
-### Componentes ([/components](./edutech/frontend/src/components))
-| Componente | Descripción |
-|----------|------------|
-| [PostCard](./edutech/frontend/src/components/PostCard.jsx) | Representa un recurso (PDF o vídeo) |
-| [PostGrid](./edutech/frontend/src/components/PostCard.jsx) | Layout de visualización |
-| [TitlePage](./edutech/frontend/src/components/PostCard.jsx) | Cabecera de navegación |
+- Componentes ([/components](./edutech/frontend/src/components)): [Componentes.md](./doc/Componentes.md).
 
-### Páginas ([/pages](./edutech/frontend/src/pages))
-| Página | Descripción |
-|--------|------------|
-| [SubjectDetail](./edutech/frontend/src/pages/SubjectDetail.jsx) | Vista de asignatura |
+- Páginas ([/pages](./edutech/frontend/src/pages)): [Pages.md](./doc/Pages.md).
 
-### Servicios ([/services](./edutech/frontend/src/services))
-| Servicio | Función |
-|----------|--------|
-| [connections.js](./edutech/frontend/src/services/connections.js) | Comunicación con la API |
-| getCourse | Obtener asignatura |
-| getPosts | Obtener publicaciones |
-| getYears | Obtener cursos |
+- Servicios ([/services](./edutech/frontend/src/services)): [Services.md](./doc/Services.md).
 
 ---
 
