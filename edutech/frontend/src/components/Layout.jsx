@@ -1,10 +1,12 @@
-import { use, useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./Header";
 import NotebookFooter from "./Footer";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { getUserByEmail } from "../services/connections";
 
-export default function Layout({ children }) {
+export default function Layout({ accounts, children }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const tabs_config = {
     default: [
@@ -27,13 +29,24 @@ export default function Layout({ children }) {
         : "default"
     ];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (accounts.length > 0) {
+        const user = await getUserByEmail(accounts[0].username);
+        setUserData(user);
+      }
+    };
+
+    fetchData();
+  }, [accounts]);
+
   return (
     <div className="flex h-screen w-full  bg-transparent overflow-hidden">
       <Header
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        userProfilePic={null}
-        userName={null}
+        userProfilePic={userData ? userData.picture : null}
+        userName={userData ? userData.first_name : null}
       />
       <div className="flex flex-1 flex-col relative overflow-hidden">
         <main
