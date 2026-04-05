@@ -51,11 +51,6 @@ export const getPosts = async (courseId) => {
   }
 };
 
-
-export const getUserId = async () => {
-  return 1;
-};
-
 export const checkSubscription = async (userId, courseId) => {
   try {
     const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}&course=${courseId}`);
@@ -186,4 +181,16 @@ export const getUserByEmail = async (email) => {
     return null;
   }
 };
+
+export const getUserId = async (dataAccount) => {
+  try {
+    const data = await getUserByEmail(dataAccount.username);
+    if (!data) throw new Error("Usuario no encontrado");
+    return data.id;
+  } catch (error) {
+    console.error("Error en getUserId:", error);
+    throw error;
+  }
+};
+
 
