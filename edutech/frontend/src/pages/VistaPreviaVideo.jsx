@@ -61,10 +61,12 @@ export default function VistaPreviaVideo() {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <h2 className="text-4xl font-bold text-gray-800">Comentarios:</h2>
-                  <label 
-                    htmlFor="modal-comentario" 
-                    className="text-4xl font-light text-gray-400 hover:text-black hover:scale-110 transition-all cursor-pointer select-none"
-                  >+</label>
+                  <span 
+                      onClick={() => setIsModalOpen(true)} 
+                      className="text-4xl font-light text-gray-400 hover:text-black hover:scale-125 transition-all p-2 cursor-pointer select-none"
+                    >
+                      +
+                    </span>
                 </div>
                 <span className="text-xl text-gray-400 font-medium">(3)</span>
               </div>
