@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 POST_TYPE_LABELS = {'PDF': 'Documento PDF', 'VID': 'Vídeo de YouTube'}
 
 def notify_subscribers_of_new_post(post):
-    subscriptions = Subscription.object.filter(course=post.course).select_related('user')
+    subscriptions = Subscription.objects.filter(course=post.course).select_related('user')
     if not subscriptions.exists():
         return
 
