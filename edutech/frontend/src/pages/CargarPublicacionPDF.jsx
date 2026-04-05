@@ -20,7 +20,6 @@ export default function CargarPublicacionPDF() {
                 <Input label="Subir archivo" type="file" />
                 <Input label="Título" placeholder="Introduce el título de la publicación" />
                 <Input label="Descripción" placeholder="Escribe una breve descripción..." rows={8} />
-                <Input label="Ruta" placeholder="Value/Value/Value..." />
               </div>
               <div className="pt-4">
                 <button 
