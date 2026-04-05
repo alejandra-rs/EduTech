@@ -12,8 +12,8 @@ export default function Layout({ children }) {
       { label: "Mi espacio", color: "bg-yellow-400" },
       { label: "Todos", color: "bg-green-400" },
     ],
-    "/cargarPublicacion": [
-      // Si la URL de cargarPublicacionPDF o Video cambia debe el nombre
+    "/upload": [
+      // Si la URL de uploadPDF o Video cambia debe el nombre
       { label: "PDF", color: "bg-red-400" },
       { label: "Video", color: "bg-blue-400" },
     ],
@@ -22,8 +22,8 @@ export default function Layout({ children }) {
   const location = useLocation();
   const currentTabs =
     tabs_config[
-      location.pathname.endsWith("/cargarPublicacion")
-        ? "/cargarPublicacion" // Si la URL de cargarPublicacionPDF o Video cambia debe actualizar esta condición, minimo debe contender o terminar con esto
+      location.pathname.endsWith("/upload")
+        ? "/upload" // Si la URL de cargarPublicacionPDF o Video cambia debe actualizar esta condición, minimo debe contender o terminar con esto
         : "default"
     ];
 

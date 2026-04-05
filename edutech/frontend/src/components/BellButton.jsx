@@ -44,8 +44,7 @@ const BellButton = ({ subjectId }) => {
     } catch (error) {
       console.error("Error al hacer toggle:", error);
       setSubscriptionId(previousSubscriptionId); 
-    }
-  };
+    }};
   return (
     <button 
       onClick={handleToggle}

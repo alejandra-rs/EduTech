@@ -80,33 +80,13 @@
     },
     {
       "user": 1,
-      "course": 1,
-      "id": 4
-    },
-    {
-      "user": 1,
-      "course": 1,
-      "id": 5
-    },
-    {
-      "user": 1,
-      "course": 1,
-      "id": 6
-    },
-    {
-      "user": 1,
-      "course": 1,
-      "id": 7
-    },
-    {
-      "user": 1,
-      "course": 3,
-      "id": 8
-    },
-    {
-      "user": 1,
-      "course": 1,
+      "course": "1",
       "id": 9
+    },
+    {
+      "user": 1,
+      "course": "3",
+      "id": 10
     }
   ],
   "documents": [

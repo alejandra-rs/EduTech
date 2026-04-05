@@ -39,50 +39,6 @@ const SubjectDetail = () => {
     }
   }, [subjectId]);
 
-  const dummyPosts = [
-    {
-      id: 1,
-      title: "Apuntes Tema 1",
-      type: "pdf",
-      date: "2026-03-20",
-      fileUrl: "https://www.w3.org/dummy.pdf",
-    },
-    {
-      id: 2,
-      title: "Resumen Final",
-      type: "pdf",
-      date: "2026-03-22",
-      fileUrl: "https://www.w3.org/dummy2.pdf",
-    },
-    {
-      id: 3,
-      title: "Guía de estudio",
-      type: "pdf",
-      date: "2026-03-23",
-      fileUrl: "https://www.w3.org/dummy3.pdf",
-    },
-    {
-      id: 4,
-      title: "Examen 2025",
-      type: "pdf",
-      date: "2026-03-24",
-      fileUrl: "https://www.w3.org/dummy4.pdf",
-    },
-    {
-      id: 5,
-      title: "Explicación Tema 2",
-      type: "vid",
-      date: "2026-03-21",
-      fileUrl: "https://www.youtube.com/watch?v=7iobxzd_2wY&t=1s",
-    },
-    {
-      id: 6,
-      title: "Ejercicios Resueltos",
-      type: "vid",
-      date: "2026-03-25",
-      fileUrl: "https://youtu.be/7iobxzd_2wY?si=W8AwakVp7J0a2XL_",
-    },
-  ];
 
   const filteredPosts = posts.filter((post) => {
     if (activeTabs.length === 0) return true;
