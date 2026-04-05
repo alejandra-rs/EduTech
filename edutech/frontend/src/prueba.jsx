@@ -31,7 +31,7 @@ export default function App() {
         </UnauthenticatedTemplate>
         <AuthenticatedTemplate>
           {isDomainValid ? (
-            <Layout accounts={accounts}>
+            <Layout accounts={accounts} instance={instance}>
               <Routes>
                 <Route path="/" element={<Courses />} />
                 <Route path="/:id/asignaturas" element={<Subject />} />

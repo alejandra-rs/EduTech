@@ -4,7 +4,7 @@ import NotebookFooter from "./Footer";
 import { useLocation } from "react-router-dom";
 import { getUserByEmail } from "../services/connections";
 
-export default function Layout({ accounts, children }) {
+export default function Layout({ accounts, instance, children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [userData, setUserData] = useState(null);
 
@@ -47,6 +47,8 @@ export default function Layout({ accounts, children }) {
         setIsOpen={setIsOpen}
         userProfilePic={userData ? userData.picture : null}
         userName={userData ? userData.first_name : null}
+        instance={instance}
+        accountsMsal={accounts}
       />
       <div className="flex flex-1 flex-col relative overflow-hidden">
         <main

@@ -8,13 +8,13 @@ export default function Header({
   setIsOpen,
   userProfilePic,
   userName,
+  instance,
+  accountsMsal,
 }) {
-  const { instance, accounts } = useMsal();
-
   const handleLogoutRedirect = () => {
     instance
       .logoutRedirect({
-        account: accounts[0],
+        account: accountsMsal[0],
       })
       .catch((error) => console.log(error));
   };
