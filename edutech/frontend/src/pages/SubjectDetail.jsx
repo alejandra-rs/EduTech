@@ -4,9 +4,8 @@ import SearchBar from "../components/SearchBar";
 import BellButton from "../components/BellButton";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
-import NotebookFooter from "../components/Footer";
 import { TitlePage } from "../components/TitlePage";
-import { getPosts } from "@services/connections";
+import { getPosts, getCourse } from "@services/connections";
 import { useState, useEffect } from 'react';
 
 const SubjectDetail = () => {
@@ -24,18 +23,26 @@ const SubjectDetail = () => {
   const [posts, setPosts] = useState([]);
   const [activeTabs, setActiveTabs] = useState([]);
 
+  const [subjectName, setSubjectName] = useState("Cargando...");
+
   useEffect(() => {
-    const cargarPosts = async () => {
+    const cargarDatos = async () => {
       try {
-        const data = await getPosts(subjectId);
-        setPosts(data);
+        const dataPosts = await getPosts(subjectId);
+        setPosts(dataPosts);
+
+        const dataCourse = await getCourse(subjectId);
+        if (dataCourse && dataCourse.name) {
+          setSubjectName(dataCourse.name);
+        }
       } catch (error) {
-        console.error("Error al cargar los documentos de la asignatura", error);
+        console.error("Error al cargar datos:", error);
+        setSubjectName("Asignatura"); 
       }
     };
 
     if (subjectId) {
-      cargarPosts();
+      cargarDatos();
     }
   }, [subjectId]);
 
@@ -52,11 +59,14 @@ const SubjectDetail = () => {
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       <div className="shrink-0 bg-white ">
-        <TitlePage PageName= "Asignaturas" onBack={() => navigate(-1)} >
+        <TitlePage 
+          PageName={subjectName} 
+          backLabel="Asignaturas" 
+          onBack={() => navigate(-1)} 
+        >
           <button
             onClick={() => navigate(`/${id}/${subjectId}/upload`)}
-            className="text-gray-700 hover:text-blue-600 transition-all duration-200 transform active:scale-75 hover:scale-110"
-            title="Subir nuevo recurso"
+            className="text-gray-700 hover:text-blue-600 transition-all"
           >
             <PlusCircleIcon className="w-10 h-10" />
           </button>
