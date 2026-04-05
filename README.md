@@ -115,14 +115,46 @@ En el siguiente sprint se abordarán funcionalidades más avanzadas:
 
 El objetivo será evolucionar el MVP hacia una plataforma más inteligente y personalizada.
 
-## Tech Tag
+## Tech Stack
 
-- **Frontend:** React + Vite  
-- **Estilos:** Tailwind CSS + Flowbite  
-- **Backend (prototipo):** JSON Server  
-- **Backend (objetivo):** Django  
-- **Base de datos:** PostgreSQL + pgvector  
-- **Control de versiones:** Git & GitHub  
+### Frontend
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vite/vite-original.svg" width="40"  />
+</p>
+
+- React + Vite
+
+### Estilos
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" width="40" />
+</p>
+
+- Tailwind CSS + Flowbite
+
+### Backend
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" width="40" />
+</p>
+
+- JSON Server (prototipo)  
+- Django (objetivo)
+
+### Base de Datos
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="40" />
+</p>
+
+- PostgreSQL + pgvector
+
+### Control de Versiones
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="40" />
+</p>
+
+- Git & GitHub
 
 ---
 
