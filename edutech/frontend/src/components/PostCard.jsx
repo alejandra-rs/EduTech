@@ -71,7 +71,7 @@ export function PostCard({ title, type, fileUrl, date, onClick }) {
         
         <div className="flex justify-between items-start gap-2">
           <h5 className="text-xl font-bold text-gray-900 leading-tight">
-            {title || "Título del recurso"}
+            {title}
           </h5>
           <span className="text-xs text-gray-500 whitespace-nowrap mt-1">
             {formatDate(date)}

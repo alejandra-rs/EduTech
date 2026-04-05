@@ -7,8 +7,37 @@ import Comentario from '../components/Comentario';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
 import ReportButton from '../components/ReportButton';
+import { getDocument } from '@services/connections';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 export default function VistaPreviaDocumento() {
+  
+  const { id, subjectId, postId } = useParams();
+  const [document, setDocument] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [likes, setLikes] = useState(null);
+  const [dislikes, setDislikes] = useState(null);
+  const [views, setViews] = useState(null);
+
+  useEffect(() => {
+    const cargarDocumento = async () => {
+      try {
+        const data = await getDocument(postId);
+        setDocument(data);
+        setComments(data.comments);
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setViews(data.views);
+      } catch (error) {
+        console.error("Error al cargar el documento", error);
+      }
+    };
+    if (postId){
+      cargarDocumento();
+    }
+  }, [postId]);
+
   const asignaturaNombre = "Asignatura";
   const handleBack = () => window.history.back();
 
