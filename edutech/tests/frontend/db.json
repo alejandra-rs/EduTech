@@ -1,5 +1,5 @@
 {
-  "years": [
+  "courses_years": [
     {
       "id": 1,
       "year": 1
@@ -58,7 +58,7 @@
         "year_id": 1,
         "year": 1
       },
-      "quarter": 1
+      "semester": 1
     },
     {
       "id": 2,
@@ -67,7 +67,7 @@
         "year_id": 2,
         "year": 2
       },
-      "quarter": 2
+      "semester": 2
     },
     {
       "id": 3,
@@ -76,7 +76,7 @@
         "year_id": 3,
         "year": 3
       },
-      "quarter": 1
+      "semester": 1
     }
   ],
   "courses_sub": [
@@ -87,16 +87,11 @@
     },
     {
       "user": 1,
-      "course": 1,
-      "id": 11
-    },
-    {
-      "user": 1,
       "course": 3,
       "id": 12
     },
     {
-      "user": 4,
+      "user": 1,
       "course": 1,
       "id": 13
     }
@@ -112,27 +107,10 @@
       "created_at": "2024-03-10T10:30:00Z",
       "pdf": {
         "id": 1,
-        "file": "http://localhost:8000/documents/apuntes_tema_1.pdf"
+        "file": "https://r.search.yahoo.com/_ylt=Awr.QK45k9NpHwIAOctU04lQ;_ylu=Y29sbwNpcjIEcG9zAzEEdnRpZAMEc2VjA3Ny/RV=2/RE=1776683066/RO=10/RU=https%3A%2F%2Fkanban.university%2Fwp-content%2Fuploads%2F2024%2F03%2FThe-Official-Kanban-Guide_Spanish.pdf/RK=2/RS=MrxzHdwhot9T5ZZYqZMrk9NffLg-"
       },
       "vid": null,
-      "likes": 2,
-      "dislikes": 0,
-      "comments": [
-        {
-          "id": 1,
-          "user_name": "Carlos López",
-          "profile_pic": "http://localhost:8000/media/profile_pics/laura.jpg",
-          "post_id": 1,
-          "message": "¡Mil gracias! Me salvaste la vida con estos apuntes."
-        },
-        {
-          "id": 2,
-          "user_name": "Laura García",
-          "profile_pic": "http://localhost:8000/media/profile_pics/laura.jpg",
-          "post_id": 2,
-          "message": "Buenísimo el vídeo, aunque en el minuto 5 se lía un poco."
-        }
-      ]
+      "views": 1113111
     },
     {
       "id": 2,
@@ -151,41 +129,248 @@
       "pdf": null,
       "vid": {
         "id": 1,
-        "vid": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-      }
+        "vid": "https://youtu.be/lMTaNbJAqvM?si=TsiXlxZOVsFSmReH"
+      },
+      "views": 200
     }
   ],
   "likes": [
     {
       "id": 1,
-      "user_id": 2,
-      "post_id": 1
+      "user": 2,
+      "post": 1
     },
     {
       "id": 2,
-      "user_id": 3,
-      "post_id": 1
+      "user": 3,
+      "post": 1
     }
   ],
   "dislikes": [
     {
       "id": 1,
-      "user_id": 3,
-      "post_id": 2
+      "user": 3,
+      "post": 2
     }
   ],
-  "comments": [
+  "documents_comments": [
     {
       "id": 1,
-      "user_id": 2,
-      "post_id": 1,
-      "comment": "¡Mil gracias! Me salvaste la vida con estos apuntes."
+      "user": 2,
+      "post": 1,
+      "message": "¡Mil gracias! Me salvaste la vida con estos apuntes.",
+      "created_at": "2026-03-11T12:00:00Z"
     },
     {
       "id": 2,
-      "user_id": 1,
-      "post_id": 2,
-      "comment": "Buenísimo el vídeo, aunque en el minuto 5 se lía un poco."
+      "user": 1,
+      "post": 1,
+      "message": "Buenísimo el vídeo, aunque en el minuto 5 se lía un poco.",
+      "created_at": "2026-03-12T10:30:00Z"
+    },
+    {
+      "id": 3,
+      "user": 3,
+      "post": 1,
+      "message": "Están muy bien organizados, pero falta el último tema del temario, ¿no?",
+      "created_at": "2026-03-15T09:30:00Z"
+    },
+    {
+      "id": 4,
+      "user": 2,
+      "post": 2,
+      "message": "El profe explicó esto en clase de otra forma, pero este método es muchísimo más rápido.",
+      "created_at": "2026-03-02T16:45:00Z"
+    },
+    {
+      "id": 5,
+      "user": 4,
+      "post": 1,
+      "message": "No entiendo el ejercicio de la página 4, ¿alguien me lo explica?",
+      "created_at": "2026-03-16T20:15:00Z"
+    },
+    {
+      "id": 6,
+      "user": 5,
+      "post": 2,
+      "message": "Excelente recurso para repasar antes del parcial de la semana que viene.",
+      "created_at": "2026-03-05T11:20:00Z"
+    },
+    {
+      "id": 7,
+      "user": 1,
+      "post": 2,
+      "message": "Me ha venido genial, ya lo he compartido por el grupo de WhatsApp de la clase.",
+      "created_at": "2026-03-06T14:10:00Z"
+    },
+    {
+      "id": 8,
+      "user": 6,
+      "post": 1,
+      "message": "¿Alguien sabe si esto entra en la convocatoria ordinaria?",
+      "created_at": "2026-03-17T18:05:00Z"
+    },
+    {
+      "id": 9,
+      "user": 7,
+      "post": 1,
+      "message": "Ojalá hubiera encontrado esto antes del primer examen.",
+      "created_at": "2026-03-18T21:00:00Z"
+    },
+    {
+      "id": 10,
+      "user": 8,
+      "post": 1,
+      "message": "Creo que hay una errata en la fórmula del ejercicio 3.",
+      "created_at": "2026-03-19T12:45:00Z"
+    },
+    {
+      "id": 11,
+      "user": 2,
+      "post": 1,
+      "message": "¡Confirmado! Esa fórmula está bien, solo que usa otra notación.",
+      "created_at": "2026-03-20T15:30:00Z"
+    },
+    {
+      "id": 12,
+      "user": 9,
+      "post": 1,
+      "message": "¿Alguien tiene la segunda parte de este PDF?",
+      "created_at": "2026-03-21T10:00:00Z"
+    },
+    {
+      "id": 13,
+      "user": 10,
+      "post": 1,
+      "message": "La calidad del escaneo es increíble, se lee perfecto.",
+      "created_at": "2026-03-22T08:20:00Z"
+    },
+    {
+      "id": 14,
+      "user": 4,
+      "post": 1,
+      "message": "Yo tengo la segunda parte, la subo esta tarde si puedo.",
+      "created_at": "2026-03-23T19:40:00Z"
+    },
+    {
+      "id": 15,
+      "user": 5,
+      "post": 1,
+      "message": "Espero con ansias esa segunda parte, ¡gracias!",
+      "created_at": "2026-03-24T14:15:00Z"
+    },
+    {
+      "id": 16,
+      "user": 1,
+      "post": 2,
+      "message": "¿El audio se escucha un poco bajo o es cosa mía?",
+      "created_at": "2026-03-07T09:10:00Z"
+    },
+    {
+      "id": 17,
+      "user": 3,
+      "post": 2,
+      "message": "A mí se me escucha bien, prueba con auriculares.",
+      "created_at": "2026-03-08T11:55:00Z"
+    },
+    {
+      "id": 18,
+      "user": 6,
+      "post": 2,
+      "message": "Me encantan estos vídeos cortos, van al grano.",
+      "created_at": "2026-03-09T22:30:00Z"
+    },
+    {
+      "id": 19,
+      "user": 7,
+      "post": 2,
+      "message": "¿Vas a subir más vídeos de este tema?",
+      "created_at": "2026-03-10T13:20:00Z"
+    },
+    {
+      "id": 20,
+      "user": 8,
+      "post": 2,
+      "message": "Este canal me está salvando la carrera.",
+      "created_at": "2026-03-11T17:45:00Z"
+    },
+    {
+      "id": 21,
+      "user": 9,
+      "post": 2,
+      "message": "¿Podrías hacer uno explicando la parte de integrales?",
+      "created_at": "2026-03-12T15:10:00Z"
+    },
+    {
+      "id": 22,
+      "user": 10,
+      "post": 2,
+      "message": "Se nota que le pones ganas a la edición, muy profesional.",
+      "created_at": "2026-03-13T19:00:00Z"
+    },
+    {
+      "id": 23,
+      "user": 4,
+      "post": 2,
+      "message": "El minuto 8:30 es clave para entender todo el cuatrimestre.",
+      "created_at": "2026-03-14T11:40:00Z"
+    },
+    {
+      "id": 24,
+      "user": 2,
+      "post": 2,
+      "message": "¡Totalmente de acuerdo! Ahí es cuando me hizo 'click' la cabeza.",
+      "created_at": "2026-03-15T16:25:00Z"
+    },
+    {
+      "id": 25,
+      "user": 5,
+      "post": 2,
+      "message": "Ojalá mis profesores explicaran la mitad de bien que tú.",
+      "created_at": "2026-03-16T20:50:00Z"
+    },
+    {
+      "id": 26,
+      "user": 1,
+      "post": 2,
+      "message": "¿Alguien sabe si hay ejercicios resueltos de esto por algún lado?",
+      "created_at": "2026-03-17T08:15:00Z"
+    },
+    {
+      "id": 27,
+      "user": 3,
+      "post": 2,
+      "message": "Mira en la descripción, hay un link a un Drive.",
+      "created_at": "2026-03-18T12:05:00Z"
+    },
+    {
+      "id": 28,
+      "user": 7,
+      "post": 2,
+      "message": "¡Encontrado! Mil gracias por el aporte.",
+      "created_at": "2026-03-19T14:50:00Z"
+    },
+    {
+      "id": 29,
+      "user": 8,
+      "post": 2,
+      "message": "Me lo guardo en favoritos para el examen final.",
+      "created_at": "2026-03-20T21:30:00Z"
+    },
+    {
+      "id": 30,
+      "user": 10,
+      "post": 2,
+      "message": "Duda: ¿esto vale para el plan de estudios de 2026?",
+      "created_at": "2026-03-21T18:10:00Z"
     }
-  ]
+  ],
+  "documents_likes": {
+    "user": 1,
+    "post": 2
+  },
+  "documents_dislikes": {
+    "user": 1,
+    "post": 2
+  }
 }

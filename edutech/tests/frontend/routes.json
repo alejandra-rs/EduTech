@@ -1,4 +1,10 @@
 {
   "/courses/sub": "/courses_sub",
-  "/courses/sub/:id": "/courses_sub/:id"
+  "/courses/years": "/courses_years",
+  "/courses/years/:id": "/courses_years/:id",
+  "/courses/sub/:id": "/courses_sub/:id",
+  "/documents/comments/": "/documents_comments/",
+  "/documents/comments/:id": "/documents_comments/:id",
+  "/documents/likes/": "/documents_likes/",
+  "/documents/dislikes/": "/documents_dislikes/"
 }
