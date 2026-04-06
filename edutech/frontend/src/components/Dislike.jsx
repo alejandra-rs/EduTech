@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { HandThumbDownIcon } from '@heroicons/react/24/solid';
 
-export const DislikeButton = ({ initialDislikes = 0 }) => {
-  const [dislikes, setDislikes] = useState(initialDislikes);
+export const DislikeButton = ({ getDislikess = 0 }) => {
+  const [dislikes, setDislikes] = useState(getDislikess);
   const [active, setActive] = useState(false);
   const [animate, setAnimate] = useState(false);
 

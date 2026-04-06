@@ -3,8 +3,8 @@ import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/solid';
 import { ReactionButton } from './ReactionButton';
 import { 
   getUserId, 
-  initialLike, addLike, removeLike,
-  initialDislike, addDislike, removeDislike 
+  getLikes, addLike, removeLike,
+  getDislikes, addDislike, removeDislike 
 } from '@services/connections';
 
 const ReactionsContainer = ({ PostId }) => {
@@ -26,15 +26,15 @@ const ReactionsContainer = ({ PostId }) => {
         setUserId(user);
         
         const [likeData, dislikeData] = await Promise.all([
-          initialLike(user, PostId),
-          initialDislike(user, PostId)
+          getLikes(user, PostId),
+          getDislikes(user, PostId)
         ]);
         
         setLikes(likeData.count);
-        setLikeRecordId(likeData.self > 0 ? likeData.recordId : null); 
+        setLikeRecordId(likeData.id > -1 ? likeData.id : null); 
 
         setDislikes(dislikeData.count);
-        setDislikeRecordId(dislikeData.self > 0 ? dislikeData.recordId : null);
+        setDislikeRecordId(dislikeData.id > -1 ? dislikeData.id : null);
       } catch (error) {
         console.error('Error al cargar las reacciones:', error);
       }

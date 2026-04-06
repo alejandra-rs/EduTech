@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { HandThumbUpIcon } from '@heroicons/react/24/solid';
-import { initialLike, getUserId, addLike, removeLike} from '@services/connections';
+import { getLikes, getUserId, addLike, removeLike} from '@services/connections';
 import { useEffect } from 'react';
 
 const LikeButton = ({PostId}) => {
@@ -16,7 +16,7 @@ const LikeButton = ({PostId}) => {
       try {
         const user = await getUserId();
         setUserId(user);
-        const data = await initialLike(user, PostId);
+        const data = await getLikes(user, PostId);
         
         setLikes(data.count);
         setRecordId(data.self ? data.recordId : null); 
