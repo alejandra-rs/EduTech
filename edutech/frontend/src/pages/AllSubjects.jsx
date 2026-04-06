@@ -8,7 +8,7 @@ const Subject = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
+    <div className="flex flex-col w-full overflow-y-auto">
       <TitlePage 
         PageName={`${id}º Curso`} 
         backLabel="Cursos"       

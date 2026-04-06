@@ -10,8 +10,8 @@ export function TitlePage({ PageName, onBack, backLabel = "Volver", children }) 
         </span>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none w-full max-w-[50%]">
-        <h1 className="text-3xl font-bold text-gray-800 text-center truncate">
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center w-full max-w-[60%]">
+        <h1 className="text-3xl font-bold text-gray-800 text-center">
           {PageName}
         </h1>
         <div className="h-1 w-12 bg-indigo-500 rounded-full mt-1"></div>
