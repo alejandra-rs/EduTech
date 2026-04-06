@@ -14,7 +14,7 @@ export  function DocumentInfo({document}) {
       <p className="text-2xl font-semibold text-gray-800 leading-relaxed mb-4">
         {document?.description}
       </p>
-      <div className="mb-10 w-full">
+      <div className="mb-10 w-full hidden">
         <Descargar />
       </div>
       <div className="flex items-center justify-between w-full pt-8 border-t border-gray-100">

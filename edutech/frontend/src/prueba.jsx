@@ -5,7 +5,7 @@ import SubjectDetail from './pages/SubjectDetail';
 import CargarPublicacionPDF from './pages/CargarPublicacionPDF';
 import CargarPublicacionVideo from './pages/CargarPublicacionVideo';
 import VistaPreviaDocumento from './pages/VistaPreviaDocumento';
-import VistaPreviaVideo from './pages/VistaPreviaVideo';
+import VistaPreviaVideo from './pages/VistaPreviaDocumentocopy';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 export default function App() {

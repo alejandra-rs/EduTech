@@ -28,12 +28,12 @@ export default function VistaPreviaDocumento() {
   }, [postId]);
 
   return (
-    <div className="flex h-screen w-full bg-white overflow-hidden font-sans">
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-transparent">
+    <div className="flex h-screen w-full bg-white font-sans">
+      <div className="flex-1 flex flex-col h-full bg-transparent">
         <div className="w-full shrink-0">
           <TitlePage PageName={"asignatura"} onBack={() => navigate(-1)} />
         </div>
-        <div className="flex-1 flex flex-col lg:flex-row w-full h-full overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row w-full h-full">
           <div className="w-full h-[60vh] lg:h-full lg:w-[30%] xl:w-[35%] flex items-center justify-center p-2 lg:p-6 shrink-0 bg-transparent overflow-hidden">
             <div className="w-full h-full flex items-center justify-center">
               <VisorPDF pdfUrl={document?.pdf?.file} />
