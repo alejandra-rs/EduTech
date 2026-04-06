@@ -184,8 +184,7 @@ export const getUserByEmail = async (email) => {
     const response = await fetch(`${BASE_URL}/students?email=${email}`);
     if (!response.ok) throw new Error("Error al obtener el usuario");
     const data = await response.json();
-
-    return data.length > 0 ? data[0] : null;
+    return data.length > 0 ? data[0] : data;
   } catch (error) {
     console.error("Error en getUserByEmail:", error);
     return null;
@@ -291,3 +290,24 @@ export const getComments = async (documentId) => {
     throw error;
   }
 };
+
+export const postComment = async (userId, postId, message) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/comments/?user=${userId}&post=${postId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: userId,
+        post: postId,
+        message: message,
+        created_at: new Date().toISOString()
+      })
+    });
+    if (!response.ok) throw new Error("Error al agregar el comentario");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en postComment:", error);
+    throw error;
+  }
+};
+
