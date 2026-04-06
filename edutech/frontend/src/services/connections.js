@@ -2,7 +2,7 @@ const BASE_URL = "http://localhost:8000";
 
 export const getYears = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/years`);
+    const response = await fetch(`${BASE_URL}/courses/years`);
     if (!response.ok) throw new Error("Error al obtener los años");
     return await response.json();
   } catch (error) {
@@ -11,10 +11,10 @@ export const getYears = async () => {
   }
 };
 
-export const getCourses = async (yearId, quarter) => {
+export const getCourses = async (yearId, semester) => {
   let fetchUrl = `${BASE_URL}/courses?year.year_id=${yearId}`;
-  if (quarter) {
-    fetchUrl += `&quarter=${quarter}`;
+  if (semester) {
+    fetchUrl += `&semester=${semester}`;
   }
   try {
     const response = await fetch(fetchUrl);
@@ -80,7 +80,7 @@ export const checkSubscription = async (userId, courseId) => {
 
 export const subscribeToCourse = async (userId, courseId) => {
   try {
-    const response = await fetch(`${BASE_URL}/courses/sub`, { 
+    const response = await fetch(`${BASE_URL}/courses/sub/`, { 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: userId, course: courseId })

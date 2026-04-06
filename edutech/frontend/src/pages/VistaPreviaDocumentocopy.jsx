@@ -1,59 +1,61 @@
-import VisorPDF from '../components/VisorPDF.jsx';
-import { TitlePage } from '../components/TitlePage.jsx';
-import { getDocument } from '@services/connections';
-import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { DocumentInfo } from '../components/DocumentInfo.jsx';
-import { CommentsSections } from '../components/CommentsSections.jsx';
+import { useState, useEffect } from 'react';
+import { getDocument } from '@services/connections';
+import { TitlePage } from '../components/TitlePage';
+import { DocumentInfo } from '../components/DocumentInfo';
+import { CommentsSections } from '../components/CommentsSections';
 import VisorVideo from '../components/VisorVideo';
+import VisorPDF from '../components/VisorPDF';
 
 export default function VistaPreviaDocumento() {
-  
   const navigate = useNavigate();
   const { id, subjectId, postId } = useParams();
   const [document, setDocument] = useState(null);
-  
+
   useEffect(() => {
     const cargarDocumento = async () => {
       try {
         const data = await getDocument(postId);
-        console.log("Documento obtenido de la API:", data);
         setDocument(data);
       } catch (error) {
         console.error("Error al cargar el documento", error);
       }
     };
-    if (postId){
-      cargarDocumento();
-    }
+    if (postId) cargarDocumento();
   }, [postId]);
-  console.log("Documento cargado:", document);
+
+
   return (
-<div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden font-sans">
       
-      <div className="w-full shrink-0 bg-white shadow-sm z-10">
-        <TitlePage PageName={"asignatura"} onBack={() => navigate(-1)} />
-      </div>
-      <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 md:p-6 flex flex-col overflow-hidden gap-4">
-        <div className="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden">
-          <div className="flex-[7] flex flex-col overflow-y-auto custom-scrollbar pb-10 pr-2">
-            <div className="w-full shrink-0 bg-black rounded-2xl overflow-hidden shadow-md">
+      <header className="w-full shrink-0 bg-white shadow-sm z-10">
+        <TitlePage PageName={"Asignatura"} onBack={() => navigate(-1)} />
+      </header>
+
+      <main className="flex-1 w-full max-w-[95%] xl:max-w-[85%] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 overflow-hidden">
+        
+        {/* COLUMNA IZQUIERDA: Contenido Principal */}
+        <div className="flex-[7] flex flex-col overflow-y-auto custom-scrollbar pb-10">
+          <div className="w-full aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl mb-6">
+            {document?.post_type === 'vid' || document?.vid ? (
               <VisorVideo videoUrl={document?.vid?.vid} />
-            </div>
-            <div className="bg-white p-6 rounded-2xl mt-4 shadow-sm border border-gray-100">
-              <DocumentInfo document={document} />
-            </div>
-
+            ) : (
+              <VisorPDF pdfUrl={document?.pdf?.file} />
+            )}
           </div>
-          <div className="flex-[3] flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-              <CommentsSections documentId={postId} />
-            </div>
+          
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+            <DocumentInfo document={document} />
           </div>
-
         </div>
 
-      </div>
+        {/* COLUMNA DERECHA: Comentarios */}
+        <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
+          {/* Al ponerlo aquí, el max-h-[70vh] del componente hará su magia */}
+          <CommentsSections documentId={postId} />
+        </aside>
+
+      </main>
     </div>
   );
 }
