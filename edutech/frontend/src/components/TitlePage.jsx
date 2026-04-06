@@ -5,7 +5,6 @@ export function TitlePage({ PageName, onBack, backLabel = "Volver", children }) 
         onClick={onBack} 
         className="group flex items-center gap-2 cursor-pointer z-20"
       >
-        {/* Usamos flex e items-center aquí también para el símbolo */}
         <span className="flex items-center text-2xl leading-none font-light text-gray-400 group-hover:text-black group-hover:-translate-x-1 transition-all duration-200 -mt-[3px]">
           {"<"}
         </span>

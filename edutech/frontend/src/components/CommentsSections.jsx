@@ -36,7 +36,6 @@ export function CommentsSections({ documentId }) {
         <span className="text-lg text-gray-400">({comments.length})</span>
       </div>
       
-      {/* LISTA: Es la que tiene el scroll independiente */}
       <div className="flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar pr-2 pb-10">
         {comments?.length > 0 ? (
           comments.map((comment) => (

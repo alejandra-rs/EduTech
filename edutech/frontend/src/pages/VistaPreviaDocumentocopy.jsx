@@ -34,7 +34,6 @@ export default function VistaPreviaDocumento() {
 
       <main className="flex-1 w-full max-w-[95%] xl:max-w-[85%] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 overflow-hidden">
         
-        {/* COLUMNA IZQUIERDA: Contenido Principal */}
         <div className="flex-[7] flex flex-col overflow-y-auto custom-scrollbar pb-10">
           <div className="w-full aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl mb-6">
             {document?.post_type === 'vid' || document?.vid ? (
@@ -49,9 +48,7 @@ export default function VistaPreviaDocumento() {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: Comentarios */}
         <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
-          {/* Al ponerlo aquí, el max-h-[70vh] del componente hará su magia */}
           <CommentsSections documentId={postId} />
         </aside>
 
