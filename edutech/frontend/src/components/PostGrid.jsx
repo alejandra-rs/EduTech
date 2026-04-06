@@ -15,6 +15,11 @@ export default function PostGrid({ posts, onPostClick }) {
             fileUrl={urlFile} 
             date={post.created_at} 
             onClick={() => onPostClick(post)}
+            stats={{
+                views: post.views_count || 0,
+                likes: post.likes_count || 0,
+                dislikes: post.dislikes_count || 0
+            }}
           />
         )})}
       </div>
