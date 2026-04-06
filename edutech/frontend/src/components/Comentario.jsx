@@ -1,27 +1,22 @@
-import Like from './Like';
-import Dislike from './Dislike';
 import ReportComment from './ReportComment';
 import UserAvatar from './UserAvatar';
 
-export default function Comentario() {
+export default function Comentario({comment, user}) {
   return (
     <div className="bg-[#dfdfdf] rounded-lg p-5 sm:p-6 flex gap-4 w-full font-sans">
-      <UserAvatar />
+      <div className="flex flex-row">
+      <UserAvatar user={user?.profile_pic} />
+      <date className="text-sm text-gray-500 mb-2">
+        {comment?.created_at && new Date(comment.created_at).toLocaleDateString()}
+      </date>
+      </div>
       <div className="flex-1 flex flex-col">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          Name Surname
+          {user?.name}
         </h3>
         <p className="text-gray-800 text-sm sm:text-base leading-relaxed mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-          veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-          commodo consequat.
+          {comment?.message}
         </p>
-        <div className="flex justify-end items-center gap-5 mt-auto">
-          <Like />
-          <Dislike />
-          <ReportComment />
-        </div>
       </div>
     </div>
   );

@@ -107,3 +107,92 @@ export const unsubscribe = async (subscriptionId) => {
   }
 };
 
+export const initialLike = async (userId, postId) => {
+  return await fetch(`${BASE_URL}/documents/likes/?user=${userId}&post=${postId}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Error al obtener el estado del like");
+      return response.json();
+    })
+    .catch(error => {
+      console.error("Error en initialLike:", error);
+      throw error;
+    });
+};
+
+export const addLike = async (userId, postId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/likes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: userId, post: postId }) 
+    });
+    if (!response.ok) throw new Error("Error al dar like");
+    return await response.json(); 
+  } catch (error) {
+    console.error("Error en addLike:", error);
+    throw error;
+  }
+};
+
+export const removeLike = async (likeId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/likes/${likeId}`, {
+      method: "DELETE" 
+    });
+    if (!response.ok) throw new Error("Error al quitar el like");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en removeLike:", error);
+    throw error;
+  }
+};
+export const initialDislike = async (userId, postId) => {
+  return await fetch(`${BASE_URL}/documents/dislikes/?user=${userId}&post=${postId}`)
+    .then(response => {
+      if (!response.ok) throw new Error("Error al obtener el estado del dislike");
+      return response.json();
+    })
+    .catch(error => {
+      console.error("Error en initialDisLike:", error);
+      throw error;
+    });
+};
+
+export const addDislike = async (userId, postId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/dislikes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: userId, post: postId }) 
+    });
+    if (!response.ok) throw new Error("Error al dar dislike");
+    return await response.json(); 
+  } catch (error) {
+    console.error("Error en addDislike:", error);
+    throw error;
+  }
+};
+
+export const removeDislike = async (dislikeId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/dislikes/${dislikeId}`, {
+      method: "DELETE" 
+    });
+    if (!response.ok) throw new Error("Error al quitar el dislike");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en removeDislike:", error);
+    throw error;
+  }
+};
+
+export const getComments = async (documentId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/comments/?post=${documentId}`);
+    if (!response.ok) throw new Error("Error al obtener los comentarios");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getComments:", error);
+    throw error;
+  } 
+};

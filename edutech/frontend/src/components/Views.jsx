@@ -10,10 +10,6 @@ export const ViewsDisplay = ({ views = 0 }) => {
     return num;
   };
 
-  const formatExact = (num) => {
-    return new Intl.NumberFormat('es-ES').format(num);
-  };
-
   return (
     <button 
       onClick={() => setShowExact(!showExact)}
@@ -29,7 +25,7 @@ export const ViewsDisplay = ({ views = 0 }) => {
       
       <div className="flex items-baseline gap-1.5">
         <span className="font-extrabold text-2xl text-gray-600 leading-none tabular-nums">
-          {showExact ? formatExact(views) : formatViews(views)}
+          {showExact ? views : formatViews(views)}
         </span>
         
         <span className="font-medium text-sm text-gray-500 uppercase tracking-wide">
