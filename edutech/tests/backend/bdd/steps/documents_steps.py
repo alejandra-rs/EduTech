@@ -2,7 +2,7 @@ from behave import given, when, then
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from unittest.mock import patch, MagicMock
-from documents.models import MAX_PDF_SIZE
+from documents.models import MAX_PDF_KB
 
 TEST_STORAGES = {
     'default':     {'BACKEND': 'django.core.files.storage.InMemoryStorage'},
@@ -111,7 +111,7 @@ def step_upload_valid_pdf(context, title):
 
 @when('el estudiante intenta subir un PDF que sobrepasa los 600KB')
 def step_upload_wrong_size(context):
-    archivo = _pdf_file(size=(MAX_PDF_SIZE + 1) * 1024)
+    archivo = _pdf_file(size=(MAX_PDF_KB + 1) * 1024)
     with override_settings(STORAGES=TEST_STORAGES):
         context.response = context.client.post('/documents/upload/pdf/', {
             'title': 'Prueba', 'description': 'D',

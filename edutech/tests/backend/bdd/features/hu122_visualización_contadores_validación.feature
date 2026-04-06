@@ -10,12 +10,10 @@ Feature: Visualización de contadores de valoraciones
 
   Scenario: Visualizar contadores con votos
     Given que existe un post con 3 votos positivos y 1 voto negativo
-    When pido el detalle del post
-    Then la respuesta tiene el estado 200
-    And la respuesta muestra 3 "Me gusta" y 1 "No me gusta"
+    Then la cuenta de likes muestra 3 "Me gusta"
+    And la cuenta de dislikes muestra 1 "No me gusta"
 
   Scenario: Visualizar contadores sin votos
     Given que existe un post sin valoraciones
-    When pido el detalle del post
-    Then la respuesta tiene el estado 200
-    And la respuesta muestra 0 "Me gusta" y 0 "No me gusta"
+    Then la cuenta de likes muestra 0 "Me gusta"
+    And la cuenta de dislikes muestra 0 "No me gusta"

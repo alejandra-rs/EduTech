@@ -153,8 +153,20 @@ def step_dislike_registered(context):
     assert Dislike.objects.filter(user=context.student, post=context.post).exists(), \
         'No existe un dislike del estudiante para este post'
 
-@then('la respuesta muestra {likes:d} "Me gusta" y {dislikes:d} "No me gusta"')
-def step_response_counters(context, likes, dislikes):
-    data = context.response.data
-    assert data.get('likes_count') == likes, f'Se esperaban {likes} likes, se encontraron {data.get("likes_count")}'
-    assert data.get('dislikes_count') == dislikes, f'Se esperaban {dislikes} dislikes, se encontraron {data.get("dislikes_count")}'
+@then('la cuenta de likes muestra {likes:d} "Me gusta"')
+def step_check_likes_count(context, likes):
+    response = context.client.get('/documents/likes/', {
+        'user': context.student.pk,
+        'post': context.post.pk,
+    })
+    count = response.data.get('count')
+    assert count == likes, f'Se esperaban {likes} likes, se encontraron {count}'
+
+@then('la cuenta de dislikes muestra {dislikes:d} "No me gusta"')
+def step_check_dislikes_count(context, dislikes):
+    response = context.client.get('/documents/dislikes/', {
+        'user': context.student.pk,
+        'post': context.post.pk,
+    })
+    count = response.data.get('count')
+    assert count == dislikes, f'Se esperaban {dislikes} dislikes, se encontraron {count}'

@@ -136,25 +136,28 @@ class LikeView(views.APIView):
     def get(self, request):
         user = request.query_params.get('user')
         post = request.query_params.get('post')
-
         like = Like.objects.filter(user=user, post=post).first()
-        if like:
-            return Response({"id": like.id}, status=status.HTTP_200_OK)
-        return Response({}, status=status.HTTP_200_OK)
+        count = Like.objects.filter(post=post).count()
+
+        return Response({"id": like.id if like else -1, "count": count},
+                        status=status.HTTP_200_OK)
 
     def post(self, request):
         user = get_object_or_404(Student, pk=request.data.get('user'))
         post = get_object_or_404(Post, pk=request.data.get('post'))
-        like_exists = Like.objects.filter(user=user, post=post).first()
-        if like_exists:
-            return Response({"detail": "Ya existe un like para este usuario en este post."}, status=status.HTTP_200_OK)
-        like = Like(user=user, post=post)
+        like = Like.objects.filter(user=user, post=post).first()
+        count = Like.objects.filter(post=post).count()
+
+        if like:
+            return Response({"id": like.id, "count": count}, status=status.HTTP_200_OK)
+
+        new_like = Like(user=user, post=post)
         try:
-            like.full_clean()
+            new_like.full_clean()
         except ValidationError as e:
             return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
-        like.save()
-        return Response({"id": like.id}, status=status.HTTP_201_CREATED)
+        new_like.save()
+        return Response({"id": new_like.id, "count": count + 1}, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
         like = get_object_or_404(Like, pk=pk)
@@ -170,25 +173,28 @@ class DislikeView(views.APIView):
     def get(self, request):
         user = request.query_params.get('user')
         post = request.query_params.get('post')
-
         dislike = Dislike.objects.filter(user=user, post=post).first()
-        if dislike:
-            return Response({"id": dislike.id}, status=status.HTTP_200_OK)
-        return Response({}, status=status.HTTP_200_OK)
+        count = Dislike.objects.filter(post=post).count()
+
+        return Response({"id": dislike.id if dislike else -1, "count": count},
+                        status=status.HTTP_200_OK)
 
     def post(self, request):
         user = get_object_or_404(Student, pk=request.data.get('user'))
         post = get_object_or_404(Post, pk=request.data.get('post'))
-        dislike_exists = Dislike.objects.filter(user=user, post=post).first()
-        if dislike_exists:
-            return Response({"detail": "Ya existe un dislike para este usuario en este post."}, status=status.HTTP_200_OK)
-        dislike = Dislike(user=user, post=post)
+        dislike = Dislike.objects.filter(user=user, post=post).first()
+        count = Dislike.objects.filter(post=post).count()
+
+        if dislike:
+            return Response({"id": dislike.id, "count": count}, status=status.HTTP_200_OK)
+
+        new_dislike = Dislike(user=user, post=post)
         try:
-            dislike.full_clean()
+            new_dislike.full_clean()
         except ValidationError as e:
             return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
-        dislike.save()
-        return Response({"id": dislike.id}, status=status.HTTP_201_CREATED)
+        new_dislike.save()
+        return Response({"id": new_dislike.id, "count": count + 1}, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
         dislike = get_object_or_404(Dislike, pk=pk)

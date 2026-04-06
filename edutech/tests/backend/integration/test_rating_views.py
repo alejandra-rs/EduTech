@@ -22,7 +22,7 @@ class LikeViewTest(APITestCase):
         }, format='json')
         self.assertEqual(response.status_code, 201)
         self.assertIn('id', response.data)
-        self.assertEqual(Like.objects.count(), 1)
+        self.assertEqual(response.data['count'], 1)
 
     def test_create_duplicate_like_returns_200_no_duplicate(self):
         Like.objects.create(user=self.student, post=self.post)
@@ -47,11 +47,12 @@ class LikeViewTest(APITestCase):
         response = self.client.get(f'/documents/likes/?user={self.student.pk}&post={self.post.pk}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['id'], like.pk)
+        self.assertEqual(response.data['count'], 1)
 
-    def test_get_like_not_exists_returns_empty_dict(self):
+    def test_get_like_not_exists_returns_negative_id(self):
         response = self.client.get(f'/documents/likes/?user={self.student.pk}&post={self.post.pk}')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, {})
+        self.assertEqual(response.data, {'id': -1, 'count': 0})
 
     def test_create_like_when_dislike_exists_returns_400(self):
         Dislike.objects.create(user=self.student, post=self.post)
@@ -86,7 +87,7 @@ class DislikeViewTest(APITestCase):
         }, format='json')
         self.assertEqual(response.status_code, 201)
         self.assertIn('id', response.data)
-        self.assertEqual(Dislike.objects.count(), 1)
+        self.assertEqual(response.data['count'], 1)
 
     def test_create_duplicate_dislike_returns_200_no_duplicate(self):
         Dislike.objects.create(user=self.student, post=self.post)
@@ -111,11 +112,12 @@ class DislikeViewTest(APITestCase):
         response = self.client.get(f'/documents/dislikes/?user={self.student.pk}&post={self.post.pk}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['id'], dislike.pk)
+        self.assertEqual(response.data['count'], 1)
 
-    def test_get_dislike_not_exists_returns_empty_dict(self):
+    def test_get_dislike_not_exists_returns_negative_id(self):
         response = self.client.get(f'/documents/dislikes/?user={self.student.pk}&post={self.post.pk}')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, {})
+        self.assertEqual(response.data, {"id": -1, "count": 0})
 
     def test_create_dislike_when_like_exists_returns_400(self):
         Like.objects.create(user=self.student, post=self.post)

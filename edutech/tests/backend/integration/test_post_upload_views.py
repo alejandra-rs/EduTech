@@ -2,7 +2,7 @@ from django.test import override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 from rest_framework.test import APITestCase
-from documents.models import Post, PDFAttachment, YoutubeVideo, MAX_PDF_SIZE
+from documents.models import Post, PDFAttachment, YoutubeVideo, MAX_PDF_KB
 from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen
 
 
@@ -43,7 +43,7 @@ class PDFUploadViewTest(APITestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_upload_oversized_pdf_returns_400(self):
-        big = make_pdf_file(size_bytes=(MAX_PDF_SIZE + 1) * 1024)
+        big = make_pdf_file(size_bytes=(MAX_PDF_KB + 1) * 1024)
         response = self._post(file=big)
         self.assertEqual(response.status_code, 400)
 
