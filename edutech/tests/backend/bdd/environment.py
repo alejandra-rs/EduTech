@@ -7,12 +7,15 @@ if base_dir not in sys.path:
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.edutech.settings")
 django.setup()
 
-from django.test.utils import setup_test_environment
+from django.test.utils import setup_test_environment, teardown_test_environment
+from django.test.runner import DiscoverRunner
 from django.core.management import call_command
 from rest_framework.test import APIClient
 
 def before_all(context):
     setup_test_environment()
+    context.runner = DiscoverRunner()
+    context.old_db_config = context.runner.setup_databases()
 
 def before_scenario(context, scenario):
     call_command('flush', interactive=False)
@@ -28,5 +31,8 @@ def after_scenario(context, scenario):
             p.stop()
         except RuntimeError:
             pass
-
     context.patches = []
+
+def after_all(context):
+    context.runner.teardown_databases(context.old_db_config)
+    teardown_test_environment()
