@@ -14,7 +14,6 @@ Feature: Subida de documentos PDF
     And el archivo de tipo "PDF" con título "kanban.pdf" aparece en la base de datos
     And el archivo aparece listado en los documentos de la asignatura
 
-
   Scenario: Subir un PDF demasiado grande
     When el estudiante intenta subir un PDF que sobrepasa los 600KB
     Then la respuesta tiene el estado 400

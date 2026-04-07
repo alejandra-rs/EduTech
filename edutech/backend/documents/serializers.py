@@ -75,7 +75,7 @@ class VideoUploadSerializer(serializers.Serializer):
     description = serializers.CharField()
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
-    vid = serializers.URLField()
+    file = serializers.URLField()
 
     def validate_vid(self, video):
        oembed_url = 'https://www.youtube.com/oembed?format=json&url=' + urllib.parse.quote(video)
