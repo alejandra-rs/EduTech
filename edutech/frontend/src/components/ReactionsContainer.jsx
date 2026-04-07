@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/solid';
+import { useCurrentUser } from '@services/useCurrentUser';
 import { ReactionButton } from './ReactionButton';
-import { 
-  getUserId, 
+import {
   initialLike, addLike, removeLike,
   initialDislike, addDislike, removeDislike 
 } from '@services/connections';
 
 const ReactionsContainer = ({ PostId }) => {
-  const [userId, setUserId] = useState(null);
+  const {userData} = useCurrentUser();
 
   const [likes, setLikes] = useState(0);
   const [likeRecordId, setLikeRecordId] = useState(null);
@@ -22,12 +22,9 @@ const ReactionsContainer = ({ PostId }) => {
   useEffect(() => {
     const cargarReacciones = async () => {
       try {
-        const user = await getUserId();
-        setUserId(user);
-        
         const [likeData, dislikeData] = await Promise.all([
-          initialLike(user, PostId),
-          initialDislike(user, PostId)
+          initialLike(userData.id, PostId),
+          initialDislike(userData.id, PostId)
         ]);
         
         setLikes(likeData.count);
@@ -40,7 +37,7 @@ const ReactionsContainer = ({ PostId }) => {
       }
     };
 
-    if (PostId) {
+    if (PostId && userData) {
       cargarReacciones();
     }
   }, [PostId]);

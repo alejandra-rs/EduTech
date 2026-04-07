@@ -105,14 +105,8 @@ export const unsubscribe = async (subscriptionId) => {
 
 export const syncUser = async (instance, dataMSL) => {
   try {
-    const email = dataMSL.username;
-    const response = await fetch(`${BASE_URL}/students?email=${email}`);
-    const data = await response.json();
-
-    if (!response.ok) throw new Error("Error al verificar el usuario");
-    if (response.status === 404 || data.length === 0) {
-      await postUser(instance, dataMSL);
-    }
+    const data = await getUserByEmail(dataMSL.username);
+    if (!data) await postUser(instance, dataMSL);
   } catch (error) {
     console.error("Error en syncUser:", error);
     throw error;
@@ -124,25 +118,26 @@ export const postUser = async (instance, account) => {
     const nameParts = account.name ? account.name.split(" ") : ["Sin", "Nombre"];
     const profilePic = await getUserPhoto(instance, account);
 
-    const newUser = {
-      first_name: nameParts[0],
-      last_name: nameParts.slice(1).join(" "),
-      email: account.username,
-      picture: profilePic
-    };
+    let formData = new FormData();
+    formData.append("first_name", nameParts[0]);
+    formData.append("last_name", nameParts.slice(1).join(" "));
+    formData.append("email", account.username);
+    if (profilePic) {
+      const res = await fetch(profilePic);
+      const blob = await res.blob();
+      formData.append("picture", blob, "profile.jpg");
+    }
 
-    const response = await fetch(`${BASE_URL}/students`, {
+    const response = await fetch(`${BASE_URL}/students/post/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newUser)
+      body: formData
     });
     if (!response.ok) throw new Error("Error al crear el usuario");
     return await response.json();
   } catch (error) {
-    console.error("Error en syncUser:", error);
+    console.error("Error en postUser:", error);
     throw error;
   }
-
 }
 
 export const getUserPhoto = async (instance, account) => {
@@ -191,16 +186,6 @@ export const getUserByEmail = async (email) => {
   }
 };
 
-export const getUserId = async (dataAccount) => {
-  try {
-    const data = await getUserByEmail(dataAccount.username);
-    if (!data) throw new Error("Usuario no encontrado");
-    return data.id;
-  } catch (error) {
-    console.error("Error en getUserId:", error);
-    throw error;
-  }
-};
 export const initialLike = async (userId, postId) => {
   return await fetch(`${BASE_URL}/documents/likes/?user=${userId}&post=${postId}`)
     .then(response => {
