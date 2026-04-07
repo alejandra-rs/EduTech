@@ -7,7 +7,7 @@ import { CommentsSections } from '../components/CommentsSections';
 import VisorVideo from '../components/VisorVideo';
 import VisorPDF from '../components/VisorPDF';
 
-export default function VistaPreviaDocumento() {
+export default function VistaPreviaVideo() {
   const navigate = useNavigate();
   const { id, subjectId, postId } = useParams();
   const [document, setDocument] = useState(null);

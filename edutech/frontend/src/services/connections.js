@@ -39,6 +39,10 @@ export const getCourse = async (courseId) => {
 
 
 
+export const getLinkDescarga = async (postId) => {
+  return `http://localhost:8000/documents/download/pdf/${postId}`;
+}
+
 export const getPosts = async (courseId) => {
   try {
     const response = await fetch(`${BASE_URL}/documents?course=${courseId}`);
