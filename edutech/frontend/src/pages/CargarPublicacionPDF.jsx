@@ -1,23 +1,25 @@
-import VisorPDF from '../components/VisorPDF';
-import Input from '../components/Input';
-import { TitlePage } from '../components/TitlePage'; 
+import VisorPDF from "../components/VisorPDF";
+import Input from "../components/Input";
+import { TitlePage } from "../components/TitlePage";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getUserId, postDocument } from '../services/connections';
+import { postDocument } from '../services/connections';
+import { useCurrentUser } from "@services/useCurrentUser";
 
 export default function CargarPublicacionPDF() {
-  const handleBack = () => window.history.back();
-  const { id, subjectId} = useParams(); 
+  const navigate = useNavigate();
+  const { id, subjectId } = useParams();
   const [selectedFile, setSelectedFile] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  const handleBack = () => navigate(`/${id}/${subjectId}/post`);
+
   const handlePublish = async (e) => {
     e.preventDefault();
-    const idUsuarioActual = await getUserId();
-    postDocument(subjectId, idUsuarioActual, title, description, "PDF", selectedFile);
+    const { userData } = useCurrentUser();
+    postDocument(subjectId, userData.id, title, description, "PDF", selectedFile);
   };
-
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
       <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -36,10 +38,11 @@ export default function CargarPublicacionPDF() {
                 <Input label="Descripción" placeholder="Escribe una breve descripción..." rows={8} onChange={(e) => setDescription(e.target.value)} />
               </div>
               <div className="pt-4">
-                <button 
+                <button
                   type="submit"
                   className="w-full bg-[#2d2d2d] hover:bg-black text-white text-sm py-4 rounded-lg transition-all duration-200 flex justify-center items-center font-bold uppercase tracking-[0.2em] shadow-lg"
-                >Publicar
+                >
+                  Publicar
                 </button>
               </div>
             </form>

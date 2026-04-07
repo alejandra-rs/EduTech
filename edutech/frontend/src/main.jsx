@@ -1,10 +1,16 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { loginConfig } from "@services/authConfig.js";
 import "./index.css";
-import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
-import App from "./prueba";
+import App from "./prueba.jsx";
+
+const msalInstance = new PublicClientApplication(loginConfig);
 
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <App />
+  <MsalProvider instance={msalInstance}>
+      <App />
+  </MsalProvider>
 );

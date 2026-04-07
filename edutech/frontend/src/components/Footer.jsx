@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const NotebookFooter = ({ tabs = [] }) => { 
+const NotebookFooter = ({ tabs = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState(0);
 
-  useEffect(() => {
-    if (!tabs || tabs.length === 0) return;
+  const activeTab = tabs.findIndex((tab) =>
+    location.pathname.endsWith(tab.path),
+  );
 
-    const currentIndex = tabs.findIndex(tab => 
-      location.pathname.endsWith(tab.subPath || tab.path)
-    );
-    if (currentIndex !== -1) setActiveTab(currentIndex);
-  }, [location.pathname, tabs]);
-
-  if (!tabs || tabs.length === 0) return null;
+  const handleTabClick = (tab) => {
+    if (location.pathname.includes("/upload")) {
+      const pathParts = location.pathname.split("/");
+      const uploadIndex = pathParts.indexOf("upload");
+      if (uploadIndex !== -1) {
+        tab.path = [...pathParts.slice(0, uploadIndex + 1), tab.path].join("/");
+      }
+    }
+    navigate(tab.path);
+  };
 
   return (
     <footer className="w-full font-mono pointer-events-none">
@@ -24,17 +26,7 @@ const NotebookFooter = ({ tabs = [] }) => {
           <button
             key={index}
             onClick={() => {
-              setActiveTab(index);
-              if (tab.path) {
-                navigate(tab.path);
-              } else if (tab.subPath) {
-                const pathParts = location.pathname.split('/');
-                const uploadIndex = pathParts.indexOf('upload');
-                if (uploadIndex !== -1) {
-                  const newPath = [...pathParts.slice(0, uploadIndex + 1), tab.subPath].join('/');
-                  navigate(newPath);
-                }
-              }
+              handleTabClick(tab);
             }}
             className={`
               px-6 transition-all duration-300 ease-out pointer-events-auto
@@ -48,8 +40,14 @@ const NotebookFooter = ({ tabs = [] }) => {
         ))}
       </div>
       <div className="bg-white p-3 min-h-[3em] relative shadow-lg pointer-events-auto">
-         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "linear-gradient(#000 1px, transparent 1px)", backgroundSize: "100% 1.5rem" }}></div>
-         <div className="absolute left-10 top-0 bottom-0 w-px bg-red-300 opacity-40"></div>
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: "linear-gradient(#000 1px, transparent 1px)",
+            backgroundSize: "100% 1.5rem",
+          }}
+        ></div>
+        <div className="absolute left-10 top-0 bottom-0 w-px bg-red-300 opacity-40"></div>
       </div>
     </footer>
   );

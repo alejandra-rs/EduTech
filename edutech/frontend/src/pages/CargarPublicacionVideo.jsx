@@ -2,21 +2,25 @@ import VisorVideo from "../components/VisorVideo";
 import Input from "../components/Input";
 import { TitlePage } from '../components/TitlePage';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getUserId, postDocument } from "@services/connections";
+import { useNavigate, useParams } from "react-router-dom";
+import { postDocument } from "@services/connections";
+import { useCurrentUser } from "@services/useCurrentUser";
 
 export default function CargarPublicacionVideo() {
-  const handleBack = () => window.history.back();
-  const { id, subjectId} = useParams(); 
+  const navigate = useNavigate();
+  const { id, subjectId } = useParams();
   const [selectedFile, setSelectedFile] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  const handleBack = () => navigate(`/${id}/${subjectId}/post`);
+
   const handlePublish = async (e) => {
     e.preventDefault();
-    const idUsuarioActual = await getUserId();
-    postDocument(subjectId, idUsuarioActual, title, description, "VID", selectedFile);
+    const { userData } = useCurrentUser();
+    postDocument(subjectId, userData.id, title, description, "VID", selectedFile);
   };
+  
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
       <div className="flex-1 flex flex-col h-full overflow-hidden">

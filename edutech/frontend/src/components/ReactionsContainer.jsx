@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/solid';
+import { useCurrentUser } from '@services/useCurrentUser';
 import { ReactionButton } from './ReactionButton';
 import { 
-  getUserId, 
   getLikes, addLike, removeLike,
   getDislikes, addDislike, removeDislike 
 } from '@services/connections';
 
 const ReactionsContainer = ({ PostId }) => {
-  const [userId, setUserId] = useState(null);
+  const {userData} = useCurrentUser();
 
   const [likes, setLikes] = useState(0);
   const [likeRecordId, setLikeRecordId] = useState(null);
@@ -22,12 +22,9 @@ const ReactionsContainer = ({ PostId }) => {
   useEffect(() => {
     const cargarReacciones = async () => {
       try {
-        const user = await getUserId();
-        setUserId(user);
-        
         const [likeData, dislikeData] = await Promise.all([
-          getLikes(user, PostId),
-          getDislikes(user, PostId)
+          getLikes(userData.id, PostId),
+          getDislikes(userData.id, PostId)
         ]);
         
         setLikes(likeData.count);
@@ -40,13 +37,13 @@ const ReactionsContainer = ({ PostId }) => {
       }
     };
 
-    if (PostId) {
+    if (PostId && userData) {
       cargarReacciones();
     }
-  }, [PostId]);
+  }, [PostId, userData]);
 
   const handleLike = async () => {
-    if (!userId) return;
+    if (!userData.id) return;
 
     const prevLikes = likes;
     const prevLikeId = likeRecordId;
@@ -68,7 +65,7 @@ const ReactionsContainer = ({ PostId }) => {
           await removeDislike(prevDislikeId); 
         }
         
-        const newLike = await addLike(userId, PostId); 
+        const newLike = await addLike(userData.id, PostId); 
         setLikeRecordId(newLike.id);
       }
     } catch (error) {
@@ -80,7 +77,7 @@ const ReactionsContainer = ({ PostId }) => {
   };
 
   const handleDislike = async () => {
-    if (!userId) return;
+    if (!userData.id) return;
 
     const prevDislikes = dislikes;
     const prevDislikeId = dislikeRecordId;
@@ -102,7 +99,7 @@ const ReactionsContainer = ({ PostId }) => {
           await removeLike(prevLikeId); 
         }
         
-        const newDislike = await addDislike(userId, PostId); 
+        const newDislike = await addDislike(userData.id, PostId); 
         setDislikeRecordId(newDislike.id);
       }
     } catch (error) {

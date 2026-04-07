@@ -28,7 +28,7 @@ export const getCourses = async (yearId, semester) => {
 
 export const getCourse = async (courseId) => {
   try {
-    const response = await fetch(`${BASE_URL}/courses/${courseId}/`); 
+    const response = await fetch(`${BASE_URL}/courses/${courseId}/`);
     if (!response.ok) throw new Error("Error al obtener el curso");
     return await response.json();
   } catch (error) {
@@ -91,10 +91,6 @@ export const postDocument = async (courseId, userId, title, description, docType
   }
 };
 
-export const getUserId = async () => {
-  return 1;
-};
-
 export const checkSubscription = async (userId, courseId) => {
   try {
     const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}&course=${courseId}`);
@@ -109,14 +105,14 @@ export const checkSubscription = async (userId, courseId) => {
 
 export const subscribeToCourse = async (userId, courseId) => {
   try {
-    const response = await fetch(`${BASE_URL}/courses/sub/`, { 
+    const response = await fetch(`${BASE_URL}/courses/sub/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: userId, course: courseId })
     });
     if (!response.ok) throw new Error("Error al suscribirse al curso");
-    
-    return await response.json(); 
+
+    return await response.json();
   } catch (error) {
     console.error("Error en subscribeToCourse:", error);
     throw error;
@@ -126,13 +122,97 @@ export const subscribeToCourse = async (userId, courseId) => {
 export const unsubscribe = async (subscriptionId) => {
   try {
     const deleteResponse = await fetch(`${BASE_URL}/courses/sub/${subscriptionId}`, {
-      method: "DELETE" 
+      method: "DELETE"
     });
     if (!deleteResponse.ok) throw new Error("Error al darse de baja del curso");
     return await deleteResponse.json();
   } catch (error) {
     console.error("Error en unsubscribe:", error);
     throw error;
+  }
+};
+
+
+export const syncUser = async (instance, dataMSL) => {
+  try {
+    const data = await getUserByEmail(dataMSL.username);
+    if (!data) await postUser(instance, dataMSL);
+  } catch (error) {
+    console.error("Error en syncUser:", error);
+    throw error;
+  };
+}
+
+export const postUser = async (instance, account) => {
+  try {
+    const nameParts = account.name ? account.name.split(" ") : ["Sin", "Nombre"];
+    const profilePic = await getUserPhoto(instance, account);
+
+    let formData = new FormData();
+    formData.append("first_name", nameParts[0]);
+    formData.append("last_name", nameParts.slice(1).join(" "));
+    formData.append("email", account.username);
+    if (profilePic) {
+      const res = await fetch(profilePic);
+      const blob = await res.blob();
+      formData.append("picture", blob, "profile.jpg");
+    }
+
+    const response = await fetch(`${BASE_URL}/students/post/`, {
+      method: "POST",
+      body: formData
+    });
+    if (!response.ok) throw new Error("Error al crear el usuario");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en postUser:", error);
+    throw error;
+  }
+}
+
+export const getUserPhoto = async (instance, account) => {
+  try {
+    const request = {
+      scopes: ["User.Read"],
+      account: account,
+      authority: `https://login.microsoftonline.com/${account.tenantId || 'common'}`
+    };
+
+    const response = await instance.acquireTokenSilent(request);
+
+    const photoUrl = "https://graph.microsoft.com/v1.0/me/photo/$value";
+    const photoResponse = await fetch(photoUrl, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${response.accessToken}`
+      }
+    });
+
+    if (photoResponse.ok) {
+      const blob = await photoResponse.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error al obtener la foto de Microsoft:", error);
+    return null;
+  }
+};
+
+export const getUserByEmail = async (email) => {
+  try {
+    const response = await fetch(`${BASE_URL}/students?email=${email}`);
+    if (!response.ok) throw new Error("Error al obtener el usuario");
+    const data = await response.json();
+    return data.length > 0 ? data[0] : data;
+  } catch (error) {
+    console.error("Error en getUserByEmail:", error);
+    return null;
   }
 };
 
@@ -155,10 +235,10 @@ export const addLike = async (userId, postId) => {
     const response = await fetch(`${BASE_URL}/documents/likes/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: userId, post: postId }) 
+      body: JSON.stringify({ user: userId, post: postId })
     });
     if (!response.ok) throw new Error("Error al dar like");
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Error en addLike:", error);
     throw error;
@@ -168,7 +248,7 @@ export const addLike = async (userId, postId) => {
 export const removeLike = async (likeId) => {
   try {
     const response = await fetch(`${BASE_URL}/documents/likes/${likeId}`, {
-      method: "DELETE" 
+      method: "DELETE"
     });
     if (!response.ok) throw new Error("Error al quitar el like");
     return await response.json();
@@ -196,20 +276,20 @@ export const addDislike = async (userId, postId) => {
     const response = await fetch(`${BASE_URL}/documents/dislikes/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: userId, post: postId }) 
+      body: JSON.stringify({ user: userId, post: postId })
     });
     if (!response.ok) throw new Error("Error al dar dislike");
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Error en addDislike:", error);
     throw error;
-  }
-};
+  };
+}
 
 export const removeDislike = async (dislikeId) => {
   try {
     const response = await fetch(`${BASE_URL}/documents/dislikes/${dislikeId}`, {
-      method: "DELETE" 
+      method: "DELETE"
     });
     if (!response.ok) throw new Error("Error al quitar el dislike");
     return await response.json();
@@ -227,5 +307,26 @@ export const getComments = async (documentId) => {
   } catch (error) {
     console.error("Error en getComments:", error);
     throw error;
-  } 
+  }
 };
+
+export const postComment = async (userId, postId, message) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/comments/?user=${userId}&post=${postId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: userId,
+        post: postId,
+        message: message,
+        created_at: new Date().toISOString()
+      })
+    });
+    if (!response.ok) throw new Error("Error al agregar el comentario");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en postComment:", error);
+    throw error;
+  }
+};
+
