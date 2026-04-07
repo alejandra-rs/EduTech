@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { postDocument } from "@services/connections";
 import { useCurrentUser } from "@services/useCurrentUser";
+import SuccessToast from "../components/SuccessToast";
 
 export default function CargarPublicacionVideo() {
   const navigate = useNavigate();
@@ -13,16 +14,24 @@ export default function CargarPublicacionVideo() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [published, setPublished] = useState(false);
 
   const handleBack = () => navigate(`/${id}/${subjectId}/post`);
 
   const handlePublish = async (e) => {
     e.preventDefault();
-    postDocument(subjectId, userData.id, title, description, "VID", selectedFile);
+    await postDocument(subjectId, userData.id, title, description, "VID", selectedFile);
+    setPublished(true);
   };
-  
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
+      {published && (
+        <SuccessToast
+          message="¡Publicación exitosa!"
+          onClose={() => navigate(`/${id}/${subjectId}/post`)}
+        />
+      )}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <div className="w-full shrink-0 bg-transparent">
           <TitlePage PageName="Cargar Publicación" onBack={handleBack} />

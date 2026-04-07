@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getDocument } from '@services/connections';
+import { getDocument, getCourse } from '@services/connections';
 import { TitlePage } from '../components/TitlePage';
 import { DocumentInfo } from '../components/DocumentInfo';
 import { CommentsSections } from '../components/CommentsSections';
@@ -11,10 +11,13 @@ export default function VistaPreviaVideo() {
   const navigate = useNavigate();
   const { id, subjectId, postId } = useParams();
   const [document, setDocument] = useState(null);
+  const [courseName, setCourseName] = useState("Asignatura");
 
   useEffect(() => {
     const cargarDocumento = async () => {
       try {
+        const courseData = await getCourse(subjectId);
+        setCourseName(courseData?.name || "Asignatura");
         const data = await getDocument(postId);
         setDocument(data);
       } catch (error) {
@@ -29,7 +32,7 @@ export default function VistaPreviaVideo() {
     <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden font-sans">
       
       <header className="w-full shrink-0 bg-white shadow-sm z-10">
-        <TitlePage PageName={"Asignatura"} onBack={() => navigate(-1)} />
+        <TitlePage PageName={courseName} onBack={() => navigate(-1)} />
       </header>
 
       <main className="flex-1 w-full max-w-[95%] xl:max-w-[85%] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 overflow-hidden">

@@ -50,6 +50,18 @@ export const getPosts = async (courseId) => {
   }
 };
 
+export const getFilteredPosts = async (courseId, title) => {
+  try {
+    const url = `${BASE_URL}/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Error al obtener los posts filtrados");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getFilteredPosts:", error);
+    throw error;
+  }
+}
+
 export const getDocument = async (postId) => {
 
   try {

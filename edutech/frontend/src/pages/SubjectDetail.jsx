@@ -21,6 +21,7 @@ const SubjectDetail = () => {
 };
 
   const [posts, setPosts] = useState([]);
+  const [searchResults, setSearchResults] = useState(null);
   const [activeTabs, setActiveTabs] = useState([]);
 
   const [subjectName, setSubjectName] = useState("Cargando...");
@@ -45,7 +46,7 @@ const SubjectDetail = () => {
   }, [subjectId]);
 
 
-  const filteredPosts = posts.filter((post) => {
+  const filteredPosts = (searchResults ?? posts).filter((post) => {
     if (activeTabs.length === 0) return true;
     const traductorTipos = {
       "PDF": "pdf",
@@ -73,6 +74,8 @@ const SubjectDetail = () => {
         <SearchBar
           placeholder="Buscar en esta asignatura..."
           color="bg-slate-800"
+          courseId={subjectId}
+          onSearch={setSearchResults}
         />
       </div>
 
