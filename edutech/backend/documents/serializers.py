@@ -32,6 +32,7 @@ class PostPreviewSerializer(serializers.ModelSerializer):
     vid = YoutubeVideoSerializer(read_only=True)
     likes = serializers.SerializerMethodField()
     dislikes = serializers.SerializerMethodField()
+    year = serializers.IntegerField(source='course.year.id', read_only=True)
 
     def get_likes(self, obj):
         return obj.like_set.count()
@@ -42,6 +43,7 @@ class PostPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'title', 'post_type', 'created_at',
+                  'course', 'year',
                   'pdf', 'vid', 'views', 'likes', 'dislikes']
 
 
@@ -77,7 +79,7 @@ class VideoUploadSerializer(serializers.Serializer):
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
     file = serializers.URLField()
 
-    def validate_vid(self, video):
+    def validate_file(self, video):
        oembed_url = 'https://www.youtube.com/oembed?format=json&url=' + urllib.parse.quote(video)
        try:
            with urllib.request.urlopen(oembed_url):

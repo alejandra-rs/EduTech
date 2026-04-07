@@ -26,7 +26,7 @@ def step_post_empty_comment(context):
 
 @when('pido los comentarios del post')
 def step_get_comments(context):
-    context.response = context.client.get(f'/documents/comments/{context.post.pk}')
+    context.response = context.client.get(f'/documents/comments/?post={context.post.pk}')
 
 
 

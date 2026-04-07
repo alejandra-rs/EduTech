@@ -181,7 +181,7 @@ class VideoUploadSerializerTest(TestCase):
             'description': 'Desc',
             'course': self.course.pk,
             'student': self.student.pk,
-            'vid': vid,
+            'file': vid,
         }
 
     def _serializer(self, data):
@@ -199,7 +199,7 @@ class VideoUploadSerializerTest(TestCase):
     def test_invalid_youtube_url_fails(self, _):
         s = self._serializer(self._valid_data())
         self.assertFalse(s.is_valid())
-        self.assertIn('vid', s.errors)
+        self.assertIn('file', s.errors)
 
     @patch('documents.serializers.urllib.request.urlopen')
     def test_non_url_vid_rejected_before_oembed(self, mock_open):

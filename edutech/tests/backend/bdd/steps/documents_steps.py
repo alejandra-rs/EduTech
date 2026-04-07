@@ -138,34 +138,34 @@ def step_upload_no_file(context):
 
 @when('el estudiante sube el vídeo de YouTube "{url}"')
 def step_upload_valid_video(context, url):
-    context.response = context.client.post('/documents/upload/video/', {
+    context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Vídeo de prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'vid': url,
-    }, format='json')
+        'file': url,
+    }, format='multipart')
 
 @when('el estudiante intenta subir el vídeo de YouTube "{url}"')
 def step_upload_video(context, url):
-    context.response = context.client.post('/documents/upload/video/', {
+    context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Vídeo de prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'vid': url,
-    }, format='json')
+        'file': url,
+    }, format='multipart')
 
 @when('el estudiante intenta subir un link no válido "{url}"')
 def step_upload_invalid_link(context, url):
-    context.response = context.client.post('/documents/upload/video/', {
+    context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'vid': url,
+        'file': url,
     }, format='json')
 
 @when('el estudiante intenta subir un vídeo sin proporcionar URL')
 def step_upload_without_url(context):
-    context.response = context.client.post('/documents/upload/video/', {
+    context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-    }, format='json')
+    }, format='multipart')
 
 @when('pido el material de la asignatura "{name}"')
 def step_get_course_content(context, name):
@@ -187,11 +187,11 @@ def step_download_pdf_with_id(context, post_id):
 
 @when('el estudiante intenta subir el vídeo de YouTube "{url}" sin título')
 def step_upload_video_without_title(context, url):
-    context.response = context.client.post('/documents/upload/video/', {
+    context.response = context.client.post('/documents/upload/vid/', {
         'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'vid': url,
-    }, format='json')
+        'file': url,
+    }, format='multipart')
 
 
 
@@ -215,7 +215,7 @@ def step_video_post_exists(context):
 
 @then('el error hace referencia al campo "vid"')
 def step_error_in_video(context):
-    assert 'vid' in context.response.data, f'Se esperaba error en "vid", se obtuvo: {context.response.data}'
+    assert 'file' in context.response.data, f'Se esperaba error en "file", se obtuvo: {context.response.data}'
 
 @then('la respuesta contiene {count:d} documentos')
 def step_document_count(context, count):

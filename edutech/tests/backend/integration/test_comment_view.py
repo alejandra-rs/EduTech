@@ -46,12 +46,12 @@ class CommentViewTest(APITestCase):
     def test_list_comments_returns_200_with_correct_count(self):
         Comment.objects.create(user=self.student, post=self.post, message='C1')
         Comment.objects.create(user=self.student, post=self.post, message='C2')
-        response = self.client.get(f'/documents/comments/{self.post.pk}')
+        response = self.client.get(f'/documents/comments/?post={self.post.pk}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
 
     def test_list_comments_empty_returns_empty_list(self):
-        response = self.client.get(f'/documents/comments/{self.post.pk}')
+        response = self.client.get(f'/documents/comments/?post={self.post.pk}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [])
 
@@ -78,7 +78,7 @@ class CommentViewTest(APITestCase):
     def test_comments_ordered_chronologically(self):
         Comment.objects.create(user=self.student, post=self.post, message='First')
         Comment.objects.create(user=self.student, post=self.post, message='Second')
-        response = self.client.get(f'/documents/comments/{self.post.pk}')
+        response = self.client.get(f'/documents/comments/?post={self.post.pk}')
         messages = [c['message'] for c in response.data]
         self.assertEqual(messages, ['First', 'Second'])
 
