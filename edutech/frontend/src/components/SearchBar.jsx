@@ -1,8 +1,24 @@
-import React from 'react';
+import { getFilteredPosts } from '../services/connections';
+import Input from './Input';
+import { useState } from 'react';
 
-const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600" }) => {
+const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600", courseId = null, onSearch }) => {
+
+  const [title, setTitle] = useState("");
+
+  const filterPostsByTitle = async (e) => {
+    e.preventDefault();
+    if (!onSearch) return;
+    if (!title.trim()) {
+      onSearch(null);
+      return;
+    }
+    const results = await getFilteredPosts(courseId, title);
+    onSearch(results);
+  };
+
   return (
-    <form className="max-w-2xl mx-auto" onSubmit={(e) => e.preventDefault()}>   
+    <form className="max-w-2xl mx-auto" onSubmit={filterPostsByTitle}>
       <label htmlFor="search" className="sr-only">Search</label>
       <div className="relative w-full">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -11,20 +27,25 @@ const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600" }) => {
           </svg>
         </div>
 
-        <input 
-          type="search" 
-          id="search" 
-          className="block w-full p-4 ps-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm placeholder:text-gray-400 outline-none transition-all" 
-          placeholder={placeholder} 
-          required 
+        <Input
+          type="search"
+          id="search"
+          className="block w-full p-4 ps-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm placeholder:text-gray-400 outline-none transition-all"
+          placeholder={placeholder}
+          value={title}
+          onChange={e => {
+            setTitle(e.target.value);
+            if (!e.target.value.trim() && onSearch) onSearch(null);
+          }}
+          required
         />
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className={`
-            absolute end-2 top-1/2 -translate-y-1/2 
-            text-white ${color} 
-            font-medium rounded-lg text-xs px-4 py-2 
+            absolute end-2 top-1/2 -translate-y-1/2
+            text-white ${color}
+            font-medium rounded-lg text-xs px-4 py-2
             transition-all duration-200 ease-in-out
             hover:scale-105 hover:opacity-95
             active:scale-90

@@ -17,7 +17,7 @@ const PdfPreview = ({ fileUrl }) => (
 
 const VideoPreview = ({ fileUrl }) => {
   const getEmbedUrl = (url) => {
-    if (!url) return '';
+    if (!url) return null;
     if (url.includes('embed/')) return url;
 
     const videoId = url.split('v=')[1]?.split('&')[0];
@@ -57,41 +57,36 @@ const LabelVideo = () => (
 
 export function PostCard({ title, type, fileUrl, date, onClick, stats }) {
   return (
-    <div 
+    <div
       onClick={onClick}
-      className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full cursor-pointer"
+      className="relative bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full cursor-pointer"
     >
       {type === "PDF" ? <PdfPreview fileUrl={fileUrl} /> : <VideoPreview fileUrl={fileUrl} />}
 
+      <div className="absolute top-2 right-2">
+        {type === "PDF" ? <LabelPDF /> : <LabelVideo />}
+      </div>
+
       <div className="p-5 flex flex-col flex-1">
-        <div className="flex justify-between items-start gap-2 mb-4">
-          <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2">
-            {title}
-          </h5>
-          <span className="text-xs text-gray-500 whitespace-nowrap mt-1">
-            {formatDate(date)}
-          </span>
-        </div>
+        <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2 mb-1">
+          {title}
+        </h5>
+        <span className="text-xs text-gray-400 mb-4">
+          {formatDate(date)}
+        </span>
 
-        <div className="flex justify-between items-end mt-auto">
-          
-          <div>
-            {type === "PDF" ? <LabelPDF /> : <LabelVideo />}
-          </div>
-
-          <div className="flex flex-col gap-1.5 items-end">
-            <ReactionButton type="like" count={stats?.views} >
-            <EyeIcon className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors" />
-            </ReactionButton>
-            <ReactionButton type="like" count={stats?.likes} >
-              <HandThumbUpIcon className="w-4 h-4 text-gray-400" />
-            </ReactionButton>
-            <ReactionButton type="dislike" count={stats?.dislikes} >
-              <HandThumbDownIcon className="w-4 h-4 text-gray-400" />
-            </ReactionButton>
-          </div>
+        <div className="flex items-center justify-between mt-auto">
+          <ReactionButton type="like" count={stats?.views}>
+            <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+          </ReactionButton>
+          <ReactionButton type="like" count={stats?.likes}>
+            <HandThumbUpIcon className="w-4 h-4 text-gray-400" />
+          </ReactionButton>
+          <ReactionButton type="dislike" count={stats?.dislikes}>
+            <HandThumbDownIcon className="w-4 h-4 text-gray-400" />
+          </ReactionButton>
         </div>
       </div>
     </div>
-);
+  );
 }

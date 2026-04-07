@@ -12,7 +12,7 @@ export const getYears = async () => {
 };
 
 export const getCourses = async (yearId, semester) => {
-  let fetchUrl = `${BASE_URL}/courses?year.year_id=${yearId}`;
+  let fetchUrl = `${BASE_URL}/courses?year=${yearId}`;
   if (semester) {
     fetchUrl += `&semester=${semester}`;
   }
@@ -49,6 +49,18 @@ export const getPosts = async (courseId) => {
     throw error;
   }
 };
+
+export const getFilteredPosts = async (courseId, title) => {
+  try {
+    const url = `${BASE_URL}/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""}`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Error al obtener los posts filtrados");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getFilteredPosts:", error);
+    throw error;
+  }
+}
 
 export const getDocument = async (postId) => {
 

@@ -1,6 +1,6 @@
 import VisorPDF from '../components/VisorPDF';
 import { TitlePage } from '../components/TitlePage';
-import { getDocument } from '@services/connections';
+import { getDocument, getCourse } from '@services/connections';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DocumentInfo } from '../components/DocumentInfo';
@@ -11,10 +11,13 @@ export default function VistaPreviaDocumento() {
   const navigate = useNavigate();
   const { id, subjectId, postId } = useParams();
   const [document, setDocument] = useState(null);
+  const [courseName, setCourseName] = useState("Asignatura");
   
   useEffect(() => {
     const cargarDocumento = async () => {
       try {
+        const courseData = await getCourse(subjectId);
+        setCourseName(courseData?.name || "Asignatura");
         const data = await getDocument(postId);
         setDocument(data);
       } catch (error) {
@@ -30,7 +33,7 @@ export default function VistaPreviaDocumento() {
     <div className="flex h-screen w-full bg-white font-sans">
       <div className="flex-1 flex flex-col h-full bg-transparent">
         <div className="w-full shrink-0">
-          <TitlePage PageName={"asignatura"} onBack={() => navigate(-1)} />
+          <TitlePage PageName={courseName} onBack={() => navigate(-1)} />
         </div>
         <div className="flex-1 flex flex-col lg:flex-row w-full h-[calc(100vh-100px)]">
           <div className="w-full h-[60vh] lg:h-full lg:w-[30%] xl:w-[35%] flex items-center justify-center p-2 lg:p-6 shrink-0 bg-transparent overflow-hidden">

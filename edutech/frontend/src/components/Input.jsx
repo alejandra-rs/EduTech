@@ -6,6 +6,8 @@ export default function Input({
   onChange,
   type = "text",
   required = false,
+  className,
+  id,
 }) {
   const baseStyle =
     "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all bg-white text-gray-800";
@@ -29,12 +31,13 @@ export default function Input({
         ></textarea>
       ) : (
         <input
+          id={id}
           type={type}
           value={type === "file" ? undefined : value}
           onChange={onChange}
           required={required}
           placeholder={placeholder}
-          className={type === "file" ? fileStyle : baseStyle}
+          className={className ?? (type === "file" ? fileStyle : baseStyle)}
         />
       )}
     </div>
