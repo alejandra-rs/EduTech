@@ -10,9 +10,7 @@ const msalInstance = new PublicClientApplication(loginConfig);
 
 const root = createRoot(document.getElementById("root"));
 root.render(
-  <StrictMode>
-    <MsalProvider instance={msalInstance}>
+  <MsalProvider instance={msalInstance}>
       <App />
-    </MsalProvider>
-  </StrictMode>,
+  </MsalProvider>
 );

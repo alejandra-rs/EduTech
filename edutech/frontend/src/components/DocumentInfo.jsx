@@ -3,7 +3,7 @@ import Descargar from '../components/Descargar';
 import Views from '../components/Views';
 import ReactionsContainer from '../components/ReactionsContainer.jsx';
 
-export  function DocumentInfo({document}) {
+export function DocumentInfo({document}) {
     return <section className="flex flex-col bg-transparent">
       <div className="flex justify-between">
       <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">{document?.title}</h1>

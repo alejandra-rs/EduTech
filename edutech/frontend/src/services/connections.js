@@ -66,7 +66,7 @@ export const checkSubscription = async (userId, courseId) => {
     const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}&course=${courseId}`);
     if (!response.ok) throw new Error("Error al verificar la suscripción");
     const data = await response.json();
-    return data.length > 0 ? data[0].id : null;
+    return data.id ? data.id : null; 
   } catch (error) {
     console.error("Error en checkSubscription:", error);
     throw error;
@@ -186,21 +186,23 @@ export const getUserByEmail = async (email) => {
   }
 };
 
-export const initialLike = async (userId, postId) => {
+export const getLikes = async (userId, postId) => {
   return await fetch(`${BASE_URL}/documents/likes/?user=${userId}&post=${postId}`)
     .then(response => {
       if (!response.ok) throw new Error("Error al obtener el estado del like");
       return response.json();
     })
     .catch(error => {
-      console.error("Error en initialLike:", error);
+      console.error("Error en getLikes:", error);
       throw error;
     });
 };
 
 export const addLike = async (userId, postId) => {
   try {
-    const response = await fetch(`${BASE_URL}/documents/likes`, {
+    const dislikes = await getDislikes(userId, postId)
+    if (dislikes.id !== -1) await removeDislike(dislikes.id);
+    const response = await fetch(`${BASE_URL}/documents/likes/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: userId, post: postId })
@@ -225,21 +227,23 @@ export const removeLike = async (likeId) => {
     throw error;
   }
 };
-export const initialDislike = async (userId, postId) => {
+export const getDislikes = async (userId, postId) => {
   return await fetch(`${BASE_URL}/documents/dislikes/?user=${userId}&post=${postId}`)
     .then(response => {
       if (!response.ok) throw new Error("Error al obtener el estado del dislike");
       return response.json();
     })
     .catch(error => {
-      console.error("Error en initialDisLike:", error);
+      console.error("Error en getDislikes:", error);
       throw error;
     });
 };
 
 export const addDislike = async (userId, postId) => {
   try {
-    const response = await fetch(`${BASE_URL}/documents/dislikes`, {
+    const likes = await getLikes(userId, postId)
+    if (likes.id !== -1) await removeLike(likes.id);
+    const response = await fetch(`${BASE_URL}/documents/dislikes/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: userId, post: postId })

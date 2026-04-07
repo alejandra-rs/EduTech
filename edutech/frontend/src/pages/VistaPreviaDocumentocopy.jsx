@@ -34,9 +34,8 @@ export default function VistaPreviaDocumento() {
 
       <main className="flex-1 w-full max-w-[95%] xl:max-w-[85%] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 overflow-hidden">
         
-        {/* COLUMNA IZQUIERDA: Contenido Principal */}
         <div className="flex-[7] flex flex-col overflow-y-auto custom-scrollbar pb-10">
-          <div className="w-full aspect-video bg-black rounded-3xl overflow-hidden shadow-2xl mb-6">
+          <div className="w-full aspect-video bg-black rounded-3xl  shadow-2xl mb-6">
             {document?.post_type === 'vid' || document?.vid ? (
               <VisorVideo videoUrl={document?.vid?.vid} />
             ) : (

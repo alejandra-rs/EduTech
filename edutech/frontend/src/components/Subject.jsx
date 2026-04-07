@@ -17,7 +17,7 @@ export const WidgetSubject = ({ subjectName, subjectId, onNavigate}) => {
             {subjectName}
           </h3>
           <span className="text-xs font-medium italic text-gray-500">
-            {subjectName.split(" ").map((word) => word.charAt(0).toUpperCase())}
+            {subjectName.split(" ").map((word) => word.charAt(0) === word.charAt(0).toUpperCase() ? word.charAt(0) : "").join("")}
           </span>
         </div>
         <BellButton subjectId={subjectId} />
