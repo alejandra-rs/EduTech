@@ -47,7 +47,7 @@ const NotebookFooter = ({ tabs = [] }) => {
           </button>
         ))}
       </div>
-      <div className="bg-white p-8 min-h-[7em] relative shadow-lg pointer-events-auto">
+      <div className="bg-white p-3 min-h-[3em] relative shadow-lg pointer-events-auto">
          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "linear-gradient(#000 1px, transparent 1px)", backgroundSize: "100% 1.5rem" }}></div>
          <div className="absolute left-10 top-0 bottom-0 w-px bg-red-300 opacity-40"></div>
       </div>

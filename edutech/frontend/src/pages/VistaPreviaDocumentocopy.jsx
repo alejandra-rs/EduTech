@@ -7,7 +7,7 @@ import { CommentsSections } from '../components/CommentsSections';
 import VisorVideo from '../components/VisorVideo';
 import VisorPDF from '../components/VisorPDF';
 
-export default function VistaPreviaDocumento() {
+export default function VistaPreviaVideo() {
   const navigate = useNavigate();
   const { id, subjectId, postId } = useParams();
   const [document, setDocument] = useState(null);
@@ -48,9 +48,7 @@ export default function VistaPreviaDocumento() {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: Comentarios */}
         <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
-          {/* Al ponerlo aquí, el max-h-[70vh] del componente hará su magia */}
           <CommentsSections documentId={postId} />
         </aside>
 
