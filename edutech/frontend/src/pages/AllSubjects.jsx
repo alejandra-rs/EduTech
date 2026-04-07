@@ -8,7 +8,8 @@ const Subject = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col w-full overflow-y-auto">
+    <div className="h-[calc(100vh-2px)]"> 
+    <div className="flex flex-col   w-full overflow-y-auto">
       <TitlePage 
         PageName={`${id}º Curso`} 
         backLabel="Cursos"       
@@ -26,9 +27,10 @@ const Subject = () => {
           title="2º Cuatrimestre"
           navigate={navigate}
           yearId={id}
-        />
+          />
       </div>
     </div>
+          </div>
   );
 };
 export default Subject;

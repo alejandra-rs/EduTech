@@ -37,11 +37,7 @@ export const getCourse = async (courseId) => {
   }
 }
 
-
-
-export const getLinkDescarga = async (postId) => {
-  return `http://localhost:8000/documents/download/pdf/${postId}`;
-}
+export const getLinkDescarga = (postId) => { return `${BASE_URL}/documents/download/pdf/${postId}` };
 
 export const getPosts = async (courseId) => {
   try {
@@ -70,17 +66,15 @@ export const postDocument = async (courseId, userId, title, description, docType
   try {
     const formData = new FormData();
   
-    formData.append("course_id", courseId);
-    formData.append("user_id", userId);
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("post_type", docType);
+    formData.append("course", courseId);
+    formData.append("student", userId);
     formData.append("file", file);
   
-    const response = await fetch(`${BASE_URL}/documents/`, {
+    const response = await fetch(`${BASE_URL}/documents/upload/${docType.toLowerCase()}/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
+      body: formData
     });
     if (!response.ok) throw new Error("Error al publicar el documento");
     return await response.json();

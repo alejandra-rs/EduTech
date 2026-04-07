@@ -36,7 +36,7 @@ export default function Layout({ accounts, instance, children }) {
   }, [accounts]);
 
   return (
-    <div className="flex h-screen w-full  bg-transparent overflow-hidden">
+    <div className="flex flex-row h-screen w-full bg-transparent vh100">
       <Header
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -45,19 +45,14 @@ export default function Layout({ accounts, instance, children }) {
         instance={instance}
         accountsMsal={accounts}
       />
-      <div className="flex flex-1 flex-col relative overflow-hidden">
-        <main
-          className={`flex-1overflow-y-auto custom-scrollbar 
-             transition-all duration-300`}
-        >
-          <div className="min-h-full flex flex-col">
-            <div className="flex-1 bg-white">{children}</div>
-            <div className="sticky bottom-0 left-0 w-full z-10">
-              <NotebookFooter tabs={currentTabs} />
-            </div>
-          </div>
-        </main>
-      </div>
+      <main className="flex-1 relative h-screen bg-transparent transition-all duration-300">
+        <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] mb-20 [scrollbar-width:none] bg-white ">
+          {children}
+        </div>
+        <div className="">
+          <NotebookFooter tabs={currentTabs} />
+        </div>
+      </main>
     </div>
   );
 }

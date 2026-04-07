@@ -41,9 +41,7 @@ const SubjectDetail = () => {
       }
     };
 
-    if (subjectId) {
-      cargarDatos();
-    }
+    if (subjectId) cargarDatos();
   }, [subjectId]);
 
 

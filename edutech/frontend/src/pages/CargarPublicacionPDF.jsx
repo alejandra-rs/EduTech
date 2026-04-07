@@ -7,6 +7,7 @@ import { postDocument } from '../services/connections';
 import { useCurrentUser } from "@services/useCurrentUser";
 
 export default function CargarPublicacionPDF() {
+  const { userData } = useCurrentUser();
   const navigate = useNavigate();
   const { id, subjectId } = useParams();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -17,7 +18,6 @@ export default function CargarPublicacionPDF() {
 
   const handlePublish = async (e) => {
     e.preventDefault();
-    const { userData } = useCurrentUser();
     postDocument(subjectId, userData.id, title, description, "PDF", selectedFile);
   };
   return (

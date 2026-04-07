@@ -8,6 +8,7 @@ import { useCurrentUser } from "@services/useCurrentUser";
 
 export default function CargarPublicacionVideo() {
   const navigate = useNavigate();
+  const { userData } = useCurrentUser();
   const { id, subjectId } = useParams();
   const [selectedFile, setSelectedFile] = useState(null);
   const [title, setTitle] = useState("");
@@ -17,7 +18,6 @@ export default function CargarPublicacionVideo() {
 
   const handlePublish = async (e) => {
     e.preventDefault();
-    const { userData } = useCurrentUser();
     postDocument(subjectId, userData.id, title, description, "VID", selectedFile);
   };
   

@@ -41,6 +41,7 @@ export default function Header({
           </h2>
         </div>
       </div>
+      
 
       <nav
         className={`flex flex-col space-y-4 w-full overflow-hidden transition-all duration-300 
