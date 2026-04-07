@@ -49,7 +49,7 @@ export default function Layout({ accounts, instance, children }) {
         <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] mb-20 [scrollbar-width:none] bg-white ">
           {children}
         </div>
-        <div className="">
+        <div className="absolute bottom-0 left-0 w-full">
           <NotebookFooter tabs={currentTabs} />
         </div>
       </main>
