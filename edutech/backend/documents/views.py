@@ -76,7 +76,7 @@ class VideoUploadView(generics.GenericAPIView):
 
         YoutubeVideo.objects.create(
             post=post,
-            vid=serializer.validated_data['vid'],
+            vid=serializer.validated_data['file'],
         )
 
         return Response(PostSerializer(post, context={'request': request}).data, status=status.HTTP_201_CREATED)
@@ -115,8 +115,8 @@ class PDFDownloadView(views.APIView):
 class CommentView(views.APIView):
     serializer_class = CommentListSerializer
 
-    def get(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+    def get(self, request):
+        post = get_object_or_404(Post, pk=request.query_params.get('post'))
         comments = Comment.objects.filter(post=post)
         return Response(CommentListSerializer(comments, many=True).data)
 

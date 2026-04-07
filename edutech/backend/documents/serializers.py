@@ -30,11 +30,19 @@ class CommentListSerializer(serializers.ModelSerializer):
 class PostPreviewSerializer(serializers.ModelSerializer):
     pdf = PDFAttachmentSerializer(read_only=True)
     vid = YoutubeVideoSerializer(read_only=True)
+    likes = serializers.SerializerMethodField()
+    dislikes = serializers.SerializerMethodField()
+
+    def get_likes(self, obj):
+        return obj.like_set.count()
+
+    def get_dislikes(self, obj):
+        return obj.dislike_set.count()
 
     class Meta:
         model = Post
         fields = ['id', 'title', 'post_type', 'created_at',
-                  'pdf', 'vid', 'views']
+                  'pdf', 'vid', 'views', 'likes', 'dislikes']
 
 
 class PostSerializer(serializers.ModelSerializer):
