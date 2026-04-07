@@ -12,7 +12,7 @@ export const getYears = async () => {
 };
 
 export const getCourses = async (yearId, semester) => {
-  let fetchUrl = `${BASE_URL}/courses?year.year_id=${yearId}`;
+  let fetchUrl = `${BASE_URL}/courses?year=${yearId}`;
   if (semester) {
     fetchUrl += `&semester=${semester}`;
   }
@@ -130,7 +130,9 @@ export const unsubscribe = async (subscriptionId) => {
 export const syncUser = async (instance, dataMSL) => {
   try {
     const data = await getUserByEmail(dataMSL.username);
-    if (!data) await postUser(instance, dataMSL);
+    if (!data || data.length === 0) {
+      await postUser(instance, dataMSL);
+    }
   } catch (error) {
     console.error("Error en syncUser:", error);
     throw error;
