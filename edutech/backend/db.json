@@ -1,0 +1,260 @@
+{
+  "years": [
+    { "year": 1 },
+    { "year": 2 },
+    { "year": 3 },
+    { "year": 4 }
+  ],
+  "students": [
+    {
+      "first_name": "Lucía",
+      "last_name": "García",
+      "email": "lucia@edutech.com",
+      "password": "pass_lucia_123",
+      "picture": ""
+    },
+    {
+      "first_name": "Marcos",
+      "last_name": "Rodríguez",
+      "email": "marcos@edutech.com",
+      "password": "pass_marcos_123",
+      "picture": ""
+    },
+    {
+      "first_name": "Elena",
+      "last_name": "Martínez",
+      "email": "elena@edutech.com",
+      "password": "pass_elena_123",
+      "picture": ""
+    },
+    {
+      "first_name": "Javier",
+      "last_name": "López",
+      "email": "javier@edutech.com",
+      "password": "pass_javier_123",
+      "picture": ""
+    },
+    {
+      "first_name": "Carmen",
+      "last_name": "Sánchez",
+      "email": "carmen@edutech.com",
+      "password": "pass_carmen_123",
+      "picture": ""
+    },
+    {
+      "first_name": "Alejandro",
+      "last_name": "Gómez",
+      "email": "alejandro@edutech.com",
+      "password": "pass_alex_123",
+      "picture": ""
+    }
+  ],
+  "courses": [
+    { "name": "Álgebra y Geometría", "year": 1, "semester": 1 },
+    { "name": "Matemática Discreta", "year": 1, "semester": 1 },
+    { "name": "Fundamentos de Programación I", "year": 1, "semester": 1 },
+    { "name": "Fundamentos de Computadores", "year": 1, "semester": 1 },
+    { "name": "Habilidades Profesionales para Ingenieros", "year": 1, "semester": 1 },
+    { "name": "Fundamentos de Programación II", "year": 1, "semester": 2 },
+    { "name": "Matemáticas para la Computación", "year": 1, "semester": 2 },
+    { "name": "Fundamentos Físicos de la Informática", "year": 1, "semester": 2 },
+    { "name": "Estructura de Computadores", "year": 1, "semester": 2 },
+    { "name": "La Empresa y sus Procesos", "year": 1, "semester": 2 },
+    
+    { "name": "Métodos Estadísticos", "year": 2, "semester": 1 },
+    { "name": "Algoritmos y Programación", "year": 2, "semester": 1 },
+    { "name": "Tecnologías de Programación", "year": 2, "semester": 1 },
+    { "name": "Periféricos e Interfaces", "year": 2, "semester": 1 },
+    { "name": "Ingeniería del Software I", "year": 2, "semester": 1 },
+    { "name": "Métodos Numéricos", "year": 2, "semester": 2 },
+    { "name": "Estructuras de Datos y Programación", "year": 2, "semester": 2 },
+    { "name": "Bases de Datos I", "year": 2, "semester": 2 },
+    { "name": "Arquitectura de Computadores", "year": 2, "semester": 2 },
+    { "name": "Fundamentos de los Sistemas Operativos", "year": 2, "semester": 2 },
+
+    { "name": "Redes de Computadores", "year": 3, "semester": 1 },
+    { "name": "Administración de Sistemas Operativos", "year": 3, "semester": 1 },
+    { "name": "Bases de Datos II", "year": 3, "semester": 1 },
+    { "name": "Fundamentos de los Sistemas Inteligentes", "year": 3, "semester": 1 },
+    { "name": "Ingeniería del Software II", "year": 3, "semester": 1 },
+    { "name": "Administración de Servicios en Red", "year": 3, "semester": 2 },
+    { "name": "Virtualización y Procesamiento Distribuido", "year": 3, "semester": 2 },
+    { "name": "Programación Web y Móvil", "year": 3, "semester": 2 },
+    { "name": "Producción de Software", "year": 3, "semester": 2 },
+
+    { "name": "Informática Gráfica", "year": 4, "semester": 1 },
+    { "name": "Sistemas Robóticos Autónomos", "year": 4, "semester": 1 },
+    { "name": "Visión por Computador", "year": 4, "semester": 1 },
+    { "name": "Programación de Aplicaciones Móviles Nativas", "year": 4, "semester": 1 },
+    { "name": "Computación en la Nube", "year": 4, "semester": 1 },
+    { "name": "Internet de las Cosas", "year": 4, "semester": 1 },
+    { "name": "Emprendimiento y Creación de Empresas de Base Tecnológica", "year": 4, "semester": 2 },
+    { "name": "Los Sistemas de Información en la Organización", "year": 4, "semester": 2 },
+    { "name": "Seguridad de la Información", "year": 4, "semester": 2 },
+    { "name": "Proyectos de Ingeniería y Gestión del Software", "year": 4, "semester": 2 },
+    { "name": "Prácticas Externas", "year": 4, "semester": 2 },
+    { "name": "Trabajo Fin de Grado", "year": 4, "semester": 2 }
+  ],
+  "subscriptions": [
+    { "user_email": "lucia@edutech.com", "course_name": "Álgebra y Geometría" },
+    { "user_email": "lucia@edutech.com", "course_name": "Matemática Discreta" },
+    { "user_email": "lucia@edutech.com", "course_name": "Fundamentos de Programación I" },
+    { "user_email": "lucia@edutech.com", "course_name": "Fundamentos de Computadores" },
+    { "user_email": "lucia@edutech.com", "course_name": "Habilidades Profesionales para Ingenieros" },
+    { "user_email": "lucia@edutech.com", "course_name": "Fundamentos de Programación II" },
+
+    { "user_email": "marcos@edutech.com", "course_name": "Estructura de Computadores" },
+    { "user_email": "marcos@edutech.com", "course_name": "La Empresa y sus Procesos" },
+    { "user_email": "marcos@edutech.com", "course_name": "Métodos Estadísticos" },
+    { "user_email": "marcos@edutech.com", "course_name": "Algoritmos y Programación" },
+    { "user_email": "marcos@edutech.com", "course_name": "Tecnologías de Programación" },
+    { "user_email": "marcos@edutech.com", "course_name": "Periféricos e Interfaces" },
+
+    { "user_email": "elena@edutech.com", "course_name": "Ingeniería del Software I" },
+    { "user_email": "elena@edutech.com", "course_name": "Métodos Numéricos" },
+    { "user_email": "elena@edutech.com", "course_name": "Estructuras de Datos y Programación" },
+    { "user_email": "elena@edutech.com", "course_name": "Bases de Datos I" },
+    { "user_email": "elena@edutech.com", "course_name": "Arquitectura de Computadores" },
+    { "user_email": "elena@edutech.com", "course_name": "Fundamentos de los Sistemas Operativos" },
+
+    { "user_email": "javier@edutech.com", "course_name": "Redes de Computadores" },
+    { "user_email": "javier@edutech.com", "course_name": "Administración de Sistemas Operativos" },
+    { "user_email": "javier@edutech.com", "course_name": "Bases de Datos II" },
+    { "user_email": "javier@edutech.com", "course_name": "Fundamentos de los Sistemas Inteligentes" },
+    { "user_email": "javier@edutech.com", "course_name": "Ingeniería del Software II" },
+    { "user_email": "javier@edutech.com", "course_name": "Administración de Servicios en Red" },
+
+    { "user_email": "carmen@edutech.com", "course_name": "Virtualización y Procesamiento Distribuido" },
+    { "user_email": "carmen@edutech.com", "course_name": "Programación Web y Móvil" },
+    { "user_email": "carmen@edutech.com", "course_name": "Producción de Software" },
+    { "user_email": "carmen@edutech.com", "course_name": "Informática Gráfica" },
+    { "user_email": "carmen@edutech.com", "course_name": "Sistemas Robóticos Autónomos" },
+    { "user_email": "carmen@edutech.com", "course_name": "Visión por Computador" },
+
+    { "user_email": "alejandro@edutech.com", "course_name": "Programación de Aplicaciones Móviles Nativas" },
+    { "user_email": "alejandro@edutech.com", "course_name": "Computación en la Nube" },
+    { "user_email": "alejandro@edutech.com", "course_name": "Internet de las Cosas" },
+    { "user_email": "alejandro@edutech.com", "course_name": "Emprendimiento y Creación de Empresas de Base Tecnológica" },
+    { "user_email": "alejandro@edutech.com", "course_name": "Los Sistemas de Información en la Organización" },
+    { "user_email": "alejandro@edutech.com", "course_name": "Seguridad de la Información" }
+  ],
+  "posts": [{
+      "id": 1,
+      "course_name": "Álgebra y Geometría",
+      "student_email": "lucia@edutech.com",
+      "title": "Apuntes completos de Álgebra Lineal",
+      "description": "Resumen de matrices, determinantes y sistemas de ecuaciones lineales.",
+      "post_type": "PDF",
+      "content_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
+    {
+      "id": 2,
+      "course_name": "Álgebra y Geometría",
+      "student_email": "marcos@edutech.com",
+      "title": "Videotutorial: Espacios Vectoriales",
+      "description": "Explicación visual de subespacios y bases.",
+      "post_type": "VID",
+      "content_url": "https://www.youtube.com/watch?v=UQUhqv5XKFY"
+    },
+    {
+      "id": 3,
+      "course_name": "Fundamentos de Programación I",
+      "student_email": "elena@edutech.com",
+      "title": "Guía de Sintaxis en C++",
+      "description": "Cheat sheet con tipos de datos, bucles y condicionales.",
+      "post_type": "PDF",
+      "content_url": "https://pdfobject.com/pdf/sample.pdf"
+    },
+    {
+      "id": 4,
+      "course_name": "Fundamentos de Programación I",
+      "student_email": "javier@edutech.com",
+      "title": "Curso de Introducción a la Lógica",
+      "description": "Conceptos básicos para empezar a programar.",
+      "post_type": "VID",
+      "content_url": "https://www.youtube.com/watch?v=UQUhqv5XKFY"
+    },
+    {
+      "id": 5,
+      "course_name": "Matemática Discreta",
+      "student_email": "carmen@edutech.com",
+      "title": "Teoría de Grafos y Árboles",
+      "description": "Apuntes detallados sobre caminos, ciclos y algoritmos de búsqueda.",
+      "post_type": "PDF",
+      "content_url": "https://www.orimi.com/pdf-test.pdf"
+    },
+    {
+      "id": 6,
+      "course_name": "Matemática Discreta",
+      "student_email": "alejandro@edutech.com",
+      "title": "Explicación: Lógica de Predicados",
+      "description": "Cómo funcionan los cuantificadores universal y existencial.",
+      "post_type": "VID",
+      "content_url": "https://www.youtube.com/watch?v=UQUhqv5XKFY"
+    }
+  ],
+  "likes": [
+    { "post_id": 1, "student_email": "marcos@edutech.com" },
+    { "post_id": 1, "student_email": "elena@edutech.com" },
+    { "post_id": 2, "student_email": "lucia@edutech.com" },
+    { "post_id": 3, "student_email": "javier@edutech.com" },
+    { "post_id": 3, "student_email": "carmen@edutech.com" },
+    { "post_id": 3, "student_email": "alejandro@edutech.com" },
+    { "post_id": 4, "student_email": "elena@edutech.com" },
+    { "post_id": 5, "student_email": "lucia@edutech.com" },
+    { "post_id": 5, "student_email": "marcos@edutech.com" },
+    { "post_id": 6, "student_email": "javier@edutech.com" }
+  ],
+  "dislikes": [
+    { "post_id": 2, "student_email": "javier@edutech.com" },
+    { "post_id": 4, "student_email": "marcos@edutech.com" },
+    { "post_id": 6, "student_email": "carmen@edutech.com" }
+  ],
+  "comments": [
+    { "post_id": 1, "student_email": "marcos@edutech.com", "message": "Me han salvado el parcial, ¡gracias!" },
+    { "post_id": 1, "student_email": "elena@edutech.com", "message": "Están muy bien estructurados, pero en la página 45 hay un pequeño error en un determinante." },
+    { "post_id": 1, "student_email": "lucia@edutech.com", "message": "Cierto, Elena. Lo corregiré en la próxima versión." },
+    { "post_id": 1, "student_email": "javier@edutech.com", "message": "¿Vas a subir la segunda parte del temario?" },
+    { "post_id": 1, "student_email": "carmen@edutech.com", "message": "Impresionante trabajo, la letra es super clara." },
+    { "post_id": 1, "student_email": "alejandro@edutech.com", "message": "Yo los he impreso y me vienen genial para clase." },
+    { "post_id": 1, "student_email": "marcos@edutech.com", "message": "Vuelvo a comentar: hoy he sacado un 8 estudiando de aquí." },
+    
+    { "post_id": 2, "student_email": "lucia@edutech.com", "message": "El vídeo es bueno, pero el audio se escucha un poco bajo." },
+    { "post_id": 2, "student_email": "javier@edutech.com", "message": "A mí me ha parecido un poco lioso en la parte de las bases." },
+    { "post_id": 2, "student_email": "elena@edutech.com", "message": "Si pones los subtítulos se sigue mucho mejor." },
+    { "post_id": 2, "student_email": "carmen@edutech.com", "message": "Gracias por compartirlo, no encontraba nada sobre este tema." },
+    { "post_id": 2, "student_email": "alejandro@edutech.com", "message": "¿Sabéis si este tema entra seguro en el examen?" },
+    { "post_id": 2, "student_email": "marcos@edutech.com", "message": "Sí, el profesor lo confirmó el martes pasado." },
+    
+    { "post_id": 3, "student_email": "javier@edutech.com", "message": "Esta cheat sheet es oro puro para las prácticas." },
+    { "post_id": 3, "student_email": "carmen@edutech.com", "message": "Me lo pongo de fondo de pantalla ahora mismo." },
+    { "post_id": 3, "student_email": "alejandro@edutech.com", "message": "Ojalá lo hubiera tenido en la primera práctica." },
+    { "post_id": 3, "student_email": "lucia@edutech.com", "message": "¿Tenéis algo parecido pero para Python?" },
+    { "post_id": 3, "student_email": "marcos@edutech.com", "message": "Creo que vi uno de Python en el tablón de la asignatura de 2º." },
+    { "post_id": 3, "student_email": "elena@edutech.com", "message": "De nada chicos, iré subiendo más cosas si encuentro." },
+    { "post_id": 3, "student_email": "javier@edutech.com", "message": "Por favor, todo lo que tengas de C++ es bienvenido." },
+    { "post_id": 3, "student_email": "carmen@edutech.com", "message": "¡Ya te digo!" },
+    
+    { "post_id": 4, "student_email": "elena@edutech.com", "message": "Muy didáctico, ideal para empezar de cero." },
+    { "post_id": 4, "student_email": "marcos@edutech.com", "message": "Me parece que va un poco lento, lo he puesto a 1.5x." },
+    { "post_id": 4, "student_email": "lucia@edutech.com", "message": "A mí me ha venido bien ese ritmo para ir tomando apuntes." },
+    { "post_id": 4, "student_email": "alejandro@edutech.com", "message": "El ejercicio del final me ha costado pillarlo." },
+    { "post_id": 4, "student_email": "carmen@edutech.com", "message": "¿Alguien ha podido resolver el reto que propone?" },
+    { "post_id": 4, "student_email": "javier@edutech.com", "message": "Sí, tienes que usar un bucle anidado." },
+    
+    { "post_id": 5, "student_email": "lucia@edutech.com", "message": "Discreta se me estaba atragantando, pero estos apuntes son la clave." },
+    { "post_id": 5, "student_email": "marcos@edutech.com", "message": "El teorema de Euler está explicadísimo, genial." },
+    { "post_id": 5, "student_email": "elena@edutech.com", "message": "¿Alguien tiene exámenes resueltos de años anteriores?" },
+    { "post_id": 5, "student_email": "javier@edutech.com", "message": "En reprografía suelen tener carpetas con exámenes." },
+    { "post_id": 5, "student_email": "alejandro@edutech.com", "message": "Me los guardo para repasar el finde." },
+    { "post_id": 5, "student_email": "carmen@edutech.com", "message": "Espero que no pregunten demostraciones raras." },
+    { "post_id": 5, "student_email": "lucia@edutech.com", "message": "Con que nos pongan un Dijkstra me conformo." },
+    
+    { "post_id": 6, "student_email": "javier@edutech.com", "message": "¡Buena explicación! Ya entiendo la diferencia entre los cuantificadores." },
+    { "post_id": 6, "student_email": "carmen@edutech.com", "message": "El profesor de teoría lo explicó de una forma mucho más compleja." },
+    { "post_id": 6, "student_email": "lucia@edutech.com", "message": "Totalmente, en clase me perdí a los 5 minutos." },
+    { "post_id": 6, "student_email": "marcos@edutech.com", "message": "¿Podrías subir más ejemplos de formalización?" },
+    { "post_id": 6, "student_email": "elena@edutech.com", "message": "Yo también necesito más ejercicios prácticos." },
+    { "post_id": 6, "student_email": "alejandro@edutech.com", "message": "Dejaré un enlace a una web con ejercicios resueltos luego." }
+  ]
+}
