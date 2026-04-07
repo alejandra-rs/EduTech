@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import Courses from "./pages/AllCourses";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
 import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
+import VistaPreviaVideo from "./pages/VistaPreviaDocumentocopy";
 import SubjectDetail from "./pages/SubjectDetail";
 import CargarPublicacionPDF from "./pages/CargarPublicacionPDF";
 import Subject from "./pages/AllSubjects";

@@ -40,10 +40,10 @@ const ReactionsContainer = ({ PostId }) => {
     if (PostId && userData) {
       cargarReacciones();
     }
-  }, [PostId]);
+  }, [PostId, userData]);
 
   const handleLike = async () => {
-    if (!userId) return;
+    if (!userData.id) return;
 
     const prevLikes = likes;
     const prevLikeId = likeRecordId;
@@ -65,7 +65,7 @@ const ReactionsContainer = ({ PostId }) => {
           await removeDislike(prevDislikeId); 
         }
         
-        const newLike = await addLike(userId, PostId); 
+        const newLike = await addLike(userData.id, PostId); 
         setLikeRecordId(newLike.id);
       }
     } catch (error) {
@@ -77,7 +77,7 @@ const ReactionsContainer = ({ PostId }) => {
   };
 
   const handleDislike = async () => {
-    if (!userId) return;
+    if (!userData.id) return;
 
     const prevDislikes = dislikes;
     const prevDislikeId = dislikeRecordId;
@@ -99,7 +99,7 @@ const ReactionsContainer = ({ PostId }) => {
           await removeLike(prevLikeId); 
         }
         
-        const newDislike = await addDislike(userId, PostId); 
+        const newDislike = await addDislike(userData.id, PostId); 
         setDislikeRecordId(newDislike.id);
       }
     } catch (error) {

@@ -7,13 +7,13 @@ export default function ModalComentario({ onCommentAdded, postId }) {
   const [isOpen, setIsOpen] = useState(false);
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
-  const userId = useCurrentUser();
+  const { userData } = useCurrentUser();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const message = e.target.elements[0].value;
     if (!message.trim()) return;
-    postComment(userId.userData, postId, message).then(() => {
+    postComment(userData.id, postId, message).then(() => {
       if (onCommentAdded) onCommentAdded();
     });
     handleClose();

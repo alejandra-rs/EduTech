@@ -16,7 +16,6 @@ export default function VistaPreviaDocumento() {
     const cargarDocumento = async () => {
       try {
         const data = await getDocument(postId);
-        console.log("Documento obtenido de la API:", data);
         setDocument(data);
       } catch (error) {
         console.error("Error al cargar el documento", error);
