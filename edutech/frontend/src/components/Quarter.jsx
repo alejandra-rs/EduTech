@@ -19,7 +19,7 @@ export function Quarter({ quarter, title, navigate, yearId }) {
         {title}
       </h2>
 
-      <div className="flex-grow overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+      <div className="flex-grow overflow-y-auto max-h-[240px] pr-2 space-y-4 custom-scrollbar">
         {courses.map((sub) => {
           return (
             <WidgetSubject

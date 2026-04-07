@@ -39,7 +39,7 @@ const NotebookFooter = ({ tabs = [] }) => {
           </button>
         ))}
       </div>
-      <div className="bg-white p-8 min-h-[7em] relative shadow-lg pointer-events-auto">
+      <div className="bg-white p-3 min-h-[3em] relative shadow-lg pointer-events-auto">
         <div
           className="absolute inset-0 opacity-10"
           style={{

@@ -2,13 +2,22 @@ import VisorPDF from "../components/VisorPDF";
 import Input from "../components/Input";
 import { TitlePage } from "../components/TitlePage";
 import { useNavigate, useParams } from "react-router-dom";
+import { useState } from 'react';
+import { getUserId, postDocument } from '../services/connections';
 
 export default function CargarPublicacionPDF() {
   const navigate = useNavigate();
   const { id, subjectId } = useParams();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  const handleBack = () => {
-    navigate(`/${id}/${subjectId}/post`);
+  const handleBack = () => navigate(`/${id}/${subjectId}/post`);
+
+  const handlePublish = async (e) => {
+    e.preventDefault();
+    const idUsuarioActual = await getUserId();
+    postDocument(subjectId, idUsuarioActual, title, description, "PDF", selectedFile);
   };
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">
@@ -21,21 +30,11 @@ export default function CargarPublicacionPDF() {
             <VisorPDF />
           </div>
           <div className="flex-1 w-full pl-0 lg:pl-8">
-            <form
-              className="space-y-6 w-full"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <form className="space-y-6 w-full" onSubmit={(e) => handlePublish(e)}>
               <div className="grid grid-cols-1 gap-6">
-                <Input label="Subir archivo" type="file" />
-                <Input
-                  label="Título"
-                  placeholder="Introduce el título de la publicación"
-                />
-                <Input
-                  label="Descripción"
-                  placeholder="Escribe una breve descripción..."
-                  rows={8}
-                />
+                <Input label="Subir archivo" type="file" onChange={(e) => setSelectedFile(e.target.files[0])}/>
+                <Input label="Título" placeholder="Introduce el título de la publicación" onChange={(e) => setTitle(e.target.value)}/>
+                <Input label="Descripción" placeholder="Escribe una breve descripción..." rows={8} onChange={(e) => setDescription(e.target.value)} />
               </div>
               <div className="pt-4">
                 <button

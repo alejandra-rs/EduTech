@@ -48,9 +48,7 @@ export default function VistaPreviaVideo() {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: Comentarios */}
         <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
-          {/* Al ponerlo aquí, el max-h-[70vh] del componente hará su magia */}
           <CommentsSections documentId={postId} />
         </aside>
 

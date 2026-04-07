@@ -34,19 +34,13 @@ export default function Header({
             Edutech
           </h1>
         </div>
-        <UserAvatar imageUrl={userProfilePic} />
-        <h2
-          className={`text-white text-sm mt-2 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}
-        >
-          {userName || "User"}
-        </h2>
+        <div className={`flex flex-col items-center mt-4`}>
+          <UserAvatar imageUrl={userProfilePic} />
+          <h2 className={`text-white text-sm mt-2 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>    
+            {userName || 'User'}
+          </h2>
+        </div>
       </div>
-
-      <HamburgerButton
-        isOpen={isOpen}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`mb-6 ${isOpen ? "self-end" : ""}`}
-      />
 
       <nav
         className={`flex flex-col space-y-4 w-full overflow-hidden transition-all duration-300 
@@ -72,6 +66,14 @@ export default function Header({
           <span>Salir</span>
         </a>
       </nav>
+
+      <div className="mt-auto w-full flex justify-center">
+        <HamburgerButton 
+          isOpen={isOpen} 
+          onClick={() => setIsOpen(!isOpen)} 
+          className={`${isOpen ? 'self-end' : ''}`} 
+        /> 
+      </div>
     </aside>
   );
 }

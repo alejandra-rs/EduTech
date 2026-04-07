@@ -1,5 +1,5 @@
-import { Button } from "flowbite-react";
 import { HandThumbUpIcon, HandThumbDownIcon, EyeIcon } from '@heroicons/react/24/solid';
+import { ReactionButton } from "./ReactionButton";
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString("es-ES", {
@@ -80,22 +80,18 @@ export function PostCard({ title, type, fileUrl, date, onClick, stats }) {
           </div>
 
           <div className="flex flex-col gap-1.5 items-end">
-            <div className="flex items-center gap-2 text-gray-500">
-              <span className="text-xs font-bold text-gray-600">{stats?.views || 0}</span>
-              <EyeIcon className="w-4 h-4 text-gray-400" />
-            </div>
-            <div className="flex items-center gap-2 text-gray-500">
-              <span className="text-xs font-bold text-gray-600">{stats?.likes || 0}</span>
+            <ReactionButton type="like" count={stats?.views} >
+            <EyeIcon className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            </ReactionButton>
+            <ReactionButton type="like" count={stats?.likes} >
               <HandThumbUpIcon className="w-4 h-4 text-gray-400" />
-            </div>
-            <div className="flex items-center gap-2 text-gray-500">
-              <span className="text-xs font-bold text-gray-600">{stats?.dislikes || 0}</span>
+            </ReactionButton>
+            <ReactionButton type="dislike" count={stats?.dislikes} >
               <HandThumbDownIcon className="w-4 h-4 text-gray-400" />
-            </div>
+            </ReactionButton>
           </div>
-
         </div>
       </div>
     </div>
-  );
+);
 }
