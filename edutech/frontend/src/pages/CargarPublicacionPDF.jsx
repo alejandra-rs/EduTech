@@ -3,7 +3,8 @@ import Input from "../components/Input";
 import { TitlePage } from "../components/TitlePage";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from 'react';
-import { getUserId, postDocument } from '../services/connections';
+import { postDocument } from '../services/connections';
+import { useCurrentUser } from "@services/useCurrentUser";
 
 export default function CargarPublicacionPDF() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ export default function CargarPublicacionPDF() {
 
   const handlePublish = async (e) => {
     e.preventDefault();
-    const idUsuarioActual = await getUserId();
-    postDocument(subjectId, idUsuarioActual, title, description, "PDF", selectedFile);
+    const { userData } = useCurrentUser();
+    postDocument(subjectId, userData.id, title, description, "PDF", selectedFile);
   };
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white">

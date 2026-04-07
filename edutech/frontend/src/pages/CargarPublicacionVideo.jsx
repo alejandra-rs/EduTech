@@ -3,7 +3,8 @@ import Input from "../components/Input";
 import { TitlePage } from '../components/TitlePage';
 import { useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { getUserId, postDocument } from "@services/connections";
+import { postDocument } from "@services/connections";
+import { useCurrentUser } from "@services/useCurrentUser";
 
 export default function CargarPublicacionVideo() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ export default function CargarPublicacionVideo() {
 
   const handlePublish = async (e) => {
     e.preventDefault();
-    const idUsuarioActual = await getUserId();
-    postDocument(subjectId, idUsuarioActual, title, description, "VID", selectedFile);
+    const { userData } = useCurrentUser();
+    postDocument(subjectId, userData.id, title, description, "VID", selectedFile);
   };
   
   return (
