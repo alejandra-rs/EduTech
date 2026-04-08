@@ -136,7 +136,7 @@ export default function CargarPublicacionPDF() {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              <div className="pt-4">
+              <div className="pt-4 mb-20">
                 <button
                   type="submit"
                   className="w-full bg-[#2d2d2d] hover:bg-black text-white text-sm py-4 rounded-lg transition-all duration-200 flex justify-center items-center font-bold uppercase tracking-[0.2em] shadow-lg"
