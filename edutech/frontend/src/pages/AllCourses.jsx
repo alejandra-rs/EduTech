@@ -1,6 +1,5 @@
 import SearchBar from '../components/SearchBar';
 import { WidgetCourse } from '../components/Course';
-import NotebookFooter from '../components/Footer';
 import PostGrid from '../components/PostGrid';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';

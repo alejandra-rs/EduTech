@@ -1,6 +1,4 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import NotebookFooter from "../components/Footer";
 import { Quarter } from "../components/Quarter.jsx";
 import { TitlePage } from "../components/TitlePage.jsx";
 const Subject = () => {
@@ -8,12 +6,12 @@ const Subject = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-[calc(100vh-2px)]"> 
+  <div className="h-[calc(100vh-2px)]"> 
     <div className="flex flex-col   w-full overflow-y-auto">
       <TitlePage 
         PageName={`${id}º Curso`} 
         backLabel="Cursos"       
-        onBack={() => navigate(-1)} 
+        onBack={() => navigate("/")} 
       />
       <div className="flex-grow px-12 py-8 flex flex-col lg:flex-row gap-8 justify-center items-start overflow-hidden">
         <Quarter
@@ -30,7 +28,7 @@ const Subject = () => {
           />
       </div>
     </div>
-          </div>
+  </div>
   );
 };
 export default Subject;
