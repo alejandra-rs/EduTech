@@ -33,7 +33,7 @@ export default function VistaPreviaDocumento() {
     <div className="flex h-screen w-full bg-white font-sans">
       <div className="flex-1 flex flex-col h-full bg-transparent">
         <div className="w-full shrink-0">
-          <TitlePage PageName={courseName} onBack={() => navigate(-1)} />
+          <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)} />
         </div>
         <div className="flex-1 flex flex-col lg:flex-row w-full h-[calc(100vh-100px)]">
           <div className="w-full h-[60vh] lg:h-full lg:w-[30%] xl:w-[35%] flex items-center justify-center p-2 lg:p-6 shrink-0 bg-transparent overflow-hidden">

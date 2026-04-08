@@ -61,7 +61,7 @@ const SubjectDetail = () => {
         <TitlePage 
           PageName={subjectName} 
           backLabel="Asignaturas" 
-          onBack={() => navigate(-1)} 
+          onBack={() => navigate(`/${id}/asignaturas`)} 
         >
           <button
             onClick={() => navigate(`/${id}/${subjectId}/upload`)}

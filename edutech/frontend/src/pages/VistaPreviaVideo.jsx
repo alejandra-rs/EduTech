@@ -32,7 +32,7 @@ export default function VistaPreviaVideo() {
     <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden font-sans">
       
       <header className="w-full shrink-0 bg-white shadow-sm z-10">
-        <TitlePage PageName={courseName} onBack={() => navigate(-1)} />
+        <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)} />
       </header>
 
       <main className="flex-1 w-full max-w-[95%] xl:max-w-[85%] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 overflow-hidden">

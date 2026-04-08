@@ -1,4 +1,3 @@
-import ReportComment from "./ReportComment";
 import UserAvatar from "./UserAvatar";
 
 export default function Comentario({ comment, user }) {
