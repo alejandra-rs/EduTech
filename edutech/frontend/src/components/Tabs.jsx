@@ -5,7 +5,7 @@ const Tabs = ({ activeTabs, onTabChange }) => {
     { id: 'pdf', label: 'PDF' },
     { id: 'video', label: 'Video' },
     { id: 'cuestionario', label: 'Cuestionario' },
-    { id: 'flashcard', label: 'Flashcard' },
+    { id: 'flashcard', label: 'Flashcards' },
   ];
 
   const handleToggle = (tabId) => {

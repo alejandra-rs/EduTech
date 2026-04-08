@@ -47,7 +47,7 @@ export default function VistaPreviaVideo() {
           </div>
           
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-            <DocumentInfo document={document} />
+            <DocumentInfo document={document} showDownload={false} />
           </div>
         </div>
 
