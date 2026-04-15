@@ -12,7 +12,7 @@ from .models import Post, PDFAttachment, YoutubeVideo, Like, Dislike, Comment
 from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer, CommentListSerializer, \
                          LikeSerializer, DislikeSerializer, PostPreviewSerializer
 from .filters import PostFilter
-
+from .vectorizator import ingerir_nuevo_documento
 
 class PostListView(generics.ListAPIView):
     queryset = Post.objects.all()
@@ -50,10 +50,11 @@ class PDFUploadView(generics.GenericAPIView):
             post_type='PDF',
         )
 
-        PDFAttachment.objects.create(
+        pdf_attachment = PDFAttachment.objects.create(
             post=post,
             file=serializer.validated_data['file'],
         )
+        ingerir_nuevo_documento(pdf_attachment)
 
         return Response(PostSerializer(post).data, status=status.HTTP_201_CREATED)
 

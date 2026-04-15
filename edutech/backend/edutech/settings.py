@@ -154,3 +154,28 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+
+import os
+
+# ==========================================
+# CONFIGURACIÓN DE IA (MICROSERVICIOS)
+# ==========================================
+AI_SETTINGS = {
+    # 1. Servicio de Vectorización (Traductor de texto a números)
+    "EMBEDDING_URL": os.environ.get("EMBEDDING_URL", "http://localhost:11434"),
+    "EMBEDDING_MODEL": os.environ.get("EMBEDDING_MODEL", "nomic-embed-text"),
+    
+    # 2. Servicio de Visión (Lector de imágenes)
+    "VISION_URL": os.environ.get("VISION_URL", "http://localhost:11434"),
+    "VISION_MODEL": os.environ.get("VISION_MODEL", "gemma3:4b"),
+    
+    # 3. Servicio de Chat (El cerebro que responde al alumno)
+    "CHAT_URL": os.environ.get("CHAT_URL", "http://localhost:11434"),
+    "CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
+    #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.1:8b"),
+    
+    # Base de datos
+    "VECTOR_DB_COLLECTION": "apuntes_universidad",
+}

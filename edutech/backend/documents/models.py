@@ -48,7 +48,16 @@ class Post(models.Model):
 class PDFAttachment(models.Model):
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='pdf')
     file = models.FileField(upload_to="documents/", validators=[validate_pdf_extension, validate_pdf_size])
-
+    ESTADOS_PROCESAMIENTO = [
+            ('pendiente', 'En cola para procesar...'),
+            ('subiendo', 'Subiendo fichero...'),
+            ('extrayendo_txt', 'Extrayendo texto del PDF...'),
+            ('reconociendo_img', 'Gemma 3: Analizando imágenes...'),
+            ('vectorizando', 'Vectorizando...'),
+            ('completado', '¡Listo para IA!'),
+            ('error', 'Error en el procesamiento')
+        ]
+    processing_status = models.CharField(max_length=20, choices=ESTADOS_PROCESAMIENTO, default='subiendo')
 
 class YoutubeVideo(models.Model):
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name='vid')
@@ -99,3 +108,5 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.user} {self.post}'
+    
+
