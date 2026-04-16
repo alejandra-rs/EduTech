@@ -7,16 +7,14 @@ from langchain_core.prompts import ChatPromptTemplate
 import time
 
 class Command(BaseCommand):
-    help = 'Abre un chat interactivo en la terminal para hablar con tus apuntes'
+    help = 'Abre un chat interactivo con modo test y cronómetro'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.WARNING("Conectando con la base de datos y los modelos de IA..."))
+        self.stdout.write(self.style.WARNING("Conectando con la base de datos y modelos..."))
 
-        # 1. CONEXIÓN A POSTGRES (Igual que en el vectorizador)
         url_original = os.environ.get('DATABASE_URL')
         CONNECTION_STRING = url_original.replace("postgres://", "postgresql+psycopg://")
 
-        # 2. MODELOS DE IA (Usando tu settings)
         embeddings = OllamaEmbeddings(
             base_url=settings.AI_SETTINGS["EMBEDDING_URL"],
             model=settings.AI_SETTINGS["EMBEDDING_MODEL"]
@@ -25,7 +23,7 @@ class Command(BaseCommand):
         llm = ChatOllama(
             base_url=settings.AI_SETTINGS["CHAT_URL"],
             model=settings.AI_SETTINGS["CHAT_MODEL"],
-            temperature=0.2 # Temperatura baja para que no se invente cosas (alucinaciones)
+            temperature=0.2 
         )
 
         vector_store = PGVector(
@@ -35,9 +33,8 @@ class Command(BaseCommand):
             use_jsonb=True,
         )
 
-        # 3. EL PROMPT (Usando Mensajes de Sistema para forzar las reglas)
-        mensajes = [
-            ("system", """Eres un asistente académico experto y muy servicial. 
+        prompt = ChatPromptTemplate.from_messages([
+           ("system", """Eres un asistente académico experto y muy servicial. 
             Tu objetivo es responder a la pregunta basándote en el CONTEXTO DE LOS APUNTES.
             
             REGLAS INQUEBRANTABLES:
@@ -46,84 +43,54 @@ class Command(BaseCommand):
             "⚠️ *Nota: No he encontrado esto en tus apuntes vectorizados, pero según mis conocimientos generales:* "
             (Después de escribir esa frase, puedes dar la respuesta usando tu conocimiento general).
 
-            CONTEXTO DE LOS APUNTES:
-            {context}
-             
-            """),
+            
+            CONTEXTO: {context}
+            ASIGNATURA: {subject}"""),
             ("human", "{question}")
-        ]
-        
-        prompt = ChatPromptTemplate.from_messages(mensajes)
-
-        self.stdout.write(self.style.SUCCESS("\n" + "="*50))
-        self.stdout.write(self.style.SUCCESS("🤖 CHATBOT ACADÉMICO LISTO (Escribe 'salir' para terminar)"))
-        self.stdout.write(self.style.SUCCESS("="*50 + "\n"))
+        ])
 
         def imprimir_fuentes(resultados):
-            """Función auxiliar para imprimir las fuentes de forma limpia"""
-            if not resultados:
-                print("\n[ No se extrajo contexto de la BD ]")
-                return
-                
-            print("\n📚 Fuentes consultadas en la base de datos:")
+            if not resultados: return print("\n[ Sin contexto ]")
+            print("\n📚 Fuentes:")
             for i, doc in enumerate(resultados):
-                origen = doc.metadata.get('asignatura', 'Desconocida')
+                origen = doc.metadata.get('asignatura', '???')
                 pag = doc.metadata.get('p', '?')
                 tipo = doc.metadata.get('tipo', 'texto')
-                cita = doc.metadata.get('cita_previa', 'Fragmento no disponible')
-                
-                # Le ponemos un icono visual si es imagen o texto
-                icono = "🖼️ [Visión]" if tipo == "vision" else "📄 [Texto]"
-                
-                print(f"  {i+1}. {icono} {origen} (Pág {pag})")
-                print(f"     └─ \"{cita}\"")
+                cita = doc.metadata.get('cita_previa', '...')
+                icono = "🖼️" if "vision" in tipo else "📄"
+                print(f"  {i+1}. {icono} {origen} (Pág {pag}) -> {cita}")
 
-        # 4. EL BUCLE DEL CHAT
+        # Selección de asignatura
+        asignatura_filtro = input("Introduce asignatura (o Intro para todas): ").strip()
+        search_kwargs = {"k": 4}
+        if asignatura_filtro:
+            search_kwargs["filter"] = {"asignatura": asignatura_filtro}
+            self.stdout.write(self.style.WARNING(f"Filtrando por: {asignatura_filtro}"))
+
         while True:
-            # Pedimos la pregunta al usuario en la terminal
             pregunta = input("\n📝 Tú: ")
+            if pregunta.lower() in ['salir', 'exit']: break
             
-            if pregunta.lower() in ['salir', 'exit', 'quit']:
-                self.stdout.write(self.style.WARNING("¡Nos vemos!"))
-                break
-                
             if pregunta.lower() == 'test':
-                preguntas = ["¿Qué es un objeto en Python?", "¿Cómo puedo imprimir los números del 1 al 10 por pantalla?"]
-                for pre in preguntas:
-                    print(f"\n--- INICIANDO TEST: {pre} ---")
-                    self.stdout.write("🧠 IA pensando y buscando en los apuntes...")
-
+                preguntas_test = ["Resumen de la asignatura", "Hazme 2 preguntas de examen", "¿Qué es lo más difícil?"]
+                for pre in preguntas_test:
+                    print(f"\n--- TEST: {pre} ---")
                     inicio = time.time()
-                    resultados_bd = vector_store.similarity_search(pre, k=3)
-                    contexto_extraido = "\n\n".join([doc.page_content for doc in resultados_bd])
-
-                    cadena_final = prompt | llm
-                    respuesta_ia = cadena_final.invoke({
-                        "context": contexto_extraido,
-                        "question": pre
-                    })
-
-                    self.stdout.write(self.style.SUCCESS(f"\n🤖 IA: {respuesta_ia.content}"))
+                    res_bd = vector_store.similarity_search(pre, **search_kwargs)
+                    contexto = "\n\n".join([d.page_content for d in res_bd])
                     
-                    fin = time.time()
-                    duracion = fin - inicio
-                    print(f"\n⏱️ Tiempo de respuesta: {duracion:.2f} segundos")
+                    respuesta = (prompt | llm).invoke({"context": contexto, "subject": asignatura_filtro or "Todas", "question": pre})
                     
-                    # Imprimir las nuevas referencias detalladas
-                    imprimir_fuentes(resultados_bd)
+                    duracion = time.time() - inicio
+                    self.stdout.write(self.style.SUCCESS(f"🤖 IA: {respuesta.content}"))
+                    print(f"⏱️ Tiempo: {duracion:.2f}s")
+                    imprimir_fuentes(res_bd)
             else:
-                self.stdout.write("🧠 IA pensando y buscando en los apuntes...")
-
-                resultados_bd = vector_store.similarity_search(pregunta, k=3)
-                contexto_extraido = "\n\n".join([doc.page_content for doc in resultados_bd])
-
-                cadena_final = prompt | llm
-                respuesta_ia = cadena_final.invoke({
-                    "context": contexto_extraido,
-                    "question": pregunta
-                })
-
-                self.stdout.write(self.style.SUCCESS(f"\n🤖 IA: {respuesta_ia.content}"))
+                inicio = time.time()
+                res_bd = vector_store.similarity_search(pregunta, **search_kwargs)
+                contexto = "\n\n".join([d.page_content for d in res_bd])
+                respuesta = (prompt | llm).invoke({"context": contexto, "subject": asignatura_filtro or "Todas", "question": pregunta})
                 
-                # Imprimir las nuevas referencias detalladas
-                imprimir_fuentes(resultados_bd)
+                self.stdout.write(self.style.SUCCESS(f"🤖 IA: {respuesta.content}"))
+                print(f"⏱️ Tiempo: {time.time() - inicio:.2f}s")
+                imprimir_fuentes(res_bd)

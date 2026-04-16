@@ -174,6 +174,7 @@ AI_SETTINGS = {
     # 3. Servicio de Chat (El cerebro que responde al alumno)
     "CHAT_URL": os.environ.get("CHAT_URL", "http://localhost:11434"),
     "CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
+    #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "gemma3:4b"),
     #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.1:8b"),
     
     # Base de datos
