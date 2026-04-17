@@ -2,6 +2,8 @@
 ### Equipo _D-MACH_
 ### Marcial Galván - Houyame Liazidi - Alejandra Rodríguez - Cristina Santana - Dácil Santana
 
+![Página inicial de la aplicación](doc/images/edutech.png)
+
 ## Descripción del Proyecto
 
 Este _sprint_ inicial tiene como objetivo construir el **primer minimo viable** (_MVP_) de EduTech.
