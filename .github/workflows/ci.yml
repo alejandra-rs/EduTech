@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       SECRET_KEY: ci-insecure-secret-key-for-testing-only
       DATABASE_URL: sqlite:///test_ci.db
       DEBUG: "True"
@@ -30,10 +31,10 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Install dependencies
-        run: uv pip install -r edutech/backend/requirements.txt
+        run: uv pip install --system -r edutech/backend/requirements.txt
 
       - name: Install ruff and mypy
-        run: uv pip install ruff mypy
+        run: uv pip install --system ruff mypy
 
       - name: Ruff format
         run: ruff format --check edutech/backend/
