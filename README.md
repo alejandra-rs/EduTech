@@ -118,10 +118,12 @@ de comandos ha sido ejecutada desde la carpeta `Edutech/`.
 cd edutech/frontend
 npm install
 npm install react-router-dom react react-dom
+```
 
+```bash
 # En backend
 cd ..
-pip install -r backend/requirements.txt
+pip install -r ./backend/requirements.txt
 ```
 
 2. Lanzar los distintos componentes de la aplicación
