@@ -13,7 +13,7 @@ const Subject = () => {
         backLabel="Cursos"       
         onBack={() => navigate("/")} 
       />
-      <div className="flex-grow px-12 py-8 flex flex-col lg:flex-row gap-8 justify-center items-start overflow-hidden">
+      <div className="flex-grow px-12 py-8 flex flex-col lg:flex-row gap-8 justify-center items-start overflow-hidden ">
         <Quarter
           quarter={1}
           title="1º Cuatrimestre"

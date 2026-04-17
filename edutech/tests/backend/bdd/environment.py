@@ -14,6 +14,8 @@ from rest_framework.test import APIClient
 
 def before_all(context):
     setup_test_environment()
+    from django.conf import settings
+    settings.EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
     context.runner = DiscoverRunner()
     context.old_db_config = context.runner.setup_databases()
 

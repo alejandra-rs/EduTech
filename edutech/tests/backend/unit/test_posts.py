@@ -1,10 +1,11 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from documents.models import Post, PDFAttachment, YoutubeVideo, Like, Dislike
-from ..config import make_student, make_course, make_pdf_file
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file
 
 
+@override_settings(STORAGES=TEST_STORAGES)
 class PostModelCleanTest(TestCase):
 
     def setUp(self):
