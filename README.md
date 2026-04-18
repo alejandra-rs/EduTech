@@ -95,6 +95,27 @@ edutech/
 
 ---
 
+## Integración Continua y Calidad del Código
+
+El proyecto cuenta con un pipeline de **CI/CD** configurado en [GitHub Actions](.github/workflows/ci.yml) que se ejecuta automáticamente con cada _push_ a las ramas `main` y `develop`.
+
+### Pasos del pipeline
+
+**Análisis estático**
+- Comprobación de formato con `ruff format`
+- _Linting_ con `ruff check`
+- Verificación de tipos estáticos con `mypy`
+
+**Tests del backend**
+- **Tests de unidad** — verifican el comportamiento individual de cada componente
+- **Tests de integración** — comprueban la interacción entre las distintas entidades del backend
+- **Tests BDD** — validan los flujos de usuario mediante escenarios escritos en _Gherkin_
+
+> [!NOTE]
+> El backend cuenta con cobertura de tests de estos tres tipos. Los tests se encuentran en [`tests/backend/`](./edutech/tests/backend/), organizados en las carpetas `unit/`, `integration/` y `bdd/`.
+
+---
+
 ## Próximos pasos
 
 En el siguiente _sprint_ se buscará evolucionar el _Minimum Viable Product_ implementado,
@@ -136,6 +157,7 @@ docker compose up
 - Backend
 ```bash
 cd edutech/
+python backend/manage.py migrate
 python backend/manage.py runserver
 ```
 
