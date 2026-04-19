@@ -151,7 +151,7 @@ pip install -r ./backend/requirements.txt
 
 - Base de datos
 ```bash
-cd edutech/backend
+cd backend
 docker compose up
 ```
 - Backend
