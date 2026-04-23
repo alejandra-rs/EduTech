@@ -9,7 +9,7 @@ import SubjectDetail from "./pages/SubjectDetail";
 import CargarPublicacionPDF from "./pages/CargarPublicacionPDF";
 import Subject from "./pages/AllSubjects";
 import SignIn from "./pages/SignIn";
-import Question from "./components/Question";
+import CreateQuiz from "./pages/CreateQuiz";
 import { syncUser } from "@services/connections";
 
 import {
@@ -63,7 +63,7 @@ export default function App() {
                   path="/:id/:subjectId/video/:postId"
                   element={<VistaPreviaVideo />}
                 />
-                <Route path="/prueba" element={<Question />} />
+                <Route path="/prueba" element={<CreateQuiz />} />
               </Routes>
             </Layout>
           ) : null}
