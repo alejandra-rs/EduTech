@@ -20,34 +20,47 @@ const NotebookFooter = ({ tabs = [] }) => {
   };
 
   return (
-    <footer className="w-full font-mono pointer-events-none">
-      <div className="flex ml-8 space-x-1 items-end h-12 bg-transparent overflow-visible">
+    <footer className="w-full font-mono pointer-events-none group z-10 relative">
+      {/* Contenedor de pestañas */}
+      <div className="flex ml-8 space-x-1 items-end h-10 bg-transparent overflow-visible transition-transform duration-300 translate-y-[2px] group-hover:translate-y-0">
         {tabs.map((tab, index) => (
           <button
             key={index}
-            onClick={() => {
-              handleTabClick(tab);
-            }}
+            onClick={() => handleTabClick(tab)}
             className={`
-              px-6 transition-all duration-300 ease-out pointer-events-auto
-              rounded-t-xl text-white font-bold text-sm uppercase tracking-wider
+              px-4 transition-all duration-300 ease-out pointer-events-auto
+              rounded-t-lg text-white font-bold text-[10px] uppercase tracking-tighter
               ${tab.color}
-              ${activeTab === index ? "h-12 pb-3 shadow-lg" : "h-8 pb-1 hover:h-10"}
+              ${activeTab === index 
+                ? "h-10 pb-2 shadow-md" 
+                : "h-7 pb-1 hover:h-9 opacity-80 hover:opacity-100"}
             `}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="bg-white p-3 min-h-[3em] relative shadow-lg pointer-events-auto">
+
+      {/* La "Hoja" de cuaderno */}
+      <div 
+        className={`
+          bg-white relative shadow-[0_-4px_10px_rgba(0,0,0,0.05)]
+          pointer-events-auto transition-all duration-500 ease-in-out
+          h-1 group-hover:h-12 translate-y-0
+        `}
+      >
+        {/* Líneas de cuaderno (solo 2 líneas visibles al expandirse) */}
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500"
           style={{
             backgroundImage: "linear-gradient(#000 1px, transparent 1px)",
-            backgroundSize: "100% 1.5rem",
+            backgroundSize: "100% 1.5rem", // 1.5rem * 2 líneas = 3rem (48px)
+            backgroundPosition: "0 1.4rem"
           }}
         ></div>
-        <div className="absolute left-10 top-0 bottom-0 w-px bg-red-300 opacity-40"></div>
+        
+        {/* Margen rojo vertical */}
+        <div className="absolute left-8 top-0 bottom-0 w-px bg-red-400 opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
       </div>
     </footer>
   );
