@@ -12,6 +12,7 @@ import SignIn from "./pages/SignIn";
 import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
+import TakeFlashCard from "./pages/TakeFlashCard";
 import { syncUser } from "@services/connections";
 
 import {
@@ -23,39 +24,52 @@ import {
 export default function App() {
   const { accounts, instance } = useMsal();
 
+  const testFlashData = {
+    title: "Fundamentos de React",
+    description: "Repasa los conceptos clave para dominar la librería.",
+    items: [
+      { id: "c1", front: "¿Qué es el Virtual DOM?", back: "Es una representación en memoria de la UI real que se sincroniza con el DOM de forma eficiente." },
+      { id: "c2", front: "¿Para qué sirve el Hook useEffect?", back: "Permite ejecutar efectos secundarios en componentes funcionales (peticiones, suscripciones, etc)." },
+      { id: "c3", front: "¿Qué es el Virtual DOM?", back: "Es una representación en memoria de la UI real que se sincroniza con el DOM de forma eficiente." },
+      { id: "c4", front: "¿Para qué sirve el Hook useEffect?", back: "Permite ejecutar efectos secundarios en componentes funcionales (peticiones, suscripciones, etc)." },
+      { id: "c5", front: "¿Qué es el Virtual DOM?", back: "Es una representación en memoria de la UI real que se sincroniza con el DOM de forma eficiente." },
+      { id: "c6", front: "¿Para qué sirve el Hook useEffect?", back: "Permite ejecutar efectos secundarios en componentes funcionales (peticiones, suscripciones, etc)." },
+    ]
+  };
+
   const testData = {
-  title: "Certificación React 2026",
-  description: "Este cuestionario evalúa tus conocimientos en el ecosistema moderno de React, incluyendo Server Components, Hooks avanzados y optimización con Tailwind CSS.",
-  questions: [
-    { 
-      id: "q1", 
-      title: "¿Qué hooks se introdujeron en React 16.8?", 
-      answers: [
-        { id: "a1", text: "useState", isCorrect: true },
-        { id: "a2", text: "useEffect", isCorrect: true },
-        { id: "a3", text: "useHistory", isCorrect: false },
-        { id: "a4", text: "useTransition", isCorrect: false }
-      ] 
-    },
-    { 
-      id: "q2", 
-      title: "¿React es un Framework o una Librería?", 
-      answers: [
-        { id: "b1", text: "Librería", isCorrect: true },
-        { id: "b2", text: "Framework", isCorrect: false }
-      ] 
-    },
-    { 
-      id: "q3", 
-      title: "Clases de Tailwind para un padding lateral de 16px:", 
-      answers: [
-        { id: "c1", text: "p-4", isCorrect: false },
-        { id: "c2", text: "px-4", isCorrect: true },
-        { id: "c3", text: "py-4", isCorrect: false }
-      ] 
-    }
-  ]
-};
+    title: "Certificación React 2026",
+    description: "Este cuestionario evalúa tus conocimientos en el ecosistema moderno de React, incluyendo Server Components, Hooks avanzados y optimización con Tailwind CSS.",
+    questions: [
+      { 
+        id: "q1", 
+        title: "¿Qué hooks se introdujeron en React 16.8?", 
+        answers: [
+          { id: "a1", text: "useState", isCorrect: true },
+          { id: "a2", text: "useEffect", isCorrect: true },
+          { id: "a3", text: "useHistory", isCorrect: false },
+          { id: "a4", text: "useTransition", isCorrect: false }
+        ] 
+      },
+      { 
+        id: "q2", 
+        title: "¿React es un Framework o una Librería?", 
+        answers: [
+          { id: "b1", text: "Librería", isCorrect: true },
+          { id: "b2", text: "Framework", isCorrect: false }
+        ] 
+      },
+      { 
+        id: "q3", 
+        title: "Clases de Tailwind para un padding lateral de 16px:", 
+        answers: [
+          { id: "c1", text: "p-4", isCorrect: false },
+          { id: "c2", text: "px-4", isCorrect: true },
+          { id: "c3", text: "py-4", isCorrect: false }
+        ] 
+      }
+    ]
+  };
 
   const isDomainValid = accounts.length > 0;
   useEffect(() => {
@@ -100,10 +114,9 @@ export default function App() {
                   element={<VistaPreviaVideo />}
                 />
                 <Route path="/prueba" element={<CreateQuiz />} />
-
-                // Y en la ruta:
                 <Route path="/prueba2" element={<TakeQuiz quizData={testData} />} />
                 <Route path="/prueba3" element={<CreateFlashCard />} />
+                <Route path="/prueba4" element={<TakeFlashCard flashData={testFlashData} />} />
               </Routes>
             </Layout>
           ) : null}
