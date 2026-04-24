@@ -21,8 +21,7 @@ const FlashCardItem = ({ card, onUpdate, onDelete }) => {
   return (
     <div className="flex gap-3 items-center group animate-in fade-in slide-in-from-bottom-2">
       <div className="flex-1 flex bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
-        
-        {/* Lado de la Pregunta */}
+
         <div className="flex-1 p-5 bg-gray-50/50 border-r border-gray-100">
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Pregunta</span>
           <textarea 
@@ -35,7 +34,6 @@ const FlashCardItem = ({ card, onUpdate, onDelete }) => {
           />
         </div>
 
-        {/* Lado de la Respuesta */}
         <div className="flex-1 p-5 bg-white">
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Respuesta</span>
           <textarea 
@@ -49,10 +47,9 @@ const FlashCardItem = ({ card, onUpdate, onDelete }) => {
         </div>
       </div>
       
-      {/* Botón borrar fuera de la tarjeta para no ensuciar el diseño */}
       <button 
         onClick={onDelete}
-        className="p-2.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all active:scale-90"
+        className="mt-0.5 text-gray-300 p-1 rounded hover:text-red-500 hover:bg-red-50 hover:rotate-12 active:scale-75 transition-all"
         title="Eliminar flashcard"
       >
         <TrashIcon className="w-5 h-5" />

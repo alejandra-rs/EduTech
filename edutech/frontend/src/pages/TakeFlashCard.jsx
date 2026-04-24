@@ -33,7 +33,7 @@ const TakeFlashCard = ({ flashData }) => {
 
   return (
     <div className="flex min-h-screen bg-white">
-      {/* Sidebar de Progreso */}
+
       <aside className={`fixed right-0 top-0 h-full bg-gray-50 border-l border-gray-200 transition-all duration-300 z-50 shadow-2xl ${showSidebar ? 'w-72' : 'w-0'}`}>
         <button onClick={() => setShowSidebar(!showSidebar)} className="absolute top-10 -left-10 bg-white border border-gray-200 p-2 rounded-l-xl shadow-sm">
           <ChevronLeftIcon className={`w-5 h-5 text-gray-500 transition-transform ${showSidebar ? 'rotate-180' : ''}`} />
@@ -77,7 +77,6 @@ const TakeFlashCard = ({ flashData }) => {
             <p className="text-lg text-gray-500 leading-relaxed">{flashData?.description}</p>
           </div>
 
-          {/* Grid de Tarjetas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {cards.map((c) => (
               <div id={`card-${c.id}`} key={c.id} className="scroll-mt-28">
@@ -90,7 +89,6 @@ const TakeFlashCard = ({ flashData }) => {
             ))}
           </div>
 
-          {/* Estado Final */}
           {stats.answered === stats.total && (
             <div className="mt-16 p-12 bg-indigo-600 rounded-[3rem] text-center text-white shadow-2xl shadow-indigo-200 animate-in zoom-in">
               <h2 className="text-3xl font-bold mb-2">¡Mazo completado! 🎯</h2>

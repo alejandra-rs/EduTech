@@ -84,7 +84,6 @@ const CreateFlashCard = () => {
             ))}
           </nav>
 
-          {/* Lista de Errores Dinámica */}
           {!canPublish && (
             <div className="p-3 bg-red-50 rounded-lg border border-red-100 mt-4">
               <p className="text-[10px] text-red-500 font-bold uppercase mb-1 tracking-tighter">Requisitos faltantes:</p>
@@ -98,7 +97,6 @@ const CreateFlashCard = () => {
         </div>
       </aside>
 
-      {/* Área de Edición Principal */}
       <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
         <div className="max-w-4xl mx-auto p-12 pb-32">
           <QuizHeader 

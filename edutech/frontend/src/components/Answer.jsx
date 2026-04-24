@@ -30,7 +30,7 @@ const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect }) => {
         value={value}
         onChange={onChange}
         placeholder="Respuesta..."
-        className={`flex-1 outline-none bg-transparent text-[13px] font-medium transition-colors resize-none overflow-hidden py-0.5 ${
+        className={`flex-1 outline-none bg-transparent text-[10px] font-medium transition-colors resize-none overflow-hidden py-0.5 ${
           isCorrect ? 'text-green-900' : 'text-gray-600'
         }`}
       />

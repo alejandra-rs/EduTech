@@ -22,8 +22,8 @@ const QuizHeader = ({ title, description, onTitleChange, onDescChange }) => {
           rows="1"
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          placeholder="Título del cuestionario"
-          className="w-full text-3xl font-extrabold text-gray-800 outline-none resize-none overflow-hidden bg-transparent placeholder:text-gray-200 transition-all"
+          placeholder="Título"
+          className="w-full text-2xl font-extrabold text-gray-800 outline-none resize-none overflow-hidden bg-transparent placeholder:text-gray-200 transition-all"
         />
         <div className="h-0.5 w-0 group-focus-within:w-full bg-blue-500 transition-all duration-500 rounded-full"></div>
       </div>
@@ -35,7 +35,7 @@ const QuizHeader = ({ title, description, onTitleChange, onDescChange }) => {
           rows="1"
           value={description}
           onChange={(e) => onDescChange(e.target.value)}
-          placeholder="¿De qué trata este cuestionario?"
+          placeholder="Escriba una descripción (opcional)"
           className="w-full text-sm text-gray-600 outline-none resize-none overflow-hidden bg-transparent placeholder:text-gray-300"
         />
       </div>

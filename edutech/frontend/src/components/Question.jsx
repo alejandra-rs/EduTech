@@ -28,7 +28,7 @@ const Question = ({ question, onUpdate, onDelete }) => {
               value={question.title}
               onChange={(e) => onUpdate({ ...question, title: e.target.value })}
               placeholder="Pregunta sin título" 
-              className="text-base font-bold text-gray-800 outline-none w-full placeholder:text-gray-300 resize-none overflow-hidden bg-transparent"
+              className="text-sm font-bold text-gray-800 outline-none w-full placeholder:text-gray-300 resize-none overflow-hidden bg-transparent"
             />
             <div className="h-0.5 w-8 bg-blue-500 mt-1 rounded-full"></div>
           </div>

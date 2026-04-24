@@ -18,6 +18,8 @@ export default function Layout({ accounts, instance, children }) {
     upload: [
       { label: "PDF", color: "bg-red-400", path: "PDF" },
       { label: "Video", color: "bg-blue-400", path: "Video" },
+      { label: "Cuestionario", color: "bg-orange-500", path: "/prueba" }, 
+      { label: "Flashcard", color: "bg-indigo-500", path: "/prueba3" },
     ],
   };
 
