@@ -11,6 +11,7 @@ import Subject from "./pages/AllSubjects";
 import SignIn from "./pages/SignIn";
 import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
+import CreateFlashCard from "./pages/CreateFlashCard";
 import { syncUser } from "@services/connections";
 
 import {
@@ -102,6 +103,7 @@ export default function App() {
 
                 // Y en la ruta:
                 <Route path="/prueba2" element={<TakeQuiz quizData={testData} />} />
+                <Route path="/prueba3" element={<CreateFlashCard />} />
               </Routes>
             </Layout>
           ) : null}
