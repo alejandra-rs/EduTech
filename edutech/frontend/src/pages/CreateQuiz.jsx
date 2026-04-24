@@ -25,7 +25,8 @@ const CreateQuiz = () => {
   };
 
   const deleteQuestion = (id) => {
-    if (questions.length > 1) setQuestions(questions.filter(q => q.id !== id));
+    if (questions.length > 1) setQuestions(questions.filter(q => q.id !== id))
+    else alert("El cuestionario debe tener al menos una pregunta.");
   };
 
   const updateQuestion = (id, updatedQ) => {
@@ -39,10 +40,20 @@ const CreateQuiz = () => {
     }
   };
 
-  const canPublish = questions.every(q => q.answers.some(a => a.isCorrect));
+  const areQuestionsValid = questions.every(q => 
+    q.title.trim() !== "" && 
+    q.answers.some(a => a.isCorrect) &&
+    q.answers.every(a => a.text.trim() !== "")
+  );
+
+  const isHeaderValid = header.title.trim() !== "";
+
+  const canPublish = isHeaderValid && areQuestionsValid;
 
   const handlePublish = () => {
-    if (!canPublish) return alert("Faltan respuestas correctas en algunas preguntas.");
+    if (!canPublish) {
+      return alert("Por favor, rellena todos los campos y marca una respuesta correcta por pregunta.");
+    }
     alert("¡Cuestionario publicado! 🚀");
   };
 
@@ -91,15 +102,18 @@ const CreateQuiz = () => {
 
           {!canPublish && (
             <div className="p-3 bg-red-50 rounded-lg border border-red-100 mt-4">
-              <p className="text-[10px] text-red-500 font-medium">
-                ⚠️ Asegúrate de que cada pregunta tenga una respuesta correcta marcada.
-              </p>
+              <p className="text-[10px] text-red-500 font-bold uppercase mb-1">Requisitos faltantes:</p>
+              <ul className="text-[10px] text-red-400 list-disc pl-3 space-y-1">
+                {!isHeaderValid && <li>Título del cuestionario</li>}
+                {questions.some(q => q.title.trim() === "") && <li>Títulos de pregunta vacíos</li>}
+                {questions.some(q => !q.answers.some(a => a.isCorrect)) && <li>Marcar respuestas correctas</li>}
+                {questions.some(q => q.answers.some(a => a.text.trim() === "")) && <li>Textos de respuesta vacíos</li>}
+              </ul>
             </div>
           )}
         </div>
       </aside>
 
-      {/* CONTENIDO PRINCIPAL */}
       <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
         <div className="max-w-3xl mx-auto p-12">
           <QuizHeader 
