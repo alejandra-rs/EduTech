@@ -1,5 +1,6 @@
 import fitz  # PyMuPDF
 import ollama
+import boto3 
 from django.conf import settings
 from langchain_core.documents import Document as LangchainDocument
 from langchain_ollama import OllamaEmbeddings
@@ -47,72 +48,87 @@ def analizar_imagen_con_gemma(imagen_bytes):
 def ingerir_nuevo_documento(pdf_instance):
     try:
         nombre_asignatura = pdf_instance.post.course.name
-        # Extraemos título y descripción de la publicación
-        titulo_doc = getattr(pdf_instance.post, 'title', 'Sin título')
-        desc_doc = getattr(pdf_instance.post, 'description', getattr(pdf_instance.post, 'content', ''))
-        
+        titulo_doc = pdf_instance.post.title
+        descripcion_doc = pdf_instance.post.description
+        doc_id = pdf_instance.post.id
         fragmentos_crudos = []
 
-        # 1. Inyectamos la información de la publicación (Página 0)
-        info_post = f"INFORMACIÓN DE LA PUBLICACIÓN:\nTítulo: {titulo_doc}\nDescripción: {desc_doc}"
-        fragmentos_crudos.append(LangchainDocument(
-            page_content=info_post,
-            metadata={"p": 0, "tipo": "info_publicacion", "asignatura": nombre_asignatura, "titulo": titulo_doc}
-        ))
+        print(f"☁️ Descargando '{titulo_doc}' desde Cloudflare a la RAM...") 
+        
+        s3 = boto3.client(
+            's3',
+            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_S3_REGION_NAME,
+        )
 
-        # 2. Procesamos el PDF
-        doc = fitz.open(stream=pdf_instance.file.read(), filetype="pdf")
+        key = pdf_instance.file.name
+        
+        respuesta_s3 = s3.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
+        
+        pdf_bytes = respuesta_s3['Body'].read()
+
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    
         for num_pag, pagina in enumerate(doc):
-            encontrado = False
-            
-            # Texto
-            texto = pagina.get_text("text").replace('\x00', ' ').strip()
+            texto = pagina.get_text("text").replace('\x00', ' ')
             if texto:
                 fragmentos_crudos.append(LangchainDocument(
                     page_content=texto,
-                    metadata={"p": num_pag + 1, "tipo": "texto", "asignatura": nombre_asignatura, "titulo": titulo_doc}
+                    metadata={"p": num_pag + 1, "tipo": "chunk"} 
                 ))
-                encontrado = True
 
-            # Imágenes
             for img in pagina.get_images():
-                encontrado = True
                 xref = img[0]
                 pix = fitz.Pixmap(doc, xref)
-                if pix.n - pix.alpha > 3: pix = fitz.Pixmap(fitz.csRGB, pix)
-                desc = analizar_imagen_con_gemma(pix.tobytes("png"))
+                img_bytes = pix.tobytes("png")
+                
+                descripcion_visual = analizar_imagen_con_gemma(img_bytes)
                 fragmentos_crudos.append(LangchainDocument(
-                    page_content=f"[Imagen]: {desc}",
-                    metadata={"p": num_pag + 1, "tipo": "vision", "asignatura": nombre_asignatura, "titulo": titulo_doc}
+                    page_content=f"[Imagen/Captura]: {descripcion_visual}",
+                    metadata={"p": num_pag + 1, "tipo": "vision_chunk"} 
                 ))
 
-            # Salvavidas (Si la página parecía vacía)
-            if not encontrado:
-                pix_pag = pagina.get_pixmap(matrix=fitz.Matrix(2, 2))
-                desc_pag = analizar_imagen_con_gemma(pix_pag.tobytes("png"))
-                if len(desc_pag) > 15:
-                    fragmentos_crudos.append(LangchainDocument(
-                        page_content=f"[Página escaneada]: {desc_pag}",
-                        metadata={"p": num_pag + 1, "tipo": "vision_salvavidas", "asignatura": nombre_asignatura, "titulo": titulo_doc}
-                    ))
+        texto_padre = f"Título del documento: {titulo_doc}\nDescripción general: {descripcion_doc}"
+        doc_padre = LangchainDocument(
+            page_content=texto_padre,
+            metadata={
+                "tipo": "resumen_documento", 
+                "doc_id": doc_id,
+                "asignatura": nombre_asignatura,
+                "titulo": titulo_doc
+            }
+        )
 
-        # 3. Fragmentación y guardado
         splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
-        docs_finales = splitter.split_documents(fragmentos_crudos)
+        docs_hijos = splitter.split_documents(fragmentos_crudos)
 
-        for d in docs_finales:
-            d.metadata["cita_previa"] = d.page_content[:80].strip()
-            # Aseguramos que todos tengan los metadatos de filtrado
+        for d in docs_hijos:
+            d.metadata["cita_previa"] = d.page_content[:80].strip() + "..."
+            d.metadata["doc_id"] = doc_id
             d.metadata["asignatura"] = nombre_asignatura
             d.metadata["titulo"] = titulo_doc
 
-        if docs_finales:
-            vector_store.add_documents(docs_finales)
-        
+        documentos_a_guardar = [doc_padre] + docs_hijos
+        vector_store.add_documents(documentos_a_guardar)
         pdf_instance.processing_status = 'completado'
         pdf_instance.save(update_fields=['processing_status'])
 
     except Exception as e:
-        print(f"Fallo: {e}")
+        print(f"Fallo crítico vectorizando PDF ID {pdf_instance.id}: {e}")
         pdf_instance.processing_status = 'error'
         pdf_instance.save(update_fields=['processing_status'])
+
+def eliminar_vectores_documento(pdf_instance_id):
+    """
+    Borra los vectores asociados al ID de un PDFAttachment borrado.
+    """
+    engine = create_engine(CONNECTION_STRING)
+    with engine.connect() as conn:
+        query = text("""
+            DELETE FROM langchain_pg_embedding 
+            WHERE cmetadata->>'doc_id' = :doc_id
+        """)
+        conn.execute(query, {"doc_id": str(pdf_instance_id)})
+        conn.commit()
