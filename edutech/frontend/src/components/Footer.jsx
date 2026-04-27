@@ -1,21 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 
-const NotebookFooter = ({ tabs = [] }) => {
+const Footer = ({ tabs = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Encontrar la pestaña activa comparando el final de la ruta o la ruta completa
-  const activeTab = tabs.findIndex((tab) =>
-    location.pathname.endsWith(tab.path) || location.pathname === tab.path
-  );
+  const activeTab = tabs.findIndex((tab) => location.pathname.endsWith(tab.path) || location.pathname === tab.path);
 
   const handleTabClick = (tab) => {
-    // Si la ruta empieza por "/", es una ruta absoluta (como /prueba)
-    if (tab.path.startsWith("/")) {
-      return navigate(tab.path);
-    }
+    if (tab.path.startsWith("/")) return navigate(tab.path);
 
-    // Lógica para rutas relativas dentro de /upload
     if (location.pathname.includes("/upload")) {
       const pathParts = location.pathname.split("/");
       const uploadIndex = pathParts.indexOf("upload");
@@ -24,7 +17,6 @@ const NotebookFooter = ({ tabs = [] }) => {
         return navigate(newPath);
       }
     }
-    
     navigate(tab.path);
   };
 
@@ -36,8 +28,8 @@ const NotebookFooter = ({ tabs = [] }) => {
             key={index}
             onClick={() => handleTabClick(tab)}
             className={`
-              px-5 transition-all duration-300 ease-out pointer-events-auto
-              rounded-t-xl text-white font-black text-[10px] uppercase tracking-tighter
+              px-6 transition-all duration-300 ease-out pointer-events-auto
+              rounded-t-xl text-white font-black text-[13px] uppercase tracking-tighter
               ${tab.color} shadow-lg
               ${activeTab === index 
                 ? "h-12 pb-3 z-20" 
@@ -71,4 +63,4 @@ const NotebookFooter = ({ tabs = [] }) => {
   );
 };
 
-export default NotebookFooter;
+export default Footer;

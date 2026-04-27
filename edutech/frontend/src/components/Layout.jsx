@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "./Header";
-import NotebookFooter from "./Footer";
+import Footer from "./Footer";
 import { useLocation } from "react-router-dom";
 import { getUserByEmail } from "../services/connections";
 
@@ -18,8 +18,8 @@ export default function Layout({ accounts, instance, children }) {
     upload: [
       { label: "PDF", color: "bg-red-400", path: "PDF" },
       { label: "Video", color: "bg-blue-400", path: "Video" },
-      { label: "Cuestionario", color: "bg-orange-500", path: "/prueba" }, 
-      { label: "Flashcard", color: "bg-indigo-500", path: "/prueba3" },
+      { label: "Cuestionario", color: "bg-orange-500", path: "quiz" }, 
+      { label: "Flashcard", color: "bg-indigo-500", path: "flashcard" },
     ],
   };
 
@@ -52,7 +52,7 @@ export default function Layout({ accounts, instance, children }) {
           {children}
         </div>
         <div className="absolute bottom-0 left-0 w-full">
-          <NotebookFooter tabs={currentTabs} />
+          <Footer tabs={currentTabs} />
         </div>
       </main>
     </div>

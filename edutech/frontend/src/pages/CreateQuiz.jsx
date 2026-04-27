@@ -86,7 +86,7 @@ const CreateQuiz = () => {
           </button>
 
           <nav className="flex-1 overflow-y-auto space-y-2">
-            {questions.map((q, index) => (
+            {questions.map((q) => (
               <button
                 key={q.id}
                 onClick={() => scrollToQuestion(q.id)}
@@ -94,7 +94,7 @@ const CreateQuiz = () => {
               >
                 <Bars3BottomLeftIcon className="w-4 h-4 text-gray-300 mt-0.5 group-hover:text-blue-500" />
                 <span className="text-sm text-gray-600 group-hover:text-blue-600 truncate">
-                  {q.title || `Pregunta ${index + 1}`}
+                  {q.title || "Pregunta sin título"}
                 </span>
               </button>
             ))}

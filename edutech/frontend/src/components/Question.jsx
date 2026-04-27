@@ -21,30 +21,30 @@ const Question = ({ question, onUpdate, onDelete }) => {
     <div className="flex gap-2 items-start animate-in fade-in slide-in-from-bottom-2">
       <div className="flex-1 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <textarea 
-              ref={titleRef}
-              rows="1"
+        <div className="flex-1">
+          <textarea 
+            ref={titleRef}
+            rows="1"
               value={question.title}
               onChange={(e) => onUpdate({ ...question, title: e.target.value })}
               placeholder="Pregunta sin título" 
               className="text-sm font-bold text-gray-800 outline-none w-full placeholder:text-gray-300 resize-none overflow-hidden bg-transparent"
-            />
+          />
             <div className="h-0.5 w-8 bg-blue-500 mt-1 rounded-full"></div>
-          </div>
-          
-          <button 
-            onClick={addAnswer}
+        </div>
+        
+        <button 
+          onClick={addAnswer}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all active:scale-90 font-medium text-xs border border-gray-100"
-          >
+        >
             <PlusIcon className="w-4 h-4 stroke-[2.5px]" />
             Respuesta
-          </button>
-        </div>
+        </button>
+      </div>
 
         <div className="space-y-2">
           {question.answers.map((ans) => (
-            <Answer
+          <Answer
               key={ans.id}
               value={ans.text}
               isCorrect={ans.isCorrect}
@@ -63,10 +63,10 @@ const Question = ({ question, onUpdate, onDelete }) => {
                 const newAnswers = question.answers.map(a => a.id === ans.id ? { ...a, isCorrect: !ans.isCorrect } : a);
                 onUpdate({ ...question, answers: newAnswers });
               }}
-            />
-          ))}
-        </div>
+          />
+        ))}
       </div>
+    </div>
       
       <button 
         onClick={onDelete}

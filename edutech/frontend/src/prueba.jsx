@@ -113,9 +113,15 @@ export default function App() {
                   path="/:id/:subjectId/video/:postId"
                   element={<VistaPreviaVideo />}
                 />
-                <Route path="/prueba" element={<CreateQuiz />} />
+                <Route 
+                  path="/:id/:subjectId/upload/quiz" 
+                  element={<CreateQuiz />} 
+                />
+                <Route 
+                  path="/:id/:subjectId/upload/flashcard" 
+                  element={<CreateFlashCard />} 
+                />
                 <Route path="/prueba2" element={<TakeQuiz quizData={testData} />} />
-                <Route path="/prueba3" element={<CreateFlashCard />} />
                 <Route path="/prueba4" element={<TakeFlashCard flashData={testFlashData} />} />
               </Routes>
             </Layout>

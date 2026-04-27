@@ -4,10 +4,10 @@ import {
   ArrowRightStartOnRectangleIcon, 
   BookOpenIcon, 
   DocumentTextIcon,
-  SparklesIcon
+  RectangleStackIcon
 } from "@heroicons/react/24/outline";
 
-export default function Header({
+export default function Header ({
   isOpen,
   setIsOpen,
   userProfilePic,
@@ -36,13 +36,11 @@ export default function Header({
                   ${isOpen ? "w-64 px-4" : "w-20 px-4"}`}
     >
       <div className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}>
-        <div className="relative flex-shrink-0">
-          <div className="scale-75 w-10 h-10 bg-indigo-500 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.5)] flex items-center justify-center transform rotate-12 group-hover:rotate-0 transition-transform">
-            <SparklesIcon className="w-6 h-6 text-white -rotate-12" />
-          </div>
+        <div className="flex center">
+          <RectangleStackIcon className="w-10 h-10 text-white" />
         </div>
         <span className={`ml-4 font-black text-xl text-white tracking-tight transition-all duration-300 ${!isOpen && "opacity-0 w-0"}`}>
-          Edutech<span className="text-indigo-400">.</span>
+          Edutech
         </span>
       </div>
 
@@ -63,12 +61,12 @@ export default function Header({
 
       <nav className="flex flex-col gap-2 flex-1">
         <a href="#" className={navItemClass} title="Cursos">
-          <BookOpenIcon className="w-6 h-6 text-indigo-400 group-hover:text-white transition-colors" />
+          <BookOpenIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
           {isOpen && <span className="text-white font-medium text-sm">Cursos</span>}
         </a>
         
         <a href="#" className={navItemClass} title="Documentos">
-          <DocumentTextIcon className="w-6 h-6 text-indigo-400 group-hover:text-white transition-colors" />
+          <DocumentTextIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
           {isOpen && <span className="text-white font-medium text-sm">Documentos</span>}
         </a>
 

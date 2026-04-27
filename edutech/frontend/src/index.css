@@ -1,16 +1,9 @@
 @import "tailwindcss";
 
 @layer base {
-  html {
-    font-size: 85%; 
-  }
 
   body {
     @apply text-slate-700 antialiased bg-gray-50;
-  }
-
-  aside, footer {
-    font-size: 1.176rem; 
   }
 
   aside span, aside p, footer button {

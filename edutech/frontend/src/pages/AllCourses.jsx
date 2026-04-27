@@ -1,5 +1,5 @@
 import SearchBar from '../components/SearchBar';
-import { WidgetCourse } from '../components/Course';
+import { CourseWidget } from '../components/CourseWidget';
 import PostGrid from '../components/PostGrid';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -42,7 +42,7 @@ const Courses = () => {
                 key={year.id}
                 className="block transition-transform hover:scale-[1.02]"
               >
-                <WidgetCourse
+                <CourseWidget
                   courseName={year.year + "º Curso"}
                   className="max-w-none w-full"
                 />
