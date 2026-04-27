@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Answer from './Answer';
 
-const Question = ({ question, onUpdate, onDelete }) => {
+const Question = ({ question, onUpdate, onDelete, canDelete = true }) => {
   const titleRef = useRef(null);
 
   useEffect(() => {
@@ -45,20 +45,12 @@ const Question = ({ question, onUpdate, onDelete }) => {
         <div className="space-y-2">
           {question.answers.map((ans) => (
           <Answer
-              key={ans.id}
-              value={ans.text}
-              isCorrect={ans.isCorrect}
+              key={ans.id} value={ans.text} isCorrect={ans.isCorrect} canDelete={question.answers.length > 2}
               onChange={(e) => {
                 const newAnswers = question.answers.map(a => a.id === ans.id ? { ...a, text: e.target.value } : a);
                 onUpdate({ ...question, answers: newAnswers });
               }}
-              onDelete={() => {
-                if(question.answers.length > 2) {
-                  onUpdate({ ...question, answers: question.answers.filter(a => a.id !== ans.id) });
-                } else {
-                  alert("Cada pregunta debe tener al menos 2 respuestas.");
-                }
-              }}
+              onDelete={() => onUpdate({ ...question, answers: question.answers.filter(a => a.id !== ans.id) })}
               onToggleCorrect={() => {
                 const newAnswers = question.answers.map(a => a.id === ans.id ? { ...a, isCorrect: !ans.isCorrect } : a);
                 onUpdate({ ...question, answers: newAnswers });
@@ -68,9 +60,9 @@ const Question = ({ question, onUpdate, onDelete }) => {
       </div>
     </div>
       
-      <button 
-        onClick={onDelete}
-        className="mt-4 p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-red-500 hover:border-red-200 hover:shadow-lg active:scale-90 transition-all shadow-sm"
+      <button
+        onClick={onDelete} disabled={!canDelete}
+        className="mt-4 p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-400 disabled:hover:border-gray-200"
         title="Eliminar pregunta"
       >
         <TrashIcon className="w-5 h-5" />

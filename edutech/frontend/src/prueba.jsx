@@ -24,53 +24,6 @@ import {
 export default function App() {
   const { accounts, instance } = useMsal();
 
-  const testFlashData = {
-    title: "Fundamentos de React",
-    description: "Repasa los conceptos clave para dominar la librería.",
-    items: [
-      { id: "c1", front: "¿Qué es el Virtual DOM?", back: "Es una representación en memoria de la UI real que se sincroniza con el DOM de forma eficiente." },
-      { id: "c2", front: "¿Para qué sirve el Hook useEffect?", back: "Permite ejecutar efectos secundarios en componentes funcionales (peticiones, suscripciones, etc)." },
-      { id: "c3", front: "¿Qué es el Virtual DOM?", back: "Es una representación en memoria de la UI real que se sincroniza con el DOM de forma eficiente." },
-      { id: "c4", front: "¿Para qué sirve el Hook useEffect?", back: "Permite ejecutar efectos secundarios en componentes funcionales (peticiones, suscripciones, etc)." },
-      { id: "c5", front: "¿Qué es el Virtual DOM?", back: "Es una representación en memoria de la UI real que se sincroniza con el DOM de forma eficiente." },
-      { id: "c6", front: "¿Para qué sirve el Hook useEffect?", back: "Permite ejecutar efectos secundarios en componentes funcionales (peticiones, suscripciones, etc)." },
-    ]
-  };
-
-  const testData = {
-    title: "Certificación React 2026",
-    description: "Este cuestionario evalúa tus conocimientos en el ecosistema moderno de React, incluyendo Server Components, Hooks avanzados y optimización con Tailwind CSS.",
-    questions: [
-      { 
-        id: "q1", 
-        title: "¿Qué hooks se introdujeron en React 16.8?", 
-        answers: [
-          { id: "a1", text: "useState", isCorrect: true },
-          { id: "a2", text: "useEffect", isCorrect: true },
-          { id: "a3", text: "useHistory", isCorrect: false },
-          { id: "a4", text: "useTransition", isCorrect: false }
-        ] 
-      },
-      { 
-        id: "q2", 
-        title: "¿React es un Framework o una Librería?", 
-        answers: [
-          { id: "b1", text: "Librería", isCorrect: true },
-          { id: "b2", text: "Framework", isCorrect: false }
-        ] 
-      },
-      { 
-        id: "q3", 
-        title: "Clases de Tailwind para un padding lateral de 16px:", 
-        answers: [
-          { id: "c1", text: "p-4", isCorrect: false },
-          { id: "c2", text: "px-4", isCorrect: true },
-          { id: "c3", text: "py-4", isCorrect: false }
-        ] 
-      }
-    ]
-  };
-
   const isDomainValid = accounts.length > 0;
   useEffect(() => {
     if (accounts.length > 0) {
@@ -113,16 +66,22 @@ export default function App() {
                   path="/:id/:subjectId/video/:postId"
                   element={<VistaPreviaVideo />}
                 />
-                <Route 
-                  path="/:id/:subjectId/upload/quiz" 
-                  element={<CreateQuiz />} 
+                <Route
+                  path="/:id/:subjectId/upload/quiz"
+                  element={<CreateQuiz />}
                 />
-                <Route 
-                  path="/:id/:subjectId/upload/flashcard" 
-                  element={<CreateFlashCard />} 
+                <Route
+                  path="/:id/:subjectId/upload/flashcard"
+                  element={<CreateFlashCard />}
                 />
-                <Route path="/prueba2" element={<TakeQuiz quizData={testData} />} />
-                <Route path="/prueba4" element={<TakeFlashCard flashData={testFlashData} />} />
+                <Route
+                  path="/:id/:subjectId/quiz/:postId"
+                  element={<TakeQuiz />}
+                />
+                <Route
+                  path="/:id/:subjectId/flashcard/:postId"
+                  element={<TakeFlashCard />}
+                />
               </Routes>
             </Layout>
           ) : null}

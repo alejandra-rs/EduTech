@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
 
-const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect }) => {
+const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect, canDelete = true }) => {
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -35,12 +35,14 @@ const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect }) => {
         }`}
       />
 
-      <button 
-        onClick={onDelete} 
-        className="mt-0.5 text-gray-300 p-1 rounded hover:text-red-500 hover:bg-red-50 hover:rotate-12 active:scale-75 transition-all"
-      >
-        <TrashIcon className="w-4 h-4" />
-      </button>
+      {canDelete && (
+        <button
+          onClick={onDelete}
+          className="mt-0.5 text-gray-300 p-1 rounded hover:text-red-500 hover:bg-red-50 transition-all"
+        >
+          <TrashIcon className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 };

@@ -1,149 +1,109 @@
 import React, { useState } from 'react';
-import QuizHeader from '../components/QuizHeader';
+import { useParams, useNavigate } from 'react-router-dom';
+import QuizHeader from '../components/quiz/QuizHeader';
+import QuizSidebar from '../components/quiz/QuizSidebar';
 import Question from '../components/Question';
-import { 
-  PlusCircleIcon, 
-  ChevronLeftIcon, 
-  RocketLaunchIcon, 
-  Bars3BottomLeftIcon 
-} from "@heroicons/react/24/solid";
+import SuccessToast from '../components/SuccessToast';
+import { PlusCircleIcon, RocketLaunchIcon } from "@heroicons/react/24/solid";
+import { postQuiz } from '@services/connections';
+import { useCurrentUser } from '@services/useCurrentUser';
+
+const createAnswer = () => ({ id: crypto.randomUUID(), text: '', isCorrect: false });
+const createQuestion = () => ({ id: crypto.randomUUID(), title: '', answers: [createAnswer(), createAnswer()] });
 
 const CreateQuiz = () => {
+  const { id, subjectId } = useParams();
+  const navigate = useNavigate();
+  const { userData } = useCurrentUser();
+
   const [header, setHeader] = useState({ title: '', description: '' });
   const [showSidebar, setShowSidebar] = useState(true);
-  const [questions, setQuestions] = useState([
-    { id: 'q-1', title: '', answers: [{ id: Date.now(), text: '', isCorrect: false }, { id: Date.now()+1, text: '', isCorrect: false }] }
-  ]);
+  const [published, setPublished] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [questions, setQuestions] = useState([createQuestion()]);
 
-  const addQuestion = () => {
-    const newId = `q-${Date.now()}`;
-    setQuestions([...questions, { 
-      id: newId, 
-      title: '', 
-      answers: [{ id: Date.now()+2, text: '', isCorrect: false }, { id: Date.now()+3, text: '', isCorrect: false }] 
-    }]);
-  };
-
-  const deleteQuestion = (id) => {
-    if (questions.length > 1) setQuestions(questions.filter(q => q.id !== id))
-    else alert("El cuestionario debe tener al menos una pregunta.");
-  };
-
-  const updateQuestion = (id, updatedQ) => {
-    setQuestions(questions.map(q => q.id === id ? updatedQ : q));
-  };
-
-  const scrollToQuestion = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
-  const areQuestionsValid = questions.every(q => 
-    q.title.trim() !== "" && 
-    q.answers.some(a => a.isCorrect) &&
-    q.answers.every(a => a.text.trim() !== "")
-  );
+  const addQuestion = () => setQuestions(prev => [...prev, createQuestion()]);
+  const deleteQuestion = (id) => setQuestions(prev => prev.filter(question => question.id !== id));
+  const updateQuestion = (id, updated) => setQuestions(prev => prev.map(question => question.id === id ? updated : question));
 
   const isHeaderValid = header.title.trim() !== "";
-
+  const areQuestionsValid = questions.every(question =>
+    question.title.trim() !== "" &&
+    question.answers.some(answer => answer.isCorrect) &&
+    question.answers.every(answer => answer.text.trim() !== "")
+  );
   const canPublish = isHeaderValid && areQuestionsValid;
 
-  const handlePublish = () => {
-    if (!canPublish) {
-      return alert("Por favor, rellena todos los campos y marca una respuesta correcta por pregunta.");
+  const requirements = [
+    ...(!isHeaderValid ? ["Título del cuestionario"] : []),
+    ...(questions.some(q => q.title.trim() === "") ? ["Títulos de pregunta vacíos"] : []),
+    ...(questions.some(q => !q.answers.some(a => a.isCorrect)) ? ["Respuesta correcta sin marcar"] : []),
+    ...(questions.some(q => q.answers.some(a => a.text.trim() === "")) ? ["Textos de respuesta vacíos"] : []),
+  ];
+
+  const handlePublish = async () => {
+    if (!canPublish || publishing) return;
+    setPublishing(true);
+    try {
+      const post = await postQuiz(subjectId, userData?.id, header.title, header.description, questions);
+      setPublished(true);
+      setTimeout(() => navigate(`/${id}/${subjectId}/quiz/${post.id}`), 1200);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setPublishing(false);
     }
-    alert("¡Cuestionario publicado! 🚀");
   };
+
+  const scrollToQuestion = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   return (
     <div className="flex min-h-screen bg-white">
-      <aside 
-        className={`fixed right-0 top-0 h-full bg-gray-50 border-l border-gray-200 transition-all duration-300 z-50 shadow-2xl ${
-          showSidebar ? 'w-72' : 'w-0'
-        }`}
+      {published && <SuccessToast message="Cuestionario publicado" onClose={() => setPublished(false)} />}
+
+      <QuizSidebar
+        items={questions} canPublish={canPublish && !publishing}
+        showSidebar={showSidebar}
+        onToggle={() => setShowSidebar(visible => !visible)}
+        onPublish={handlePublish}
+        onScrollTo={scrollToQuestion}
+        requirements={requirements}
       >
-        <button 
-          onClick={() => setShowSidebar(!showSidebar)}
-          className={`absolute top-10 -left-10 bg-white border border-gray-200 p-2 rounded-l-xl shadow-sm hover:bg-gray-50 transition-all ${!showSidebar ? 'translate-x-0' : ''}`}
-        >
-          <ChevronLeftIcon className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${showSidebar ? 'rotate-180' : ''}`} />
-        </button>
-
-        <div className={`flex flex-col h-full p-5 overflow-hidden transition-opacity duration-300 ${showSidebar ? 'opacity-100' : 'opacity-0'}`}>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Esquema</h2>
-          
-          <button 
-            onClick={handlePublish}
-            disabled={!canPublish}
-            className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold transition-all mb-8
-              ${canPublish ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}
-            `}
-          >
-            <RocketLaunchIcon className="w-4 h-4" />
-            Publicar Cuestionario
-          </button>
-
-          <nav className="flex-1 overflow-y-auto space-y-2">
-            {questions.map((q) => (
-              <button
-                key={q.id}
-                onClick={() => scrollToQuestion(q.id)}
-                className="flex items-start gap-3 w-full p-3 rounded-lg hover:bg-white hover:shadow-sm text-left transition-all group"
-              >
-                <Bars3BottomLeftIcon className="w-4 h-4 text-gray-300 mt-0.5 group-hover:text-blue-500" />
-                <span className="text-sm text-gray-600 group-hover:text-blue-600 truncate">
-                  {q.title || "Pregunta sin título"}
-                </span>
-              </button>
-            ))}
-          </nav>
-
-          {!canPublish && (
-            <div className="p-3 bg-red-50 rounded-lg border border-red-100 mt-4">
-              <p className="text-[10px] text-red-500 font-bold uppercase mb-1">Requisitos faltantes:</p>
-              <ul className="text-[10px] text-red-400 list-disc pl-3 space-y-1">
-                {!isHeaderValid && <li>Título del cuestionario</li>}
-                {questions.some(q => q.title.trim() === "") && <li>Títulos de pregunta vacíos</li>}
-                {questions.some(q => !q.answers.some(a => a.isCorrect)) && <li>Marcar respuestas correctas</li>}
-                {questions.some(q => q.answers.some(a => a.text.trim() === "")) && <li>Textos de respuesta vacíos</li>}
-              </ul>
-            </div>
-          )}
-        </div>
-      </aside>
+        <RocketLaunchIcon className="w-4 h-4" />
+        {publishing ? "Publicando…" : "Publicar cuestionario"}
+      </QuizSidebar>
 
       <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
         <div className="max-w-3xl mx-auto p-12">
-          <QuizHeader 
+          <QuizHeader
             title={header.title}
             description={header.description}
-            onTitleChange={(v) => setHeader({ ...header, title: v })}
-            onDescChange={(v) => setHeader({ ...header, description: v })}
+            onTitleChange={(val) => setHeader(header => ({ ...header, title: val }))}
+            onDescChange={(val) => setHeader(header => ({ ...header, description: val }))}
           />
 
           <div className="space-y-6 mt-10">
-            {questions.map((q) => (
-              <div id={q.id} key={q.id} className="scroll-mt-24">
-                <Question 
-                  question={q} 
-                  onUpdate={(newQ) => updateQuestion(q.id, newQ)}
-                  onDelete={() => deleteQuestion(q.id)}
+            {questions.map((question) => (
+              <div id={question.id} key={question.id} className="scroll-mt-24">
+                <Question
+                  question={question}
+                  canDelete={questions.length > 1}
+                  onUpdate={(updated) => updateQuestion(question.id, updated)}
+                  onDelete={() => deleteQuestion(question.id)}
                 />
               </div>
             ))}
           </div>
-
-          <button 
-            onClick={addQuestion}
-            className={`fixed bottom-8 p-3 bg-blue-600 text-white rounded-full shadow-2xl hover:bg-blue-700 active:scale-90 transition-all duration-300 group z-50 
-              ${showSidebar ? 'right-[312px]' : 'right-8'}`}
-          >
-            <PlusCircleIcon className="w-8 h-8" />
-          </button>
         </div>
       </main>
+
+      <button
+        onClick={addQuestion}
+        className={`fixed bottom-8 p-3 bg-blue-600 text-white rounded-full shadow-xl hover:bg-blue-700 active:scale-95 transition-all duration-200 z-50
+          ${showSidebar ? 'right-[312px]' : 'right-8'}`}
+      >
+        <PlusCircleIcon className="w-8 h-8" />
+      </button>
     </div>
   );
 };

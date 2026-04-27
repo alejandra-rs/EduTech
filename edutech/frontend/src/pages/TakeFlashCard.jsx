@@ -1,15 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import FlashCardView from '../components/FlashCardView';
 import QuizStats from '../components/Stats';
-import { 
-  ChevronLeftIcon, 
+import { getDocument } from '@services/connections';
+import {
+  ChevronLeftIcon,
   ArrowPathIcon,
-  Square3Stack3DIcon
+  Square3Stack3DIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/solid";
 
-const TakeFlashCard = ({ flashData }) => {
-  const [results, setResults] = useState({}); // { cardId: true/false }
+const transformFlashData = (post) => ({
+  title: post.title,
+  description: post.description,
+  items: (post.flc?.cards || []).map(c => ({
+    id: c.id,
+    front: c.front,
+    back: c.back,
+  })),
+});
+
+const TakeFlashCard = () => {
+  const { id, subjectId, postId } = useParams();
+  const navigate = useNavigate();
+
+  const [flashData, setFlashData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [results, setResults] = useState({});
   const [showSidebar, setShowSidebar] = useState(true);
+
+  useEffect(() => {
+    getDocument(postId)
+      .then(post => setFlashData(transformFlashData(post)))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [postId]);
 
   const cards = flashData?.items || [];
 
@@ -28,12 +53,19 @@ const TakeFlashCard = ({ flashData }) => {
     total: cards.length,
     correct: Object.values(results).filter(v => v === true).length,
     incorrect: Object.values(results).filter(v => v === false).length,
-    answered: Object.keys(results).length
+    answered: Object.keys(results).length,
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">
+        Cargando flashcards…
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-white">
-
       <aside className={`fixed right-0 top-0 h-full bg-gray-50 border-l border-gray-200 transition-all duration-300 z-50 shadow-2xl ${showSidebar ? 'w-72' : 'w-0'}`}>
         <button onClick={() => setShowSidebar(!showSidebar)} className="absolute top-10 -left-10 bg-white border border-gray-200 p-2 rounded-l-xl shadow-sm">
           <ChevronLeftIcon className={`w-5 h-5 text-gray-500 transition-transform ${showSidebar ? 'rotate-180' : ''}`} />
@@ -53,9 +85,9 @@ const TakeFlashCard = ({ flashData }) => {
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-10 mb-4">Tarjetas</h2>
           <nav className="flex-1 overflow-y-auto space-y-1">
             {cards.map((c, index) => (
-              <button 
-                key={c.id} 
-                onClick={() => document.getElementById(`card-${c.id}`).scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              <button
+                key={c.id}
+                onClick={() => document.getElementById(`card-${c.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
                 className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-white transition-all group"
               >
                 <div className={`w-2 h-2 rounded-full ${results[c.id] === undefined ? 'bg-gray-200' : results[c.id] ? 'bg-green-500' : 'bg-red-500'}`} />
@@ -68,6 +100,11 @@ const TakeFlashCard = ({ flashData }) => {
 
       <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
         <div className="max-w-4xl mx-auto p-12">
+          <button onClick={() => navigate(`/${id}/${subjectId}/post`)} className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors">
+            <ArrowLeftIcon className="w-4 h-4" />
+            Volver a la asignatura
+          </button>
+
           <div className="mb-12">
             <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-widest mb-3">
               <Square3Stack3DIcon className="w-4 h-4" />
@@ -80,8 +117,8 @@ const TakeFlashCard = ({ flashData }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {cards.map((c) => (
               <div id={`card-${c.id}`} key={c.id} className="scroll-mt-28">
-                <FlashCardView 
-                  card={c} 
+                <FlashCardView
+                  card={c}
                   onResult={handleResult}
                   currentResult={results[c.id]}
                 />
@@ -89,7 +126,7 @@ const TakeFlashCard = ({ flashData }) => {
             ))}
           </div>
 
-          {stats.answered === stats.total && (
+          {stats.answered === stats.total && stats.total > 0 && (
             <div className="mt-16 p-12 bg-indigo-600 rounded-[3rem] text-center text-white shadow-2xl shadow-indigo-200 animate-in zoom-in">
               <h2 className="text-3xl font-bold mb-2">¡Mazo completado! 🎯</h2>
               <p className="text-indigo-100 mb-8 font-medium">Has repasado todos los conceptos de esta sesión.</p>
