@@ -196,7 +196,7 @@ class QuestionUploadSerializer(serializers.Serializer):
 
 class QuizUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
-    description = serializers.CharField()
+    description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
     questions = QuestionUploadSerializer(many=True)
@@ -214,7 +214,7 @@ class FlashCardUploadSerializer(serializers.Serializer):
 
 class FlashCardDeckUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
-    description = serializers.CharField()
+    description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
     cards = FlashCardUploadSerializer(many=True)

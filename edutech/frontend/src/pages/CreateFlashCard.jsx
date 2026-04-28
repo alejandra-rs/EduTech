@@ -23,21 +23,7 @@ const CreateFlashCard = () => {
     ...(emptyAnswers ? ["Respuestas vacías"] : []),
   ];
 
-  /*
-  // Lógica de publicación y JSON
-  const handlePublish = async () => {
-    // Generar el formato JSON exacto que pediste
-    const payloadJSON = cards.map(card => {
-      return { [card.front]: card.back };
-    });
-
-    console.log("JSON FLASHCARDS LISTO PARA DJANGO:", JSON.stringify(payloadJSON, null, 2));
-
-    // Aquí harás el await postFlashCardDeck(...) en el futuro
-    return new Promise(resolve => setTimeout(resolve, 1000)); // Simulamos carga
-  };
-  */
-
+  
   const handlePublish = async (header) => {
     await postFlashCardDeck(subjectId, userData?.id, header.title, header.description, cards);
   };
@@ -52,7 +38,7 @@ const CreateFlashCard = () => {
       publishIcon={<Square3Stack3DIcon className="w-4 h-4" />}
       publishText="Publicar Flashcards"
       successMessage="Grupo de flashcards publicado!"
-      itemLabel={(card) => card.answer || "Tarjeta sin título"}
+      itemLabel={(card) => card.question || "Tarjeta sin título"}
       renderItem={(card) => (
         <FlashCardItem
           card={card}

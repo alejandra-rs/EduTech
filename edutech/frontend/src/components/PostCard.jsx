@@ -39,16 +39,14 @@ const VideoPreview = ({ fileUrl }) => {
 };
 
 const QuizPreview = ({ questionCount }) => (
-  <div className="w-full h-48 border-b border-gray-200 bg-blue-50 shrink-0 flex flex-col items-center justify-center gap-2">
-    <span className="text-4xl">📝</span>
-    <span className="text-sm font-semibold text-blue-700">{questionCount ?? "?"} preguntas</span>
+  <div className="w-full h-48 border-b border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50 shrink-0 flex flex-col items-center justify-center gap-4 overflow-hidden">
+    <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">{questionCount ?? "?"} preguntas</span>
   </div>
 );
 
 const FlashCardPreview = ({ cardCount }) => (
-  <div className="w-full h-48 border-b border-gray-200 bg-indigo-50 shrink-0 flex flex-col items-center justify-center gap-2">
-    <span className="text-4xl">🃏</span>
-    <span className="text-sm font-semibold text-indigo-700">{cardCount ?? "?"} tarjetas</span>
+  <div className="w-full h-48 border-b border-gray-200 bg-gradient-to-br from-indigo-50 to-violet-50 shrink-0 flex flex-col items-center justify-center gap-4 overflow-hidden">
+    <span className="text-xs font-bold text-indigo-600 uppercase tracking-widest">{cardCount ?? "?"} tarjetas</span>
   </div>
 );
 
@@ -84,14 +82,14 @@ const PREVIEWS = {
   PDF: ({ fileUrl }) => <PdfPreview fileUrl={fileUrl} />,
   VID: ({ fileUrl }) => <VideoPreview fileUrl={fileUrl} />,
   QUI: ({ meta }) => <QuizPreview questionCount={meta?.question_count} />,
-  FLC: ({ meta }) => <FlashCardPreview cardCount={meta?.card_count} />,
+  FLA: ({ meta }) => <FlashCardPreview cardCount={meta?.card_count} />,
 };
 
 const LABELS = {
   PDF: LabelPDF,
   VID: LabelVideo,
   QUI: LabelQuiz,
-  FLC: LabelFlashCard,
+  FLA: LabelFlashCard,
 };
 
 export function PostCard({ title, type, fileUrl, date, onClick, stats, meta }) {

@@ -28,23 +28,6 @@ const CreateQuiz = () => {
     ...(questions.some(q => q.answers.some(a => a.text.trim() === "")) ? ["Textos de respuesta vacíos"] : []),
   ];
 
-  /*
-  const handlePublish = async () => {
-    // Generar el formato JSON exacto que pediste
-    const payloadJSON = questions.map(question => {
-      const respuestasArray = question.answers.map(ans => {
-        return { [ans.text]: ans.isCorrect };
-      });
-      return { [question.title]: respuestasArray };
-    });
-
-    console.log("JSON CUESTIONARIO LISTO PARA DJANGO:", JSON.stringify(payloadJSON, null, 2));
-
-    // Aquí harás el await postQuiz(...) en el futuro
-    return new Promise(resolve => setTimeout(resolve, 1000)); // Simulamos carga
-  };
-  */ 
-
   const handlePublish = async (header) => {
     await postQuiz(subjectId, userData?.id, header.title, header.description, questions);
   };
