@@ -170,11 +170,15 @@ AI_SETTINGS = {
     # 2. Servicio de Visión (Lector de imágenes)
     "VISION_URL": os.environ.get("VISION_URL", "http://localhost:11434"),
     "VISION_MODEL": os.environ.get("VISION_MODEL", "gemma3:4b"),
+
+
+    "CODE_DETECT_MODEL": os.environ.get("CODE_DETECT_MODEL", "http://localhost:11434"),
+    "CODE_DETECT_MODEL": os.environ.get("CODE_DETECT_MODEL", "llama3.2"),
     
     # 3. Servicio de Chat (El cerebro que responde al alumno)
     "CHAT_URL": os.environ.get("CHAT_URL", "http://localhost:11434"),
-    "CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
-    #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "gemma3:4b"),
+    #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
+    "CHAT_MODEL": os.environ.get("CHAT_MODEL", "gemma3:4b"),
     #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.1:8b"),
     
     # Base de datos
