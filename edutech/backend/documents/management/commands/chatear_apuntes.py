@@ -55,6 +55,7 @@ class Command(BaseCommand):
              Si no estás seguro, es mejor no usar una referencia que inventar una. 
              SOLO si el contexto no tiene información relevante, puedes responde de la mejor manera posible sin referencias.
              SOLICITUD DE EXPLICACIONES:
+             Se te pedirá que espliques un contepto, tienes que citar textualmente el fragmento que mejor explique el concepto y referenciarlo usando [Ref: X], después deberás añadir un ejeplo con objetos cotidianos para que se entienda mejor. 
              Si te piden que expliques un concepto, trata de basar tu explicación en los fragmentos que tengas, usa tus propias palabras pero mantén la esencia del fragmento. Y referencia la fuente original del concepto con [Ref: X].
              Si el fragmento tiene una explicación clara del concepto, puedes repetirla y siempre haz referencia al fragmento original usando [Ref: X].
              Si el fragmento tiene una explicación pero no tiene un ejemplo, puedes crear un ejemplo basado en la explicación, pero siempre haz referencia al fragmento original usando [Ref: X].
