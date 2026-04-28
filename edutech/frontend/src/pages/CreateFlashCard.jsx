@@ -1,35 +1,17 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import QuizHeader from '../components/quiz/QuizHeader';
-import QuizSidebar from '../components/quiz/QuizSidebar';
 import FlashCardItem from '../components/FlashCardItem';
-import SuccessToast from '../components/SuccessToast';
-import { AddQuestionButton } from '../components/quiz/AddQuestionButton';
-import { PlusCircleIcon, Square3Stack3DIcon } from "@heroicons/react/24/solid";
-import { postFlashCardDeck } from '@services/connections';
-import { useCurrentUser } from '@services/useCurrentUser';
-import { ItemsGrid } from '../components/quiz/ItemsGrid';
+import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
+import { EditorLayout } from '../components/quiz/EditorLayout';
 
 const CreateFlashCard = () => {
-  const { id, subjectId } = useParams();
-  const navigate = useNavigate();
-  const { userData } = useCurrentUser();
-
   const [header, setHeader] = useState({ title: '', description: '' });
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [published, setPublished] = useState(false);
-  const [publishing, setPublishing] = useState(false);
-  const [cards, setCards] = useState([
-    { id: 'c-1', front: '', back: '' }
-  ]);
+  const [cards, setCards] = useState([{ id: `c-${crypto.randomUUID()}`, front: '', back: '' }]);
 
   const addCard = () => setCards(prev => [...prev, { id: `c-${crypto.randomUUID()}`, front: '', back: '' }]);
-  const deleteCard = (id) => {
-    if (cards.length > 1) setCards(cards.filter(c => c.id !== id));
-  };
+  const deleteCard = (id) => { if (cards.length > 1) setCards(cards.filter(c => c.id !== id)); };
   const updateCard = (id, updatedCard) => setCards(cards.map(c => c.id === id ? updatedCard : c));
-  const scrollToCard = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+  // Validaciones
   const isHeaderValid = header.title.trim() !== "";
   const emptyFronts = cards.some(c => c.front.trim() === "");
   const emptyBacks = cards.some(c => c.back.trim() === "");
@@ -41,61 +23,38 @@ const CreateFlashCard = () => {
     ...(emptyBacks ? ["Respuestas vacías"] : []),
   ];
 
+  // Lógica de publicación y JSON
   const handlePublish = async () => {
-    if (!canPublish || publishing) return;
-    setPublishing(true);
-    try {
-      const post = await postFlashCardDeck(subjectId, userData?.id, header.title, header.description, cards);
-      setPublished(true);
-      setTimeout(() => navigate(`/${id}/${subjectId}/flashcard/${post.id}`), 1200);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setPublishing(false);
-    }
+    // Generar el formato JSON exacto que pediste
+    const payloadJSON = cards.map(card => {
+      return { [card.front]: card.back };
+    });
+
+    console.log("JSON FLASHCARDS LISTO PARA DJANGO:", JSON.stringify(payloadJSON, null, 2));
+
+    // Aquí harás el await postFlashCardDeck(...) en el futuro
+    return new Promise(resolve => setTimeout(resolve, 1000)); // Simulamos carga
   };
 
   return (
-    <>
-      {published && <SuccessToast message="Flashcards publicadas" onClose={() => setPublished(false)} />}
-
-      <QuizSidebar
-        items={cards}
-        canPublish={canPublish && !publishing}
-        showSidebar={showSidebar}
-        onToggle={() => setShowSidebar(visible => !visible)}
-        onPublish={handlePublish}
-        onScrollTo={scrollToCard}
-        itemLabel={(c, i) => c.front || `Tarjeta ${i + 1}`}
-        requirements={requirements}
-      >
-        <Square3Stack3DIcon className="w-4 h-4" />
-        {publishing ? "Publicando…" : "Publicar Flashcards"}
-      </QuizSidebar>
-
-      <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
-        <div className="max-w-4xl mx-auto p-12 pb-32">
-          <QuizHeader
-            title={header.title}
-            description={header.description}
-            onTitleChange={(v) => setHeader(h => ({ ...h, title: v }))}
-            onDescChange={(v) => setHeader(h => ({ ...h, description: v }))}
-          />
-
-          <ItemsGrid items={cards} renderItem={(card) => (
-            <FlashCardItem
-              card={card}
-              onUpdate={(updatedCard) => updateCard(card.id, updatedCard)}
-              onDelete={() => deleteCard(card.id)}
-              />
-            )}
-          />
-
-        </div>
-      </main>
-
-      <AddQuestionButton addQuestion={addCard} showSidebar={showSidebar} />
-    </>
+    <EditorLayout
+      header={header} setHeader={setHeader}
+      items={cards} onAdd={addCard}
+      canPublish={canPublish} requirements={requirements}
+      onPublish={handlePublish}
+      publishIcon={<Square3Stack3DIcon className="w-4 h-4" />}
+      publishText="Publicar Flashcards"
+      successMessage="¡Mazo de Flashcards publicado!"
+      itemLabel={(c, i) => c.front || `Tarjeta ${i + 1}`}
+      // Usamos el render prop para inyectarle el componente FlashCardItem
+      renderItem={(card) => (
+        <FlashCardItem
+          card={card}
+          onUpdate={(updated) => updateCard(card.id, updated)}
+          onDelete={() => deleteCard(card.id)}
+        />
+      )}
+    />
   );
 };
 
