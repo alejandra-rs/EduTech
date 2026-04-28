@@ -4,9 +4,11 @@ import QuizHeader from '../components/quiz/QuizHeader';
 import QuizSidebar from '../components/quiz/QuizSidebar';
 import FlashCardItem from '../components/FlashCardItem';
 import SuccessToast from '../components/SuccessToast';
+import { AddQuestionButton } from '../components/quiz/AddQuestionButton';
 import { PlusCircleIcon, Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import { postFlashCardDeck } from '@services/connections';
 import { useCurrentUser } from '@services/useCurrentUser';
+import { ItemsGrid } from '../components/quiz/ItemsGrid';
 
 const CreateFlashCard = () => {
   const { id, subjectId } = useParams();
@@ -54,7 +56,7 @@ const CreateFlashCard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <>
       {published && <SuccessToast message="Flashcards publicadas" onClose={() => setPublished(false)} />}
 
       <QuizSidebar
@@ -80,28 +82,20 @@ const CreateFlashCard = () => {
             onDescChange={(v) => setHeader(h => ({ ...h, description: v }))}
           />
 
-          <div className="space-y-4 mt-10">
-            {cards.map((c) => (
-              <div id={c.id} key={c.id} className="scroll-mt-24">
-                <FlashCardItem
-                  card={c}
-                  onUpdate={(newC) => updateCard(c.id, newC)}
-                  onDelete={() => deleteCard(c.id)}
-                />
-              </div>
-            ))}
-          </div>
+          <ItemsGrid items={cards} renderItem={(card) => (
+            <FlashCardItem
+              card={card}
+              onUpdate={(updatedCard) => updateCard(card.id, updatedCard)}
+              onDelete={() => deleteCard(card.id)}
+              />
+            )}
+          />
+
         </div>
       </main>
 
-      <button
-        onClick={addCard}
-        className={`fixed bottom-8 p-3 bg-indigo-600 text-white rounded-full shadow-2xl hover:bg-indigo-700 active:scale-90 transition-all duration-300 z-50
-          ${showSidebar ? 'right-[312px]' : 'right-8'}`}
-      >
-        <PlusCircleIcon className="w-8 h-8" />
-      </button>
-    </div>
+      <AddQuestionButton addQuestion={addCard} showSidebar={showSidebar} />
+    </>
   );
 };
 
