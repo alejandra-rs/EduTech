@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import FlashCardView from '../components/FlashCardView';
+import FlashCardView from '../components/study-material/flashcards/FlashCardView';
 import QuizStats from '../components/Stats';
 import { getDocument } from '@services/connections';
 import {
@@ -120,7 +120,6 @@ const TakeFlashCard = () => {
                 <FlashCardView
                   card={c}
                   onResult={handleResult}
-                  currentResult={results[c.id]}
                 />
               </div>
             ))}

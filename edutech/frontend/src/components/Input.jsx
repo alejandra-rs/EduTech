@@ -1,13 +1,6 @@
 export default function Input({
-  label,
-  placeholder = "Value",
-  rows = 1,
-  value,
-  onChange,
-  type = "text",
-  required = false,
-  className,
-  id,
+  label, placeholder = "Value", rows = 1, value, onChange, 
+  type = "text", required = false, className, id,
 }) {
   const baseStyle =
     "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all bg-white text-gray-800";

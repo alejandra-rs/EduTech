@@ -1,15 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { TrashIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { useAutoResize } from '../useAutoResize';
 
-const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect, canDelete = true }) => {
-  const textareaRef = useRef(null);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [value]);
+const QuizAnswer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect, canDelete = true }) => {
+  const ref = useRef(null);
+  useAutoResize(ref, value);
 
   return (
     <div className={`flex items-start gap-2 p-1.5 px-2.5 rounded-lg border transition-all duration-200 group ${
@@ -23,9 +18,9 @@ const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect, canDele
       >
         {isCorrect && <CheckIcon className="w-3 h-3 stroke-[4px]" />}
       </button>
-      
+
       <textarea
-        ref={textareaRef}
+        ref={ref}
         rows="1"
         value={value}
         onChange={onChange}
@@ -47,4 +42,4 @@ const Answer = ({ value, onChange, onDelete, isCorrect, onToggleCorrect, canDele
   );
 };
 
-export default Answer;
+export default QuizAnswer;

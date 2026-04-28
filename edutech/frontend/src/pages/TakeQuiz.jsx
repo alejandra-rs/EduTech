@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import QuizStats from '../components/Stats';
-import QuizCard from '../components/quiz/QuizCard';
+import QuizCard from '../components/study-material/quiz/QuizCard';
 import { getDocument } from '@services/connections';
 import {
   Bars3BottomLeftIcon,

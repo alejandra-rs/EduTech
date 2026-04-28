@@ -1,18 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
+import { useAutoResize } from './useAutoResize';
 
-const QuizHeader = ({ title, description, onTitleChange, onDescChange }) => {
+const EditorHeader = ({ title, description, onTitleChange, onDescChange }) => {
   const titleRef = useRef(null);
   const descRef = useRef(null);
 
-  const autoResize = (ref) => {
-    if (ref.current) {
-      ref.current.style.height = "auto";
-      ref.current.style.height = `${ref.current.scrollHeight}px`;
-    }
-  };
-
-  useEffect(() => autoResize(titleRef), [title]);
-  useEffect(() => autoResize(descRef), [description]);
+  useAutoResize(titleRef, title);
+  useAutoResize(descRef, description);
 
   return (
     <div className="mb-10 space-y-4">
@@ -25,7 +19,7 @@ const QuizHeader = ({ title, description, onTitleChange, onDescChange }) => {
           placeholder="Título"
           className="w-full text-2xl font-extrabold text-gray-800 outline-none resize-none overflow-hidden bg-transparent placeholder:text-gray-200 transition-all"
         />
-        <div className="h-0.5 w-0 group-focus-within:w-full bg-blue-500 transition-all duration-500 rounded-full"></div>
+        <div className="h-0.5 w-0 group-focus-within:w-full bg-blue-500 transition-all duration-500 rounded-full" />
       </div>
 
       <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-3 focus-within:bg-white focus-within:border-gray-200 transition-all">
@@ -35,7 +29,7 @@ const QuizHeader = ({ title, description, onTitleChange, onDescChange }) => {
           rows="1"
           value={description}
           onChange={(e) => onDescChange(e.target.value)}
-          placeholder="Escriba una descripción (opcional)"
+          placeholder="Escribe una descripción (opcional)"
           className="w-full text-sm text-gray-600 outline-none resize-none overflow-hidden bg-transparent placeholder:text-gray-300"
         />
       </div>
@@ -43,4 +37,4 @@ const QuizHeader = ({ title, description, onTitleChange, onDescChange }) => {
   );
 };
 
-export default QuizHeader;
+export default EditorHeader;

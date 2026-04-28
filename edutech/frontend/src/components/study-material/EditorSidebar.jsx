@@ -1,10 +1,9 @@
 import React from 'react';
 import { ChevronLeftIcon, Bars3BottomLeftIcon } from "@heroicons/react/24/solid";
-import { ActionButtons } from './ActionButtons';
 
 const defaultLabel = (item, index) => item.title || item.front || `Elemento ${index + 1}`;
 
-const QuizSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onScrollTo, itemLabel, requirements, children }) => {
+const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onScrollTo, itemLabel, requirements, children }) => {
   const getLabel = itemLabel ?? defaultLabel;
 
   return (
@@ -19,9 +18,17 @@ const QuizSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onSc
       <div className={`flex flex-col h-full p-5 overflow-hidden transition-opacity duration-300 ${showSidebar ? 'opacity-100' : 'opacity-0'}`}>
         <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Esquema</h2>
 
-        <ActionButtons onPublish={onPublish} canPublish={canPublish}>
+        <button
+          onClick={onPublish}
+          disabled={!canPublish}
+          className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold transition-all mb-4
+            ${canPublish ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+        >
           {children}
-        </ActionButtons>
+        </button>
+        <button className="w-full py-2 mb-4 rounded-xl text-sm font-medium text-gray-500 border border-gray-200 hover:bg-gray-100 transition-all">
+          Guardar en borradores
+        </button>
 
         <nav className="flex-1 overflow-y-auto space-y-2">
           {items.map((item, index) => (
@@ -51,4 +58,4 @@ const QuizSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onSc
   );
 };
 
-export default QuizSidebar;
+export default EditorSidebar;
