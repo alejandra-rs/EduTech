@@ -18,6 +18,11 @@ class SubscriptionView(views.APIView):
         if subscription:
             return Response({"id": subscription.id}, status=status.HTTP_200_OK)
         return Response({}, status=status.HTTP_200_OK)
+    
+    def get(self, request, student_id):
+        subscriptions = Subscription.objects.filter(user_id=student_id)
+        serializer = self.serializer_class(subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         user = get_object_or_404(Student, pk=request.data.get("user"))
