@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
 import Courses from "./pages/AllCourses";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
@@ -15,6 +16,7 @@ import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
 import ReportsPage from "./pages/ReportsPage";
 import ReportFormPage from "./pages/ReportFormPage";
+import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 
 import {
@@ -35,6 +37,7 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
+        <NavigationGuardProvider>
         <UnauthenticatedTemplate>
           <SignIn />
         </UnauthenticatedTemplate>
@@ -84,18 +87,22 @@ export default function App() {
                   path="/:id/:subjectId/flashcard/:postId"
                   element={<TakeFlashCard />}
                 />
+                <Route path="/borradores" element={<Drafts />} />
+                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
+                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
                 <Route
                   path="/reports"
                   element={<ReportsPage />}
                 />
-                <Route 
-                  path="/admin/report-form/:id" 
-                  element={<ReportFormPage />} 
+                <Route
+                  path="/admin/report-form/:id"
+                  element={<ReportFormPage />}
                 />
               </Routes>
             </Layout>
           ) : null}
         </AuthenticatedTemplate>
+        </NavigationGuardProvider>
       </BrowserRouter>
     </>
   );

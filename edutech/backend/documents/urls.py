@@ -5,6 +5,13 @@ urlpatterns = [
     path("<int:pk>", views.PostDetailView.as_view(), name="view_post"),
     path("upload/pdf/", views.PDFUploadView.as_view(), name="upload_pdf"),
     path("upload/vid/", views.VideoUploadView.as_view(), name="upload_video"),
+    path("upload/quiz/", views.QuizUploadView.as_view(), name="upload_quiz"),
+    path(
+        "upload/flashcards/",
+        views.FlashCardDeckUploadView.as_view(),
+        name="upload_flashcards",
+    ),
+    path("<int:post_pk>/quiz/check/", views.QuizCheckView.as_view(), name="check_quiz"),
     path(
         "download/pdf/<int:post_id>",
         views.PDFDownloadView.as_view(),
@@ -16,4 +23,6 @@ urlpatterns = [
     path("dislikes/", views.DislikeView.as_view(), name="dislike"),
     path("dislikes/<int:pk>", views.DislikeView.as_view(), name="dislike_delete"),
     path("", views.PostListView.as_view(), name="list_posts"),
+    path("drafts/", views.DraftListView.as_view(), name="draft_list"),
+    path("drafts/<int:pk>/", views.DraftDetailView.as_view(), name="draft_detail"),
 ]

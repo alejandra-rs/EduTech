@@ -8,7 +8,7 @@ const getFileUrl = (post) => {
 
 const getMeta = (post) => {
   if (post.post_type === "QUI") return post.qui;
-  if (post.post_type === "FLC") return post.flc;
+  if (post.post_type === "FLA") return post.fla;
   return null;
 };
 

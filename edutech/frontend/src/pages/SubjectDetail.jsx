@@ -46,10 +46,13 @@ const SubjectDetail = () => {
   }, []);
 
   const handlePostClick = (post) => {
-    if (post.post_type === "PDF") navigate(`/${id}/${subjectId}/documento/${post.id}`);
-    else if (post.post_type === "VID") navigate(`/${id}/${subjectId}/video/${post.id}`);
-    else if (post.post_type === "QUI") navigate(`/${id}/${subjectId}/quiz/${post.id}`);
-    else if (post.post_type === "FLC") navigate(`/${id}/${subjectId}/flashcard/${post.id}`);
+    switch (post.post_type) {
+      case "PDF": navigate(`/${id}/${subjectId}/documento/${post.id}`); break;
+      case "VID": navigate(`/${id}/${subjectId}/video/${post.id}`); break;
+      case "QUI": navigate(`/${id}/${subjectId}/quiz/${post.id}`); break;
+      case "FLA": navigate(`/${id}/${subjectId}/flashcard/${post.id}`); break;
+      default: console.warn("Tipo de post desconocido:", post.post_type);
+    }
   };
 
   const filteredPosts = (searchResults ?? posts).filter((post) => {

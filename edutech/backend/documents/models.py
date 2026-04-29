@@ -18,6 +18,8 @@ class Post(models.Model):
     CONTENT_TYPES = (
         ("PDF", "Documento PDF"),
         ("VID", "Vídeo de YouTube"),
+        ("QUI", "Cuestionario"),
+        ("FLA", "Flashcards"),
     )
 
     course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
@@ -30,8 +32,10 @@ class Post(models.Model):
 
     post_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
     views = models.PositiveIntegerField(default=0)
+    is_draft = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"[{self.get_post_type_display()}] {self.title} - {self.student}"
@@ -108,3 +112,32 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.post}"
+
+
+class Quiz(models.Model):
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="qui")
+
+
+class Question(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
+    title = models.CharField(max_length=500)
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name="answers"
+    )
+    text = models.CharField(max_length=500)
+    is_correct = models.BooleanField(default=False)
+
+
+class FlashCardDeck(models.Model):
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="fla")
+
+
+class FlashCard(models.Model):
+    deck = models.ForeignKey(
+        FlashCardDeck, on_delete=models.CASCADE, related_name="cards"
+    )
+    question = models.TextField()
+    answer = models.TextField()

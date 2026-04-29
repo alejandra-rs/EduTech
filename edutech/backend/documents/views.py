@@ -8,7 +8,17 @@ from rest_framework.response import Response
 from rest_framework import status, generics, views
 from courses.models import Course
 from users.models import Student
-from .models import Post, PDFAttachment, YoutubeVideo, Like, Dislike, Comment
+from .models import (
+    Post,
+    PDFAttachment,
+    YoutubeVideo,
+    Like,
+    Dislike,
+    Comment,
+    Quiz,
+    Question,
+    FlashCardDeck,
+)
 from .serializers import (
     PostSerializer,
     PDFUploadSerializer,
@@ -17,12 +27,18 @@ from .serializers import (
     LikeSerializer,
     DislikeSerializer,
     PostPreviewSerializer,
+    QuizUploadSerializer,
+    FlashCardDeckUploadSerializer,
+    QuizCheckSerializer,
+    DraftPostSerializer,
+    DraftCreateSerializer,
+    DraftUpdateSerializer,
 )
 from .filters import PostFilter
 
 
 class PostListView(generics.ListAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.filter(is_draft=False)
     serializer_class = PostPreviewSerializer
     filterset_class = PostFilter
 
@@ -236,3 +252,168 @@ class DislikeView(views.APIView):
         return Response(
             {"detail": "Dislike eliminado con éxito"}, status=status.HTTP_200_OK
         )
+
+
+class QuizUploadView(generics.GenericAPIView):
+    serializer_class = QuizUploadSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        print("paso")
+        if not serializer.is_valid():
+            print("serializador invalido")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        post = Post.objects.create(
+            title=data["title"],
+            description=data["description"],
+            course=data["course"],
+            student=data.get("student"),
+            post_type="QUI",
+        )
+        quiz = Quiz.objects.create(post=post)
+        for q_data in data["questions"]:
+            question = Question.objects.create(
+                quiz=quiz,
+                title=q_data["title"],
+            )
+            for a_data in q_data["answers"]:
+                question.answers.create(
+                    text=a_data["text"], is_correct=a_data["is_correct"]
+                )
+
+        return Response(PostSerializer(post).data, status=status.HTTP_201_CREATED)
+
+
+class FlashCardDeckUploadView(generics.GenericAPIView):
+    serializer_class = FlashCardDeckUploadSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        post = Post.objects.create(
+            title=data["title"],
+            description=data["description"],
+            course=data["course"],
+            student=data.get("student"),
+            post_type="FLA",
+        )
+        deck = FlashCardDeck.objects.create(post=post)
+        for card_data in data["cards"]:
+            deck.cards.create(
+                question=card_data["question"], answer=card_data["answer"]
+            )
+
+        return Response(PostSerializer(post).data, status=status.HTTP_201_CREATED)
+
+
+class QuizCheckView(views.APIView):
+    def post(self, request, post_pk):
+        post = get_object_or_404(Post, pk=post_pk, post_type="QUI")
+        quiz = post.qui
+
+        serializer = QuizCheckSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        results = []
+        for response in serializer.validated_data["responses"]:
+            question = response["question"]
+            if question.quiz_id != quiz.id:
+                return Response(
+                    {
+                        "detail": f"La pregunta {question.id} no pertenece a este cuestionario."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            selected_ids = {a.id for a in response["selected"]}
+            correct_ids = set(
+                question.answers.filter(is_correct=True).values_list("id", flat=True)
+            )
+            results.append(
+                {
+                    "question": question.id,
+                    "correct": selected_ids == correct_ids,
+                    "correct_answers": list(correct_ids),
+                }
+            )
+
+        score = sum(1 for r in results if r["correct"])
+        return Response({"results": results, "score": score, "total": len(results)})
+
+
+def _write_post_content(post, data):
+    if post.post_type == "FLA":
+        deck = FlashCardDeck.objects.create(post=post)
+        for card in data.get("cards", []):
+            deck.cards.create(question=card["question"], answer=card["answer"])
+    elif post.post_type == "QUI":
+        quiz = Quiz.objects.create(post=post)
+        for q_data in data.get("questions", []):
+            question = quiz.questions.create(title=q_data["title"])
+            for a_data in q_data.get("answers", []):
+                question.answers.create(
+                    text=a_data["text"], is_correct=a_data["is_correct"]
+                )
+
+
+class DraftListView(views.APIView):
+    def get(self, request):
+        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        drafts = Post.objects.filter(student=student, is_draft=True).order_by(
+            "-updated_at"
+        )
+        return Response(DraftPostSerializer(drafts, many=True).data)
+
+    def post(self, request):
+        serializer = DraftCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        post = Post.objects.create(
+            student=data["student"],
+            course=data["course"],
+            post_type=data["post_type"],
+            title=data["title"],
+            description=data["description"],
+            is_draft=True,
+        )
+        _write_post_content(post, data)
+        return Response(DraftPostSerializer(post).data, status=status.HTTP_201_CREATED)
+
+
+class DraftDetailView(views.APIView):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk, is_draft=True)
+        return Response(DraftPostSerializer(post).data)
+
+    def patch(self, request, pk):
+        post = get_object_or_404(Post, pk=pk, is_draft=True)
+        serializer = DraftUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        post.title = data["title"]
+        post.description = data["description"]
+        post.save()
+
+        if hasattr(post, "fla"):
+            post.fla.delete()
+        if hasattr(post, "qui"):
+            post.qui.delete()
+
+        _write_post_content(post, data)
+        post.refresh_from_db()
+        return Response(DraftPostSerializer(post).data)
+
+    def delete(self, request, pk):
+        post = get_object_or_404(Post, pk=pk, is_draft=True)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

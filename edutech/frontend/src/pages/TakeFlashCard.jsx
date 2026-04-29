@@ -1,150 +1,99 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import FlashCardView from '../components/FlashCardView';
-import QuizStats from '../components/Stats';
+import { Square3Stack3DIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import FlashCardView from '../components/study-material/flashcards/FlashCardView';
+import ConfirmModal from '../components/study-material/ConfirmModal';
+import StudySidebar from '../components/study-material/StudySidebar';
+import StudyHeader from '../components/study-material/StudyHeader';
+import StudyProgressBar from '../components/study-material/flashcards/StudyProgressBar';
+import CardCarousel from '../components/study-material/flashcards/CardCarousel';
+import CompletionBanner from '../components/study-material/CompletionBanner';
+import ReactionBar from '../components/ReactionBar';
 import { getDocument } from '@services/connections';
-import {
-  ChevronLeftIcon,
-  ArrowPathIcon,
-  Square3Stack3DIcon,
-  ArrowLeftIcon,
-} from "@heroicons/react/24/solid";
-
-const transformFlashData = (post) => ({
-  title: post.title,
-  description: post.description,
-  items: (post.flc?.cards || []).map(c => ({
-    id: c.id,
-    front: c.front,
-    back: c.back,
-  })),
-});
+import { useCurrentUser } from '@services/useCurrentUser';
 
 const TakeFlashCard = () => {
   const { id, subjectId, postId } = useParams();
   const navigate = useNavigate();
+  const { userData } = useCurrentUser();
 
   const [flashData, setFlashData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState({});
   const [showSidebar, setShowSidebar] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
     getDocument(postId)
-      .then(post => setFlashData(transformFlashData(post)))
+      .then(post => setFlashData({
+        title: post.title,
+        description: post.description,
+        items: (post.fla?.cards || []).map(c => ({ id: c.id, question: c.question, answer: c.answer })),
+      }))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [postId]);
 
   const cards = flashData?.items || [];
 
-  const handleResult = (id, isCorrect) => {
-    setResults(prev => ({ ...prev, [id]: isCorrect }));
+  const handleResult = (cardId, isCorrect) => {
+    const updated = { ...results, [cardId]: isCorrect };
+    setResults(updated);
+    const next = cards.findIndex((c, i) => i > currentIndex && updated[c.id] === undefined);
+    if (next !== -1) { setCurrentIndex(next); return; }
+    const first = cards.findIndex(c => updated[c.id] === undefined);
+    if (first !== -1) setCurrentIndex(first);
   };
 
-  const handleReset = () => {
-    if (window.confirm("¿Reiniciar sesión de estudio?")) {
-      setResults({});
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+  const handleReset = () => { setConfirmReset(false); setResults({}); setCurrentIndex(0); };
 
   const stats = {
     total: cards.length,
-    correct: Object.values(results).filter(v => v === true).length,
+    correct: Object.values(results).filter(Boolean).length,
     incorrect: Object.values(results).filter(v => v === false).length,
     answered: Object.keys(results).length,
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">
-        Cargando flashcards…
-      </div>
-    );
-  }
+  const sidebarActions = [
+    {
+      label: "Reiniciar", icon: ArrowPathIcon,
+      onClick: () => setConfirmReset(true),
+      className: "flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-purple-50 hover:text-purple-600 transition-all",
+    },
+  ];
+
+  const sidebarNavItems = cards.map((c, i) => ({
+    id: c.id,
+    label: c.question,
+    status: results[c.id],
+    onClick: () => setCurrentIndex(i),
+  }));
+
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-400 text-sm">Cargando flashcards…</div>;
 
   return (
     <div className="flex min-h-screen bg-white">
-      <aside className={`fixed right-0 top-0 h-full bg-gray-50 border-l border-gray-200 transition-all duration-300 z-50 shadow-2xl ${showSidebar ? 'w-72' : 'w-0'}`}>
-        <button onClick={() => setShowSidebar(!showSidebar)} className="absolute top-10 -left-10 bg-white border border-gray-200 p-2 rounded-l-xl shadow-sm">
-          <ChevronLeftIcon className={`w-5 h-5 text-gray-500 transition-transform ${showSidebar ? 'rotate-180' : ''}`} />
-        </button>
+      <ConfirmModal open={confirmReset} title="¿Reiniciar?" message="Se perderá el progreso actual del grupo de tarjetas." onConfirm={handleReset} onCancel={() => setConfirmReset(false)} />
 
-        <div className={`flex flex-col h-full p-5 overflow-hidden transition-opacity ${showSidebar ? 'opacity-100' : 'opacity-0'}`}>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Estudio</h2>
-          <QuizStats stats={stats} />
+      <StudySidebar show={showSidebar} onToggle={() => setShowSidebar(v => !v)} title="Estudio" stats={stats} actions={sidebarActions} navTitle="Tarjetas" navItems={sidebarNavItems} activeId={cards[currentIndex]?.id} />
 
-          <div className="mt-6">
-            <button onClick={handleReset} className="flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-indigo-50 hover:text-indigo-600 transition-all">
-              <ArrowPathIcon className="w-3.5 h-3.5" />
-              Reiniciar Mazo
-            </button>
-          </div>
+      <main className={`flex-1 transition-all duration-300 ${showSidebar ? "pr-72" : "pr-0"}`}>
+        <div className="max-w-3xl mx-auto p-12">
 
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-10 mb-4">Tarjetas</h2>
-          <nav className="flex-1 overflow-y-auto space-y-1">
-            {cards.map((c, index) => (
-              <button
-                key={c.id}
-                onClick={() => document.getElementById(`card-${c.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-                className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-white transition-all group"
-              >
-                <div className={`w-2 h-2 rounded-full ${results[c.id] === undefined ? 'bg-gray-200' : results[c.id] ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span className="text-[12px] text-gray-600 truncate font-medium">Tarjeta {index + 1}</span>
-              </button>
-            ))}
-          </nav>
-        </div>
-      </aside>
+          <StudyHeader onBack={() => navigate(`/${id}/${subjectId}/post`)} backLabel="Volver a la asignatura" typeIcon={Square3Stack3DIcon} typeLabel="Sesión de Flashcards" title={flashData?.title} description={flashData?.description} />
 
-      <main className={`flex-1 transition-all duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
-        <div className="max-w-4xl mx-auto p-12">
-          <button onClick={() => navigate(`/${id}/${subjectId}/post`)} className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors">
-            <ArrowLeftIcon className="w-4 h-4" />
-            Volver a la asignatura
-          </button>
+          <StudyProgressBar current={currentIndex + 1} total={cards.length} correct={stats.correct} incorrect={stats.incorrect} unanswered={stats.total - stats.answered} />
 
-          <div className="mb-12">
-            <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-widest mb-3">
-              <Square3Stack3DIcon className="w-4 h-4" />
-              Sesión de Flashcards
-            </div>
-            <h1 className="text-4xl font-black text-gray-900 mb-3">{flashData?.title}</h1>
-            <p className="text-lg text-gray-500 leading-relaxed">{flashData?.description}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {cards.map((c) => (
-              <div id={`card-${c.id}`} key={c.id} className="scroll-mt-28">
-                <FlashCardView
-                  card={c}
-                  onResult={handleResult}
-                  currentResult={results[c.id]}
-                />
-              </div>
-            ))}
-          </div>
-
-          {stats.answered === stats.total && stats.total > 0 && (
-            <div className="mt-16 p-12 bg-indigo-600 rounded-[3rem] text-center text-white shadow-2xl shadow-indigo-200 animate-in zoom-in">
-              <h2 className="text-3xl font-bold mb-2">¡Mazo completado! 🎯</h2>
-              <p className="text-indigo-100 mb-8 font-medium">Has repasado todos los conceptos de esta sesión.</p>
-              <div className="flex justify-center gap-8 mb-10">
-                <div className="text-center">
-                  <div className="text-4xl font-black">{stats.correct}</div>
-                  <div className="text-[10px] uppercase tracking-widest opacity-70">Dominadas</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-black">{stats.incorrect}</div>
-                  <div className="text-[10px] uppercase tracking-widest opacity-70">A repasar</div>
-                </div>
-              </div>
-              <button onClick={handleReset} className="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-bold uppercase text-xs tracking-widest hover:scale-105 transition-transform active:scale-95 shadow-xl">
-                Estudiar de nuevo
-              </button>
-            </div>
+          {cards.length > 0 && stats.answered < stats.total && (
+            <CardCarousel onPrev={() => setCurrentIndex(i => Math.max(i - 1, 0))} onNext={() => setCurrentIndex(i => Math.min(i + 1, cards.length - 1))} canGoPrev={currentIndex > 0} canGoNext={currentIndex < cards.length - 1}>
+              <FlashCardView key={cards[currentIndex].id} card={cards[currentIndex]} onResult={handleResult} />
+            </CardCarousel>
           )}
+
+          {stats.answered === stats.total && stats.total > 0 && <CompletionBanner variant="flashcard" stats={stats} onRestart={() => setConfirmReset(true)} />}
+
+          <ReactionBar userId={userData?.id} postId={Number(postId)} />
         </div>
       </main>
     </div>

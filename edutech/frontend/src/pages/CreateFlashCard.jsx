@@ -1,55 +1,84 @@
-import React, { useState } from 'react';
-import FlashCardItem from '../components/FlashCardItem';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import FlashCardItem from '../components/study-material/flashcards/FlashCardItem';
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
-import { EditorLayout } from '../components/quiz/EditorLayout';
+import { EditorLayout } from '../components/study-material/EditorLayout';
+import { postFlashCardDeck, saveDraft, updateDraft, deleteDraft, getDraft } from '@services/connections';
+import { useCurrentUser } from '@services/useCurrentUser';
 
 const CreateFlashCard = () => {
-  const [header, setHeader] = useState({ title: '', description: '' });
-  const [cards, setCards] = useState([{ id: `c-${crypto.randomUUID()}`, front: '', back: '' }]);
+  const { subjectId, draftId } = useParams();
+  const { userData } = useCurrentUser();
 
-  const addCard = () => setCards(prev => [...prev, { id: `c-${crypto.randomUUID()}`, front: '', back: '' }]);
+  const [cards, setCards] = useState([{ id: `c-${crypto.randomUUID()}`, question: '', answer: '' }]);
+  const [draftPostId, setDraftPostId] = useState(draftId ? parseInt(draftId) : null);
+  const [courseId, setCourseId] = useState(subjectId);
+  const [initialHeader, setInitialHeader] = useState(null);
+  const [loading, setLoading] = useState(!!draftId);
+
+  useEffect(() => {
+    if (!draftId) return;
+    getDraft(draftId).then(draft => {
+      setInitialHeader({ title: draft.title, description: draft.description });
+      setCourseId(draft.course.id);
+      if (draft.fla?.cards?.length) {
+        setCards(draft.fla.cards.map(c => ({ id: `c-${crypto.randomUUID()}`, question: c.question, answer: c.answer })));
+      }
+      setLoading(false);
+    });
+  }, [draftId]);
+
+  const addCard = () => setCards(prev => [...prev, { id: `c-${crypto.randomUUID()}`, question: '', answer: '' }]);
   const deleteCard = (id) => { if (cards.length > 1) setCards(cards.filter(c => c.id !== id)); };
   const updateCard = (id, updatedCard) => setCards(cards.map(c => c.id === id ? updatedCard : c));
 
-  // Validaciones
-  const isHeaderValid = header.title.trim() !== "";
-  const emptyFronts = cards.some(c => c.front.trim() === "");
-  const emptyBacks = cards.some(c => c.back.trim() === "");
-  const canPublish = isHeaderValid && !emptyFronts && !emptyBacks;
+  const emptyQuestions = cards.some(c => c.question.trim() === "");
+  const emptyAnswers = cards.some(c => c.answer.trim() === "");
 
   const requirements = [
-    ...(!isHeaderValid ? ["Título del mazo"] : []),
-    ...(emptyFronts ? ["Preguntas vacías"] : []),
-    ...(emptyBacks ? ["Respuestas vacías"] : []),
+    ...(emptyQuestions ? ["Preguntas vacías"] : []),
+    ...(emptyAnswers ? ["Respuestas vacías"] : []),
   ];
 
-  // Lógica de publicación y JSON
-  const handlePublish = async () => {
-    // Generar el formato JSON exacto que pediste
-    const payloadJSON = cards.map(card => {
-      return { [card.front]: card.back };
-    });
-
-    console.log("JSON FLASHCARDS LISTO PARA DJANGO:", JSON.stringify(payloadJSON, null, 2));
-
-    // Aquí harás el await postFlashCardDeck(...) en el futuro
-    return new Promise(resolve => setTimeout(resolve, 1000)); // Simulamos carga
+  const handlePublish = async (header) => {
+    await postFlashCardDeck(courseId, userData?.id, header.title, header.description, cards);
+    if (draftPostId) await deleteDraft(draftPostId);
   };
+
+  const handleSaveDraft = async (header) => {
+    if (draftPostId) {
+      await updateDraft(draftPostId, header.title, header.description, "FLA", cards);
+    } else {
+      const draft = await saveDraft(userData?.id, courseId, "FLA", header.title, header.description, cards);
+      setDraftPostId(draft.id);
+    }
+  };
+
+  const isCardsDirty = cards.some(c => c.question.trim() !== '' || c.answer.trim() !== '');
+
+  if (loading) return null;
 
   return (
     <EditorLayout
-      header={header} setHeader={setHeader}
       items={cards} onAdd={addCard}
-      canPublish={canPublish} requirements={requirements}
+      isDirty={isCardsDirty}
+      canPublish={!emptyQuestions && !emptyAnswers}
+      requirements={requirements}
+      pageTitle="Crear flashcards"
+      titleLabel="Título del grupo de tarjetas"
       onPublish={handlePublish}
+      onSaveDraft={handleSaveDraft}
       publishIcon={<Square3Stack3DIcon className="w-4 h-4" />}
       publishText="Publicar Flashcards"
-      successMessage="¡Mazo de Flashcards publicado!"
-      itemLabel={(c, i) => c.front || `Tarjeta ${i + 1}`}
-      // Usamos el render prop para inyectarle el componente FlashCardItem
+      successMessage="Grupo de flashcards publicado!"
+      itemLabel={(card) => card.question || "Tarjeta sin título"}
+      initialHeader={initialHeader}
+      backPath={draftId ? '/borradores' : undefined}
+      publishSuccessPath={draftId ? '/borradores' : undefined}
       renderItem={(card) => (
         <FlashCardItem
           card={card}
+          canDelete={cards.length > 1}
           onUpdate={(updated) => updateCard(card.id, updated)}
           onDelete={() => deleteCard(card.id)}
         />
