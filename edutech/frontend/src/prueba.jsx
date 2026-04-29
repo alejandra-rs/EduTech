@@ -14,6 +14,7 @@ import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
+import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 
 import {
@@ -84,6 +85,9 @@ export default function App() {
                   path="/:id/:subjectId/flashcard/:postId"
                   element={<TakeFlashCard />}
                 />
+                <Route path="/borradores" element={<Drafts />} />
+                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
+                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
               </Routes>
             </Layout>
           ) : null}

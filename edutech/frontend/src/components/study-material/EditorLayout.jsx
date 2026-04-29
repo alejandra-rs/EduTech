@@ -11,17 +11,19 @@ import { TitlePage } from '../TitlePage';
 
 export function EditorLayout({
   items, renderItem, onAdd, canPublish, requirements,
-  onPublish, publishIcon, publishText, successMessage,
+  onPublish, onSaveDraft, publishIcon, publishText, successMessage,
   itemLabel, titleLabel = "Título requerido", isDirty: itemsDirty = false,
-  pageTitle,
+  pageTitle, backPath, publishSuccessPath, initialHeader,
 }) {
   const { id, subjectId } = useParams();
   const navigate = useNavigate();
 
-  const [header, setHeader] = useState({ title: '', description: '' });
+  const [header, setHeader] = useState(initialHeader ?? { title: '', description: '' });
   const [showSidebar, setShowSidebar] = useState(true);
   const [published, setPublished] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
   const [pendingNav, setPendingNav] = useState(null);
 
   const { registerGuard, unregisterGuard } = useNavigationGuard();
@@ -70,9 +72,27 @@ export function EditorLayout({
     }
   };
 
+  const handleSaveDraft = async () => {
+    if (!onSaveDraft || savingDraft) return;
+    setSavingDraft(true);
+    setDraftSaved(false);
+    try {
+      await onSaveDraft(header);
+      setDraftSaved(true);
+      setTimeout(() => setDraftSaved(false), 3000);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  const resolvedBackPath = backPath ?? `/${id}/${subjectId}/post`;
+  const resolvedSuccessPath = publishSuccessPath ?? `/${id}/${subjectId}/post`;
+
   const handleToastClose = () => {
     setPublished(false);
-    navigate(`/${id}/${subjectId}/post`);
+    navigate(resolvedSuccessPath);
   };
 
   const scrollTo = (itemId) => document.getElementById(itemId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -97,6 +117,9 @@ export function EditorLayout({
         showSidebar={showSidebar}
         onToggle={() => setShowSidebar(v => !v)}
         onPublish={handlePublish}
+        onSaveDraft={onSaveDraft ? handleSaveDraft : undefined}
+        savingDraft={savingDraft}
+        draftSaved={draftSaved}
         onScrollTo={scrollTo}
         itemLabel={itemLabel}
         requirements={allRequirements}
@@ -108,8 +131,8 @@ export function EditorLayout({
       <TitlePage
         PageName={pageTitle}
         onBack={() => {
-          if (isDirty) setPendingNav(() => () => navigate(`/${id}/${subjectId}/post`));
-          else navigate(`/${id}/${subjectId}/post`);
+          if (isDirty) setPendingNav(() => () => navigate(resolvedBackPath));
+          else navigate(resolvedBackPath);
         }}
       />
 

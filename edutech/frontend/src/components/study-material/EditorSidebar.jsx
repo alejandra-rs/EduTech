@@ -3,7 +3,7 @@ import { ChevronLeftIcon, Bars3BottomLeftIcon } from "@heroicons/react/24/solid"
 
 const label = (item, index) => item.title || item.question || 'Sin título';
 
-const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onScrollTo, itemLabel, requirements, children, defaultLabel }) => {
+const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onSaveDraft, savingDraft, draftSaved, onScrollTo, itemLabel, requirements, children, defaultLabel }) => {
   const getLabel = itemLabel ?? defaultLabel ?? label;
 
   return (
@@ -24,8 +24,12 @@ const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, on
         >
           {children}
         </button>
-        <button className="w-full py-2 mb-4 rounded-xl text-sm font-semibold text-gray-500 border border-gray-200 hover:bg-gray-100 transition-all">
-          Guardar en borradores
+        <button
+          onClick={onSaveDraft}
+          disabled={savingDraft}
+          className="w-full py-2 mb-4 rounded-xl text-sm font-semibold text-gray-500 border border-gray-200 hover:bg-gray-100 transition-all disabled:opacity-50"
+        >
+          {savingDraft ? "Guardando…" : draftSaved ? "✓ Guardado" : "Guardar en borradores"}
         </button>
         <hr className='border-gray-300 m-3'></hr>
 

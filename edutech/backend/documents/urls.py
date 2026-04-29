@@ -23,4 +23,6 @@ urlpatterns = [
     path("dislikes/", views.DislikeView.as_view(), name="dislike"),
     path("dislikes/<int:pk>", views.DislikeView.as_view(), name="dislike_delete"),
     path("", views.PostListView.as_view(), name="list_posts"),
+    path("drafts/", views.DraftListView.as_view(), name="draft_list"),
+    path("drafts/<int:pk>/", views.DraftDetailView.as_view(), name="draft_detail"),
 ]
