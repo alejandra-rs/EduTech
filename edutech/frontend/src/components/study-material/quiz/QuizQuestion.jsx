@@ -8,50 +8,48 @@ const QuizQuestion = ({ question, onUpdate, onDelete, canDelete = true }) => {
     onUpdate({ ...question, answers: [...question.answers, { id: crypto.randomUUID(), text: '', isCorrect: false }] });
 
   return (
-    <div className="flex gap-2 items-start animate-in fade-in slide-in-from-bottom-2">
-      <div className="flex-1 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <Input
-              rows={2}
-              autoResize
-              value={question.title}
-              onChange={(e) => onUpdate({ ...question, title: e.target.value })}
-              placeholder="Pregunta sin título"
-            />
-          </div>
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow animate-in fade-in slide-in-from-bottom-2">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex-1">
+          <Input
+            noBorder
+            value={question.title}
+            onChange={(e) => onUpdate({ ...question, title: e.target.value })}
+            placeholder="Pregunta sin título"
+          />
+        </div>
+        <div className="flex items-center gap-2 mt-1 flex-shrink-0">
           <button
             onClick={addAnswer}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all active:scale-90 font-medium text-xs border border-gray-100 mt-1 flex-shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all active:scale-90 font-medium text-xs border border-gray-100"
           >
             <PlusIcon className="w-4 h-4 stroke-[2.5px]" />
             Respuesta
           </button>
-        </div>
-
-        <div className="space-y-2">
-          {question.answers.map((ans) => (
-            <QuizAnswer
-              key={ans.id}
-              value={ans.text}
-              isCorrect={ans.isCorrect}
-              canDelete={question.answers.length > 2}
-              onChange={(e) => onUpdate({ ...question, answers: question.answers.map(a => a.id === ans.id ? { ...a, text: e.target.value } : a) })}
-              onDelete={() => onUpdate({ ...question, answers: question.answers.filter(a => a.id !== ans.id) })}
-              onToggleCorrect={() => onUpdate({ ...question, answers: question.answers.map(a => a.id === ans.id ? { ...a, isCorrect: !ans.isCorrect } : a) })}
-            />
-          ))}
+          <button
+            onClick={onDelete}
+            disabled={!canDelete}
+            className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-300 disabled:hover:bg-transparent"
+            title="Eliminar pregunta"
+          >
+            <TrashIcon className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
-      <button
-        onClick={onDelete}
-        disabled={!canDelete}
-        className="mt-4 p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-400 disabled:hover:border-gray-200"
-        title="Eliminar pregunta"
-      >
-        <TrashIcon className="w-5 h-5" />
-      </button>
+      <div className="space-y-2">
+        {question.answers.map((ans) => (
+          <QuizAnswer
+            key={ans.id}
+            value={ans.text}
+            isCorrect={ans.isCorrect}
+            canDelete={question.answers.length > 2}
+            onChange={(e) => onUpdate({ ...question, answers: question.answers.map(a => a.id === ans.id ? { ...a, text: e.target.value } : a) })}
+            onDelete={() => onUpdate({ ...question, answers: question.answers.filter(a => a.id !== ans.id) })}
+            onToggleCorrect={() => onUpdate({ ...question, answers: question.answers.map(a => a.id === ans.id ? { ...a, isCorrect: !ans.isCorrect } : a) })}
+          />
+        ))}
+      </div>
     </div>
   );
 };

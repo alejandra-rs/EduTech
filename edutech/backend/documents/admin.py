@@ -1,8 +1,19 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import (Post, Like, Comment, Dislike, PDFAttachment, YoutubeVideo, 
-                     Quiz, Question, Answer, FlashCardDeck, FlashCard)
+from .models import (
+    Post,
+    Like,
+    Comment,
+    Dislike,
+    PDFAttachment,
+    YoutubeVideo,
+    Quiz,
+    Question,
+    Answer,
+    FlashCardDeck,
+    FlashCard,
+)
 
 admin.site.register(Post)
 admin.site.register(Like)

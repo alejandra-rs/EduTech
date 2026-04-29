@@ -188,9 +188,13 @@ class QuestionUploadSerializer(serializers.Serializer):
 
     def validate_answers(self, answers):
         if len(answers) < 2:
-            raise serializers.ValidationError("Cada pregunta necesita al menos 2 respuestas.")
+            raise serializers.ValidationError(
+                "Cada pregunta necesita al menos 2 respuestas."
+            )
         if not any(a["is_correct"] for a in answers):
-            raise serializers.ValidationError("Cada pregunta necesita al menos una respuesta correcta.")
+            raise serializers.ValidationError(
+                "Cada pregunta necesita al menos una respuesta correcta."
+            )
         return answers
 
 
@@ -198,12 +202,16 @@ class QuizUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
+    student = serializers.PrimaryKeyRelatedField(
+        queryset=Student.objects.all(), required=False, allow_null=True
+    )
     questions = QuestionUploadSerializer(many=True)
 
     def validate_questions(self, questions):
         if not questions:
-            raise serializers.ValidationError("El cuestionario necesita al menos una pregunta.")
+            raise serializers.ValidationError(
+                "El cuestionario necesita al menos una pregunta."
+            )
         return questions
 
 
@@ -216,18 +224,24 @@ class FlashCardDeckUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
+    student = serializers.PrimaryKeyRelatedField(
+        queryset=Student.objects.all(), required=False, allow_null=True
+    )
     cards = FlashCardUploadSerializer(many=True)
 
     def validate_cards(self, cards):
         if not cards:
-            raise serializers.ValidationError("El grupo de flashcards necesita al menos una tarjeta.")
+            raise serializers.ValidationError(
+                "El grupo de flashcards necesita al menos una tarjeta."
+            )
         return cards
 
 
 class QuizResponseSerializer(serializers.Serializer):
     question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
-    selected = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=Answer.objects.all()))
+    selected = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Answer.objects.all())
+    )
 
 
 class QuizCheckSerializer(serializers.Serializer):

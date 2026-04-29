@@ -6,7 +6,11 @@ urlpatterns = [
     path("upload/pdf/", views.PDFUploadView.as_view(), name="upload_pdf"),
     path("upload/vid/", views.VideoUploadView.as_view(), name="upload_video"),
     path("upload/quiz/", views.QuizUploadView.as_view(), name="upload_quiz"),
-    path("upload/flashcards/", views.FlashCardDeckUploadView.as_view(), name="upload_flashcards"),
+    path(
+        "upload/flashcards/",
+        views.FlashCardDeckUploadView.as_view(),
+        name="upload_flashcards",
+    ),
     path("<int:post_pk>/quiz/check/", views.QuizCheckView.as_view(), name="check_quiz"),
     path(
         "download/pdf/<int:post_id>",

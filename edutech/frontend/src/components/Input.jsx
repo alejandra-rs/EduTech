@@ -1,8 +1,9 @@
 import { forwardRef, useRef, useEffect, useCallback } from "react";
 
 const Input = forwardRef(function Input({
-  label, placeholder = "Value", rows = 1, value, onChange,
+  label, placeholder = "Value", textarea = false, value, onChange,
   type = "text", required = false, className, id, autoResize = false,
+  noBorder = false
 }, forwardedRef) {
   const localRef = useRef(null);
 
@@ -13,15 +14,16 @@ const Input = forwardRef(function Input({
   }, [forwardedRef]);
 
   useEffect(() => {
-    if (!autoResize || rows <= 1) return;
+    if (!autoResize) return;
     const el = localRef.current;
     if (!el) return;
     el.style.height = "auto";
     el.style.height = `${el.scrollHeight}px`;
-  }, [value, autoResize, rows]);
+  }, [value, autoResize]);
 
-  const baseStyle =
-    "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all bg-white text-gray-800";
+  const baseStyle = noBorder
+    ? "w-full rounded-lg p-3 outline-none transition-all text-gray-800"
+    : "w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-zinc-500 outline-none transition-all bg-white text-gray-800";
   const fileStyle =
     "w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer";
 
@@ -30,14 +32,14 @@ const Input = forwardRef(function Input({
       {label && (
         <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
       )}
-      {rows > 1 ? (
+      {textarea ? (
         <textarea
           ref={setRef}
           value={value}
           onChange={onChange}
           required={required}
           placeholder={placeholder}
-          rows={rows}
+          rows={1}
           className={className ?? `${baseStyle} resize-none overflow-hidden`}
         />
       ) : (
