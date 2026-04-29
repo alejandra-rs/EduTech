@@ -1,8 +1,13 @@
 const BASE_URL = "http://localhost:8000";
 
-export const getYears = async () => {
+export const getYears = async (userId) => {
   try {
-    const response = await fetch(`${BASE_URL}/courses/years`);
+    const response = await fetch(`${BASE_URL}/courses/years?user=${userId}`,{
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+    console.log(response);
+    
     if (!response.ok) throw new Error("Error al obtener los años");
     return await response.json();
   } catch (error) {

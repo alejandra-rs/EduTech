@@ -1,5 +1,5 @@
 from django.db import models
-from courses.models import University
+from courses.models import University, Degree
 
 class Student(models.Model):
     first_name = models.CharField(max_length=50)
@@ -12,7 +12,11 @@ class Student(models.Model):
 
     universities = models.ManyToManyField(
         University,
-        related_name="students",
+        blank=True
+    )
+
+    degree = models.ManyToManyField(
+        Degree,
         blank=True
     )
 
