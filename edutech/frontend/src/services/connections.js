@@ -163,7 +163,8 @@ export const postUser = async (instance, account) => {
     if (profilePic) {
       const res = await fetch(profilePic);
       const blob = await res.blob();
-      formData.append("picture", blob, "profile.jpg");
+      const safeEmail = account.username.replace(/[^a-zA-Z0-9]/g, '_');
+      formData.append("picture", blob, `profile_${safeEmail}.jpg`);
     }
 
     const response = await fetch(`${BASE_URL}/students/post/`, {
@@ -344,14 +345,13 @@ export const postQuiz = async (courseId, userId, title, description, questions) 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
-        description,
+        title: title,
+        description: description,
         course: courseId,
         student: userId,
-        questions: questions.map(q => ({
-          title: q.title,
-          is_multiple: q.answers.filter(a => a.isCorrect).length > 1,
-          answers: q.answers.map(a => ({ text: a.text, is_correct: a.isCorrect })),
+        questions: questions.map(question => ({
+          title: question.title,
+          answers: question.answers.map(answer => ({ text: answer.text, is_correct: answer.isCorrect })),
         })),
       }),
     });
@@ -369,11 +369,11 @@ export const postFlashCardDeck = async (courseId, userId, title, description, ca
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
-        description,
+        title: title,
+        description: description,
         course: courseId,
         student: userId,
-        cards: cards.map(c => ({ front: c.front, back: c.back })),
+        cards: cards.map(card => ({ question: card.question, answer: card.answer })),
       }),
     });
     if (!response.ok) throw new Error("Error al publicar las flashcards");

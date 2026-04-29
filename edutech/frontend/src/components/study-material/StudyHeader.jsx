@@ -1,0 +1,24 @@
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+
+const StudyHeader = ({ onBack, backLabel, typeIcon: TypeIcon, typeLabel, title, description, titleSize = "text-4xl", descriptionStyle = "text-lg text-gray-500 leading-relaxed" }) => (
+  <div className="mb-10">
+    <button
+      onClick={onBack}
+      className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-700 mb-8 transition-colors"
+    >
+      <ArrowLeftIcon className="w-4 h-4" />
+      {backLabel}
+    </button>
+
+    {typeLabel && (
+      <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-widest mb-3">
+        {TypeIcon && <TypeIcon className="w-4 h-4" />}
+        {typeLabel}
+      </div>
+    )}
+    <h1 className={`${titleSize} font-black text-gray-900 mb-3`}>{title}</h1>
+    <p className={descriptionStyle}>{description}</p>
+  </div>
+);
+
+export default StudyHeader;

@@ -5,7 +5,6 @@ from django.dispatch import receiver
 
 MAX_PDF_KB = 600
 
-
 def validate_pdf_extension(pdf):
     if not pdf.name.lower().endswith(".pdf"):
         raise ValidationError("Solo se permite la subida de archivos PDF.")
@@ -20,12 +19,12 @@ class Post(models.Model):
     CONTENT_TYPES = (
         ("PDF", "Documento PDF"),
         ("VID", "Vídeo de YouTube"),
+        ("QUI", "Cuestionario"),
+        ("FLA", "Flashcards"),
     )
 
     course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
-    student = models.ForeignKey(
-        "users.Student", on_delete=models.SET_NULL, null=True, blank=True
-    )
+    student = models.ForeignKey("users.Student", on_delete=models.SET_NULL, null=True, blank=True)
 
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -116,8 +115,33 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user} {self.post}'
-    
+        return f"{self.user} {self.post}"
+
+
+class Quiz(models.Model):
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="qui")
+
+
+class Question(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
+    title = models.CharField(max_length=500)
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
+    text = models.CharField(max_length=500)
+    is_correct = models.BooleanField(default=False)
+
+
+class FlashCardDeck(models.Model):
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="fla")
+
+
+class FlashCard(models.Model):
+    deck = models.ForeignKey(FlashCardDeck, on_delete=models.CASCADE, related_name="cards")
+    question = models.TextField()
+    answer = models.TextField()
+
 
 @receiver(post_save, sender=PDFAttachment)
 def auto_vectorizar_pdf(sender, instance, created, **kwargs):

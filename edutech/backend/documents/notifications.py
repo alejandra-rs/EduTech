@@ -4,7 +4,12 @@ from django.conf import settings
 from courses.models import Subscription
 
 logger = logging.getLogger(__name__)
-POST_TYPE_LABELS = {"PDF": "Documento PDF", "VID": "Vídeo de YouTube"}
+POST_TYPE_LABELS = {
+    "PDF": "Documento PDF",
+    "VID": "Vídeo de YouTube",
+    "QUI": "Cuestionario",
+    "FLA": "Flashcards",
+}
 
 
 def notify_subscribers_of_new_post(post):

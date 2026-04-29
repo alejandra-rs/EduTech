@@ -16,7 +16,7 @@ const QuizCard = ({ question, onAnswered, isCorrected, selectedIds, onSelect, on
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-[13px] font-bold text-gray-800">{question.title}</h3>
+        <h3 className="text-base font-bold text-gray-800 leading-snug">{question.title}</h3>
         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
           {isMultiple ? "Múltiple" : "Única"}
         </span>
@@ -38,7 +38,7 @@ const QuizCard = ({ question, onAnswered, isCorrected, selectedIds, onSelect, on
               key={ans.id}
               disabled={isCorrected}
               onClick={() => onSelect(question.id, ans.id, isMultiple)}
-              className={`w-full flex items-center gap-3 p-2.5 px-3 rounded-lg border transition-all text-left text-[12px] font-medium ${statusStyle}`}
+              className={`w-full flex items-center gap-3 p-3.5 px-4 rounded-lg border transition-all text-left text-sm font-medium ${statusStyle}`}
             >
               <div className={`w-4 h-4 flex-shrink-0 border flex items-center justify-center transition-all ${
                 isMultiple ? 'rounded' : 'rounded-full'
