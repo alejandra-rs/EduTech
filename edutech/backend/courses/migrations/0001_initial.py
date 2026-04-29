@@ -5,48 +5,83 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('users', '0001_initial'),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=80)),
-                ('semester', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=80)),
+                ("semester", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='Year',
+            name="Year",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('year', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("year", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='Subscription',
+            name="Subscription",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.course')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="courses.course"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="users.student"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='course',
-            name='year',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.year'),
+            model_name="course",
+            name="year",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.year"
+            ),
         ),
         migrations.AddIndex(
-            model_name='course',
-            index=models.Index(fields=['name'], name='courses_cou_name_eb4cc3_idx'),
+            model_name="course",
+            index=models.Index(fields=["name"], name="courses_cou_name_eb4cc3_idx"),
         ),
         migrations.AlterUniqueTogether(
-            name='course',
-            unique_together={('name', 'year', 'semester')},
+            name="course",
+            unique_together={("name", "year", "semester")},
         ),
     ]

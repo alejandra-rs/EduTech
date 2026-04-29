@@ -73,6 +73,10 @@ class NotificationTest(TestCase):
         self.assertEqual(len(mail.outbox), 2)
 
 
+@override_settings(
+    STORAGES=TEST_STORAGES,
+    EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+)
 class NotificationSignalTest(TestCase):
 
     def setUp(self):

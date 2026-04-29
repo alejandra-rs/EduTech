@@ -1,8 +1,13 @@
 import UserAvatar from "./UserAvatar";
 import HamburgerButton from "./HamburgerButton";
-import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
+import { 
+  ArrowRightStartOnRectangleIcon, 
+  BookOpenIcon, 
+  DocumentTextIcon,
+  RectangleStackIcon
+} from "@heroicons/react/24/outline";
 
-export default function Header({
+export default function Header ({
   isOpen,
   setIsOpen,
   userProfilePic,
@@ -17,63 +22,73 @@ export default function Header({
       })
       .catch((error) => console.log(error));
   };
+
+  const navItemClass = `
+    flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
+    ${isOpen ? "w-full" : "w-12 justify-center"}
+    hover:bg-white/10 hover:shadow-lg active:scale-95
+  `;
+
   return (
     <aside
-      className={`select-none header h-screen bg-gray-400 flex flex-col py-10 shadow-lg shrink-0
-                  transition-all duration-300 ease-in-out 
-                  ${isOpen ? "w-64 px-5 items-start" : "w-24 px-0 items-center"}`}
+      className={`select-none h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex flex-col py-8 shadow-2xl shrink-0
+                  transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative z-50
+                  ${isOpen ? "w-64 px-4" : "w-20 px-4"}`}
     >
-      <div
-        className={`flex flex-col items-center w-full mb-10 transition-all ${isOpen ? "gap-3 justify-start" : "justify-center"}`}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white rounded-sm shadow-sm flex items-center justify-center flex-shrink-0"></div>
-          <h1
-            className={`text-xl font-bold text-white transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}
-          >
-            Edutech
-          </h1>
+      <div className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}>
+        <div className="flex center">
+          <RectangleStackIcon className="w-10 h-10 text-white" />
         </div>
-        <div className={`flex flex-col items-center mt-4`}>
-          <UserAvatar imageUrl={userProfilePic} />
-          <h2 className={`text-white text-sm mt-2 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>    
-            {userName || 'User'}
-          </h2>
+        <span className={`ml-4 font-black text-xl text-white tracking-tight transition-all duration-300 ${!isOpen && "opacity-0 w-0"}`}>
+          Edutech
+        </span>
+      </div>
+
+      <div className={`mb-10 p-2 rounded-2xl transition-colors ${isOpen ? "bg-white/5 border border-white/10" : ""}`}>
+        <div className={`flex items-center ${isOpen ? "gap-4" : "justify-center"}`}>
+          <div className="scale-75 relative">
+            <UserAvatar imageUrl={userProfilePic} />
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
+          </div>
+          {isOpen && (
+            <div className="flex flex-col min-w-0">
+              <p className="text-white font-bold text-sm truncate">{userName || 'Usuario'}</p>
+              <p className="text-indigo-300 text-[10px] uppercase font-black tracking-widest">Estudiante</p>
+            </div>
+          )}
         </div>
       </div>
-      
 
-      <nav
-        className={`flex flex-col space-y-4 w-full overflow-hidden transition-all duration-300 
-        ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
-        <a
-          href="#"
-          className="flex gap-3 text-white hover:text-blue-200 font-medium text-lg px-2 py-1 hover:bg-white/10 rounded transition-colors"
-        >
-          📚 <span>Cursos</span>
+      <nav className="flex flex-col gap-2 flex-1">
+        <a href="#" className={navItemClass} title="Cursos">
+          <BookOpenIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && <span className="text-white font-medium text-sm">Cursos</span>}
         </a>
-        <a
-          href="#"
-          className="flex gap-3 text-white hover:text-blue-200 font-medium text-lg px-2 py-1 hover:bg-white/10 rounded transition-colors"
-        >
-          📄 <span>Documentos</span>
+        
+        <a href="#" className={navItemClass} title="Documentos">
+          <DocumentTextIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && <span className="text-white font-medium text-sm">Documentos</span>}
         </a>
-        <a
-          className="flex items-center gap-3 text-white hover:text-blue-200 font-medium text-lg px-2 py-1 hover:bg-white/10 rounded transition-colors"
-          onClick={handleLogoutRedirect}
+
+        <div className="my-4 border-t border-white/5 mx-2"></div>
+
+        <button 
+          onClick={handleLogoutRedirect} 
+          className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`}
+          title="Salir"
         >
-          <ArrowRightStartOnRectangleIcon className="h-5 w-5 " />
-          <span>Salir</span>
-        </a>
+          <ArrowRightStartOnRectangleIcon className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
+          {isOpen && <span className="font-medium text-sm">Cerrar sesión</span>}
+        </button>
       </nav>
 
-      <div className="mt-auto w-full flex justify-center">
-        <HamburgerButton 
-          isOpen={isOpen} 
-          onClick={() => setIsOpen(!isOpen)} 
-          className={`${isOpen ? 'self-end' : ''}`} 
-        /> 
+      <div className="mt-auto pt-4 flex justify-center border-t border-white/5">
+        <div className="hover:bg-white/5 p-1.5 rounded-full transition-colors cursor-pointer scale-75">
+          <HamburgerButton 
+            isOpen={isOpen} 
+            onClick={() => setIsOpen(!isOpen)} 
+          /> 
+        </div>
       </div>
     </aside>
   );

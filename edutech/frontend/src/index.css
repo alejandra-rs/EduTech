@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@layer base {
+
+  body {
+    @apply text-slate-700 antialiased bg-gray-50;
+  }
+
+  aside span, aside p, footer button {
+    @apply antialiased;
+  }
+}
+
+@layer utilities {
+  .perspective-1000 { perspective: 1000px; }
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+  .rotate-y-180 { transform: rotateY(180deg); }
+}
+
 @source "./*.{jsx,tsx,js,ts,html}";
 @source "./components/*.{jsx,tsx,js,ts}";
 @source "./pages/*.{jsx,tsx,js,ts}";

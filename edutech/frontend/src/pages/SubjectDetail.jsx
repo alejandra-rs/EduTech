@@ -1,74 +1,100 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { useState, useEffect, useRef } from 'react';
+import { PlusCircleIcon, DocumentTextIcon, PlayCircleIcon, ClipboardDocumentListIcon, Square3Stack3DIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../components/SearchBar";
 import BellButton from "../components/BellButton";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
 import { getPosts, getCourse } from "@services/connections";
-import { useState, useEffect } from 'react';
+
+const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLC: "flashcard" };
 
 const SubjectDetail = () => {
   const { id, subjectId } = useParams();
   const navigate = useNavigate();
 
-  const handlePostClick = (post) => {
-  if (post.post_type === "PDF") {
-    navigate(`/${id}/${subjectId}/documento/${post.id}`);
-  } else if (post.post_type === "VID") {
-    navigate(`/${id}/${subjectId}/video/${post.id}`);
-  }
-};
-
   const [posts, setPosts] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
   const [activeTabs, setActiveTabs] = useState([]);
-
   const [subjectName, setSubjectName] = useState("Cargando...");
+  const [showUploadMenu, setShowUploadMenu] = useState(false);
+  const uploadMenuRef = useRef(null);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const dataPosts = await getPosts(subjectId);
+        const [dataPosts, dataCourse] = await Promise.all([getPosts(subjectId), getCourse(subjectId)]);
         setPosts(dataPosts);
-
-        const dataCourse = await getCourse(subjectId);
-        if (dataCourse && dataCourse.name) {
-          setSubjectName(dataCourse.name);
-        }
+        if (dataCourse?.name) setSubjectName(dataCourse.name);
       } catch (error) {
         console.error("Error al cargar datos:", error);
-        setSubjectName("Asignatura"); 
+        setSubjectName("Asignatura");
       }
     };
-
     if (subjectId) cargarDatos();
   }, [subjectId]);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (uploadMenuRef.current && !uploadMenuRef.current.contains(e.target)) {
+        setShowUploadMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handlePostClick = (post) => {
+    if (post.post_type === "PDF") navigate(`/${id}/${subjectId}/documento/${post.id}`);
+    else if (post.post_type === "VID") navigate(`/${id}/${subjectId}/video/${post.id}`);
+    else if (post.post_type === "QUI") navigate(`/${id}/${subjectId}/quiz/${post.id}`);
+    else if (post.post_type === "FLC") navigate(`/${id}/${subjectId}/flashcard/${post.id}`);
+  };
 
   const filteredPosts = (searchResults ?? posts).filter((post) => {
     if (activeTabs.length === 0) return true;
-    const traductorTipos = {
-      "PDF": "pdf",
-      "VID": "video"
-    };
-    return activeTabs.includes(traductorTipos[post.post_type]); 
+    return activeTabs.includes(TYPE_TO_TAB[post.post_type]);
   });
+
+  const uploadOptions = [
+    { label: "PDF", path: "PDF", icon: DocumentTextIcon },
+    { label: "Video", path: "Video", icon: PlayCircleIcon },
+    { label: "Cuestionario", path: "quiz", icon: ClipboardDocumentListIcon },
+    { label: "Flashcards", path: "flashcard", icon: Square3Stack3DIcon },
+  ];
 
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
-      <div className="shrink-0 bg-white ">
-        <TitlePage 
-          PageName={subjectName} 
-          backLabel="Asignaturas" 
-          onBack={() => navigate(`/${id}/asignaturas`)} 
+      <div className="shrink-0 bg-white">
+        <TitlePage
+          PageName={subjectName}
+          backLabel="Asignaturas"
+          onBack={() => navigate(`/${id}/asignaturas`)}
         >
-          <button
-            onClick={() => navigate(`/${id}/${subjectId}/upload`)}
-            className="text-gray-700 hover:text-blue-600 transition-all"
-          >
-            <PlusCircleIcon className="w-10 h-10" />
-          </button>
+          <div className="relative" ref={uploadMenuRef}>
+            <button
+              onClick={() => setShowUploadMenu(v => !v)}
+              className="text-gray-700 hover:text-blue-600 transition-all"
+            >
+              <PlusCircleIcon className="w-10 h-10" />
+            </button>
+
+            {showUploadMenu && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2 overflow-hidden">
+                {uploadOptions.map(({ label, path, icon: Icon }) => (
+                  <button
+                    key={path}
+                    onClick={() => { navigate(`/${id}/${subjectId}/upload/${path}`); setShowUploadMenu(false); }}
+                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <Icon className="w-4 h-4 text-gray-400" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <BellButton subjectId={subjectId} />
         </TitlePage>
         <SearchBar
@@ -85,11 +111,7 @@ const SubjectDetail = () => {
             <div className="mb-8 sticky top-0 bg-white/90 backdrop-blur-sm py-2 z-10">
               <Tabs activeTabs={activeTabs} onTabChange={setActiveTabs} />
             </div>
-
-            <PostGrid 
-              posts={filteredPosts} 
-              onPostClick={handlePostClick} 
-            />
+            <PostGrid posts={filteredPosts} onPostClick={handlePostClick} />
           </div>
         </div>
       </div>

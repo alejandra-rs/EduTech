@@ -9,6 +9,10 @@ import SubjectDetail from "./pages/SubjectDetail";
 import CargarPublicacionPDF from "./pages/CargarPublicacionPDF";
 import Subject from "./pages/AllSubjects";
 import SignIn from "./pages/SignIn";
+import CreateQuiz from "./pages/CreateQuiz";
+import TakeQuiz from "./pages/TakeQuiz";
+import CreateFlashCard from "./pages/CreateFlashCard";
+import TakeFlashCard from "./pages/TakeFlashCard";
 import { syncUser } from "@services/connections";
 
 import {
@@ -61,6 +65,22 @@ export default function App() {
                 <Route
                   path="/:id/:subjectId/video/:postId"
                   element={<VistaPreviaVideo />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/quiz"
+                  element={<CreateQuiz />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/flashcard"
+                  element={<CreateFlashCard />}
+                />
+                <Route
+                  path="/:id/:subjectId/quiz/:postId"
+                  element={<TakeQuiz />}
+                />
+                <Route
+                  path="/:id/:subjectId/flashcard/:postId"
+                  element={<TakeFlashCard />}
                 />
               </Routes>
             </Layout>

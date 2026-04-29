@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      SECRET_KEY: ci-insecure-secret-key-for-testing-only
+      DATABASE_URL: sqlite:///test_ci.db
+      DEBUG: "True"
+      R2_ENDPOINT_URL: https://dummy.r2.cloudflarestorage.com
+      R2_ACCESS_KEY_ID: dummy
+      R2_SECRET_ACCESS_KEY: dummy
+      R2_BUCKET_NAME: dummy
+      EMAIL_BACKEND: django.core.mail.backends.locmem.EmailBackend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install dependencies
+        run: uv pip install --system -r edutech/backend/requirements.txt
+
+      - name: Install ruff and mypy
+        run: uv pip install --system ruff mypy
+
+      - name: Ruff format
+        run: ruff format --check edutech/backend/
+
+      - name: Ruff linter
+        run: ruff check edutech/backend/
+
+      - name: Mypy
+        working-directory: edutech
+        run: mypy backend/
+
+      - name: Unit tests
+        working-directory: edutech
+        run: pytest tests/backend/unit -v
+
+      - name: Integration tests
+        working-directory: edutech
+        run: pytest tests/backend/integration -v
+
+      - name: BDD tests
+        working-directory: edutech
+        run: python -m behave tests/backend/bdd
