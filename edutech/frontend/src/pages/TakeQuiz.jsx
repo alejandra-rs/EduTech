@@ -81,10 +81,10 @@ const TakeQuiz = () => {
   const sidebarActions = [
     {
       label: "Corregir Todo", icon: CheckBadgeIcon, onClick: handleCorrectAll,
-      className: "flex items-center justify-center gap-2 w-full py-2.5 bg-blue-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-blue-700 shadow-md transition-all active:scale-95",
+      className: "flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-orange-600 shadow-md transition-all active:scale-95",
     },
     {
-      label: "Rehacer", icon: ArrowPathIcon, onClick: () => setConfirmReset(true),
+      label: "Reiniciar", icon: ArrowPathIcon, onClick: () => setConfirmReset(true),
       className: "flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-red-50 hover:text-red-600 transition-all",
     },
   ];
@@ -98,7 +98,7 @@ const TakeQuiz = () => {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <ConfirmModal open={confirmReset} title="¿Reiniciar cuestionario?" message="Se borrarán todas las respuestas seleccionadas." onConfirm={handleReset} onCancel={() => setConfirmReset(false)} />
+      <ConfirmModal open={confirmReset} title="¿Reiniciar?" message="Se borrarán todas las respuestas seleccionadas." onConfirm={handleReset} onCancel={() => setConfirmReset(false)} />
 
       <StudySidebar show={showSidebar} onToggle={() => setShowSidebar(visible => !visible)} title="Tu Progreso" stats={stats} actions={sidebarActions} navTitle="Navegación" navItems={sidebarNavItems} />
 

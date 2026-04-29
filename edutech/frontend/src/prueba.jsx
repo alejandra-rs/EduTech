@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
 import Courses from "./pages/AllCourses";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
+        <NavigationGuardProvider>
         <UnauthenticatedTemplate>
           <SignIn />
         </UnauthenticatedTemplate>
@@ -86,6 +88,7 @@ export default function App() {
             </Layout>
           ) : null}
         </AuthenticatedTemplate>
+        </NavigationGuardProvider>
       </BrowserRouter>
     </>
   );

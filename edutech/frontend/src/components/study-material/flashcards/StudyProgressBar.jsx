@@ -5,7 +5,7 @@ const StudyProgressBar = ({ current, total, correct, incorrect, unanswered }) =>
     </div>
     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
       <div
-        className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+        className="h-full bg-purple-500 rounded-full transition-all duration-500"
         style={{ width: total > 0 ? `${(current / total) * 100}%` : "0%" }}
       />
     </div>

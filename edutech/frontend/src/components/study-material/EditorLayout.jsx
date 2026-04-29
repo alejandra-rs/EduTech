@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { useNavigationGuard } from '../../context/NavigationGuardContext';
 import EditorHeader from './EditorHeader';
 import EditorSidebar from './EditorSidebar';
+import ConfirmModal from './ConfirmModal';
 import SuccessToast from '../SuccessToast';
 import { AddItemButton } from './AddItemButton';
+import { TitlePage } from '../TitlePage';
 
 export function EditorLayout({
   items, renderItem, onAdd, canPublish, requirements,
   onPublish, publishIcon, publishText, successMessage,
-  itemLabel, titleLabel = "Título requerido",
+  itemLabel, titleLabel = "Título requerido", isDirty: itemsDirty = false,
+  pageTitle,
 }) {
   const { id, subjectId } = useParams();
   const navigate = useNavigate();
@@ -17,6 +22,33 @@ export function EditorLayout({
   const [showSidebar, setShowSidebar] = useState(true);
   const [published, setPublished] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [pendingNav, setPendingNav] = useState(null);
+
+  const { registerGuard, unregisterGuard } = useNavigationGuard();
+
+  const isDirty = !published && (
+    header.title.trim() !== '' ||
+    header.description.trim() !== '' ||
+    itemsDirty
+  );
+
+  // Register/unregister the navigation guard based on dirty state
+  useEffect(() => {
+    if (isDirty) {
+      registerGuard((proceed) => setPendingNav(() => proceed));
+    } else {
+      unregisterGuard();
+    }
+    return () => unregisterGuard();
+  }, [isDirty]);
+
+  // Block browser refresh / tab close when dirty
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
 
   const isTitleValid = header.title.trim() !== "";
   const allCanPublish = canPublish && isTitleValid;
@@ -49,6 +81,16 @@ export function EditorLayout({
     <>
       {published && <SuccessToast message={successMessage} onClose={handleToastClose} />}
 
+      <ConfirmModal
+        open={pendingNav !== null}
+        title="¿Salir sin guardar?"
+        message="Se perderá todo el progreso no guardado."
+        confirmLabel="Salir"
+        Icon={TrashIcon}
+        onConfirm={() => { const go = pendingNav; setPendingNav(null); go(); }}
+        onCancel={() => setPendingNav(null)}
+      />
+
       <EditorSidebar
         items={items}
         canPublish={allCanPublish && !publishing}
@@ -63,7 +105,15 @@ export function EditorLayout({
         {publishing ? "Publicando…" : publishText}
       </EditorSidebar>
 
-      <main className={`flex-1 transition-all max-w-4xl mx-auto p-12 pb-32 duration-300 ${showSidebar ? 'pr-72' : 'pr-0'}`}>
+      <TitlePage
+        PageName={pageTitle}
+        onBack={() => {
+          if (isDirty) setPendingNav(() => () => navigate(`/${id}/${subjectId}/post`));
+          else navigate(`/${id}/${subjectId}/post`);
+        }}
+      />
+
+      <main className={`flex-1 transition-all max-w-4xl mx-auto px-8 py-6 pb-32 duration-300 ${showSidebar ? 'pr-80' : ''}`}>
         <EditorHeader
           title={header.title}
           description={header.description}

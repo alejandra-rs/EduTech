@@ -32,9 +32,13 @@ const CreateQuiz = () => {
     await postQuiz(subjectId, userData?.id, header.title, header.description, questions);
   };
 
+  const isQuestionsDirty = questions.some(q => q.title.trim() !== '' || q.answers.some(a => a.text.trim() !== ''));
+
   return (
     <EditorLayout
       items={questions} onAdd={addQuestion}
+      isDirty={isQuestionsDirty}
+      pageTitle="Crear cuestionario"
       canPublish={areQuestionsValid}
       requirements={requirements}
       titleLabel="Título del cuestionario"

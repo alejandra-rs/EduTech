@@ -1,23 +1,27 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigationGuard } from "../context/NavigationGuardContext";
 
 const Footer = ({ tabs = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { guardedNavigate } = useNavigationGuard();
 
   const activeTab = tabs.findIndex((tab) => location.pathname.endsWith(tab.path) || location.pathname === tab.path);
 
   const handleTabClick = (tab) => {
-    if (tab.path.startsWith("/")) return navigate(tab.path);
-
-    if (location.pathname.includes("/upload")) {
-      const pathParts = location.pathname.split("/");
-      const uploadIndex = pathParts.indexOf("upload");
-      if (uploadIndex !== -1) {
-        const newPath = [...pathParts.slice(0, uploadIndex + 1), tab.path].join("/");
-        return navigate(newPath);
+    const doNavigate = () => {
+      if (tab.path.startsWith("/")) return navigate(tab.path);
+      if (location.pathname.includes("/upload")) {
+        const pathParts = location.pathname.split("/");
+        const uploadIndex = pathParts.indexOf("upload");
+        if (uploadIndex !== -1) {
+          const newPath = [...pathParts.slice(0, uploadIndex + 1), tab.path].join("/");
+          return navigate(newPath);
+        }
       }
-    }
-    navigate(tab.path);
+      navigate(tab.path);
+    };
+    guardedNavigate(doNavigate);
   };
 
   return (

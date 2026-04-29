@@ -28,11 +28,15 @@ const CreateFlashCard = () => {
     await postFlashCardDeck(subjectId, userData?.id, header.title, header.description, cards);
   };
 
+  const isCardsDirty = cards.some(c => c.question.trim() !== '' || c.answer.trim() !== '');
+
   return (
     <EditorLayout
       items={cards} onAdd={addCard}
+      isDirty={isCardsDirty}
       canPublish={!emptyQuestions && !emptyAnswers}
       requirements={requirements}
+      pageTitle="Crear flashcards"
       titleLabel="Título del grupo de tarjetas"
       onPublish={handlePublish}
       publishIcon={<Square3Stack3DIcon className="w-4 h-4" />}
@@ -42,6 +46,7 @@ const CreateFlashCard = () => {
       renderItem={(card) => (
         <FlashCardItem
           card={card}
+          canDelete={cards.length > 1}
           onUpdate={(updated) => updateCard(card.id, updated)}
           onDelete={() => deleteCard(card.id)}
         />
