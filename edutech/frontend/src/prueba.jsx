@@ -13,6 +13,7 @@ import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
+import ReportsPage from "./pages/ReportsPage";
 import { syncUser } from "@services/connections";
 
 import {
@@ -81,6 +82,10 @@ export default function App() {
                 <Route
                   path="/:id/:subjectId/flashcard/:postId"
                   element={<TakeFlashCard />}
+                />
+                <Route
+                  path="/prueba"
+                  element={<ReportsPage />}
                 />
               </Routes>
             </Layout>
