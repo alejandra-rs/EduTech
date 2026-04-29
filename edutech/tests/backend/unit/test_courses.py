@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.db import IntegrityError
 from users.models import Student
-from courses.models import Course, Year, Subscription
+from courses.models import Course, Year, Subscription, University,Degree
 from ..config import make_student, make_year, make_course
 
 
@@ -9,7 +9,14 @@ class YearModelTest(TestCase):
 
     def test_str_returns_year_as_string(self):
         y = Year(year=2)
-        self.assertEqual(str(y), '2')
+        self.assertEqual(str(y.year), '2' )
+
+    def test_year_with_degree(self):
+        u = University(name="ULPGC", location="Las Palmas")
+        d = Degree(name="eii", university=u)
+        y = Year(degree = d)
+        self.assertEqual(y.degree, d)
+
 
     def test_year_field_accepts_integer(self):
         y = Year.objects.create(year=2)
