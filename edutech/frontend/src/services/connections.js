@@ -338,3 +338,30 @@ export const postComment = async (userId, postId, message) => {
   }
 };
 
+
+
+
+export const askChatbot = async (question, course = "", mode = "estricto") => {
+    try {
+        const response = await fetch(`${BASE_URL}/api/ai/chat/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                student_question: question,
+                course: course,
+                mode: mode
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Error en la comunicación con el asistente");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Chatbot Connection Error:", error);
+        throw error;
+    }
+};

@@ -4,6 +4,7 @@ import PostGrid from '../components/PostGrid';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import  { getYears } from '@services/connections';
+import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
 
 const Courses = () => {
   const [years, setYears] = useState([]);
@@ -51,6 +52,7 @@ const Courses = () => {
           </div>
         )}
       </div>
+      <ChatbotWidget />
     </div>
   );
 };
