@@ -14,6 +14,7 @@ import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
 import ReportsPage from "./pages/ReportsPage";
+import ReportFormPage from "./pages/ReportFormPage";
 import { syncUser } from "@services/connections";
 
 import {
@@ -84,8 +85,12 @@ export default function App() {
                   element={<TakeFlashCard />}
                 />
                 <Route
-                  path="/prueba"
+                  path="/reports"
                   element={<ReportsPage />}
+                />
+                <Route 
+                  path="/admin/report-form/:id" 
+                  element={<ReportFormPage />} 
                 />
               </Routes>
             </Layout>

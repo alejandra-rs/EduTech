@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ReportWidget } from '../components/ReportWidget';
+import { useNavigate } from 'react-router-dom';
 
 const MOCK_REPORTS = [
   {
     id: 1,
-    title: "Resumen del primer parcial de Fundamentos de Programación I",
+    title: "Resumen del primer parcial de Fundamentos de Programación I - Apuntes PDF",
     subject: "Fundamentos de Programación I",
     type: "PDF",
     reasons: [
@@ -52,7 +53,7 @@ const MOCK_REPORTS = [
   },
   {
     id: 2,
-    title: "Resumen del primer parcial de Fundamentos de Programación I",
+    title: "Resumen del primer parcial",
     subject: "Fundamentos de Programación I",
     type: "VID",
     reasons: [
@@ -102,20 +103,36 @@ const MOCK_REPORTS = [
 ];
 
 export default function ReportsPage() {
+  const [reports, setReports] = useState(MOCK_REPORTS);
+  const navigate = useNavigate();
+
+  const handleReject = (id) => {
+    setReports(reports.filter(report => report.id !== id));
+  };
+
+  const handleAccept = (report) => {
+    navigate(`/admin/report-form/${report.id}`, { state: { title: report.title } });
+  };
+
   return (
     <main className="p-6 bg-gray-50 min-h-screen">
       <div className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tighter italic">
+          <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">
             Panel de Reportes
           </h1>
           <p className="text-gray-500">Gestiona las incidencias reportadas por la comunidad.</p>
         </header>
 
         <section className="space-y-4">
-          {MOCK_REPORTS.length > 0 ? (
-            MOCK_REPORTS.map(report => (
-              <ReportWidget key={report.id} report={report} />
+          {reports.length > 0 ? (
+            reports.map(report => (
+              <ReportWidget 
+                key={report.id} 
+                report={report} 
+                onAccept={() => handleAccept(report)}
+                onReject={() => handleReject(report.id)}
+              />
             ))
           ) : (
             <div className="text-center py-20 bg-white rounded-xl border-2 border-dashed border-gray-200">
