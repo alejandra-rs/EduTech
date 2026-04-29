@@ -4,21 +4,99 @@ import { ReportWidget } from '../components/ReportWidget';
 const MOCK_REPORTS = [
   {
     id: 1,
-    title: "Resumen de Mitosis",
-    subject: "Biología Celular",
+    title: "Resumen del primer parcial de Fundamentos de Programación I",
+    subject: "Fundamentos de Programación I",
     type: "PDF",
     reasons: [
-      { user: "Juan Pérez", date: "hace 2 días", reason: "El archivo está corrupto y no se puede abrir en dispositivos móviles." },
-      { user: "Maria G.", date: "hace 1 día", reason: "Contenido desactualizado. Las fases de la meiosis están mezcladas con la mitosis y esto genera mucha confusión a los estudiantes de primer año. Además, el texto es extremadamente largo y tedioso de leer en este formato." }
+      { 
+        type: "Contenido desactualizado", 
+        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
+        date: "Hace 1 día" 
+      },
+      { 
+        type: "Archivo corrupto", 
+        comment: "",
+        date: "Hace 2 días" 
+      },
+      { 
+        type: "Contenido desactualizado", 
+        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
+        date: "Hace 1 día" 
+      },
+      { 
+        type: "Archivo corrupto", 
+        comment: "",
+        date: "Hace 2 días" 
+      },
+      { 
+        type: "Contenido desactualizado", 
+        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
+        date: "Hace 1 día" 
+      },
+      { 
+        type: "Archivo corrupto", 
+        comment: "",
+        date: "Hace 2 días" 
+      },
+      { 
+        type: "Contenido desactualizado", 
+        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
+        date: "Hace 1 día" 
+      },
+      { 
+        type: "Archivo corrupto", 
+        comment: "",
+        date: "Hace 2 días" 
+      }
     ]
   },
   {
     id: 2,
+    title: "Resumen del primer parcial de Fundamentos de Programación I",
+    subject: "Fundamentos de Programación I",
+    type: "VID",
+    reasons: [
+      { 
+        type: "Contenido desactualizado", 
+        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
+        date: "Hace 1 día" 
+      },
+      { 
+        type: "Archivo corrupto", 
+        comment: "",
+        date: "Hace 2 días" 
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "Resumen del primer parcial de Fundamentos de Programación I",
+    subject: "Fundamentos de Programación I",
+    type: "FLC",
+    reasons: [
+      { 
+        type: "Contenido desactualizado", 
+        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
+        date: "Hace 1 día" 
+      },
+      { 
+        type: "Archivo corrupto", 
+        comment: "",
+        date: "Hace 2 días" 
+      }
+    ]
+  },
+  {
+    id: 4,
     title: "Cuestionario de Integrales",
     subject: "Cálculo I",
     type: "QUI",
     reasons: [
-      { user: "Admin_21", date: "hace 5 horas", reason: "La pregunta 4 no tiene una respuesta correcta entre las opciones." }
+      { 
+        type: "Error en las respuestas", 
+        comment: "La pregunta 4 no tiene una respuesta correcta entre las opciones.", 
+        date: "Hace 5 horas" 
+      }
     ]
   }
 ];
