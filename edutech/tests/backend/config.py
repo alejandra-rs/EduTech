@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import MagicMock
 from users.models import Student
-from courses.models import Year, Course
+from courses.models import Year, Course, University, Degree
 
 TEST_STORAGES = {
     'default':     {'BACKEND': 'django.core.files.storage.InMemoryStorage'},
@@ -10,12 +10,14 @@ TEST_STORAGES = {
 
 def make_student(**kw):
     defaults = {'first_name': 'Pepe', 'last_name': 'Garcia',
-                'email': 'pepe@test.com', 'password': 'x'}
+                'email': 'pepe@test.com', 'password': 'x', }
     defaults.update(kw)
     return Student.objects.create(**defaults)
 
 def make_year(year=3):
-    return Year.objects.create(year=year)
+    u = University.objects.create(name="ULPGC", location="Las Palmas")
+    d = Degree.objects.create(name="eii", university=u)
+    return Year.objects.create(year=year, degree=d)
 
 def make_course(name='Producción de Software', year=None):
     return Course.objects.create(name=name, year=year or make_year(), semester=1)
