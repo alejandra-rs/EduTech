@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 MAX_PDF_KB = 600
 
@@ -110,3 +112,9 @@ class Comment(models.Model):
         return f'{self.user} {self.post}'
     
 
+@receiver(post_save, sender=PDFAttachment)
+def auto_vectorizar_pdf(sender, instance, created, **kwargs):
+    # Si el PDF se acaba de subir por primera vez, lanzamos Celery
+    if created:
+        from ai_agent.tasks import procesar_pdf_y_vectorizar
+        procesar_pdf_y_vectorizar.delay(instance.id)

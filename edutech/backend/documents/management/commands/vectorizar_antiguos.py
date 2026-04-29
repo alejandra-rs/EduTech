@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from documents.models import PDFAttachment
-from documents.vectorizator import ingerir_nuevo_documento
+from edutech.backend.ai_agent.vectorizator import ingerir_nuevo_documento
 
 class Command(BaseCommand):
     help = 'Vectoriza todos los PDFs que ya estaban en la base de datos o que dieron error'

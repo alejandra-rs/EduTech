@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: pgvector/pgvector:pg15
+    restart: always
+    environment:
+      POSTGRES_DB: edutech_db
+      POSTGRES_USER: admin_edutech
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  web:
+    build: ./backend
+    command: python backend/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app/backend
+    environment: # <--- AÑADE ESTO
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - PYTHONPATH=/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  # Tu empleado de fondo (Celery)
+  celery:
+    build: ./backend
+    # Al estar dentro de /app, la ruta de módulos funciona perfecta
+    command: celery -A backend.edutech worker -l INFO
+    volumes:
+      - ./backend:/app/backend
+    environment: # <--- AÑADE ESTO AQUÍ TAMBIÉN
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - PYTHONPATH=/app:/app/backend
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
+    name: backend_postgres_data
+    external: true

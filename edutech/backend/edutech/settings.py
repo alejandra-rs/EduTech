@@ -157,30 +157,43 @@ STATIC_URL = 'static/'
 
 
 
-import os
 
 # ==========================================
 # CONFIGURACIÓN DE IA (MICROSERVICIOS)
 # ==========================================
 AI_SETTINGS = {
     # 1. Servicio de Vectorización (Traductor de texto a números)
-    "EMBEDDING_URL": os.environ.get("EMBEDDING_URL", "http://localhost:11434"),
+    "EMBEDDING_URL": os.environ.get("EMBEDDING_URL", "http://host.docker.internal:11434"),
     "EMBEDDING_MODEL": os.environ.get("EMBEDDING_MODEL", "nomic-embed-text"),
     
     # 2. Servicio de Visión (Lector de imágenes)
-    "VISION_URL": os.environ.get("VISION_URL", "http://localhost:11434"),
+    "VISION_URL": os.environ.get("VISION_URL", "http://host.docker.internal:11434"),
     "VISION_MODEL": os.environ.get("VISION_MODEL", "gemma3:4b"),
 
 
-    "CODE_DETECT_MODEL": os.environ.get("CODE_DETECT_MODEL", "http://localhost:11434"),
+    "CODE_DETECT_URL": os.environ.get("CODE_DETECT_URL", "http://host.docker.internal:11434"),
     "CODE_DETECT_MODEL": os.environ.get("CODE_DETECT_MODEL", "llama3.2"),
     
     # 3. Servicio de Chat (El cerebro que responde al alumno)
-    "CHAT_URL": os.environ.get("CHAT_URL", "http://localhost:11434"),
+    "CHAT_URL": os.environ.get("CHAT_URL", "http://host.docker.internal:11434"),
     #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
     "CHAT_MODEL": os.environ.get("CHAT_MODEL", "gemma3:4b"),
     #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.1:8b"),
     
     # Base de datos
     "VECTOR_DB_COLLECTION": "apuntes_universidad",
+
 }
+
+# ==========================================
+# CONFIGURACIÓN DE CELERY Y REDIS
+# ==========================================
+# Dónde está el mensajero (Redis) que guarda la cola de tareas
+CELERY_BROKER_URL = env('REDIS_URL', default='redis://localhost:6379/0')
+
+# Dónde guarda Celery el resultado de la tarea cuando termina
+CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://localhost:6379/0')
+
+# Forzamos a que Celery acepte formato JSON al comunicarse
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

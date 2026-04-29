@@ -12,7 +12,7 @@ from .models import Post, PDFAttachment, YoutubeVideo, Like, Dislike, Comment
 from .serializers import PostSerializer, PDFUploadSerializer, VideoUploadSerializer, CommentListSerializer, \
                          LikeSerializer, DislikeSerializer, PostPreviewSerializer
 from .filters import PostFilter
-from .vectorizator import ingerir_nuevo_documento
+from ai_agent.vectorizator import ingerir_nuevo_documento
 
 class PostListView(generics.ListAPIView):
     queryset = Post.objects.all()

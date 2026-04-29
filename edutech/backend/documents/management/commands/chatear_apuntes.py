@@ -45,7 +45,11 @@ class Command(BaseCommand):
              Si te piden que hagas por ejemplo ejercicios, trata de seguir la estructura de los ejercicios que tengas, cambia los datos pero mantén la estructura. Y referencia la fuente original del ejercicio con [Ref: X].
              Si el fragmento tiene un ejercicio resuelto, puedes usarlo como base para crear el nuevo ejercicio, pero siempre haz referencia al fragmento original usando [Ref: X].
              FRAGMENTOS DE CONTEXTO:
-            {context}"""),
+            {context}
+             FORMATO:
+             "Formatea tu respuesta utilizando Markdown (usa negritas, listas, y bloques de código ``` cuando sea necesario)."
+             "NO OLVIDES REFERENCIAR LOS FRAGMENTOS USADOS CON [Ref: X]"
+             """),
             ("human", "{question}")
         ])
 
@@ -60,7 +64,11 @@ class Command(BaseCommand):
              Si el fragmento tiene una explicación clara del concepto, puedes repetirla y siempre haz referencia al fragmento original usando [Ref: X].
              Si el fragmento tiene una explicación pero no tiene un ejemplo, puedes crear un ejemplo basado en la explicación, pero siempre haz referencia al fragmento original usando [Ref: X].
              FRAGMENTOS DE CONTEXTO:
-            {context}"""),
+            {context}
+             FORMATO:
+             "Formatea tu respuesta utilizando Markdown (usa negritas, listas, y bloques de código ``` cuando sea necesario)."
+             "NO OLVIDES REFERENCIAR LOS FRAGMENTOS USADOS CON [Ref: X]"
+             """),
             ("human", "{question}")
         ])
 
@@ -75,7 +83,12 @@ class Command(BaseCommand):
             "El patrón Singleton asegura una instancia única [Ref: 1]. La arquitectura MVC tiene tres capas [Ref: 4]."
             
             CONTEXTO:
-            {context}"""),
+            {context}
+             
+             FORMATO:
+             "Formatea tu respuesta utilizando Markdown (usa negritas, listas, y bloques de código ``` cuando sea necesario)."
+             "NO OLVIDES REFERENCIAR LOS FRAGMENTOS USADOS CON [Ref: X]"
+             """),
             ("human", "{question}")
         ])
 

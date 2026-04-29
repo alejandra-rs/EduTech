@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from documents.models import PDFAttachment
-from documents.vectorizator import CONNECTION_STRING
+from edutech.backend.ai_agent.vectorizator import CONNECTION_STRING
 from sqlalchemy import create_engine, text
 
 class Command(BaseCommand):
