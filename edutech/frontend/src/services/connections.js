@@ -1,8 +1,8 @@
 const BASE_URL = "http://127.0.0.1:8000";
 
-export const getYears = async () => {
+export const getYears = async (userId) => {
   try {
-    const response = await fetch(`${BASE_URL}/courses/years`);
+    const response = await fetch(`${BASE_URL}/courses/years?user=${userId}`);
     if (!response.ok) throw new Error("Error al obtener los años");
     return await response.json();
   } catch (error) {
@@ -77,13 +77,13 @@ export const getDocument = async (postId) => {
 export const postDocument = async (courseId, userId, title, description, docType, file) => {
   try {
     const formData = new FormData();
-  
+
     formData.append("title", title);
     formData.append("description", description);
     formData.append("course", courseId);
     formData.append("student", userId);
     formData.append("file", file);
-  
+
     const response = await fetch(`${BASE_URL}/documents/upload/${docType.toLowerCase()}/`, {
       method: "POST",
       body: formData
@@ -102,7 +102,7 @@ export const checkSubscription = async (userId, courseId) => {
     const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}&course=${courseId}`);
     if (!response.ok) throw new Error("Error al verificar la suscripción");
     const data = await response.json();
-    return data.id ? data.id : null; 
+    return data.id ? data.id : null;
   } catch (error) {
     console.error("Error en checkSubscription:", error);
     throw error;
@@ -467,4 +467,3 @@ export const checkQuizAnswers = async (postId, responses) => {
     throw error;
   }
 };
-

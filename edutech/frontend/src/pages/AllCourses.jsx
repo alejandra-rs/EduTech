@@ -1,24 +1,30 @@
-import SearchBar from '../components/SearchBar';
-import { CourseWidget } from '../components/CourseWidget';
-import PostGrid from '../components/PostGrid';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import  { getYears } from '@services/connections';
+import SearchBar from "../components/SearchBar";
+import { CourseWidget } from "../components/CourseWidget";
+import PostGrid from "../components/PostGrid";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getYears } from "@services/connections";
+import { useCurrentUser } from "@services/useCurrentUser";
 
 const Courses = () => {
   const [years, setYears] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
   const navigate = useNavigate();
+  const { userData } = useCurrentUser();
 
   useEffect(() => {
-    getYears()
+    getYears(userData?.id)
       .then(setYears)
-      .catch((error) => {console.error("Error al cargar los cursos:", error)});
-  }, []);
+      .catch((error) => {
+        console.error("Error al cargar los cursos:", error);
+      });
+  }, [userData?.id]);
 
   const handlePostClick = (post) => {
-    if (post.post_type === "PDF") navigate(`/${post.course}/${post.year}/documento/${post.id}`);
-    else if (post.post_type === "VID") navigate(`/${post.course}/${post.year}/video/${post.id}`);
+    if (post.post_type === "PDF")
+      navigate(`/${post.course}/${post.year}/documento/${post.id}`);
+    else if (post.post_type === "VID")
+      navigate(`/${post.course}/${post.year}/video/${post.id}`);
   };
 
   return (
