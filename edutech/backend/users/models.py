@@ -1,5 +1,5 @@
 from django.db import models
-from courses.models import University, Degree
+from courses.models import  Degree
 
 class Student(models.Model):
     first_name = models.CharField(max_length=50)
@@ -8,11 +8,6 @@ class Student(models.Model):
     password = models.CharField(max_length=50)
     picture = models.ImageField(
         blank=True, null=True, upload_to="images/", max_length=255
-    )
-
-    universities = models.ManyToManyField(
-        University,
-        blank=True
     )
 
     degree = models.ManyToManyField(
