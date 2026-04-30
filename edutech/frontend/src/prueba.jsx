@@ -22,6 +22,7 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from "@azure/msal-react";
+import MyDocuments from "./pages/MyDocuments";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -88,6 +89,7 @@ export default function App() {
                 <Route path="/borradores" element={<Drafts />} />
                 <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
                 <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
+                <Route path="/mis-publicaciones/" element={<MyDocuments/>}/>
               </Routes>
             </Layout>
           ) : null}

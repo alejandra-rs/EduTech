@@ -34,7 +34,7 @@ export interface PostBase {
 
 export interface PostPDF extends PostBase {
   post_type: 'PDF';
-  extendedType: 'pdf'; 
+  extendedType: 'documento'; 
   pdf: PDFAttachment;
 }
 
@@ -46,7 +46,7 @@ export interface PostVideo extends PostBase {
 
 export interface PostQuiz extends PostBase {
   post_type: 'QUI';
-  extendedType: 'cuestionario';
+  extendedType: 'quiz';
   qui: QuizPreview;
 
 }

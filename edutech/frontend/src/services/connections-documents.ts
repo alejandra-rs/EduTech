@@ -97,9 +97,9 @@ export const getPosts = async (courseId: number): Promise<PostPreview[]> => {
   }
 };
 
-export const getFilteredPosts = async (courseId: number | null, title: string): Promise<PostPreview[]> => {
+export const getFilteredPosts = async (courseId: string | null, title: string, userId: string | null): Promise<PostPreview[]> => {
   try {
-    const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""}`;
+    const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}`  : ""} ${userId ? `&student=${userId}` : ""}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Error al obtener los posts filtrados");
     const data = await response.json();
