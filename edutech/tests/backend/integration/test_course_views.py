@@ -1,14 +1,16 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase
-from courses.models import Course, Year
+from courses.models import Course, Year,University, Degree
 from ..config import make_student, make_year, make_course
 
 
 class YearListCreateViewTest(APITestCase):
 
     def test_list_years_returns_200_and_year_list(self):
-        Year.objects.create(year=2)
-        Year.objects.create(year=3)
+        u = University.objects.create(name="ULPGC", location="Las Palmas")
+        d = Degree.objects.create(name="EII", university=u)
+        Year.objects.create(year=2, degree=d)
+        Year.objects.create(year=3, degree=d)
         response = self.client.get('/courses/years/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)

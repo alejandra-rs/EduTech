@@ -10,6 +10,7 @@ class StudentListView(generics.ListAPIView):
     filterset_fields = ["email"]
 
 
+
 class StudentView(views.APIView):
     def post(self, request):
         print(request.data)
@@ -31,3 +32,15 @@ class StudentView(views.APIView):
         student = Student.objects.get(pk=pk)
         student.delete()
         return Response()
+
+    def patch(self, request, pk):
+        try:
+            student = Student.objects.get(pk=pk)
+        except Student.DoesNotExist:
+            return Response({"error": "Estudiante no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+        if "degree" in request.data:
+            student.degree.set(request.data["degree"])
+        return Response(
+            status=status.HTTP_200_OK
+        )
