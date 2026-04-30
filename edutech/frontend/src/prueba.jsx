@@ -22,6 +22,7 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from "@azure/msal-react";
+import UploadWizard from "./pages/UploadDocument";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -55,7 +56,7 @@ export default function App() {
                 />
                 <Route
                   path="/:id/:subjectId/upload/PDF"
-                  element={<CargarPublicacionPDF />}
+                  element={<UploadWizard />}
                 />
                 <Route
                   path="/:id/:subjectId/upload/Video"
