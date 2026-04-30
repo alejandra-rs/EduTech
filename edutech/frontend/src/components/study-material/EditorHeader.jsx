@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { useAutoResize } from './useAutoResize';
 import Input from '../Input';
 
 const EditorHeader = ({ title, description, onTitleChange, onDescChange }) => {

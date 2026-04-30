@@ -8,6 +8,8 @@ from langchain_postgres.vectorstores import PGVector
 from sqlalchemy import create_engine, text
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import os
+from .etiquetator import generar_etiquetas  # Asegúrate de que estén en la misma carpeta
+
 
 url_original = os.environ.get('DATABASE_URL')
 CONNECTION_STRING = url_original.replace("postgres://", "postgresql+psycopg://")
@@ -41,11 +43,13 @@ def analizar_imagen_con_gemma(imagen_bytes, titulo, asignatura, descripcion):
                 {
                     'role': 'system',
                     'content': (
-                        "Eres un transcriptor visual experto. Tu ÚNICA misión es extraer texto o describir diagramas de la imagen que recibes. "
+                        "Eres un transcriptor visual experto. Tu ÚNICA misión es extraer texto, si es un diagrama describir el diagramas de la imagen que recibes. "
                         "REGLAS INQUEBRANTABLES:\n"
                         "1. Responde SIEMPRE y ÚNICAMENTE en ESPAÑOL.\n"
                         "2. Describe solo lo que ves físicamente en la imagen. No inventes información.\n"
-                        "3. PROHIBIDO saludar, dar introducciones o hacer comentarios. Empieza directamente con el contenido."
+                        "3. PROHIBIDO saludar, dar introducciones o hacer comentarios. Empieza directamente con el contenido.\n"
+                        "4. Si la imagen contiene código terminal o comandos, transcribe el código con la mayor precisión posible, incluyendo formato y símbolos especiales.\n"
+                        "5. tu output se va a vectorizar directamente, así que no añadas nada en tu respuesta que no sea util para la vectorización. Evita palabras como 'imagen', 'foto', 'diagrama' o similares, céntrate en describir el contenido de forma clara y estructurada.\n"
                         f'la imagen está en: {contexto_input}'
                     )
                 },
@@ -60,31 +64,6 @@ def analizar_imagen_con_gemma(imagen_bytes, titulo, asignatura, descripcion):
     except Exception as e:
         return f"[Error visión: {e}]"
     
-
-def clasificar_contenido_con_ia(texto):
-    """Analiza el texto y detecta si es código y de qué tipo"""
-    try:
-        # Usamos un modelo muy ligero para que sea instantáneo
-        res = ollama.chat(
-            model=settings.AI_SETTINGS["CODE_DETECT_MODEL"], 
-            messages=[{
-                'role': 'system',
-                'content': (
-                    "Eres un clasificador de texto. Tu tarea es responder ÚNICAMENTE en formato JSON. "
-                    "Analiza el texto y decide si contiene código de programación, configuración o comandos. "
-                    "ten en cuanta que mucho codigo viene redactado en markdown"
-                    "Formato de respuesta: {\"es_codigo\": boolean, \"lenguaje\": \"nombre o null\"}"
-                )
-            }, {
-                'role': 'user',
-                'content': f"Clasifica este texto: {texto[:800]}" 
-            }],
-            format="json"
-        )
-        import json
-        return json.loads(res['message']['content'])
-    except:
-        return {"es_codigo": False, "lenguaje": None}
     
 def ingerir_nuevo_documento(pdf_instance):
     nombre_asignatura = pdf_instance.post.course.name
@@ -127,7 +106,6 @@ def ingerir_nuevo_documento(pdf_instance):
                     metadata={"p": num_pag + 1, "tipo": "chunk"} 
                 ))
 
-            # Procesar Imágenes (Sustituye OCR)
             for img in pagina.get_images():
                 print(f"   👀 IA analizando imagen") 
                 xref = img[0]
@@ -140,17 +118,11 @@ def ingerir_nuevo_documento(pdf_instance):
                     asignatura=nombre_asignatura,
                     descripcion=descripcion_doc
                 )
-                info_codigo = clasificar_contenido_con_ia(descripcion_visual)
-                es_codigo = info_codigo.get("es_codigo", False)
-                lenguaje = info_codigo.get("lenguaje", None)
-                print(f"      -> ¿Es código?: {es_codigo} (Lenguaje detectado: {lenguaje})")
                 print(f"-> Descripción IA: {descripcion_visual}...")
 
                 metadata_vision = {
                     "p": num_pag + 1, 
                     "tipo": "vision_chunk",
-                    "tipo_contenido": "Code" if es_codigo else "Texto",
-                    "lenguaje": lenguaje
                 }
 
                 fragmentos_crudos.append(LangchainDocument(
@@ -165,7 +137,7 @@ def ingerir_nuevo_documento(pdf_instance):
             metadata={
                 "tipo": "resumen_documento", 
                 "doc_id": doc_id,
-                "asignatura": nombre_asignatura,
+                "course_id": str(pdf_instance.post.course.id),
                 "titulo": titulo_doc
             }
         )
@@ -178,9 +150,10 @@ def ingerir_nuevo_documento(pdf_instance):
             d.page_content = f"Asignatura: {nombre_asignatura} | Documento: {titulo_doc}\n{d.page_content}"
             d.metadata["cita_previa"] = d.page_content[:80].strip()
             d.metadata["doc_id"] = doc_id
-            d.metadata["asignatura"] = nombre_asignatura
+            d.metadata["course_id"] = str(pdf_instance.post.course.id)
             d.metadata["titulo"] = titulo_doc
-
+            d.metadata["tags"] = generar_etiquetas(d.page_content)
+            
         # D. Guardar Padre y Hijos juntos en PGVector
         documentos_a_guardar = [doc_padre] + docs_hijos
         vector_store.add_documents(documentos_a_guardar)

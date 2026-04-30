@@ -399,71 +399,11 @@ export const checkQuizAnswers = async (postId, responses) => {
   }
 };
 
-export const postQuiz = async (courseId, userId, title, description, questions) => {
-  try {
-    const response = await fetch(`${BASE_URL}/documents/upload/quiz/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        description,
-        course: courseId,
-        student: userId,
-        questions: questions.map(q => ({
-          title: q.title,
-          is_multiple: q.answers.filter(a => a.isCorrect).length > 1,
-          answers: q.answers.map(a => ({ text: a.text, is_correct: a.isCorrect })),
-        })),
-      }),
-    });
-    if (!response.ok) throw new Error("Error al publicar el cuestionario");
-    return await response.json();
-  } catch (error) {
-    console.error("Error en postQuiz:", error);
-    throw error;
-  }
-};
-
-export const postFlashCardDeck = async (courseId, userId, title, description, cards) => {
-  try {
-    const response = await fetch(`${BASE_URL}/documents/upload/flashcards/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title,
-        description,
-        course: courseId,
-        student: userId,
-        cards: cards.map(c => ({ front: c.front, back: c.back })),
-      }),
-    });
-    if (!response.ok) throw new Error("Error al publicar las flashcards");
-    return await response.json();
-  } catch (error) {
-    console.error("Error en postFlashCardDeck:", error);
-    throw error;
-  }
-};
-
-export const checkQuizAnswers = async (postId, responses) => {
-  try {
-    const response = await fetch(`${BASE_URL}/documents/${postId}/quiz/check/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ responses }),
-    });
-    if (!response.ok) throw new Error("Error al corregir el cuestionario");
-    return await response.json();
-  } catch (error) {
-    console.error("Error en checkQuizAnswers:", error);
-    throw error;
-  }
-};
 
 
 
 
-export const askChatbot = async (question, course = "", mode = "estricto") => {
+export const askChatbot = async (question, course_id = "", mode = "estricto", deep_thinking = false) => {
     try {
         const response = await fetch(`${BASE_URL}/api/ai/chat/`, {
             method: 'POST',
@@ -472,8 +412,9 @@ export const askChatbot = async (question, course = "", mode = "estricto") => {
             },
             body: JSON.stringify({
                 student_question: question,
-                course: course,
-                mode: mode
+                course: course_id,
+                mode: mode,
+                deep_thinking: deep_thinking
             }),
         });
 

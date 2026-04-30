@@ -52,7 +52,6 @@ const Courses = () => {
           </div>
         )}
       </div>
-      <ChatbotWidget />
     </div>
   );
 };

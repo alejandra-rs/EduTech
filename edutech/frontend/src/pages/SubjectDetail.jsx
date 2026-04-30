@@ -7,6 +7,7 @@ import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
 import { getPosts, getCourse } from "@services/connections";
+import { ChatbotWidget } from "../components/chatbot/ChatbotWidget";
 
 const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLC: "flashcard" };
 
@@ -118,6 +119,7 @@ const SubjectDetail = () => {
           </div>
         </div>
       </div>
+      <ChatbotWidget courseId={subjectId} />
     </div>
   );
 };
