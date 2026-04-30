@@ -28,6 +28,7 @@ import {
 export default function App() {
   const { accounts, instance } = useMsal();
   const { userData, isLoading } = useCurrentUser();
+
   useEffect(() => {
     if (accounts.length > 0) {
       syncUser(instance, accounts[0]);
@@ -46,7 +47,7 @@ export default function App() {
                 {/* loader component here */}
                 <h1>Cargando datos del usuario...</h1>
               </div>
-            ) : userData?.degree === null ? (
+            ) : userData?.degree !== undefined && userData?.degree.length !== 0 ? (
               <Layout accounts={accounts} instance={instance}>
                 <Routes>
                   <Route path="/" element={<Courses />} />
@@ -105,9 +106,6 @@ export default function App() {
             ) : (
               <SelectUniversity
                 userId={userData.id}
-                usuarioAceptado={() => {
-                  window.location.reload();
-                }}
               />
             )}
           </AuthenticatedTemplate>

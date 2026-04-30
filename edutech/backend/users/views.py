@@ -42,5 +42,6 @@ class StudentView(views.APIView):
         if "degree" in request.data:
             student.degree.set(request.data["degree"])
         return Response(
+            {},
             status=status.HTTP_200_OK
         )

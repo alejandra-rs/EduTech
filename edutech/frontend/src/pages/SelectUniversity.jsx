@@ -6,16 +6,16 @@ import {
 } from "../services/degree";
 import SelectionGrid from "../components/SelectionGrid";
 
-export default function SelectUniversity({ userId, usuarioAceptado }) {
+export default function SelectUniversity({ userId }) {
   const [paso, setPaso] = useState(1);
   const [universitySelected, setUniversitySelected] = useState(null);
   const [degrees, setDegrees] = useState([]);
   const [universities, setUniversities] = useState([]);
   const [selectedDegreesIds, setSelectedDegreesIds] = useState([]);
+
   useEffect(() => {
     getUniversities()
       .then((data) => {
-        console.log("Universidades obtenidas:", data);
         setUniversities(data);
       })
       .catch((error) => {
@@ -27,12 +27,7 @@ export default function SelectUniversity({ userId, usuarioAceptado }) {
     if (universitySelected) {
       getDegrees(universitySelected.id)
         .then((data) => {
-          console.log(
-            "Carreras obtenidas para universidad",
-            universitySelected.name,
-            ":",
-            data,
-          );
+
           setDegrees(data);
         })
         .catch((error) => {
@@ -54,9 +49,9 @@ export default function SelectUniversity({ userId, usuarioAceptado }) {
   };
 
   const chooseDegree = async (degree) => {
-    await saveUserDegree(userId, degree);
-    if (usuarioAceptado) {
-      usuarioAceptado();
+    const response = await saveUserDegree(userId, degree);
+    if (response){
+      window.location.reload(); 
     }
   };
 
