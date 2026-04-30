@@ -384,6 +384,75 @@ export const postFlashCardDeck = async (courseId, userId, title, description, ca
   }
 };
 
+export const getDraft = async (draftId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/drafts/${draftId}/`);
+    if (!response.ok) throw new Error("Error al obtener el borrador");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getDraft:", error);
+    throw error;
+  }
+};
+
+export const getDrafts = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/drafts/?student=${userId}`);
+    if (!response.ok) throw new Error("Error al obtener los borradores");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getDrafts:", error);
+    throw error;
+  }
+};
+
+export const saveDraft = async (studentId, courseId, postType, title, description, items) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/drafts/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(_buildDraftItems({ student: studentId, course: courseId, post_type: postType, title, description }, postType, items)),
+    });
+    if (!response.ok) throw new Error("Error al guardar el borrador");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en saveDraft:", error);
+    throw error;
+  }
+};
+
+export const updateDraft = async (draftId, title, description, postType, items) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/drafts/${draftId}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(_buildDraftItems({ title, description }, postType, items)),
+    });
+    if (!response.ok) throw new Error("Error al actualizar el borrador");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en updateDraft:", error);
+    throw error;
+  }
+};
+
+export const deleteDraft = async (draftId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/documents/drafts/${draftId}/`, { method: "DELETE" });
+    if (!response.ok) throw new Error("Error al eliminar el borrador");
+  } catch (error) {
+    console.error("Error en deleteDraft:", error);
+    throw error;
+  }
+};
+
+function _buildDraftItems(base, postType, items) {
+  if (postType === "FLA") {
+    return { ...base, cards: items.map(c => ({ question: c.question, answer: c.answer })) };
+  }
+  return { ...base, questions: items.map(q => ({ title: q.title, answers: q.answers.map(a => ({ text: a.text, is_correct: a.isCorrect })) })) };
+}
+
 export const checkQuizAnswers = async (postId, responses) => {
   try {
     const response = await fetch(`${BASE_URL}/documents/${postId}/quiz/check/`, {

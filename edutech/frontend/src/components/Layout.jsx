@@ -9,23 +9,15 @@ export default function Layout({ accounts, instance, children }) {
   const [userData, setUserData] = useState(null);
   const location = useLocation();
 
-  const tabs_config = {
-    default: [
-      { label: "Mis asignaturas", color: "bg-red-400" },
-      { label: "Mi espacio", color: "bg-yellow-400" },
-      { label: "Todos", color: "bg-green-400", path: "/" },
-    ],
-    upload: [
+  const tabs_config = [
       { label: "PDF", color: "bg-red-400", path: "PDF" },
       { label: "Video", color: "bg-blue-400", path: "Video" },
       { label: "Cuestionario", color: "bg-orange-500", path: "quiz" }, 
-      { label: "Flashcard", color: "bg-indigo-500", path: "flashcard" },
-    ],
-  };
+      { label: "Flashcard", color: "bg-purple-500", path: "flashcard" }, 
+  ];
 
   const isUploadPath = location.pathname.toLowerCase().includes("/upload");
-  const currentTabs = isUploadPath ? tabs_config.upload : tabs_config.default;
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       if (accounts.length > 0) {
@@ -51,9 +43,11 @@ export default function Layout({ accounts, instance, children }) {
         <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] mb-20 [scrollbar-width:none] bg-white ">
           {children}
         </div>
-        <div className="absolute bottom-0 left-0 w-full">
-          <Footer tabs={currentTabs} />
-        </div>
+        {isUploadPath && (
+          <div className="absolute bottom-0 left-0 w-full">
+            <Footer tabs={tabs_config} />
+          </div>
+        )}
       </main>
     </div>
   );

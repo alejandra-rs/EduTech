@@ -2,9 +2,10 @@ import UserAvatar from "./UserAvatar";
 import HamburgerButton from "./HamburgerButton";
 import { 
   ArrowRightStartOnRectangleIcon, 
-  BookOpenIcon, 
-  DocumentTextIcon,
-  RectangleStackIcon
+  PencilSquareIcon, 
+  BellIcon,
+  RectangleStackIcon,
+  DocumentIcon
 } from "@heroicons/react/24/outline";
 
 export default function Header ({
@@ -36,13 +37,13 @@ export default function Header ({
                   ${isOpen ? "w-64 px-4" : "w-20 px-4"}`}
     >
       <div className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}>
-        <div className="flex center">
-          <RectangleStackIcon className="w-10 h-10 text-white" />
-        </div>
-        <span className={`ml-4 font-black text-xl text-white tracking-tight transition-all duration-300 ${!isOpen && "opacity-0 w-0"}`}>
-          Edutech
-        </span>
+        <a href="/" className="d-flex text-white font-bold text-xl" title="Edutech">
+          <RectangleStackIcon className="w-10 h-10 text-white group-hover:text-white transition-colors" />
+          {isOpen && <span className="text-white font-medium text-xl">Edutech</span>}
+        </a>
       </div>
+
+
 
       <div className={`mb-10 p-2 rounded-2xl transition-colors ${isOpen ? "bg-white/5 border border-white/10" : ""}`}>
         <div className={`flex items-center ${isOpen ? "gap-4" : "justify-center"}`}>
@@ -59,27 +60,36 @@ export default function Header ({
         </div>
       </div>
 
+      <hr className="border-white-100"></hr>
+
       <nav className="flex flex-col gap-2 flex-1">
-        <a href="#" className={navItemClass} title="Cursos">
-          <BookOpenIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && <span className="text-white font-medium text-sm">Cursos</span>}
+        <a href="/suscripciones/" className={navItemClass} title="Cursos">
+          <BellIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && <span className="text-white font-medium text-sm">Mis suscripciones</span>}
         </a>
         
-        <a href="#" className={navItemClass} title="Documentos">
-          <DocumentTextIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && <span className="text-white font-medium text-sm">Documentos</span>}
+        <a href="/borradores/" className={navItemClass} title="Documentos">
+          <PencilSquareIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && <span className="text-white font-medium text-sm">Mis borradores</span>}
         </a>
 
-        <div className="my-4 border-t border-white/5 mx-2"></div>
+        <a href="/documentos/" className={navItemClass} title="Documentos">
+          <DocumentIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && <span className="text-white font-medium text-sm">Mi material</span>}
+        </a>
 
+        <hr className="border-white-100"></hr>
+
+      { isOpen &&
         <button 
           onClick={handleLogoutRedirect} 
           className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`}
           title="Salir"
         >
           <ArrowRightStartOnRectangleIcon className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
-          {isOpen && <span className="font-medium text-sm">Cerrar sesión</span>}
+          <span className="font-medium text-sm">Cerrar sesión</span>
         </button>
+      }
       </nav>
 
       <div className="mt-auto pt-4 flex justify-center border-t border-white/5">

@@ -57,9 +57,9 @@ const TakeFlashCard = () => {
 
   const sidebarActions = [
     {
-      label: "Reiniciar Mazo", icon: ArrowPathIcon,
+      label: "Reiniciar", icon: ArrowPathIcon,
       onClick: () => setConfirmReset(true),
-      className: "flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-indigo-50 hover:text-indigo-600 transition-all",
+      className: "flex items-center justify-center gap-2 w-full py-2.5 bg-white border border-gray-200 text-gray-600 rounded-xl text-[11px] font-bold uppercase tracking-wider hover:bg-purple-50 hover:text-purple-600 transition-all",
     },
   ];
 
@@ -74,7 +74,7 @@ const TakeFlashCard = () => {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <ConfirmModal open={confirmReset} title="¿Reiniciar sesión?" message="Se perderá el progreso actual de este mazo." onConfirm={handleReset} onCancel={() => setConfirmReset(false)} />
+      <ConfirmModal open={confirmReset} title="¿Reiniciar?" message="Se perderá el progreso actual del grupo de tarjetas." onConfirm={handleReset} onCancel={() => setConfirmReset(false)} />
 
       <StudySidebar show={showSidebar} onToggle={() => setShowSidebar(v => !v)} title="Estudio" stats={stats} actions={sidebarActions} navTitle="Tarjetas" navItems={sidebarNavItems} activeId={cards[currentIndex]?.id} />
 

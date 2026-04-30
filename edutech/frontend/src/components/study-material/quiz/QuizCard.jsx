@@ -26,7 +26,7 @@ const QuizCard = ({ question, onAnswered, isCorrected, selectedIds, onSelect, on
         {question.answers.map((ans) => {
           const isSelected = selectedIds.includes(ans.id);
           let statusStyle = "border-gray-100 bg-white hover:border-gray-300";
-          if (isSelected) statusStyle = "border-blue-400 bg-blue-50/30";
+          if (isSelected) statusStyle = "border-orange-400 bg-orange-50/30";
           if (isCorrected) {
             if (ans.isCorrect) statusStyle = "border-green-400 bg-green-50/50 text-green-900";
             else if (isSelected && !ans.isCorrect) statusStyle = "border-red-300 bg-red-50/50 text-red-900";
@@ -42,7 +42,7 @@ const QuizCard = ({ question, onAnswered, isCorrected, selectedIds, onSelect, on
             >
               <div className={`w-4 h-4 flex-shrink-0 border flex items-center justify-center transition-all ${
                 isMultiple ? 'rounded' : 'rounded-full'
-              } ${isSelected ? 'bg-blue-500 border-blue-500 text-white' : 'border-gray-300 bg-gray-50'}`}>
+              } ${isSelected ? 'bg-orange-500 border-orange-500 text-white' : 'border-gray-300 bg-gray-50'}`}>
                 {isSelected && <CheckIcon className="w-3 h-3 stroke-[4px]" />}
               </div>
               {ans.text}

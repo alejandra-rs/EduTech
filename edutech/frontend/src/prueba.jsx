@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
 import Courses from "./pages/AllCourses";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
@@ -13,6 +14,7 @@ import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
+import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 
 import {
@@ -20,6 +22,7 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from "@azure/msal-react";
+import UploadWizard from "./pages/UploadDocument";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -33,6 +36,7 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
+        <NavigationGuardProvider>
         <UnauthenticatedTemplate>
           <SignIn />
         </UnauthenticatedTemplate>
@@ -52,7 +56,7 @@ export default function App() {
                 />
                 <Route
                   path="/:id/:subjectId/upload/PDF"
-                  element={<CargarPublicacionPDF />}
+                  element={<UploadWizard />}
                 />
                 <Route
                   path="/:id/:subjectId/upload/Video"
@@ -82,10 +86,14 @@ export default function App() {
                   path="/:id/:subjectId/flashcard/:postId"
                   element={<TakeFlashCard />}
                 />
+                <Route path="/borradores" element={<Drafts />} />
+                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
+                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
               </Routes>
             </Layout>
           ) : null}
         </AuthenticatedTemplate>
+        </NavigationGuardProvider>
       </BrowserRouter>
     </>
   );

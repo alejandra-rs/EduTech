@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 MAX_PDF_KB = 600
 
+
 def validate_pdf_extension(pdf):
     if not pdf.name.lower().endswith(".pdf"):
         raise ValidationError("Solo se permite la subida de archivos PDF.")
@@ -24,15 +25,19 @@ class Post(models.Model):
     )
 
     course = models.ForeignKey("courses.Course", on_delete=models.CASCADE)
-    student = models.ForeignKey("users.Student", on_delete=models.SET_NULL, null=True, blank=True)
+    student = models.ForeignKey(
+        "users.Student", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     title = models.CharField(max_length=200)
     description = models.TextField()
 
     post_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
     views = models.PositiveIntegerField(default=0)
+    is_draft = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"[{self.get_post_type_display()}] {self.title} - {self.student}"
@@ -128,7 +133,9 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name="answers"
+    )
     text = models.CharField(max_length=500)
     is_correct = models.BooleanField(default=False)
 
@@ -138,7 +145,9 @@ class FlashCardDeck(models.Model):
 
 
 class FlashCard(models.Model):
-    deck = models.ForeignKey(FlashCardDeck, on_delete=models.CASCADE, related_name="cards")
+    deck = models.ForeignKey(
+        FlashCardDeck, on_delete=models.CASCADE, related_name="cards"
+    )
     question = models.TextField()
     answer = models.TextField()
 

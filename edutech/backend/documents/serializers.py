@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Post, PDFAttachment, YoutubeVideo, Comment, Like, Dislike
 from .models import Quiz, Question, Answer, FlashCardDeck, FlashCard
 from courses.models import Course
+from courses.serializers import CourseSerializer
 from users.models import Student
 from users.serializers import StudentSerializer
 import urllib.request
@@ -188,9 +189,13 @@ class QuestionUploadSerializer(serializers.Serializer):
 
     def validate_answers(self, answers):
         if len(answers) < 2:
-            raise serializers.ValidationError("Cada pregunta necesita al menos 2 respuestas.")
+            raise serializers.ValidationError(
+                "Cada pregunta necesita al menos 2 respuestas."
+            )
         if not any(a["is_correct"] for a in answers):
-            raise serializers.ValidationError("Cada pregunta necesita al menos una respuesta correcta.")
+            raise serializers.ValidationError(
+                "Cada pregunta necesita al menos una respuesta correcta."
+            )
         return answers
 
 
@@ -198,12 +203,16 @@ class QuizUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
+    student = serializers.PrimaryKeyRelatedField(
+        queryset=Student.objects.all(), required=False, allow_null=True
+    )
     questions = QuestionUploadSerializer(many=True)
 
     def validate_questions(self, questions):
         if not questions:
-            raise serializers.ValidationError("El cuestionario necesita al menos una pregunta.")
+            raise serializers.ValidationError(
+                "El cuestionario necesita al menos una pregunta."
+            )
         return questions
 
 
@@ -216,18 +225,24 @@ class FlashCardDeckUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all(), required=False, allow_null=True)
+    student = serializers.PrimaryKeyRelatedField(
+        queryset=Student.objects.all(), required=False, allow_null=True
+    )
     cards = FlashCardUploadSerializer(many=True)
 
     def validate_cards(self, cards):
         if not cards:
-            raise serializers.ValidationError("El grupo de flashcards necesita al menos una tarjeta.")
+            raise serializers.ValidationError(
+                "El grupo de flashcards necesita al menos una tarjeta."
+            )
         return cards
 
 
 class QuizResponseSerializer(serializers.Serializer):
     question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
-    selected = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=Answer.objects.all()))
+    selected = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Answer.objects.all())
+    )
 
 
 class QuizCheckSerializer(serializers.Serializer):
@@ -244,3 +259,63 @@ class DislikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dislike
         fields = ["user", "post"]
+
+
+class DraftPostSerializer(serializers.ModelSerializer):
+    fla = FlashCardDeckSerializer(read_only=True)
+    qui = QuizSerializer(read_only=True)
+    course = CourseSerializer(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = [
+            "id",
+            "title",
+            "description",
+            "post_type",
+            "course",
+            "created_at",
+            "updated_at",
+            "fla",
+            "qui",
+        ]
+
+
+class DraftCardInputSerializer(serializers.Serializer):
+    question = serializers.CharField(allow_blank=True)
+    answer = serializers.CharField(allow_blank=True)
+
+
+class DraftAnswerInputSerializer(serializers.Serializer):
+    text = serializers.CharField(allow_blank=True)
+    is_correct = serializers.BooleanField()
+
+
+class DraftQuestionInputSerializer(serializers.Serializer):
+    title = serializers.CharField(allow_blank=True)
+    answers = DraftAnswerInputSerializer(many=True, allow_empty=True)
+
+
+class DraftCreateSerializer(serializers.Serializer):
+    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
+    post_type = serializers.ChoiceField(choices=["QUI", "FLA"])
+    title = serializers.CharField(max_length=200)
+    description = serializers.CharField(allow_blank=True)
+    cards = DraftCardInputSerializer(
+        many=True, required=False, allow_empty=True, default=list
+    )
+    questions = DraftQuestionInputSerializer(
+        many=True, required=False, allow_empty=True, default=list
+    )
+
+
+class DraftUpdateSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=200)
+    description = serializers.CharField(allow_blank=True)
+    cards = DraftCardInputSerializer(
+        many=True, required=False, allow_empty=True, default=list
+    )
+    questions = DraftQuestionInputSerializer(
+        many=True, required=False, allow_empty=True, default=list
+    )

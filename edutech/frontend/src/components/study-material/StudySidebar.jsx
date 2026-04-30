@@ -10,9 +10,9 @@ const StudySidebar = ({ show, onToggle, title, stats, actions = [], navTitle, na
       <ChevronLeftIcon className={`w-5 h-5 text-gray-500 transition-transform ${show ? "rotate-180" : ""}`} />
     </button>
 
-    <div className={`flex flex-col h-full p-5 overflow-hidden transition-opacity ${show ? "opacity-100" : "opacity-0"}`}>
-      <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">{title}</h2>
+    <div className={`flex flex-col h-full p-5 mt-3 overflow-hidden transition-opacity ${show ? "opacity-100" : "opacity-0"}`}>
       <QuizStats stats={stats} />
+      <hr className="border-gray-200 mt-6" />
 
       {actions.length > 0 && (
         <div className="mt-6 space-y-2">
