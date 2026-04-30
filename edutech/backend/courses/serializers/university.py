@@ -4,5 +4,5 @@ from ..models import University
 class UniversitySerializer(serializers.ModelSerializer):
     class Meta:
         model = University
-        fields = ["id", "name", "location"]
+        fields = ["id", "name", "location","logo"]
 
