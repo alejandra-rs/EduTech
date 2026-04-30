@@ -6,4 +6,13 @@ from users.models import Student
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ["id", "first_name", "last_name", "email", "picture","universities", "degree"]
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "picture",
+            "universities",
+            "degree",
+            "is_admin",
+        ]

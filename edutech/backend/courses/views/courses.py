@@ -18,9 +18,7 @@ class CourseListCreate(generics.ListCreateAPIView):
         return super().list(request, *args, **kwargs)
 
 
-
 class CourseDetailView(views.APIView):
     def get(self, request, pk):
         course = get_object_or_404(Course, pk=pk)
         return Response(CourseSerializer(course).data, status=status.HTTP_200_OK)
-

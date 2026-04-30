@@ -1,146 +1,97 @@
-import React, { useState } from 'react';
-import { ReportWidget } from '../components/ReportWidget';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const MOCK_REPORTS = [
-  {
-    id: 1,
-    title: "Resumen del primer parcial de Fundamentos de Programación I - Apuntes PDF",
-    subject: "Fundamentos de Programación I",
-    type: "PDF",
-    reasons: [
-      { 
-        type: "Contenido desactualizado", 
-        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
-        date: "Hace 1 día" 
-      },
-      { 
-        type: "Archivo corrupto", 
-        comment: "",
-        date: "Hace 2 días" 
-      },
-      { 
-        type: "Contenido desactualizado", 
-        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
-        date: "Hace 1 día" 
-      },
-      { 
-        type: "Archivo corrupto", 
-        comment: "",
-        date: "Hace 2 días" 
-      },
-      { 
-        type: "Contenido desactualizado", 
-        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
-        date: "Hace 1 día" 
-      },
-      { 
-        type: "Archivo corrupto", 
-        comment: "",
-        date: "Hace 2 días" 
-      },
-      { 
-        type: "Contenido desactualizado", 
-        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
-        date: "Hace 1 día" 
-      },
-      { 
-        type: "Archivo corrupto", 
-        comment: "",
-        date: "Hace 2 días" 
-      }
-    ]
-  },
-  {
-    id: 2,
-    title: "Resumen del primer parcial",
-    subject: "Fundamentos de Programación I",
-    type: "VID",
-    reasons: [
-      { 
-        type: "Contenido desactualizado", 
-        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
-        date: "Hace 1 día" 
-      },
-      { 
-        type: "Archivo corrupto", 
-        comment: "",
-        date: "Hace 2 días" 
-      }
-    ]
-  },
-  {
-    id: 3,
-    title: "Resumen del primer parcial de Fundamentos de Programación I",
-    subject: "Fundamentos de Programación I",
-    type: "FLC",
-    reasons: [
-      { 
-        type: "Contenido desactualizado", 
-        comment: "Los apuntes de programación están mezclados con el contenido de POO y genera mucha confusión. Sería ideal tenerlos separados por curso o al menos una sección clara para cada uno. Además, algunos ejemplos de código ya no funcionan con las versiones actuales de los lenguajes.", 
-        date: "Hace 1 día" 
-      },
-      { 
-        type: "Archivo corrupto", 
-        comment: "",
-        date: "Hace 2 días" 
-      }
-    ]
-  },
-  {
-    id: 4,
-    title: "Cuestionario de Integrales",
-    subject: "Cálculo I",
-    type: "QUI",
-    reasons: [
-      { 
-        type: "Error en las respuestas", 
-        comment: "La pregunta 4 no tiene una respuesta correcta entre las opciones.", 
-        date: "Hace 5 horas" 
-      }
-    ]
-  }
-];
+import { ReportWidget } from '../components/reports/ReportWidget';
+import { TitlePage } from '../components/TitlePage';
+import { useCurrentUser } from '../services/useCurrentUser';
+import { getReports, rejectPostReports } from '../services/connections-reports';
 
 export default function ReportsPage() {
-  const [reports, setReports] = useState(MOCK_REPORTS);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { userData, isAdmin, loading: userLoading } = useCurrentUser();
   const navigate = useNavigate();
 
-  const handleReject = (id) => {
-    setReports(reports.filter(report => report.id !== id));
+  const fetchReports = async () => {
+    try {
+      const reports = await getReports(userData.id);
+      setReports(groupByPost(reports));
+    } catch (err) {
+      console.error("Error al cargar reportes:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    if (!userLoading && (!userData || !isAdmin)) navigate('/');
+  }, [userData, isAdmin, userLoading, navigate]);
+
+  useEffect(() => {
+    if (!userData?.id) return;
+    fetchReports();
+  }, [userData]);
+
+  const groupByPost = (allReports) => {
+    const reportsByPost = {};
+    allReports.forEach((r) => {
+      if (!reportsByPost[r.post.id]) {
+        reportsByPost[r.post.id] = {
+          postId: r.post.id, title: r.post.title,
+          subject: r.post.course_name, type: r.post.post_type,
+          courseId: r.post.course, yearId: r.post.year_id,
+          reasons: [],
+        };
+      }
+      reportsByPost[r.post.id].reasons.push({
+        type: r.reason.reason,
+        comment: r.description,
+        date: new Date(r.created_at).toLocaleDateString('es-ES'),
+      });
+    });
+    return Object.values(reportsByPost);
   };
 
-  const handleAccept = (report) => {
-    navigate(`/admin/report-form/${report.id}`, { state: { title: report.title } });
+  const handleReject = async (report) => {
+    try {
+      await rejectPostReports(report.postId, userData.id);
+      setReports((prev) => prev.filter((r) => r.postId !== report.postId));
+    } catch (err) {
+      console.error("Error al descartar reporte:", err);
+    }
   };
+
+  const handleAccept = (report) => navigate(`/admin/report-form/${report.postId}`, {
+    state: { title: report.title, subject: report.subject },
+  });
+
+  if (loading) {
+    return (
+      <main className="flex items-center justify-center h-full">
+        <p className="text-gray-400 italic">Cargando reportes</p>
+      </main>
+    );
+  }
 
   return (
-    <main className="p-6 bg-gray-50 min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">
-            Panel de Reportes
-          </h1>
-          <p className="text-gray-500">Gestiona las incidencias reportadas por la comunidad.</p>
-        </header>
-
+    <>
+      <div className="flex flex-col max-w-4xl mx-auto px-4 gap-7">
+        <TitlePage
+          PageName="Panel de Reportes"
+          onBack={() => navigate(-1)}
+        />
         <section className="space-y-4">
           {reports.length > 0 ? (
-            reports.map(report => (
-              <ReportWidget 
-                key={report.id} 
-                report={report} 
+            reports.map((report) => (
+              <ReportWidget
+                key={report.postId}
+                report={report}
                 onAccept={() => handleAccept(report)}
-                onReject={() => handleReject(report.id)}
+                onReject={() => handleReject(report)}
               />
             ))
-          ) : (
-            <div className="text-center py-20 bg-white rounded-xl border-2 border-dashed border-gray-200">
-              <p className="text-gray-400">No hay reportes pendientes ✨</p>
-            </div>
-          )}
+          ) : (<p className="text-gray-400 mt-10 text-center italic">No hay reportes pendientes de revisión.</p>)}
         </section>
       </div>
-    </main>
+    </>
   );
 }

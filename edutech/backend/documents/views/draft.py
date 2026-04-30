@@ -3,7 +3,11 @@ from rest_framework import views, status
 from rest_framework.response import Response
 from users.models import Student
 from ..models import Post, FlashCardDeck, Quiz
-from ..serializers import DraftPostSerializer, DraftCreateSerializer, DraftUpdateSerializer
+from ..serializers import (
+    DraftPostSerializer,
+    DraftCreateSerializer,
+    DraftUpdateSerializer,
+)
 
 
 def _write_post_content(post, data):
@@ -16,13 +20,17 @@ def _write_post_content(post, data):
         for q_data in data.get("questions", []):
             question = quiz.questions.create(title=q_data["title"])
             for a_data in q_data.get("answers", []):
-                question.answers.create(text=a_data["text"], is_correct=a_data["is_correct"])
+                question.answers.create(
+                    text=a_data["text"], is_correct=a_data["is_correct"]
+                )
 
 
 class DraftListView(views.APIView):
     def get(self, request):
         student = get_object_or_404(Student, pk=request.query_params.get("student"))
-        drafts = Post.objects.filter(student=student, is_draft=True).order_by("-updated_at")
+        drafts = Post.objects.filter(student=student, is_draft=True).order_by(
+            "-updated_at"
+        )
         return Response(DraftPostSerializer(drafts, many=True).data)
 
     def post(self, request):

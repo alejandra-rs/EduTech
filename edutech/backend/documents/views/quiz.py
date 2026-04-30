@@ -25,7 +25,9 @@ class QuizUploadView(generics.GenericAPIView):
         for q_data in data["questions"]:
             question = Question.objects.create(quiz=quiz, title=q_data["title"])
             for a_data in q_data["answers"]:
-                question.answers.create(text=a_data["text"], is_correct=a_data["is_correct"])
+                question.answers.create(
+                    text=a_data["text"], is_correct=a_data["is_correct"]
+                )
 
         return Response(PostSerializer(post).data, status=status.HTTP_201_CREATED)
 
@@ -44,18 +46,22 @@ class QuizCheckView(views.APIView):
             question = response["question"]
             if question.quiz_id != quiz.id:
                 return Response(
-                    {"detail": f"La pregunta {question.id} no pertenece a este cuestionario."},
+                    {
+                        "detail": f"La pregunta {question.id} no pertenece a este cuestionario."
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             selected_ids = {a.id for a in response["selected"]}
             correct_ids = set(
                 question.answers.filter(is_correct=True).values_list("id", flat=True)
             )
-            results.append({
-                "question": question.id,
-                "correct": selected_ids == correct_ids,
-                "correct_answers": list(correct_ids),
-            })
+            results.append(
+                {
+                    "question": question.id,
+                    "correct": selected_ids == correct_ids,
+                    "correct_answers": list(correct_ids),
+                }
+            )
 
         score = sum(1 for r in results if r["correct"])
         return Response({"results": results, "score": score, "total": len(results)})

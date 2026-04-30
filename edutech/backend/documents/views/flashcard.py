@@ -22,6 +22,8 @@ class FlashCardDeckUploadView(generics.GenericAPIView):
         )
         deck = FlashCardDeck.objects.create(post=post)
         for card_data in data["cards"]:
-            deck.cards.create(question=card_data["question"], answer=card_data["answer"])
+            deck.cards.create(
+                question=card_data["question"], answer=card_data["answer"]
+            )
 
         return Response(PostSerializer(post).data, status=status.HTTP_201_CREATED)

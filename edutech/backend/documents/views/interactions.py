@@ -25,7 +25,9 @@ class CommentView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         comment = Comment.objects.create(user=user, post=post, message=message)
-        return Response(CommentListSerializer(comment).data, status=status.HTTP_201_CREATED)
+        return Response(
+            CommentListSerializer(comment).data, status=status.HTTP_201_CREATED
+        )
 
 
 class LikeView(views.APIView):
@@ -51,7 +53,9 @@ class LikeView(views.APIView):
         except ValidationError as e:
             return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
         new_like.save()
-        return Response({"id": new_like.id, "count": count + 1}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"id": new_like.id, "count": count + 1}, status=status.HTTP_201_CREATED
+        )
 
     def delete(self, request, pk):
         like = get_object_or_404(Like, pk=pk)
@@ -87,7 +91,9 @@ class DislikeView(views.APIView):
         except ValidationError as e:
             return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
         new_dislike.save()
-        return Response({"id": new_dislike.id, "count": count + 1}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"id": new_dislike.id, "count": count + 1}, status=status.HTTP_201_CREATED
+        )
 
     def delete(self, request, pk):
         dislike = get_object_or_404(Dislike, pk=pk)

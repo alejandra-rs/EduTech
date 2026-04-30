@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import Comentario from "../components/Comentario";
 import ModalComentario from "./PopUp";
 import { getComments } from "@services/connections";
+import { useCurrentUser } from "@services/useCurrentUser";
 
 export function CommentsSections({ documentId }) {
   const [comments, setComments] = useState([]);
+  const { userData } = useCurrentUser();
 
   useEffect(() => {
     const cargarComentarios = async () => {
@@ -53,6 +55,7 @@ export function CommentsSections({ documentId }) {
               key={comment.id}
               comment={comment}
               user={comment.user}
+              currentUser={userData}
             />
           ))
         ) : (
