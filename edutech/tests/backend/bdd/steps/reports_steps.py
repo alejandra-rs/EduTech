@@ -54,7 +54,7 @@ def step_i_am_on_report_screen(context):
 
 @given('que soy un usuario moderador')
 def step_i_am_moderator(context):
-    pass  # context.admin is set in Background
+    pass
 
 
 @given('estoy en la zona de moderación')
@@ -64,7 +64,7 @@ def step_i_am_in_moderation_zone(context):
 
 @given('que soy el creador del contenido reportado')
 def step_i_am_content_creator(context):
-    pass  # context.student already owns context.post
+    pass
 
 
 @given('que soy un usuario registrado leyendo los comentarios de un material')
