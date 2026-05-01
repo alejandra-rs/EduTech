@@ -1,4 +1,14 @@
-export function TitlePage({ PageName, subtitle, onBack, backLabel = "Volver", children }) {
+import { ReactNode } from 'react';
+
+interface TitlePageProps {
+  PageName: string;
+  subtitle: string;
+  backLabel: string;
+  onBack: () => void;
+  children?: ReactNode;
+}
+
+export const TitlePage = ({ PageName, subtitle, onBack, backLabel = "Volver", children }: TitlePageProps) => {
   return (
     <div className="relative px-12 pt-10 pb-4 shrink-0 flex items-center min-h-[100px]">
       <div

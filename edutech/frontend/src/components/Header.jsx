@@ -9,8 +9,9 @@ import {
   AcademicCapIcon,
   ShieldExclamationIcon,
 } from "@heroicons/react/24/outline";
+import { NavLink } from "react-router-dom"
 
-export default function Header({
+export default function Header ({
   isOpen,
   setIsOpen,
   userProfilePic,
@@ -27,11 +28,20 @@ export default function Header({
       .catch((error) => console.error(error));
   };
 
+  const navLinks = [
+  { to: "/suscripciones/", label: "Mis asignaturas", icon: BellIcon, title: "Cursos" },
+  { to: "/borradores/", label: "Mis borradores", icon: PencilSquareIcon, title: "Documentos" },
+  { to: "/mis-publicaciones/", label: "Mi material", icon: DocumentIcon, title: "Material" },
+  ];
+
   const navItemClass = `
     flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
     ${isOpen ? "w-full" : "w-12 justify-center"}
     hover:bg-white/10 hover:shadow-lg active:scale-95
   `;
+
+  const getLinkClass = ({ isActive }) =>
+    `${navItemClass} ${isActive ? "bg-white/20 shadow-inner border border-white/10" : "text-white"}`;
 
   return (
     <aside
@@ -39,27 +49,17 @@ export default function Header({
                   transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative z-50
                   ${isOpen ? "w-64 px-4" : "w-20 px-4"}`}
     >
-      <div
-        className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}
-      >
-        <a
-          href="/"
-          className="d-flex text-white font-bold text-xl"
-          title="Edutech"
-        >
+      <div className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}>
+        <a href="/" className="d-flex text-white font-bold text-xl" title="Edutech">
           <RectangleStackIcon className="w-10 h-10 text-white group-hover:text-white transition-colors" />
-          {isOpen && (
-            <span className="text-white font-medium text-xl">Edutech</span>
-          )}
+          {isOpen && <span className="text-white font-medium text-xl">Edutech</span>}
         </a>
       </div>
 
-      <div
-        className={`mb-10 p-2 rounded-2xl transition-colors ${isOpen ? "bg-white/5 border border-white/10" : ""}`}
-      >
-        <div
-          className={`flex items-center ${isOpen ? "gap-4" : "justify-center"}`}
-        >
+
+
+      <div className={`mb-10 p-2 rounded-2xl transition-colors ${isOpen ? "bg-white/5 border border-white/10" : ""}`}>
+        <div className={`flex items-center ${isOpen ? "gap-4" : "justify-center"}`}>
           <div className="scale-75 relative">
             <UserAvatar imageUrl={userProfilePic} />
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
@@ -75,49 +75,25 @@ export default function Header({
         </div>
       </div>
 
+        <a href="/degrees/" className={navItemClass} title="Carreras">
+            <AcademicCapIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+            {isOpen && (
+                <span className="text-white font-medium text-sm">
+              Cambiar carrera
+            </span>
+            )}
+        </a>
+
       <hr className="border-white-100"></hr>
 
       <nav className="flex flex-col gap-2 flex-1">
-        <a href="/suscripciones/" className={navItemClass} title="Cursos">
-          <BellIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && (
-            <span className="text-white font-medium text-sm">
-              Mis suscripciones
-            </span>
-          )}
-        </a>
 
-        <a href="/borradores/" className={navItemClass} title="Documentos">
-          <PencilSquareIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && (
-            <span className="text-white font-medium text-sm">
-              Mis borradores
-            </span>
-          )}
-        </a>
-
-        <a href="/documentos/" className={navItemClass} title="Documentos">
-          <DocumentIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && (
-            <span className="text-white font-medium text-sm">Mi material</span>
-          )}
-        </a>
-        <a href="/degrees/" className={navItemClass} title="Carreras">
-          <AcademicCapIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && (
-            <span className="text-white font-medium text-sm">
-              Cambiar carrera
-            </span>
-          )}
-        </a>
-        <a href="/degrees/" className={navItemClass} title="Carreras">
-          <AcademicCapIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && (
-            <span className="text-white font-medium text-sm">
-              Cambiar carrera
-            </span>
-          )}
-        </a>
+          {navLinks.map(({ to, label, icon: Icon, title }) => (
+              <NavLink key={to} to={to} className={getLinkClass} title={title}>
+                  <Icon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+                  {isOpen && <span className="text-white font-medium text-sm">{label}</span>}
+              </NavLink>
+          ))}
 
         {isAdmin && (
           <a href="/reports" className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`} title="Panel de reportes">
@@ -126,15 +102,6 @@ export default function Header({
           </a>
         )}
 
-        {isAdmin && (
-        <>
-          <hr className="border-white-100"></hr>
-          <a href="/reports" className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`} title="Panel de reportes">
-            <ShieldExclamationIcon className="w-6 h-6 transition-colors" />
-            {isOpen && <span className="font-medium text-sm">Panel de reportes</span>}
-          </a>
-        </>
-        )}
         <hr className="border-white-100"></hr>
 
       { isOpen &&
@@ -157,4 +124,3 @@ export default function Header({
     </aside>
   );
 }
-

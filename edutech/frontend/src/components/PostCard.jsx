@@ -1,5 +1,6 @@
-import { HandThumbUpIcon, HandThumbDownIcon, EyeIcon } from '@heroicons/react/24/solid';
+import { HandThumbUpIcon, HandThumbDownIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { ReactionButton } from "./ReactionButton";
+import { useState } from 'react';
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString("es-ES", {
@@ -92,9 +93,18 @@ export const LABELS = {
   FLA: LabelFlashCard,
 };
 
-export function PostCard({ title, type, fileUrl, date, onClick, stats, meta }) {
+export function PostCard({ title, type, fileUrl, date, onClick, stats, meta, onDelete }) {
   const Preview = PREVIEWS[type] ?? PREVIEWS.VID;
   const Label = LABELS[type] ?? LabelVideo;
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  const onClickDelete = (e) => {
+    e.stopPropagation();
+    if (isConfirming) {
+      onDelete();
+      setIsConfirming(false);
+    } else setIsConfirming(true);
+  }
 
   return (
     <div
@@ -106,6 +116,20 @@ export function PostCard({ title, type, fileUrl, date, onClick, stats, meta }) {
       <div className="absolute top-2 right-2">
         <Label />
       </div>
+
+      {onDelete && (
+        <button
+          onClick={(e) => onClickDelete(e)} onMouseLeave={() => setIsConfirming(false)}
+          className="absolute top-2 left-2 flex items-center gap-2 rounded-full p-1.5 transition-all duration-200 shadow text-white bg-red-500 hover:bg-red-600"
+          title={isConfirming ? "Confirmar eliminación" : "Eliminar"}
+        >
+          {isConfirming ? (<>
+                            <span className="text-xs font-bold uppercase tracking-wider">Eliminar</span>
+                            <TrashIcon className="w-6 h-6" />
+                           </>)
+                        : (<TrashIcon className="w-6 h-6" />)}
+        </button>
+      )}
 
       <div className="p-5 flex flex-col flex-1">
         <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2 mb-1">

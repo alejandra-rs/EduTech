@@ -22,8 +22,10 @@ import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 import { useCurrentUser } from "@services/useCurrentUser";
 import StudySessions from "./pages/StudySessions";
-import StudySessionDetail from "./pages/StudySessionDetail";
+import MyDocuments from "./pages/MyDocuments";
+import MySubjects from "./pages/MySubjects";
 
+import StudySessionDetail from "./pages/StudySessionDetail";
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,
@@ -128,6 +130,8 @@ export default function App() {
                     path="/sesiones/:sessionId"
                     element={<StudySessionDetail />}
                 />
+                <Route path="/mis-publicaciones/" element={<MyDocuments/>}/>
+                <Route path="/suscripciones" element={<MySubjects/>}/>
               </Routes>
             </Layout>
           ) : (

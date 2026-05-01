@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
-import { getUserByEmail } from "@services/connections";
+import { AccountInfo } from "@azure/msal-browser";
+import { getUserByEmail } from "./connections-students";
+import { Student } from "../models/student.model";
+interface CurrentUserHook {
+    userData: Student | null;
+    account: AccountInfo | null;
+}
 
-const BASE_URL = "http://127.0.0.1:8000";
-
-
-export const useCurrentUser = () => {
+export const useCurrentUser = (): CurrentUserHook => {
     const { accounts, inProgress } = useMsal();
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState<Student | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -30,6 +33,6 @@ export const useCurrentUser = () => {
         userData,
         isAdmin: Boolean(userData?.is_admin),
         isLoading,
-        account: accounts[0] ?? null,
+        account:  (accounts[0] as AccountInfo)  ?? null,
     };
 };
