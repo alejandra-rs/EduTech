@@ -1,29 +1,59 @@
-import SearchBar from '../components/SearchBar';
-import { CourseWidget } from '../components/CourseWidget';
-import PostGrid from '../components/PostGrid';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import  { getYears } from '@services/connections';
+import SearchBar from "../components/SearchBar";
+import { CourseWidget } from "../components/CourseWidget";
+import PostGrid from "../components/PostGrid";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getYears } from "@services/connections";
 import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
-import { useCurrentUser } from '../services/useCurrentUser';
+import { useCurrentUser } from "@services/useCurrentUser";
+import { getDegreeName } from "@services/degree";
 
 const Courses = () => {
-  const [years, setYears] = useState([]);
+  const [groupedDegrees, setGroupedDegrees] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
+
   const navigate = useNavigate();
   const { userData } = useCurrentUser();
   const userId = userData?.id;
-  
+
   useEffect(() => {
     if (!userId) return;
-    getYears(userId)
-      .then(setYears)
-      .catch((error) => {console.error("Error al cargar los cursos:", error)});
+    const fetchCoursesAndDegrees = async () => {
+      try {
+        const yearsData = await getYears(userId);
+        if (!yearsData || yearsData.length === 0) return;
+
+        const uniqueDegreeIds = [
+          ...new Set(yearsData.map((year) => year.degree)),
+        ];
+        const degreesData = await Promise.all(
+          uniqueDegreeIds.map(async (degreeId) => {
+            if (!degreeId) return { id: degreeId, name: "Carrera desconocida" };
+            try {
+              const name = await getDegreeName(degreeId);
+              return { id: degreeId, name: name };
+            } catch (error) {
+              console.error(`Error al cargar la carrera ${degreeId}:`, error);
+              return { id: degreeId, name: "Carrera no encontrada" };
+            }
+          }),
+        );
+        const structuredData = degreesData.map((degree) => ({
+          ...degree,
+          years: yearsData.filter((year) => year.degree === degree.id),
+        }));
+
+        setGroupedDegrees(structuredData);
+      } catch (error) {
+        console.error("Error al cargar cursos y carreras:", error);
+      }
+    };
+    fetchCoursesAndDegrees();
   }, [userId]);
 
   const handlePostClick = (post) => {
-    if (post.post_type === "PDF") navigate(`/${post.course}/${post.year}/documento/${post.id}`);
-    else if (post.post_type === "VID") navigate(`/${post.course}/${post.year}/video/${post.id}`);
+    const route = post.post_type === "PDF" ? "documento" : "video";
+    navigate(`/${post.course}/${post.year}/${route}/${post.id}`);
   };
 
   return (
@@ -41,17 +71,27 @@ const Courses = () => {
           <PostGrid posts={searchResults} onPostClick={handlePostClick} />
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-12 gap-y-6 w-full max-w-7xl mx-auto">
-            {years.map((year) => (
-              <Link
-                to={`/${year.id}/asignaturas`}
-                key={year.id}
-                className="block transition-transform hover:scale-[1.02]"
-              >
-                <CourseWidget
-                  courseName={year.year + "º Curso"}
-                  className="max-w-none w-full"
-                />
-              </Link>
+            {groupedDegrees.map((degree) => (
+              <>
+                <h1
+                  key={degree.id}
+                  className="text-3xl font-bold text-gray-800 mb-6 col-span-full"
+                >
+                  {degree.name}
+                </h1>
+                {degree.years.map((year) => (
+                  <Link
+                    to={`/${year.id}/asignaturas`}
+                    key={year.id}
+                    className="block transition-transform hover:scale-[1.02]"
+                  >
+                    <CourseWidget
+                      courseName={year.year + "º Curso"}
+                      className="max-w-none w-full"
+                    />
+                  </Link>
+                ))}
+              </>
             ))}
           </div>
         )}

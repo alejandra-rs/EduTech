@@ -16,7 +16,7 @@ class Post(models.Model):
     )
 
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(max_length=5000)
 
     post_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
     views = models.PositiveIntegerField(default=0)
@@ -36,6 +36,5 @@ class Post(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=["course", "post_type"]),
-            models.Index(fields=["student"]),
+            models.Index(fields=["course", "post_type", "-created_at"]),
         ]

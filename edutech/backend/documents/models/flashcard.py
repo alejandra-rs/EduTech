@@ -10,5 +10,5 @@ class FlashCard(models.Model):
     deck = models.ForeignKey(
         FlashCardDeck, on_delete=models.CASCADE, related_name="cards"
     )
-    question = models.TextField()
-    answer = models.TextField()
+    question = models.TextField(max_length=300)
+    answer = models.TextField(max_length=3000)

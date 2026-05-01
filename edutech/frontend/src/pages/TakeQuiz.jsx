@@ -6,14 +6,12 @@ import ConfirmModal from '../components/study-material/ConfirmModal';
 import StudySidebar from '../components/study-material/StudySidebar';
 import StudyHeader from '../components/study-material/StudyHeader';
 import CompletionBanner from '../components/study-material/CompletionBanner';
-import ReactionBar from '../components/ReactionBar';
+import ReactionsContainer from '../components/ReactionsContainer';
 import { getDocument } from '@services/connections';
-import { useCurrentUser } from '@services/useCurrentUser';
 
 const TakeQuiz = () => {
   const { id, subjectId, postId } = useParams();
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
 
   const [quizData, setQuizData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -124,7 +122,10 @@ const TakeQuiz = () => {
 
           {stats.answered === stats.total && stats.total > 0 && <CompletionBanner variant="quiz" stats={stats} onRestart={() => setConfirmReset(true)} />}
 
-          <ReactionBar userId={userData?.id} postId={Number(postId)} />
+          <hr className="mt-10 mb-5 border-gray-200"></hr>
+          <div className="flex justify-end">
+            <ReactionsContainer postId={Number(postId)} />
+          </div>
         </div>
       </main>
     </div>

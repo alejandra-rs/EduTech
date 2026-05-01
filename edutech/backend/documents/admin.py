@@ -13,6 +13,9 @@ from .models import (
     Answer,
     FlashCardDeck,
     FlashCard,
+    Report,
+    ReportReason,
+    ReportResolution,
 )
 
 admin.site.register(Post)
@@ -26,3 +29,6 @@ admin.site.register(Question)
 admin.site.register(Answer)
 admin.site.register(FlashCardDeck)
 admin.site.register(FlashCard)
+admin.site.register(Report)
+admin.site.register(ReportReason)
+admin.site.register(ReportResolution)

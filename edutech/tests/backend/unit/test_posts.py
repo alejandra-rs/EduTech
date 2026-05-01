@@ -63,14 +63,14 @@ class LikeDislikeConstraintTest(TestCase):
             title='T', description='D', post_type='PDF',
         )
 
-    def test_duplicate_like_raises_integrity_error(self):
+    def test_duplicate_like_raises_validation_error(self):
         Like.objects.create(user=self.student, post=self.post)
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError): 
             Like.objects.create(user=self.student, post=self.post)
 
     def test_duplicate_dislike_raises_integrity_error(self):
         Dislike.objects.create(user=self.student, post=self.post)
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError):
             Dislike.objects.create(user=self.student, post=self.post)
 
     def test_like_clean_raises_when_dislike_exists(self):

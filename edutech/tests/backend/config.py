@@ -10,14 +10,22 @@ TEST_STORAGES = {
 
 def make_student(**kw):
     defaults = {'first_name': 'Pepe', 'last_name': 'Garcia',
-                'email': 'pepe@test.com', 'password': 'x', }
+                'email': 'pepe@test.com', }
     defaults.update(kw)
     return Student.objects.create(**defaults)
 
-def make_year(year=3):
-    u = University.objects.create(name="ULPGC", location="Las Palmas")
-    d = Degree.objects.create(name="eii", university=u)
-    return Year.objects.create(year=year, degree=d)
+def make_university(name="ULPGC", location="Las Palmas"):
+    return University.objects.create(name=name, location=location)
+
+def make_degree(name="eii", university=None):
+    if university is None:
+        university = make_university()
+    return Degree.objects.create(name=name, university=university)
+
+def make_year(year=3, degree=None):
+    if degree is None:
+        degree = make_degree()
+    return Year.objects.create(year=year, degree=degree)
 
 def make_course(name='Producción de Software', year=None):
     return Course.objects.create(name=name, year=year or make_year(), semester=1)

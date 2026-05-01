@@ -6,7 +6,6 @@ export const getYears = async (userId) => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
-    console.log(response);
     
     if (!response.ok) throw new Error("Error al obtener los años");
     return await response.json();
@@ -82,13 +81,13 @@ export const getDocument = async (postId) => {
 export const postDocument = async (courseId, userId, title, description, docType, file) => {
   try {
     const formData = new FormData();
-  
+
     formData.append("title", title);
     formData.append("description", description);
     formData.append("course", courseId);
     formData.append("student", userId);
     formData.append("file", file);
-  
+
     const response = await fetch(`${BASE_URL}/documents/upload/${docType.toLowerCase()}/`, {
       method: "POST",
       body: formData
@@ -107,7 +106,7 @@ export const checkSubscription = async (userId, courseId) => {
     const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}&course=${courseId}`);
     if (!response.ok) throw new Error("Error al verificar la suscripción");
     const data = await response.json();
-    return data.id ? data.id : null; 
+    return data.id ? data.id : null;
   } catch (error) {
     console.error("Error en checkSubscription:", error);
     throw error;
@@ -215,6 +214,18 @@ export const getUserPhoto = async (instance, account) => {
   } catch (error) {
     console.error("Error al obtener la foto de Microsoft:", error);
     return null;
+  }
+};
+
+export const checkIsAdmin = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/students/${userId}/is-admin/`);
+    if (!response.ok) return false;
+    const data = await response.json();
+    return data.is_admin === true;
+  } catch (error) {
+    console.error("Error en checkIsAdmin:", error);
+    return false;
   }
 };
 
@@ -472,10 +483,6 @@ export const checkQuizAnswers = async (postId, responses) => {
     throw error;
   }
 };
-
-
-
-
 
 export const askChatbot = async (question, course_id = "", mode = "estricto", deep_thinking = false) => {
     try {

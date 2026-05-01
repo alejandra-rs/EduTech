@@ -2,17 +2,13 @@ from behave import given, when, then
 
 @given('que existen las asignaturas "{name1}" y "{name2}" en el curso "{year}"')
 def step_create_courses_on_year(context, name1, name2, year):
-    from courses.models import Year, Course
-    curso = Year.objects.get(year=int(year))
+    from courses.models import Course
     for nombre in (name1, name2):
-        Course.objects.get_or_create(name=nombre, year=curso, semester=1)
+        Course.objects.get_or_create(name=nombre, year=context.year, semester=1)
 
 @when('pido las asignaturas del curso "{year}"')
 def step_find_courses_by_year(context, year):
-    from courses.models import Year
-    curso = Year.objects.get(year=int(year))
-    # Requiere añadir filterset_fields = ['year'] a CourseListCreate
-    context.response = context.client.get(f'/courses/?year={curso.pk}')
+    context.response = context.client.get(f'/courses/?year={context.year.pk}')
 
 @when('pido las asignaturas de un curso con id {year_id:d}')
 def step_find_courses_by_id(context, year_id):

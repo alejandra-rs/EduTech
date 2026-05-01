@@ -48,7 +48,7 @@ def step_other_student_has_draft(context):
     from users.models import Student
     other = Student.objects.create(
         first_name="Otro", last_name="Usuario",
-        email="otro@test.com", password="x",
+        email="otro@test.com",
     )
     post = Post.objects.create(
         course=context.course, student=other,

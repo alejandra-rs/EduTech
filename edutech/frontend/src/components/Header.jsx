@@ -1,28 +1,31 @@
 import UserAvatar from "./UserAvatar";
 import HamburgerButton from "./HamburgerButton";
-import { 
-  ArrowRightStartOnRectangleIcon, 
-  PencilSquareIcon, 
+import {
+  ArrowRightStartOnRectangleIcon,
+  PencilSquareIcon,
   BellIcon,
   RectangleStackIcon,
-  DocumentIcon
+  DocumentIcon,
+  AcademicCapIcon,
+  ShieldExclamationIcon,
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom"
 
-export default function Header ({
+export default function Header({
   isOpen,
   setIsOpen,
   userProfilePic,
   userName,
   instance,
   accountsMsal,
+  isAdmin,
 }) {
   const handleLogoutRedirect = () => {
     instance
       .logoutRedirect({
         account: accountsMsal[0],
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   };
 
   
@@ -46,25 +49,37 @@ export default function Header ({
                   transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative z-50
                   ${isOpen ? "w-64 px-4" : "w-20 px-4"}`}
     >
-      <div className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}>
-        <a href="/" className="d-flex text-white font-bold text-xl" title="Edutech">
+      <div
+        className={`flex items-center mb-10 overflow-hidden ${isOpen ? "px-2" : "justify-center"}`}
+      >
+        <a
+          href="/"
+          className="d-flex text-white font-bold text-xl"
+          title="Edutech"
+        >
           <RectangleStackIcon className="w-10 h-10 text-white group-hover:text-white transition-colors" />
-          {isOpen && <span className="text-white font-medium text-xl">Edutech</span>}
+          {isOpen && (
+            <span className="text-white font-medium text-xl">Edutech</span>
+          )}
         </a>
       </div>
 
-
-
-      <div className={`mb-10 p-2 rounded-2xl transition-colors ${isOpen ? "bg-white/5 border border-white/10" : ""}`}>
-        <div className={`flex items-center ${isOpen ? "gap-4" : "justify-center"}`}>
+      <div
+        className={`mb-10 p-2 rounded-2xl transition-colors ${isOpen ? "bg-white/5 border border-white/10" : ""}`}
+      >
+        <div
+          className={`flex items-center ${isOpen ? "gap-4" : "justify-center"}`}
+        >
           <div className="scale-75 relative">
             <UserAvatar imageUrl={userProfilePic} />
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
           </div>
           {isOpen && (
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col min-w-0 gap-1">
               <p className="text-white font-bold text-sm truncate">{userName || 'Usuario'}</p>
-              <p className="text-indigo-300 text-[10px] uppercase font-black tracking-widest">Estudiante</p>
+              <p className={`text-xs font-semibold italic tracking-widest ${isAdmin ? "text-red-400" : "text-white"}`}>
+                {isAdmin ? "Admin" : "Estudiante"}
+              </p>
             </div>
           )}
         </div>
@@ -80,6 +95,22 @@ export default function Header ({
             {isOpen && <span className="text-white font-medium text-sm">{label}</span>}
           </NavLink>
         ))}
+
+                <a href="/degrees/" className={navItemClass} title="Carreras">
+          <AcademicCapIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && (
+            <span className="text-white font-medium text-sm">
+              Cambiar carrera
+            </span>
+          )}
+        </a>
+
+        {isAdmin && (
+          <a href="/reports" className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`} title="Panel de reportes">
+            <ShieldExclamationIcon className="w-6 h-6 transition-colors" />
+            {isOpen && <span className="font-medium text-sm">Panel de reportes</span>}
+          </a>
+        )}
 
         <hr className="border-white-100"></hr>
 
@@ -97,12 +128,10 @@ export default function Header ({
 
       <div className="mt-auto pt-4 flex justify-center border-t border-white/5">
         <div className="hover:bg-white/5 p-1.5 rounded-full transition-colors cursor-pointer scale-75">
-          <HamburgerButton 
-            isOpen={isOpen} 
-            onClick={() => setIsOpen(!isOpen)} 
-          /> 
+          <HamburgerButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
         </div>
       </div>
     </aside>
   );
 }
+
