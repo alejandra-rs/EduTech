@@ -110,15 +110,15 @@ export default function App() {
                     path="/degrees/"
                     element={<ChangeDegree userData={userData} />}
                   />
+                  <Route
+                    path="/reports"
+                    element={<ReportsPage />}
+                  />
+                  <Route
+                    path="/admin/report-form/:id"
+                    element={<ReportFormPage />}
+                  />
                 </Routes>
-                <Route
-                  path="/reports"
-                  element={<ReportsPage />}
-                />
-                <Route
-                  path="/admin/report-form/:id"
-                  element={<ReportFormPage />}
-                />
               </Layout>
             ) : (
               <SelectDegree userId={userData.id} />

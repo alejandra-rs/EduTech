@@ -10,13 +10,18 @@ class Like(models.Model):
     def __str__(self):
         return f"{self.user} {self.post}"
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def clean(self):
-        if Dislike.objects.filter(user=self.user, post=self.post).exists():
+        if Dislike.objects.filter(user_id=self.user_id, post_id=self.post_id).exists():
             raise ValidationError("No puedes dar like y dislike al mismo tiempo.")
 
     class Meta:
-        unique_together = (("user", "post"),)
-        indexes = [models.Index(fields=["user", "post"])]
+        constraints = [
+            models.UniqueConstraint(fields=['post', 'user'], name='unique_like')
+        ]
 
 
 class Dislike(models.Model):
@@ -25,21 +30,31 @@ class Dislike(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.post}"
-
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+    
     def clean(self):
-        if Like.objects.filter(user=self.user, post=self.post).exists():
+        if Like.objects.filter(user_id=self.user_id, post_id=self.post_id).exists():
             raise ValidationError("No puedes dar like y dislike al mismo tiempo.")
 
     class Meta:
-        unique_together = (("user", "post"),)
-        indexes = [models.Index(fields=["user", "post"])]
+        constraints = [
+            models.UniqueConstraint(fields=['post', 'user'], name='unique_dislike')
+        ]
 
 
 class Comment(models.Model):
     user = models.ForeignKey("users.Student", on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    message = models.TextField()
+    message = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user} {self.post}"
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['post', '-created_at']),
+        ]

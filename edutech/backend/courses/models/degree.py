@@ -7,7 +7,9 @@ class Degree(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ("name", "university")
+        constraints = [
+            models.UniqueConstraint(fields=['university', 'name'], name='unique_university_degree')
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.university})"

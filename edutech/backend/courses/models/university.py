@@ -8,5 +8,9 @@ class University(models.Model):
         blank=True, null=True, upload_to="logo_universities/", max_length=255
     )
 
+    class Meta:
+        constraints  = [
+            models.UniqueConstraint(fields=['name', 'location'], name='unique_university')
+        ]
     def __str__(self):
         return self.name
