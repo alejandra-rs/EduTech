@@ -1,4 +1,3 @@
-// pages/StreamViewer.jsx
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
 const StreamViewer2 = () => {
@@ -13,7 +12,14 @@ const StreamViewer2 = () => {
           readOnlyName: false,
         }}
         interfaceConfigOverwrite={{
-          TOOLBAR_BUTTONS: ['chat', 'fullscreen'],
+          TOOLBAR_BUTTONS: [
+            'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+            'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+            'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+            'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+            'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
+            'security'
+          ],
         }}
         userInfo={{ displayName: 'Estudiante' }}
         getIFrameRef={(node) => { node.style.height = '100%'; node.style.width = '100%'; }}

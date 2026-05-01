@@ -1,4 +1,3 @@
-// pages/StreamHost.jsx
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
 const StreamHost2 = () => {

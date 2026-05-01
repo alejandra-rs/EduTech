@@ -1,4 +1,3 @@
-// pages/StreamViewer.jsx
 import { JitsiMeeting } from '@jitsi/react-sdk';
 
 const StreamViewer = () => {
