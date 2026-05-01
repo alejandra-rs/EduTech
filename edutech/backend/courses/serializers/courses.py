@@ -3,6 +3,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from ..models import Course, Year
 from .year import YearSerializer
 
+
 class CourseSerializer(serializers.ModelSerializer):
     year = YearSerializer(read_only=True)
     year_id = serializers.PrimaryKeyRelatedField(

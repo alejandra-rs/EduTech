@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { getUserByEmail } from "@services/connections";
 
+const BASE_URL = "http://127.0.0.1:8000";
+
+
 export const useCurrentUser = () => {
     const { accounts, inProgress } = useMsal();
     const [userData, setUserData] = useState(null);
@@ -25,6 +28,7 @@ export const useCurrentUser = () => {
     }, [accounts, inProgress]);
     return {
         userData,
+        isAdmin: Boolean(userData?.is_admin),
         isLoading,
         account: accounts[0] ?? null,
     };

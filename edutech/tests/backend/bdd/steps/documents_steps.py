@@ -79,7 +79,7 @@ def step_create_vid_post(context, title):
 def step_url_storage(context):
     mock_s3 = MagicMock()
     mock_s3.generate_presigned_url.return_value = FAKE_PRESIGNED_URL
-    p = patch('documents.views.boto3.client', return_value=mock_s3)
+    p = patch('documents.views.attachments.boto3.client', return_value=mock_s3)
     p.start()
     context.patches.append(p)
 

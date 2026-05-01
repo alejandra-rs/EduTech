@@ -14,6 +14,8 @@ import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
+import ReportsPage from "./pages/ReportsPage";
+import ReportFormPage from "./pages/ReportFormPage";
 import SelectDegree from "./pages/SelectDegree";
 import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
@@ -109,6 +111,14 @@ export default function App() {
                     element={<ChangeDegree userData={userData} />}
                   />
                 </Routes>
+                <Route
+                  path="/reports"
+                  element={<ReportsPage />}
+                />
+                <Route
+                  path="/admin/report-form/:id"
+                  element={<ReportFormPage />}
+                />
               </Layout>
             ) : (
               <SelectDegree userId={userData.id} />

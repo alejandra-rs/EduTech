@@ -28,7 +28,7 @@ class PDFDownloadViewTest(APITestCase):
         PDFAttachment.objects.create(post=post, file=make_pdf_file())
         return post
 
-    @patch('documents.views.boto3.client')
+    @patch('documents.views.attachments.boto3.client')
     def test_returns_302_redirect_to_url(self, mock_boto3):
         self._mock_s3(mock_boto3)
         post = self._create_pdf_post()
@@ -36,7 +36,7 @@ class PDFDownloadViewTest(APITestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], self.FAKE_URL)
 
-    @patch('documents.views.boto3.client')
+    @patch('documents.views.attachments.boto3.client')
     def test_boto3_client_called_with_s3_and_credentials(self, mock_boto3):
         self._mock_s3(mock_boto3)
         post = self._create_pdf_post()
@@ -48,7 +48,7 @@ class PDFDownloadViewTest(APITestCase):
                       'aws_secret_access_key', 'region_name'):
             self.assertIn(kwarg, kwargs)
 
-    @patch('documents.views.boto3.client')
+    @patch('documents.views.attachments.boto3.client')
     def test_generate_url_called_with_correct_params(self, mock_boto3):
         mock_s3 = self._mock_s3(mock_boto3)
         post = self._create_pdf_post()
@@ -60,13 +60,13 @@ class PDFDownloadViewTest(APITestCase):
         self.assertIn('ResponseContentDisposition', params)
         self.assertIn('attachment', params['ResponseContentDisposition'])
 
-    @patch('documents.views.boto3.client')
+    @patch('documents.views.attachments.boto3.client')
     def test_download_nonexistent_post_returns_404(self, mock_boto3):
         self._mock_s3(mock_boto3)
         response = self.client.get('/documents/download/pdf/99999')
         self.assertEqual(response.status_code, 404)
 
-    @patch('documents.views.boto3.client')
+    @patch('documents.views.attachments.boto3.client')
     def test_download_video_post_returns_404(self, mock_boto3):
         self._mock_s3(mock_boto3)
         post = Post.objects.create(

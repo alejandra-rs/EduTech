@@ -7,6 +7,7 @@ import {
   RectangleStackIcon,
   DocumentIcon,
   AcademicCapIcon,
+  ShieldExclamationIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Header({
@@ -16,13 +17,14 @@ export default function Header({
   userName,
   instance,
   accountsMsal,
+  isAdmin,
 }) {
   const handleLogoutRedirect = () => {
     instance
       .logoutRedirect({
         account: accountsMsal[0],
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   };
 
   const navItemClass = `
@@ -63,12 +65,10 @@ export default function Header({
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
           </div>
           {isOpen && (
-            <div className="flex flex-col min-w-0">
-              <p className="text-white font-bold text-sm truncate">
-                {userName || "Usuario"}
-              </p>
-              <p className="text-indigo-300 text-[10px] uppercase font-black tracking-widest">
-                Estudiante
+            <div className="flex flex-col min-w-0 gap-1">
+              <p className="text-white font-bold text-sm truncate">{userName || 'Usuario'}</p>
+              <p className={`text-xs font-semibold italic tracking-widest ${isAdmin ? "text-red-400" : "text-white"}`}>
+                {isAdmin ? "Admin" : "Estudiante"}
               </p>
             </div>
           )}
@@ -110,19 +110,43 @@ export default function Header({
             </span>
           )}
         </a>
+        <a href="/degrees/" className={navItemClass} title="Carreras">
+          <AcademicCapIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+          {isOpen && (
+            <span className="text-white font-medium text-sm">
+              Cambiar carrera
+            </span>
+          )}
+        </a>
 
+        {isAdmin && (
+          <a href="/reports" className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`} title="Panel de reportes">
+            <ShieldExclamationIcon className="w-6 h-6 transition-colors" />
+            {isOpen && <span className="font-medium text-sm">Panel de reportes</span>}
+          </a>
+        )}
+
+        {isAdmin && (
+        <>
+          <hr className="border-white-100"></hr>
+          <a href="/reports" className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`} title="Panel de reportes">
+            <ShieldExclamationIcon className="w-6 h-6 transition-colors" />
+            {isOpen && <span className="font-medium text-sm">Panel de reportes</span>}
+          </a>
+        </>
+        )}
         <hr className="border-white-100"></hr>
 
-        {isOpen && (
-          <button
-            onClick={handleLogoutRedirect}
-            className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`}
-            title="Salir"
-          >
-            <ArrowRightStartOnRectangleIcon className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
-            <span className="font-medium text-sm">Cerrar sesión</span>
-          </button>
-        )}
+      { isOpen &&
+        <button 
+          onClick={handleLogoutRedirect} 
+          className={`${navItemClass} text-red-400 hover:text-white hover:bg-red-500/20`}
+          title="Salir"
+        >
+          <ArrowRightStartOnRectangleIcon className="w-6 h-6 transition-transform group-hover:-translate-x-1" />
+          <span className="font-medium text-sm">Cerrar sesión</span>
+        </button>
+      }
       </nav>
 
       <div className="mt-auto pt-4 flex justify-center border-t border-white/5">
@@ -133,3 +157,4 @@ export default function Header({
     </aside>
   );
 }
+

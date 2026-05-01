@@ -40,3 +40,12 @@ class SubscriptionView(views.APIView):
         return Response(
             {"detail": "Suscripción eliminada con éxito"}, status=status.HTTP_200_OK
         )
+
+
+class SubscriptionByStudentView(views.APIView):
+    serializer_class = SubscriptionSerializer
+
+    def get(self, request, student_id):
+        subscriptions = Subscription.objects.filter(user_id=student_id)
+        serializer = self.serializer_class(subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

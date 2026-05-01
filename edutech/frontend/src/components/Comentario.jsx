@@ -1,6 +1,12 @@
 import UserAvatar from "./UserAvatar";
+import ReportButton from "./reports/ReportButton";
+import { createCommentReport } from "@services/connections-reports";
 
-export default function Comentario({ comment, user }) {
+export default function Comentario({ comment, user, currentUser }) {
+  const handleReport = async ({ reasonId, description }) => {
+    await createCommentReport(comment.id, currentUser.id, reasonId, description);
+  };
+
   return (
     <div className="bg-[#dfdfdf] rounded-lg p-5 sm:p-6 flex gap-4 w-full font-sans">
       <div className="flex flex-row">
@@ -14,6 +20,15 @@ export default function Comentario({ comment, user }) {
           {comment?.message}
         </p>
       </div>
+      {currentUser && (
+        <div className="flex-shrink-0 self-start">
+          <ReportButton
+            entity="Comentario"
+            postId={comment?.id}
+            onSubmit={handleReport}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -5,39 +5,61 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0001_initial'),
+        ("courses", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Degree',
+            name="Degree",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=80)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=80)),
             ],
         ),
         migrations.CreateModel(
-            name='University',
+            name="University",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=80)),
-                ('location', models.CharField(max_length=80)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=80)),
+                ("location", models.CharField(max_length=80)),
             ],
         ),
         migrations.AddField(
-            model_name='year',
-            name='degree',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='courses.degree'),
+            model_name="year",
+            name="degree",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="courses.degree",
+            ),
         ),
         migrations.AddField(
-            model_name='degree',
-            name='university',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.university'),
+            model_name="degree",
+            name="university",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.university"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='degree',
-            unique_together={('name', 'university')},
+            name="degree",
+            unique_together={("name", "university")},
         ),
     ]

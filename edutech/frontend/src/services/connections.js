@@ -2,7 +2,11 @@ const BASE_URL = "http://127.0.0.1:8000";
 
 export const getYears = async (userId) => {
   try {
-    const response = await fetch(`${BASE_URL}/courses/years?user=${userId}`);
+    const response = await fetch(`${BASE_URL}/courses/years?user=${userId}`,{
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+    
     if (!response.ok) throw new Error("Error al obtener los años");
     return await response.json();
   } catch (error) {
@@ -210,6 +214,18 @@ export const getUserPhoto = async (instance, account) => {
   } catch (error) {
     console.error("Error al obtener la foto de Microsoft:", error);
     return null;
+  }
+};
+
+export const checkIsAdmin = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/students/${userId}/is-admin/`);
+    if (!response.ok) return false;
+    const data = await response.json();
+    return data.is_admin === true;
+  } catch (error) {
+    console.error("Error en checkIsAdmin:", error);
+    return false;
   }
 };
 
