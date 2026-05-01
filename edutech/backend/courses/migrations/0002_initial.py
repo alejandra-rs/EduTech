@@ -13,109 +13,52 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.SeparateDatabaseAndState(
-            # ── model-state side ─────────────────────────────────────────────
-            # These inform Django's migration state so subsequent migrations
-            # (0003) can reference them.  They must match the original file.
-            state_operations=[
-                migrations.AddField(
-                    model_name="subscription",
-                    name="user",
-                    field=models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="users.student",
-                    ),
-                ),
-                migrations.AddField(
-                    model_name="degree",
-                    name="university",
-                    field=models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="courses.university",
-                    ),
-                ),
-                migrations.AddField(
-                    model_name="year",
-                    name="degree",
-                    field=models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="courses.degree",
-                    ),
-                ),
-                migrations.AddField(
-                    model_name="course",
-                    name="year",
-                    field=models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="courses.year",
-                    ),
-                ),
-                migrations.AlterUniqueTogether(
-                    name="degree",
-                    unique_together={("name", "university")},
-                ),
-                migrations.AddIndex(
-                    model_name="course",
-                    index=models.Index(
-                        fields=["name"], name="courses_cou_name_eb4cc3_idx"
-                    ),
-                ),
-                migrations.AlterUniqueTogether(
-                    name="course",
-                    unique_together={("name", "year", "semester")},
-                ),
-            ],
-            # ── database side ─────────────────────────────────────────────────
-            # Every statement is idempotent: it skips silently if the column /
-            # constraint / index already exists.
-            database_operations=[
-                migrations.RunSQL(
-                    sql="""
-                        ALTER TABLE courses_subscription
-                            ADD COLUMN IF NOT EXISTS user_id bigint
-                            REFERENCES users_student(id) ON DELETE CASCADE;
-
-                        ALTER TABLE courses_degree
-                            ADD COLUMN IF NOT EXISTS university_id bigint
-                            REFERENCES courses_university(id) ON DELETE CASCADE;
-
-                        ALTER TABLE courses_year
-                            ADD COLUMN IF NOT EXISTS degree_id bigint
-                            REFERENCES courses_degree(id) ON DELETE CASCADE;
-
-                        ALTER TABLE courses_course
-                            ADD COLUMN IF NOT EXISTS year_id bigint
-                            REFERENCES courses_year(id) ON DELETE CASCADE;
-
-                        DO $$ BEGIN
-                            IF NOT EXISTS (
-                                SELECT 1 FROM pg_constraint
-                                WHERE conname = 'courses_degree_name_university_id_79e0055a_uniq'
-                            ) THEN
-                                ALTER TABLE courses_degree
-                                    ADD CONSTRAINT courses_degree_name_university_id_79e0055a_uniq
-                                    UNIQUE (name, university_id);
-                            END IF;
-                        END $$;
-
-                        CREATE INDEX IF NOT EXISTS courses_cou_name_eb4cc3_idx
-                            ON courses_course (name);
-
-                        DO $$ BEGIN
-                            IF NOT EXISTS (
-                                SELECT 1 FROM pg_constraint
-                                WHERE conname = 'courses_course_name_year_id_semester_1591cd1f_uniq'
-                            ) THEN
-                                ALTER TABLE courses_course
-                                    ADD CONSTRAINT courses_course_name_year_id_semester_1591cd1f_uniq
-                                    UNIQUE (name, year_id, semester);
-                            END IF;
-                        END $$;
-                    """,
-                    reverse_sql=migrations.RunSQL.noop,
-                ),
-            ],
+        migrations.AddField(
+            model_name="subscription",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="users.student",
+            ),
+        ),
+        migrations.AddField(
+            model_name="degree",
+            name="university",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="courses.university",
+            ),
+        ),
+        migrations.AddField(
+            model_name="year",
+            name="degree",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="courses.degree",
+            ),
+        ),
+        migrations.AddField(
+            model_name="course",
+            name="year",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="courses.year",
+            ),
+        ),
+        migrations.AlterUniqueTogether(
+            name="degree",
+            unique_together={("name", "university")},
+        ),
+        migrations.AddIndex(
+            model_name="course",
+            index=models.Index(
+                fields=["name"], name="courses_cou_name_eb4cc3_idx"
+            ),
+        ),
+        migrations.AlterUniqueTogether(
+            name="course",
+            unique_together={("name", "year", "semester")},
         ),
     ]
