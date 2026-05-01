@@ -154,7 +154,6 @@ class FlashCard(models.Model):
 
 @receiver(post_save, sender=PDFAttachment)
 def auto_vectorizar_pdf(sender, instance, created, **kwargs):
-    # Si el PDF se acaba de subir por primera vez, lanzamos Celery
     if created:
         from ai_agent.tasks import procesar_pdf_y_vectorizar
         procesar_pdf_y_vectorizar.delay(instance.id)

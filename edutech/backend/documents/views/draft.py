@@ -57,8 +57,12 @@ class DraftDetailView(views.APIView):
         data = serializer.validated_data
         post.title = data["title"]
         post.description = data["description"]
-        post.save()
 
+        if request.data.get("publish") is True:
+            post.is_draft = False
+        
+        post.save()
+            
         if hasattr(post, "fla"):
             post.fla.delete()
         if hasattr(post, "qui"):

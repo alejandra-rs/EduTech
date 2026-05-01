@@ -379,14 +379,21 @@ export const updateDraft = async (
   title: string,
   description: string,
   postType: PostType,
-  items: QuizQuestion[] | FlashCard[]
+  items: QuizQuestion[] | FlashCard[],
+  isPublishing: boolean = false
 ): Promise<Draft> => {
   try {
+    const payload = {
+      ..._buildDraftItems({ title, description }, postType, items),
+      publish: isPublishing
+    };
+
     const response = await fetch(`/api/documents/drafts/${draftId}/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(_buildDraftItems({ title, description }, postType, items)),
+      body: JSON.stringify(payload),
     });
+    
     if (!response.ok) throw new Error("Error al actualizar el borrador");
     return await response.json() as Draft;
   } catch (error) {
@@ -395,12 +402,31 @@ export const updateDraft = async (
   }
 };
 
-export const deleteDraft = async (draftId: number): Promise<void> => {
+export const uploadPDFDraft = async (
+  courseId: string | number,
+  userId: string | number,
+  title: string,
+  description: string,
+  file: File
+): Promise<{ post_id: number; attachment_id: number; message: string }> => {
   try {
-    const response = await fetch(`/api/documents/drafts/${draftId}/`, { method: "DELETE" });
-    if (!response.ok) throw new Error("Error al eliminar el borrador");
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("course", courseId.toString());
+    formData.append("student", userId.toString());
+    formData.append("file", file);
+
+    // Asegúrate de que esta URL coincide con la que pongas en tu urls.py de Django
+    const response = await fetch(`/api/documents/upload-draft/`, {
+      method: "POST",
+      body: formData,
+    });
+    
+    if (!response.ok) throw new Error("Error al iniciar la vectorización del documento");
+    return await response.json();
   } catch (error) {
-    console.error("Error en deleteDraft:", error);
+    console.error("Error en uploadPDFDraft:", error);
     throw error;
   }
 };

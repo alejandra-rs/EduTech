@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCurrentUser } from "../useCurrentUser";
+import { useCurrentUser } from "../services/useCurrentUser";
 import UploadDropzone from "../components/forms-components/UploadDropzone";
 import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
-import { updateDraft } from "../services/connections";
-import { uploadPDFDraft } from "../services/connections-documents"; 
+import { uploadPDFDraft, updateDraft } from "../services/connections-documents"
 
 export default function UploadDocument() {
   const navigate = useNavigate();
@@ -36,7 +35,9 @@ export default function UploadDocument() {
         defaultDesc,
         file
       );
+      
       setDraftId(data.post_id);
+      
       setIsConfirmed(true);
     } catch (error) {
       console.error("Fallo al subir el borrador:", error);
@@ -48,7 +49,7 @@ export default function UploadDocument() {
     if (!draftId) return;
 
     try {
-      await updateDraft(draftId, title, description, 'PDF', []);
+      await updateDraft(draftId, title, description, 'PDF', [], true); 
       setPublished(true);
     } catch (error) {
       console.error("Fallo al publicar el documento:", error);
@@ -64,11 +65,13 @@ export default function UploadDocument() {
           onClose={() => navigate(`/${id}/${subjectId}/post`)}
         />
       )}
+
       <div 
         className={`mt-8 flex flex-col lg:flex-row gap-8 transition-all duration-700 ease-in-out ${
           isConfirmed ? "w-full justify-start" : "w-full max-w-2xl justify-center"
         }`}
       >
+        
         <div 
           className={`flex flex-col shrink-0 transition-all duration-700 ease-in-out ${
             isConfirmed ? "w-full lg:w-[40%] xl:w-[35%] h-[500px]" : "w-full h-[450px]"
@@ -104,7 +107,7 @@ export default function UploadDocument() {
         >
           <Input
             label="Título"
-            value={title} // Enlazamos el valor para que muestre el pre-rellenado
+            value={title}
             placeholder="Introduce el título de la publicación"
             onChange={(e) => setTitle(e.target.value)}
           />

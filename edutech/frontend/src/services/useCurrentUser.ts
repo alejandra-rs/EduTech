@@ -17,8 +17,12 @@ export const useCurrentUser = (): CurrentUserHook => {
     useEffect(() => {
         const fetchData = async () => {
             if (accounts.length > 0) {
+                console.log("Cuenta MSAL detectada:", accounts[0]);
+                console.log("Cuenta MSAL detectada:", accounts[0].username);
+
                 const user = await getUserByEmail(accounts[0].username);
                 setUserData(user);
+                console.log("Usuario actual:", user); 
             }
         };
         fetchData();

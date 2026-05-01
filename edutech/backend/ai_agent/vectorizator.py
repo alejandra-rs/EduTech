@@ -18,13 +18,14 @@ embeddings = OllamaEmbeddings(
     base_url=settings.AI_SETTINGS["EMBEDDING_URL"],
     model="nomic-embed-text" 
 )
-
-vector_store = PGVector(
-    embeddings=embeddings,
-    collection_name=settings.AI_SETTINGS["VECTOR_DB_COLLECTION"],
-    connection=CONNECTION_STRING,
-    use_jsonb=True,
-)
+def get_vector_store():
+    """Deferred initialization of the database connection."""
+    return PGVector(
+                embeddings=embeddings,
+                collection_name=settings.AI_SETTINGS["VECTOR_DB_COLLECTION"],
+                connection=CONNECTION_STRING,
+                use_jsonb=True,
+            )
 
 def analizar_imagen_con_gemma(imagen_bytes, titulo, asignatura, descripcion):
     """Describe la imagen usando el contexto del documento para mayor precisión"""
@@ -71,6 +72,7 @@ def ingerir_nuevo_documento(pdf_instance):
     descripcion_doc = pdf_instance.post.description
     doc_id = pdf_instance.post.id
     fragmentos_crudos = []
+    vector_store = get_vector_store()
     try:
 
         # -------------------------------------------------------------
