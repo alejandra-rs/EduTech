@@ -33,7 +33,7 @@ export default function Drafts() {
 
   return (
     <>
-      <TitlePage PageName="Mis borradores" onBack={() => navigate("/")} />
+      <TitlePage PageName="Mis borradores" backLabel="Inicio" onBack={() => navigate("/")} />
       <main className="max-w-3xl mx-auto px-6 py-6">
         {loading && (
           <p className="text-sm text-gray-400 text-center mt-16">Cargando borradores…</p>

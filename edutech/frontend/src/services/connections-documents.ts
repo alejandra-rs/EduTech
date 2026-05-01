@@ -77,7 +77,7 @@ function _buildDraftItems(base: object, postType: PostType, items: QuizQuestion[
 // ── Posts / Documents ─────────────────────────────────────────────────────────
 
 export const getLinkDescarga = (postId: number): string =>
-  `/api/documents/download/pdf/${postId}`;
+  `/documents/download/pdf/${postId}`;
 
 export const getMyPosts = async (userId: string | number): Promise<PostPreview[]> => {
   const response = await fetch(`/api/documents/?student=${userId}`);
@@ -401,6 +401,19 @@ export const deleteDraft = async (draftId: number): Promise<void> => {
     if (!response.ok) throw new Error("Error al eliminar el borrador");
   } catch (error) {
     console.error("Error en deleteDraft:", error);
+    throw error;
+  }
+};
+
+const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1] ?? '';
+export const deleteDocument = async (postId: number, studentId: number): Promise<void> => {
+  try {
+    const response = await fetch(`/api/documents/delete/${postId}/${studentId}`, 
+                                { method: "DELETE", headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json',},
+    credentials: 'include', });
+    if (!response.ok) throw new Error("Error al eliminar el documento");
+  } catch (error) {
+    console.error("Error en deleteDocument:", error);
     throw error;
   }
 };

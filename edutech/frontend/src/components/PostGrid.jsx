@@ -12,7 +12,7 @@ const getMeta = (post) => {
   return null;
 };
 
-export default function PostGrid({ posts, onPostClick }) {
+export default function PostGrid({ posts, onPostClick, onDelete }) {
   return (
     <div className="w-full mb-20">
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 bg-gray-50 p-3">
@@ -26,6 +26,7 @@ export default function PostGrid({ posts, onPostClick }) {
             onClick={() => onPostClick(post)}
             stats={{ views: post.views || 0, likes: post.likes || 0, dislikes: post.dislikes || 0 }}
             meta={getMeta(post)}
+            onDelete={onDelete ? () => onDelete(post) : undefined}
           />
         ))}
       </div>

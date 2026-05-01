@@ -27,7 +27,7 @@ export default function Header ({
 
   
   const navLinks = [
-  { to: "/suscripciones/", label: "Mis suscripciones", icon: BellIcon, title: "Cursos" },
+  { to: "/suscripciones/", label: "Mis asignaturas", icon: BellIcon, title: "Cursos" },
   { to: "/borradores/", label: "Mis borradores", icon: PencilSquareIcon, title: "Documentos" },
   { to: "/mis-publicaciones/", label: "Mi material", icon: DocumentIcon, title: "Material" },
   ];

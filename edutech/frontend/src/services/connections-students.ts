@@ -1,7 +1,5 @@
 import { Student } from '../models/student.model';
 
-const BASE_URL = "http://127.0.0.1:8000";
-
 // Minimal interfaces for MSAL to avoid a hard dependency on @azure/msal-browser
 interface MsalTokenRequest {
   scopes: string[];
@@ -21,9 +19,11 @@ interface MsalAccount {
 
 export const getUserByEmail = async (email: string): Promise<Student | null> => {
   try {
-    const response = await fetch(`${BASE_URL}/api/users/student/?email=${email}`);
+    const response = await fetch(`/api/students/?email=${email}`);
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-    return await response.json() as Student;
+    const data = await response.json();
+    // Backend returns a list; extract the first match
+    return (Array.isArray(data) ? data[0] : data) ?? null;
   } catch (error) {
     console.error("Error al obtener el usuario por email:", error);
     return null;
@@ -73,7 +73,7 @@ export const postUser = async (instance: MsalInstance, account: MsalAccount): Pr
       formData.append("picture", blob, `profile_${safeEmail}.jpg`);
     }
 
-    const response = await fetch(`${BASE_URL}/api/students/post/`, { method: "POST", body: formData });
+    const response = await fetch(`/api/students/post/`, { method: "POST", body: formData });
     if (!response.ok) throw new Error("Error al crear el usuario");
     return await response.json() as Student;
   } catch (error) {

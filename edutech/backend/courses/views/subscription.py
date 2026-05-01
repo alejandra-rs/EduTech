@@ -14,13 +14,16 @@ class SubscriptionView(views.APIView):
         user = request.query_params.get("user")
         course = request.query_params.get("course")
 
-        subscription = Subscription.objects.filter(user=user, course=course).first()
-        if subscription:
-            return Response({"id": subscription.id}, status=status.HTTP_200_OK)
-        return Response({}, status=status.HTTP_200_OK)
-    
-    def get(self, request, student_id):
-        subscriptions = Subscription.objects.filter(user_id=student_id)
+        if not user:
+            return Response({"detail": "Se requiere el parámetro user."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if course:
+            # Single-subscription check used by checkSubscription()
+            subscription = Subscription.objects.filter(user=user, course=course).first()
+            return Response({"id": subscription.id} if subscription else {}, status=status.HTTP_200_OK)
+
+        # All subscriptions for a user, with nested course info
+        subscriptions = Subscription.objects.filter(user_id=user).select_related("course__year")
         serializer = self.serializer_class(subscriptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -42,6 +45,4 @@ class SubscriptionView(views.APIView):
                 {"detail": "No se ha podido anular la suscripción"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        return Response(
-            {"detail": "Suscripción eliminada con éxito"}, status=status.HTTP_200_OK
-        )
+        return Response({"detail": "Suscripción eliminada con éxito"}, status=status.HTTP_200_OK)

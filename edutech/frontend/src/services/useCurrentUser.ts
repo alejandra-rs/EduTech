@@ -1,4 +1,3 @@
-// src/hooks/useCurrentUser.ts
 import { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { AccountInfo } from "@azure/msal-browser"; 
