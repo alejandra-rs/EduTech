@@ -19,7 +19,7 @@ import ReportFormPage from "./pages/ReportFormPage";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 import StudySessions from "./pages/StudySessions";
-import DetalleSesionEstudio from "./pages/DetalleSesionEstudio";
+import StudySessionDetail from "./pages/StudySessionDetail";
 
 import {
   AuthenticatedTemplate,
@@ -89,10 +89,19 @@ export default function App() {
                   path="/:id/:subjectId/flashcard/:postId"
                   element={<TakeFlashCard />}
                 />
-                <Route path="/borradores" element={<Drafts />} />
-                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
-                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
-                <Route
+                <Route 
+                  path="/borradores" 
+                  element={<Drafts />} 
+                />
+                <Route 
+                  path="/borradores/flashcard/:draftId" 
+                  element={<CreateFlashCard />} 
+                />
+                <Route 
+                  path="/borradores/quiz/:draftId" 
+                  element={<CreateQuiz />} 
+                />
+                <Route 
                   path="/reports"
                   element={<ReportsPage />}
                 />
@@ -100,8 +109,14 @@ export default function App() {
                   path="/admin/report-form/:id"
                   element={<ReportFormPage />}
                 />
-                <Route path="/:id/sesiones" element={<StudySessions currentUserId={accounts[0]?.localAccountId} />} />
-                <Route path="/sesiones/:sessionId" element={<DetalleSesionEstudio currentUserId={accounts[0]?.localAccountId} />} />
+                <Route 
+                  path="/sesiones" 
+                  element={<StudySessions />} 
+                />
+                <Route 
+                  path="/sesiones/:sessionId" 
+                  element={<StudySessionDetail />} 
+                />
               </Routes>
             </Layout>
           ) : null}

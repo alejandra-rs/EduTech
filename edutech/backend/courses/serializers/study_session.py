@@ -1,7 +1,8 @@
 from rest_framework import serializers
+from courses.serializers import CourseSerializer
 from users.models import Student
 from users.serializers import StudentSerializer
-from ..models import StudySession, StudySessionComment
+from ..models import StudySession, StudySessionComment, Course
 
 
 class StudySessionCommentSerializer(serializers.ModelSerializer):
@@ -21,6 +22,14 @@ class StudySessionSerializer(serializers.ModelSerializer):
     creator_id = serializers.PrimaryKeyRelatedField(
         write_only=True, source="creator", queryset=Student.objects.all()
     )
+    course = CourseSerializer(read_only=True)
+    course_id = serializers.PrimaryKeyRelatedField(
+        write_only=True,
+        source="course",
+        queryset=Course.objects.all(),
+        required=False,
+        allow_null=True,
+    )
     participants = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     is_starred = serializers.SerializerMethodField()
 
@@ -35,6 +44,7 @@ class StudySessionSerializer(serializers.ModelSerializer):
             "creator",
             "creator_id",
             "course",
+            "course_id",
             "participants",
             "is_starred",
         ]
@@ -45,7 +55,5 @@ class StudySessionSerializer(serializers.ModelSerializer):
             student_id = int(self.context.get("student_id"))
         except (TypeError, ValueError):
             return False
-        return (
-            obj.creator_id == student_id
-            or obj.participants.filter(pk=student_id).exists()
-        )
+        # Only starred if explicitly in participants list (not just creator)
+        return obj.participants.filter(pk=student_id).exists()

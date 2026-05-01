@@ -7,7 +7,10 @@ class StudySession(models.Model):
     scheduled_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     course = models.ForeignKey(
-        "courses.Course", on_delete=models.CASCADE, related_name="study_sessions"
+        "courses.Course",
+        on_delete=models.CASCADE,
+        related_name="study_sessions",
+        null=True,
     )
     creator = models.ForeignKey(
         "users.Student", on_delete=models.CASCADE, related_name="study_sessions"
@@ -20,7 +23,7 @@ class StudySession(models.Model):
         ordering = ["scheduled_at"]
 
     def __str__(self):
-        return f"{self.title} — {self.course.name} ({self.scheduled_at:%Y-%m-%d %H:%M})"
+        return f"{self.title} — {self.course.name if self.course else 'Divulgativa'} ({self.scheduled_at:%Y-%m-%d %H:%M})"
 
 
 class StudySessionComment(models.Model):

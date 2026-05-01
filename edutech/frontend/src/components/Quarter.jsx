@@ -1,4 +1,4 @@
-import { WidgetSubject } from "./Subject";
+import { SubjectWidget } from "./SubjectWidget";
 import { getCourses } from "@services/connections.js";
 import { useState, useEffect } from "react";
 

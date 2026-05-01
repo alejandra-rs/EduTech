@@ -178,8 +178,6 @@ class StudySessionListViewTest(APITestCase):
         self.assertIn("participants", session)
         self.assertIn("is_starred", session)
 
-    # --- Starred filter ---
-
     def test_starred_filter_returns_sessions_where_user_is_creator(self):
         self._make_session("Mi sesión")
         other_student = make_student(email="otro@test.com")
@@ -214,11 +212,6 @@ class StudySessionListViewTest(APITestCase):
         self._make_session("B")
         response = self.client.get(self.url, {"starred": "true"})
         self.assertEqual(len(response.data), 2)
-
-    def test_is_starred_true_for_creator(self):
-        self._make_session("Mi sesión")
-        response = self.client.get(self.url, {"student_id": self.student.pk})
-        self.assertTrue(response.data[0]["is_starred"])
 
     def test_is_starred_false_without_student_id(self):
         self._make_session("Sesión")

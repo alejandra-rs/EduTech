@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { getDocument, getCourse } from '@services/connections';
 import { TitlePage } from '../components/TitlePage';
 import { DocumentInfo } from '../components/DocumentInfo';
-import { CommentsSections } from '../components/CommentsSections';
+import { CommentsSection } from '../components/interactions/CommentsSection';
 import VisorVideo from '../components/VisorVideo';
 import VisorPDF from '../components/VisorPDF';
 
@@ -52,7 +52,7 @@ export default function VistaPreviaVideo() {
         </div>
 
         <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
-          <CommentsSections documentId={postId} />
+          <CommentsSection documentId={postId} />
         </aside>
 
       </main>

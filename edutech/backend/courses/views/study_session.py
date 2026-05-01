@@ -16,7 +16,17 @@ class StudySessionListCreateView(views.APIView):
         )
 
         course_ids = request.query_params.getlist("courses")
-        if course_ids:
+        no_course = request.query_params.get("no_course") == "true"
+        include_no_course = request.query_params.get("include_no_course") == "true"
+
+        if include_no_course:
+            course_filter = Q(course__isnull=True)
+            if course_ids:
+                course_filter |= Q(course_id__in=course_ids)
+            qs = qs.filter(course_filter)
+        elif no_course:
+            qs = qs.filter(course__isnull=True)
+        elif course_ids:
             qs = qs.filter(course_id__in=course_ids)
 
         raw_student_id = request.query_params.get("student_id")
@@ -74,6 +84,19 @@ class StudySessionListCreateView(views.APIView):
 
 
 class StudySessionDetailView(views.APIView):
+    def get(self, request, pk):
+        session = get_object_or_404(
+            StudySession.objects.select_related("creator", "course"), pk=pk
+        )
+        raw_student_id = request.query_params.get("student_id")
+        try:
+            student_id = int(raw_student_id)
+        except (TypeError, ValueError):
+            student_id = None
+        return Response(
+            StudySessionSerializer(session, context={"student_id": student_id}).data
+        )
+
     def delete(self, request, pk):
         session = get_object_or_404(StudySession, pk=pk)
         session.delete()

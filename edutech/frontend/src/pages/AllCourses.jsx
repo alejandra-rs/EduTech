@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import  { getYears } from '@services/connections';
 import { useCurrentUser } from '../services/useCurrentUser';
+import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 
 const Courses = () => {
   const [years, setYears] = useState([]);
@@ -28,12 +29,21 @@ const Courses = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-2px)] w-full overflow-hidden">
       <div className="flex-grow overflow-y-auto custom-scrollbar px-8 pt-12 pb-10">
-        <div className="mb-10 w-full">
-          <SearchBar
-            placeholder="Buscar documento..."
-            color="bg-slate-800"
-            onSearch={setSearchResults}
-          />
+        <div className="mb-10 w-full flex justify-between items-center gap-4">
+          <div className="flex-1">
+            <SearchBar
+              placeholder="Buscar documento..."
+              color="bg-slate-800"
+              onSearch={setSearchResults}
+            />
+          </div>
+          
+          <button 
+            onClick={() => navigate('/sesiones')}
+            className="p-2 rounded-lg bg-slate-400 hover:bg-slate-700 transition-colors shrink-0"
+          >
+            <CalendarDaysIcon className="w-8 h-8 text-white" />
+          </button>
         </div>
 
         {searchResults !== null ? (
