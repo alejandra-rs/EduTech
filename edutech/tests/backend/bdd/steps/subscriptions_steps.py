@@ -22,7 +22,7 @@ def step_subscribed_name(context, full_name):
     first, last = full_name.split(' ', 1)
     student = Student.objects.get_or_create(
         first_name=first, last_name=last,
-        defaults={'email': f'{first.lower()}@test.com', 'password': 'x'},
+        defaults={'email': f'{first.lower()}@test.com'},
     )[0]
     Subscription.objects.create(user=student, course=context.course)
     context.subscriber = student
@@ -33,7 +33,7 @@ def step_non_subscribed_name(context, full_name):
     first, last = full_name.split(' ', 1)
     context.non_subscriber = Student.objects.get_or_create(
         first_name=first, last_name=last,
-        defaults={'email': f'{first.lower()}2@test.com', 'password': 'x'},
+        defaults={'email': f'{first.lower()}2@test.com'},
     )[0]
 
 

@@ -2,8 +2,16 @@ from behave import given, then
 
 @given('que existe el curso "{year}"')
 def step_year_exists(context, year):
-    from courses.models import Year
-    context.year = Year.objects.get_or_create(year=int(year))[0]
+    from courses.models import University, Degree, Year
+    university, _ = University.objects.get_or_create(
+        name="Universidad de Prueba", location="Las Palmas"
+    )
+    degree, _ = Degree.objects.get_or_create(
+        name="Titulación de Prueba", university=university
+    )
+    context.university = university
+    context.degree = degree
+    context.year = Year.objects.get_or_create(year=int(year), degree=degree)[0]
 
 @given('que existe la asignatura "{name}" para ese año')
 def step_course_exists(context, name):
@@ -16,7 +24,7 @@ def step_student_exists(context, full_name):
     first, last = full_name.split(' ', 1)
     context.student = Student.objects.get_or_create(
         first_name=first, last_name=last,
-        defaults={'email': 'test@test.com', 'password': 'x'},
+        defaults={'email': 'test@test.com'},
     )[0]
 
 

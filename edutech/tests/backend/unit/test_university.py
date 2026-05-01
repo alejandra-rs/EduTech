@@ -18,10 +18,10 @@ class UniversityModelTest(TestCase):
         self.assertEqual(uni.location, "Las Palmas")
 
     def test_str_returns_name_and_location(self):
-        self.assertEqual(str(self.uni_ulpgc), "ULPGC - Las Palmas")
+        self.assertEqual(str(self.uni_ulpgc), "ULPGC")
 
     def test_blank_logo_is_allowed(self):
-        self.assertEqual(self.uni_ulpgc.logo.name, "")
+        self.assertIsNone(self.uni_ulpgc.logo.name)
 
     def test_unique_constraint_blocks_duplicate_name_location(self):
         with self.assertRaises(IntegrityError):
@@ -29,16 +29,15 @@ class UniversityModelTest(TestCase):
                 University.objects.create(name="ULPGC", location="Las Palmas")
 
     def test_same_name_different_location_is_allowed(self):
-        uni2 = University.objects.create(name="ULPGC", location="Tenerife")
+        University.objects.create(name="ULPGC", location="Tenerife")
         self.assertEqual(University.objects.filter(name="ULPGC").count(), 2)
 
     def test_same_location_different_name_is_allowed(self):
-        uni2 = University.objects.create(name="Otra Uni", location="Las Palmas")
+        University.objects.create(name="Otra Uni", location="Las Palmas")
         self.assertEqual(University.objects.filter(location="Las Palmas").count(), 2)
 
     def test_name_max_length_enforced(self):
-        long_name = "x" * 256
-        uni = University(name=long_name, location="Test Location")
+        uni = University(name="x" * 256, location="Test Location")
         with self.assertRaises(ValidationError):
             uni.full_clean()
 

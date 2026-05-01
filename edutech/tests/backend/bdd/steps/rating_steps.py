@@ -45,10 +45,10 @@ def step_post_with_rating(context, likes, dislikes):
     context.post = post
 
     for i in range(likes):
-        student = Student.objects.create(first_name=f'LikeVoter{i}', last_name='V', email=f'lv{i}@t.com', password='x',)
+        student = Student.objects.create(first_name=f'LikeVoter{i}', last_name='V', email=f'lv{i}@t.com')
         Like.objects.create(user=student, post=post)
     for i in range(dislikes):
-        student = Student.objects.create(first_name=f'DisVoter{i}', last_name='V', email=f'dv{i}@t.com', password='x',)
+        student = Student.objects.create(first_name=f'DisVoter{i}', last_name='V', email=f'dv{i}@t.com')
         Dislike.objects.create(user=student, post=post)
 
 @given('que existe un post sin valoraciones')

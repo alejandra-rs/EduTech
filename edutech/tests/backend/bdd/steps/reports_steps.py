@@ -14,7 +14,7 @@ def step_admin_exists(context, full_name):
     first, last = full_name.split(' ', 1)
     context.admin = Student.objects.get_or_create(
         first_name=first, last_name=last,
-        defaults={'email': 'admin@test.com', 'password': 'x', 'is_admin': True},
+        defaults={'email': 'admin@test.com', 'is_admin': True},
     )[0]
 
 
