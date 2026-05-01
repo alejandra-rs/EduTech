@@ -4,6 +4,7 @@ import { Quarter } from "../components/Quarter.jsx";
 import { TitlePage } from "../components/TitlePage.jsx";
 import { getYearById, getDegreeInfo } from "@services/degree";
 
+
 const Subject = () => {
   const [yearData, setYearData] = useState(null);
   const [degreeInfo, setDegreeInfo] = useState(null);

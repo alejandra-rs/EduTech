@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from 'react';
 import { PlusCircleIcon, DocumentTextIcon, PlayCircleIcon, ClipboardDocumentListIcon, Square3Stack3DIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../components/SearchBar";
-import BellButton from "../components/BellButton";
+import BellButton from "../components/interactions/BellButton";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";

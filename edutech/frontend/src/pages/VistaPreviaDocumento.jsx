@@ -4,7 +4,7 @@ import { getDocument, getCourse } from '@services/connections';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DocumentInfo } from '../components/DocumentInfo';
-import { CommentsSections } from '../components/CommentsSections.jsx';
+import { CommentsSection } from '../components/interactions/CommentsSection.jsx';
 
 export default function VistaPreviaDocumento() {
   
@@ -44,7 +44,7 @@ export default function VistaPreviaDocumento() {
           <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-transparent pb-2">
             <div className="p-8 md:p-12 lg:pl-2 lg:pr-16 space-y-12 bg-transparent">
               <DocumentInfo document={document} />
-              <CommentsSections documentId={postId} />
+              <CommentsSection documentId={postId} />
             </div>
           </div>
         </div>

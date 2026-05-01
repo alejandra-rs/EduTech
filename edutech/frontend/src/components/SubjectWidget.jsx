@@ -1,7 +1,7 @@
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
-import BellButton from "./BellButton";
+import BellButton from "./interactions/BellButton";
 
-export const WidgetSubject = ({ subjectName, subjectId, degreeName, onNavigate }) => {
+export const SubjectWidget = ({ subjectName, subjectId, degreeName, onNavigate}) => {
   return (
     <div
       onClick={onNavigate}
@@ -26,4 +26,4 @@ export const WidgetSubject = ({ subjectName, subjectId, degreeName, onNavigate }
   );
 };
 
-export default WidgetSubject;
+export default SubjectWidget;

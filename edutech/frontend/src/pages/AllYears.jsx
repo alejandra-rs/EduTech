@@ -6,6 +6,7 @@ import { useCurrentUser } from "@services/useCurrentUser";
 import SearchBar from "../components/SearchBar";
 import PostGrid from "../components/PostGrid";
 import YearWidget from "../components/core-structure/YearWidget";
+import {CalendarDaysIcon} from "@heroicons/react/24/outline/index.d.ts";
 
 const AllYears = () => {
   const [groupedDegrees, setGroupedDegrees] = useState([]);
@@ -37,8 +38,22 @@ const AllYears = () => {
   return (
     <main className="h-screen overflow-y-auto p-6 md:p-12 custom-scrollbar">
       <div className="max-w-6xl mx-auto space-y-10">
-        
-        <SearchBar onSearch={setSearchResults} placeholder="Buscar..." color="bg-slate-800" />
+        <div className="mb-10 w-full flex justify-between items-center gap-4">
+          <div className="flex-1">
+            <SearchBar
+                placeholder="Buscar documento..."
+                color="bg-slate-800"
+                onSearch={setSearchResults}
+            />
+          </div>
+
+          <button
+              onClick={() => navigate('/sesiones')}
+              className="p-2 rounded-lg bg-slate-400 hover:bg-slate-700 transition-colors shrink-0"
+          >
+            <CalendarDaysIcon className="w-8 h-8 text-white" />
+          </button>
+        </div>
 
         {searchResults ? (
           <PostGrid posts={searchResults} onPostClick={handlePostClick} />
