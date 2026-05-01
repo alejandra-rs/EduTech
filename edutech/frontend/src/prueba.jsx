@@ -19,6 +19,7 @@ import ReportFormPage from "./pages/ReportFormPage";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 import StudySessions from "./pages/StudySessions";
+import DetalleSesionEstudio from "./pages/DetalleSesionEstudio";
 
 import {
   AuthenticatedTemplate,
@@ -100,6 +101,7 @@ export default function App() {
                   element={<ReportFormPage />}
                 />
                 <Route path="/:id/sesiones" element={<StudySessions currentUserId={accounts[0]?.localAccountId} />} />
+                <Route path="/sesiones/:sessionId" element={<DetalleSesionEstudio currentUserId={accounts[0]?.localAccountId} />} />
               </Routes>
             </Layout>
           ) : null}
