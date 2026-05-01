@@ -17,6 +17,10 @@ import TakeFlashCard from "./pages/TakeFlashCard";
 import ReportsPage from "./pages/ReportsPage";
 import ReportFormPage from "./pages/ReportFormPage";
 import Drafts from "./pages/Drafts";
+import StreamHost from "./retransmission/jitsi_sin_docker/StreamHost";
+import StreamViewer from "./retransmission/jitsi_sin_docker/StreamViewer";
+import StreamHost2 from "./retransmission/jitsi/StreamHost";
+import StreamViewer2 from "./retransmission/jitsi/StreamViewer";
 import { syncUser } from "@services/connections";
 
 import {
@@ -98,6 +102,10 @@ export default function App() {
                   path="/admin/report-form/:id"
                   element={<ReportFormPage />}
                 />
+                <Route path="/stream/host" element={<StreamHost />} />
+                <Route path="/stream/watch" element={<StreamViewer />} />
+                <Route path="/stream/host2" element={<StreamHost2 />} />
+                <Route path="/stream/watch2" element={<StreamViewer2 />} />
               </Routes>
             </Layout>
           ) : null}
