@@ -81,6 +81,40 @@ class PDFUploadView(generics.GenericAPIView):
 
         return Response(PostSerializer(post).data, status=status.HTTP_201_CREATED)
 
+class UploadPDFDraftView(generics.GenericAPIView):
+    serializer_class = PDFUploadSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+
+        post = Post.objects.create(
+            title=data["title"], 
+            description=data["description"],
+            course=data["course"],
+            student=data.get("student"),
+            post_type="PDF",
+            is_draft=True
+        )
+
+        pdf_attachment = PDFAttachment.objects.create(
+            post=post,
+            file=data["file"],
+            processing_status='pending' 
+        )
+
+        procesar_pdf_y_vectorizar.delay(pdf_attachment.id)
+
+        return Response({
+            "post_id": post.id,
+            "attachment_id": pdf_attachment.id,
+            "message": "Archivo subiendo y vectorización iniciada."
+        }, status=status.HTTP_201_CREATED)
+
 
 class VideoUploadView(generics.GenericAPIView):
     serializer_class = VideoUploadSerializer
@@ -405,6 +439,9 @@ class DraftDetailView(views.APIView):
         post.description = data["description"]
         post.save()
 
+        if request.data.get("publish") is True:
+            post.is_draft = False
+            
         if hasattr(post, "fla"):
             post.fla.delete()
         if hasattr(post, "qui"):

@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.urls import re_path
+from . import consumers
 
 urlpatterns = [
     path("<int:pk>", views.PostDetailView.as_view(), name="view_post"),
@@ -25,4 +27,9 @@ urlpatterns = [
     path("", views.PostListView.as_view(), name="list_posts"),
     path("drafts/", views.DraftListView.as_view(), name="draft_list"),
     path("drafts/<int:pk>/", views.DraftDetailView.as_view(), name="draft_detail"),
+]
+
+
+websocket_urlpatterns = [
+    re_path(r'ws/documents/(?P<document_id>\w+)/$', consumers.DocumentStatusConsumer.as_asgi()),
 ]

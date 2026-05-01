@@ -45,6 +45,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -88,7 +89,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "backend.edutech.wsgi.application"
+ASGI_APPLICATION = "backend.edutech.asgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
@@ -212,3 +213,12 @@ CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://localhost:6379/0')
 # Forzamos a que Celery acepte formato JSON al comunicarse
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)], # Apunta al servicio 'redis' de tu docker-compose
+        },
+    },
+}
