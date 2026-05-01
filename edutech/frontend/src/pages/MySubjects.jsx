@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
-import { WidgetSubject } from '../components/Subject';
+import { SubjectWidget } from '../components/SubjectWidget';
 import SearchBar from '../components/SearchBar';
 import PostGrid from '../components/PostGrid';
 import { useCurrentUser } from '../services/useCurrentUser';
-
-const BASE_URL = "http://127.0.0.1:8000";
+import { getSubscriptions } from '../services/connections';
 
 const TYPE_TO_ROUTE = { PDF: 'documento', VID: 'video', QUI: 'quiz', FLA: 'flashcard' };
 
@@ -19,8 +18,7 @@ const MySubjects = () => {
 
   useEffect(() => {
     if (!userData?.id) return;
-    fetch(`${BASE_URL}/courses/sub/?user=${userData.id}`)
-      .then((r) => r.json())
+    getSubscriptions(userData.id)
       .then(setSubscriptions)
       .catch((err) => console.error("Error cargando suscripciones:", err));
   }, [userData?.id]);
@@ -59,7 +57,7 @@ const MySubjects = () => {
               <p className="text-gray-400 italic text-center py-12">No estás suscrito a ninguna asignatura.</p>
             ) : (
               subscriptions.map((sub) => (
-                <WidgetSubject
+                <SubjectWidget
                   key={sub.course?.id}
                   subjectName={sub.course?.name ?? "Asignatura"}
                   subjectId={sub.course?.id}

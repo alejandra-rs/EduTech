@@ -7,9 +7,7 @@ export function Quarter({ quarter, title, navigate, yearId, degreeName }) {
 
   useEffect(() => {
     getCourses(yearId, quarter)
-      .then((data) => {
-        setCourses(data);
-      })
+      .then((data) => setCourses(data))
       .catch((error) => {});
   }, []);
 
@@ -22,7 +20,7 @@ export function Quarter({ quarter, title, navigate, yearId, degreeName }) {
       <div className="flex-grow overflow-y-auto max-h-[75vh] pr-2 space-y-4 custom-scrollbar">
         {courses.map((sub) => {
           return (
-            <WidgetSubject
+            <SubjectWidget
               key={sub.id}
               subjectName={sub.name}
               subjectId={sub.id}

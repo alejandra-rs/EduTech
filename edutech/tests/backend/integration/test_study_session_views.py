@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from django.utils import timezone
 from datetime import timedelta
 from courses.models import StudySession, StudySessionComment
-from ..config import make_student, make_course
+from ..config import make_student, make_course, make_year
 
 
 def future(days=1):
@@ -95,9 +95,10 @@ class StudySessionCreateViewTest(APITestCase):
 class StudySessionListViewTest(APITestCase):
 
     def setUp(self):
+        self.year = make_year()
         self.student = make_student()
-        self.course = make_course()
-        self.other_course = make_course(name="Otra Asignatura")
+        self.course = make_course(year=self.year)
+        self.other_course = make_course(name="Otra Asignatura", year=self.year)
         self.url = "/courses/study-sessions/"
 
     def _make_session(self, title, days=1, course=None):
@@ -131,7 +132,7 @@ class StudySessionListViewTest(APITestCase):
     def test_list_sessions_filtered_by_multiple_courses(self):
         self._make_session("Sesión A")
         self._make_session("Sesión B", course=self.other_course)
-        third_course = make_course(name="Tercera Asignatura")
+        third_course = make_course(name="Tercera Asignatura", year=self.year)
         self._make_session("Sesión C", course=third_course)
         response = self.client.get(
             self.url + f"?courses={self.course.pk}&courses={self.other_course.pk}"
