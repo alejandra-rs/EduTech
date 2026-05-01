@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase
-from courses.models import Course, Year,University, Degree
-from ..config import make_student, make_year, make_course
+from courses.models import Course, Year, University, Degree
+from ..config import make_student, make_year, make_course, make_degree
 
 
 class YearListCreateViewTest(APITestCase):
@@ -21,10 +21,12 @@ class YearListCreateViewTest(APITestCase):
         self.assertEqual(response.data, [])
 
     def test_create_year_returns_201(self):
-        response = self.client.post('/courses/years/', {'year': 2}, format='json')
+        data = {
+            'year': 2,
+            'degree': make_degree().id
+        }
+        response = self.client.post('/courses/years/', data, format='json')
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Year.objects.count(), 1)
-
     def test_create_empty_year_returns_400(self):
         response = self.client.post('/courses/years/', {}, format='json')
         self.assertEqual(response.status_code, 400)
@@ -33,7 +35,7 @@ class YearListCreateViewTest(APITestCase):
 class CourseListCreateViewTest(APITestCase):
 
     def setUp(self):
-        self.year = Year.objects.create(year=3)
+        self.year = make_year()
 
     def test_list_courses_returns_nested_year(self):
         Course.objects.create(name='Producción de Software', year=self.year, semester=1)

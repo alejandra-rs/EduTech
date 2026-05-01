@@ -2,7 +2,7 @@ from django.test import TestCase, override_settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 from users.serializers import StudentSerializer
-from courses.models import Year, Course
+from courses.models import Year, Course, University, Degree
 from courses.serializers import YearSerializer, CourseSerializer
 from documents.models import MAX_PDF_KB
 from ..config import TEST_STORAGES, make_student, make_course, make_year, make_pdf_file, mock_urlopen
@@ -23,7 +23,6 @@ class StudentSerializerTest(TestCase):
             'first_name': 'Pepe',
             'last_name': 'Garcia',
             'email': 'pepe@test.com',
-            'password': 'x'
         }
         serializer = StudentSerializer(data=data)
         self.assertTrue(serializer.is_valid(), serializer.errors)
@@ -54,7 +53,13 @@ class YearSerializerTest(TestCase):
         self.assertEqual(set(data.keys()), {'id', 'year', 'degree'})
 
     def test_valid_year_data(self):
-        s = YearSerializer(data={'year': 3})
+        uni = University.objects.create(name="ULPGC")
+        degree = Degree.objects.create(name="Ingeniería Informática", university=uni)
+        data_json = {
+            'year': 2,
+            'degree': degree.id
+        }
+        s = YearSerializer(data=data_json)
         self.assertTrue(s.is_valid(), s.errors)
 
     def test_year_field_required(self):
