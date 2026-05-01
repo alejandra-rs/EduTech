@@ -5,32 +5,24 @@ import { TitlePage } from "../components/TitlePage";
 import BellButton from "../components/BellButton";
 import CalendarWidget from "../components/CalendarWidget";
 import SessionItem from "../components/SessionItem";
-import UserAvatar from "../components/UserAvatar"; // Importado para el modal
+import UserAvatar from "../components/UserAvatar";
 
-// Importación de servicios
 import { getStudySessions, createStudySession } from "@services/connections-study-sessions";
 import { getCourses, getCourse } from "@services/connections"; 
 
-const StudySessions = ({ currentUserId, currentUser }) => { // He añadido currentUser como prop
-  const { id } = useParams(); 
+const StudySessions = ({ currentUserId, currentUser }) => {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [sessions, setSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [courseName, setCourseName] = useState(""); 
+  const [courseName, setCourseName] = useState("Cargando asignatura...");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  // Estado del formulario actualizado para coincidir con la función createStudySession
-  const [newSession, setNewSession] = useState({ 
-    title: "", 
-    courseId: id || "", 
-    description: "", 
-    scheduledAt: "" 
-  });
+  const [newSession, setNewSession] = useState({ title: "", courseId: "" });
 
   const loadData = async () => {
     setLoading(true);
@@ -40,7 +32,7 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
         studentId: currentUserId
       };
       const sessionsData = await getStudySessions(filters);
-      setSessions(sessionsData || []);
+      setSessions(sessionsData);
     } catch (error) {
       console.error("Error cargando sesiones:", error);
     } finally {
@@ -55,18 +47,15 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
         const name = courseData?.name || courseData?.title || "Asignatura";
         setCourseName(name);
 
-        if (courseData?.year) {
-          const subjectsData = await getCourses(courseData.year); 
-          const formattedSubjects = Array.isArray(subjectsData) ? subjectsData : subjectsData?.results || [];
-          setSubjects(formattedSubjects);
-        } else {
-          setSubjects([{ id: id, name: name }]);
-        }
+        const subjectsData = await getCourses(id); 
+        const formattedSubjects = Array.isArray(subjectsData) ? subjectsData : subjectsData?.results || [];
+        setSubjects(formattedSubjects);
       } catch (error) {
-        console.error("Error en la carga inicial:", error);
-        setCourseName("SESIONES DE ESTUDIO");
+        console.error("Error cargando datos iniciales:", error);
+        setCourseName("Sesiones de Estudio");
       }
     };
+
     if (id) loadInitialData();
   }, [id]);
 
@@ -77,18 +66,15 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
   const handleCreateSession = async (e) => {
     e.preventDefault();
     try {
-      // Llamada corregida con los 5 parámetros de tu función:
-      // (courseId, creatorId, title, description, scheduledAt)
-      await createStudySession(
-        newSession.courseId || id,
-        currentUserId,
-        newSession.title,
-        newSession.description,
-        newSession.scheduledAt
-      );
+      await createStudySession({
+        title: newSession.title,
+        course_id: newSession.courseId || id,
+        student_id: currentUserId,
+        scheduled_at: new Date().toISOString()
+      });
       
       setIsModalOpen(false);
-      setNewSession({ title: "", courseId: id || "", description: "", scheduledAt: "" });
+      setNewSession({ title: "", courseId: "" });
       loadData();
     } catch (error) {
       alert("Error al crear la sesión");
@@ -98,11 +84,15 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
   const daysWithSessions = sessions.map(s => new Date(s.scheduled_at).getDate());
 
   return (
-    <div className="min-h-screen w-full bg-white font-sans relative">
+    <div className="min-h-screen w-full bg-white font-sans relative selection:bg-gray-100">
+      
       <div className="shrink-0 sticky top-0 z-20 bg-white/80 backdrop-blur-md">
-        <TitlePage PageName={courseName.toUpperCase() || "CARGANDO..."} onBack={() => navigate(-1)}>
+        <TitlePage PageName={courseName.toUpperCase()} onBack={() => navigate(-1)}>
           <div className="flex items-center gap-2">
-            <button onClick={() => setIsModalOpen(true)} className="hover:scale-110 transition-transform active:scale-95">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="hover:scale-110 transition-transform active:scale-95"
+            >
               <PlusCircleIcon className="w-9 h-9 text-gray-800" />
             </button>
             <BellButton />
@@ -112,6 +102,7 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
 
       <main className="px-8 md:px-20 py-10">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-16">
+          
           <aside className="md:col-span-5 lg:col-span-4 space-y-8">
             <div className="sticky top-28">
               <CalendarWidget 
@@ -127,10 +118,10 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
                 <select 
                   value={selectedSubject}
                   onChange={(e) => setSelectedSubject(e.target.value)}
-                  className="w-full appearance-none border-2 border-gray-100 bg-white text-gray-800 font-bold rounded-2xl py-4 px-6 shadow-sm focus:ring-4 focus:ring-gray-50 outline-none cursor-pointer transition-all"
+                  className="w-full appearance-none border-2 border-gray-100 bg-white text-gray-800 font-bold rounded-2xl py-4 px-6 shadow-sm focus:ring-4 focus:ring-gray-50 outline-none cursor-pointer transition-all hover:border-gray-200"
                 >
-                  <option value="">{courseName || "Seleccionar asignatura"}</option>
-                  {subjects.filter(s => s.id.toString() !== id.toString()).map(s => (
+                  <option value="">Todas mis asignaturas</option>
+                  {subjects.map(s => (
                     <option key={s.id} value={s.id}>{s.name || s.title}</option>
                   ))}
                 </select>
@@ -140,17 +131,25 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
 
           <section className="md:col-span-7 lg:col-span-8">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">Próximas Sesiones</h2>
-              <span className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">{sessions.length} programadas</span>
+              <h2 className="text-xl font-black text-gray-900 uppercase tracking-tighter">
+                Próximas Sesiones
+              </h2>
+              <span className="text-xs font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
+                {sessions.length} programadas
+              </span>
             </div>
 
             <div className="space-y-3">
               {loading ? (
                 <div className="space-y-4">
-                  {[1,2,3].map(i => <div key={i} className="h-24 w-full bg-gray-50 animate-pulse rounded-3xl" />)}
+                  {[1,2,3].map(i => (
+                    <div key={i} className="h-24 w-full bg-gray-50 animate-pulse rounded-3xl" />
+                  ))}
                 </div>
               ) : sessions.length > 0 ? (
-                sessions.map(session => <SessionItem key={session.id} session={session} currentUserId={currentUserId} />)
+                sessions.map(session => (
+                  <SessionItem key={session.id} session={session} currentUserId={currentUserId} />
+                ))
               ) : (
                 <div className="text-center py-20 bg-gray-50 rounded-[40px] border-2 border-dashed border-gray-100">
                   <p className="text-gray-400 font-medium">No hay sesiones planeadas aquí.</p>
@@ -161,7 +160,6 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
         </div>
       </main>
 
-      {/* Modal para nueva sesión con campos actualizados */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
@@ -172,14 +170,14 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
             
             <h3 className="text-2xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Nueva Sesión</h3>
             
-            {/* Sección del Creador (Estilo Comentario) */}
-            <div className="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-2xl">
-              <UserAvatar imageUrl={currentUser?.picture} />
-              <div className="flex flex-col">
-                <span className="text-xs font-bold text-gray-400 uppercase">Creador</span>
-                <span className="text-lg font-semibold text-gray-900">
+            <div className="bg-[#dfdfdf] rounded-lg p-5 sm:p-6 flex gap-4 w-full font-sans mb-8">
+              <div className="flex flex-row">
+                <UserAvatar imageUrl={currentUser?.picture} />
+              </div>
+              <div className="flex-1 flex flex-col">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {currentUser?.first_name} {currentUser?.last_name}
-                </span>
+                </h3>
               </div>
             </div>
 
@@ -189,7 +187,7 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
                 <select 
                   required value={newSession.courseId}
                   onChange={(e) => setNewSession({...newSession, courseId: e.target.value})}
-                  className="w-full bg-gray-50 border-none rounded-2xl py-4 px-6 outline-none appearance-none"
+                  className="w-full bg-gray-50 border-none rounded-2xl py-4 px-6 outline-none appearance-none cursor-pointer"
                 >
                   <option value="">Seleccionar...</option>
                   {subjects.map(s => <option key={s.id} value={s.id}>{s.name || s.title}</option>)}
@@ -199,7 +197,7 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-2 uppercase ml-1">Título de la Sesión</label>
                 <input 
-                  type="text" required placeholder="Ej: Repaso examen final"
+                  type="text" required placeholder="¿Qué vas a estudiar?"
                   value={newSession.title}
                   onChange={(e) => setNewSession({...newSession, title: e.target.value})}
                   className="w-full bg-gray-50 border-none rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-gray-200"
@@ -209,7 +207,7 @@ const StudySessions = ({ currentUserId, currentUser }) => { // He añadido curre
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-2 uppercase ml-1">Descripción</label>
                 <textarea 
-                  required rows="3" placeholder="Detalles de lo que se estudiará..."
+                  required rows="3" placeholder="Añade una breve descripción..."
                   value={newSession.description}
                   onChange={(e) => setNewSession({...newSession, description: e.target.value})}
                   className="w-full bg-gray-50 border-none rounded-2xl py-4 px-6 outline-none focus:ring-2 focus:ring-gray-200 resize-none"
