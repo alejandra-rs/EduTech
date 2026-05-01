@@ -12,6 +12,15 @@ class StudentListView(generics.ListAPIView):
 
 
 class StudentView(views.APIView):
+    def get(self, request, pk):
+        try:
+            student = Student.objects.get(pk=pk)
+        except Student.DoesNotExist:
+            return Response({"error": "Estudiante no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = StudentSerializer(student, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def post(self, request):
         print(request.data)
 

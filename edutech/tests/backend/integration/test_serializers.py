@@ -16,7 +16,7 @@ class StudentSerializerTest(TestCase):
         self.assertIn('first_name', data)
         self.assertIn('last_name', data)
         self.assertIn('email', data)
-        self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email', 'picture', 'universities' ,'degree'})
+        self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email', 'picture', 'degree'})
 
     def test_valid_student_data(self):
         data = {

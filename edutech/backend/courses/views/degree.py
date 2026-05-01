@@ -6,4 +6,4 @@ from ..models import Degree
 class DegreeListCreate(generics.ListCreateAPIView):
     queryset = Degree.objects.all()
     serializer_class = DegreeSerializer
-    filterset_fields = ["university"]
+    filterset_fields = ["university", "id"]
