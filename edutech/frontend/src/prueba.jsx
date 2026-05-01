@@ -41,12 +41,12 @@ export default function App() {
             <SignIn />
           </UnauthenticatedTemplate>
           <AuthenticatedTemplate>
-            {isLoading ? (
+            {isLoading || !userData ? (
               <div>
                 {/* loader component here */}
                 <h1>Cargando datos del usuario...</h1>
               </div>
-            ) : userData?.degree === null ? (
+            ) : userData?.degree !== null || userData?.degree !== undefined ? (
               <Layout accounts={accounts} instance={instance}>
                 <Routes>
                   <Route path="/" element={<Courses />} />
