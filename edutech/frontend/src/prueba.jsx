@@ -14,7 +14,8 @@ import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
 import CreateFlashCard from "./pages/CreateFlashCard";
 import TakeFlashCard from "./pages/TakeFlashCard";
-import SelectUniversity from "./pages/SelectUniversity";
+import SelectDegree from "./pages/SelectDegree";
+import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 import { useCurrentUser } from "@services/useCurrentUser";
@@ -46,7 +47,9 @@ export default function App() {
                 {/* loader component here */}
                 <h1>Cargando datos del usuario...</h1>
               </div>
-            ) : userData?.degree !== null || userData?.degree !== undefined ? (
+            ) : userData?.degree !== null &&
+              userData?.degree !== undefined &&
+              userData?.degree.length !== 0 ? (
               <Layout accounts={accounts} instance={instance}>
                 <Routes>
                   <Route path="/" element={<Courses />} />
@@ -100,15 +103,14 @@ export default function App() {
                     path="/borradores/quiz/:draftId"
                     element={<CreateQuiz />}
                   />
+                  <Route
+                    path="/degrees/"
+                    element={<ChangeDegree userData={userData} />}
+                  />
                 </Routes>
               </Layout>
             ) : (
-              <SelectUniversity
-                userId={userData.id}
-                usuarioAceptado={() => {
-                  window.location.reload();
-                }}
-              />
+              <SelectDegree userId={userData.id} />
             )}
           </AuthenticatedTemplate>
         </NavigationGuardProvider>

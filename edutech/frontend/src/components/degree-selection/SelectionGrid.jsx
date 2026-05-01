@@ -1,7 +1,7 @@
 export default function SelectionGrid({ data, action, selectedIds = [] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {data.map((i) => {
+      {data?.map((i) => {
         const isSelected = selectedIds.includes(i.id);
 
         return (
@@ -11,8 +11,8 @@ export default function SelectionGrid({ data, action, selectedIds = [] }) {
             className={`flex items-center justify-center gap-3 p-4 rounded-full font-bold text-base transition-all duration-200 border-2
               ${
                 isSelected
-                  ? "bg-blue-100 border-blue-500 text-blue-800 shadow-md" // Estilo SELECCIONADO
-                  : "bg-gray-200 border-transparent hover:bg-gray-300 text-gray-800" // Estilo NORMAL
+                  ? "bg-blue-100 border-blue-500 text-blue-800 shadow-md"
+                  : "bg-gray-200 border-transparent hover:bg-gray-300 text-gray-800"
               }
             `}
           >

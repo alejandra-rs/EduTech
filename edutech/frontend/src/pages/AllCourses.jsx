@@ -14,9 +14,6 @@ const Courses = () => {
   const navigate = useNavigate();
   const { userData } = useCurrentUser();
 
-  const [years, setYears] = useState([]);
-  const [degrees, setDegrees] = useState([]);
-
   useEffect(() => {
     if (!userData?.id) return;
     const fetchCoursesAndDegrees = async () => {
