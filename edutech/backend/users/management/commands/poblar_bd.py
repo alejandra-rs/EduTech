@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
             # 1. Años y Estudiantes
             for y in datos.get("years", []):
-                Year.objects.get_or_create(year=y["year"])
+                Year.objects.get_or_create(year=y["year"], degree=y["degree"])
 
             for s in datos.get("students", []):
                 Student.objects.get_or_create(

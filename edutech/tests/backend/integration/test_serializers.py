@@ -16,7 +16,7 @@ class StudentSerializerTest(TestCase):
         self.assertIn('first_name', data)
         self.assertIn('last_name', data)
         self.assertIn('email', data)
-        self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email', 'picture'})
+        self.assertEqual(set(data.keys()), {'id', 'first_name', 'last_name', 'email', 'picture', 'universities' ,'degree'})
 
     def test_valid_student_data(self):
         data = {
@@ -50,7 +50,8 @@ class YearSerializerTest(TestCase):
         data = YearSerializer(year).data
         self.assertIn('id', data)
         self.assertIn('year', data)
-        self.assertEqual(set(data.keys()), {'id', 'year'})
+        self.assertIn('degree', data)
+        self.assertEqual(set(data.keys()), {'id', 'year', 'degree'})
 
     def test_valid_year_data(self):
         s = YearSerializer(data={'year': 3})

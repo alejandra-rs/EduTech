@@ -1,17 +1,34 @@
-import { forwardRef, useRef, useEffect, useCallback } from "react";
 
-const Input = forwardRef(function Input({
-  label, placeholder = "Value", textarea = false, value, onChange,
-  type = "text", required = false, className, id, autoResize = false,
-  noBorder = false
-}, forwardedRef) {
-  const localRef = useRef(null);
+import { forwardRef, useRef, useEffect, useCallback, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
-  const setRef = useCallback((node) => {
-    localRef.current = node;
-    if (typeof forwardedRef === "function") forwardedRef(node);
-    else if (forwardedRef) forwardedRef.current = node;
-  }, [forwardedRef]);
+type InputProps = (
+  | React.InputHTMLAttributes<HTMLInputElement> 
+  | React.TextareaHTMLAttributes<HTMLTextAreaElement>
+) & {
+  label?: string;
+  textarea?: boolean;
+  autoResize?: boolean;
+  noBorder?: boolean;
+  type?: string;
+  };
+
+const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
+  ({ 
+    label, placeholder = "Value", textarea = false, value, onChange,
+    type = "text", required = false, className, id, autoResize = false,
+    noBorder = false, ...props 
+  }, forwardedRef) => {
+
+    const localRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+
+    const setRef = useCallback((node: HTMLInputElement | HTMLTextAreaElement | null) => {
+      localRef.current = node;
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+      } else if (forwardedRef) {
+        (forwardedRef as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>).current = node;
+      }
+    }, [forwardedRef]);
 
   useEffect(() => {
     if (!autoResize) return;
@@ -34,9 +51,10 @@ const Input = forwardRef(function Input({
       )}
       {textarea ? (
         <textarea
+          {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
           ref={setRef}
           value={value}
-          onChange={onChange}
+          onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
           required={required}
           placeholder={placeholder}
           rows={1}
@@ -44,11 +62,12 @@ const Input = forwardRef(function Input({
         />
       ) : (
         <input
+          {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
           ref={setRef}
           id={id}
           type={type}
           value={type === "file" ? undefined : value}
-          onChange={onChange}
+          onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
           required={required}
           placeholder={placeholder}
           className={className ?? (type === "file" ? fileStyle : baseStyle)}

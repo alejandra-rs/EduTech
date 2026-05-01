@@ -7,6 +7,7 @@ import {
   RectangleStackIcon,
   DocumentIcon
 } from "@heroicons/react/24/outline";
+import { NavLink } from "react-router-dom"
 
 export default function Header ({
   isOpen,
@@ -24,11 +25,20 @@ export default function Header ({
       .catch((error) => console.log(error));
   };
 
+  
+  const navLinks = [
+  { to: "/suscripciones/", label: "Mis suscripciones", icon: BellIcon, title: "Cursos" },
+  { to: "/borradores/", label: "Mis borradores", icon: PencilSquareIcon, title: "Documentos" },
+  { to: "/mis-publicaciones/", label: "Mi material", icon: DocumentIcon, title: "Material" },
+  ];
   const navItemClass = `
     flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
     ${isOpen ? "w-full" : "w-12 justify-center"}
     hover:bg-white/10 hover:shadow-lg active:scale-95
   `;
+
+  const getLinkClass = ({ isActive }) => 
+    `${navItemClass} ${isActive ? "bg-white/20 shadow-inner border border-white/10" : "text-white"}`;
 
   return (
     <aside
@@ -63,20 +73,13 @@ export default function Header ({
       <hr className="border-white-100"></hr>
 
       <nav className="flex flex-col gap-2 flex-1">
-        <a href="/suscripciones/" className={navItemClass} title="Cursos">
-          <BellIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && <span className="text-white font-medium text-sm">Mis suscripciones</span>}
-        </a>
-        
-        <a href="/borradores/" className={navItemClass} title="Documentos">
-          <PencilSquareIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && <span className="text-white font-medium text-sm">Mis borradores</span>}
-        </a>
 
-        <a href="/documentos/" className={navItemClass} title="Documentos">
-          <DocumentIcon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
-          {isOpen && <span className="text-white font-medium text-sm">Mi material</span>}
-        </a>
+        {navLinks.map(({ to, label, icon: Icon, title }) => (
+          <NavLink key={to} to={to} className={getLinkClass} title={title}>
+            <Icon className="w-6 h-6 text-white group-hover:text-white transition-colors" />
+            {isOpen && <span className="text-white font-medium text-sm">{label}</span>}
+          </NavLink>
+        ))}
 
         <hr className="border-white-100"></hr>
 

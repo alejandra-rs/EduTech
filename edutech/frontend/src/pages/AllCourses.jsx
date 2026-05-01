@@ -5,17 +5,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import  { getYears } from '@services/connections';
 import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
+import { useCurrentUser } from '../services/useCurrentUser';
 
 const Courses = () => {
   const [years, setYears] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
   const navigate = useNavigate();
-
+  const { userData } = useCurrentUser();
+  const userId = userData?.id;
+  
   useEffect(() => {
-    getYears()
+    if (!userId) return;
+    getYears(userId)
       .then(setYears)
       .catch((error) => {console.error("Error al cargar los cursos:", error)});
-  }, []);
+  }, [userId]);
 
   const handlePostClick = (post) => {
     if (post.post_type === "PDF") navigate(`/${post.course}/${post.year}/documento/${post.id}`);

@@ -1,24 +1,33 @@
-import { getFilteredPosts } from '../services/connections';
+import { PostPreview } from '../models/post.model';
+import { getFilteredPosts } from '../services/connections-documents';
 import Input from './Input';
-import { useState } from 'react';
+import { use, useState } from 'react';
+import { ReactNode } from 'react';
+interface SearchBarProps {
+  placeholder?: string;
+  color?: string;
+  courseId?: string | null;
+  studentId?: string | null;
+  onSearch: (results: any[] | null) => void;
+}
 
-const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600", courseId = null, onSearch }) => {
 
-  const [title, setTitle] = useState("");
+const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600", courseId = null, onSearch, studentId = null }: SearchBarProps) => {
+const [title, setTitle] = useState("");
 
-  const filterPostsByTitle = async (e) => {
-    e.preventDefault();
-    if (!onSearch) return;
+const filterPosts = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  if (!onSearch) return;
     if (!title.trim()) {
       onSearch(null);
       return;
     }
-    const results = await getFilteredPosts(courseId, title);
+    const results: PostPreview[] = await getFilteredPosts(courseId, title, studentId);
     onSearch(results);
   };
-
+  
   return (
-    <form className="max-w-2xl mx-auto" onSubmit={filterPostsByTitle}>
+    <form className="max-w-2xl mx-auto" onSubmit={filterPosts}>
       <label htmlFor="search" className="sr-only">Search</label>
       <div className="relative w-full">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -33,7 +42,7 @@ const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600", courseId 
           className="block w-full p-4 ps-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm placeholder:text-gray-400 outline-none transition-all"
           placeholder={placeholder}
           value={title}
-          onChange={e => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setTitle(e.target.value);
             if (!e.target.value.trim() && onSearch) onSearch(null);
           }}

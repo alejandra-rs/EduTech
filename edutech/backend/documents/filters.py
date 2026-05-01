@@ -8,7 +8,8 @@ class PostFilter(django_filters.FilterSet):
         field_name="title", lookup_expr="icontains"
     )
     course = django_filters.NumberFilter(field_name="course")
+    student = django_filters.NumberFilter(field_name="student")
 
     class Meta:
         model = Post
-        fields = ["post_type", "search_title", "course"]
+        fields = ["post_type", "search_title", "course", "student"]
