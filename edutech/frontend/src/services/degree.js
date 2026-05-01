@@ -79,3 +79,16 @@ export const getDegreeName = async (degreeId) => {
         throw error;
     }
 };
+
+export const getDegreeInfo = async (degreeId) => {
+    let fetchUrl = `${BASE_URL}/courses/degree?id=${degreeId}`;
+    try {
+        const response = await fetch(fetchUrl);
+        if (!response.ok) throw new Error("Error al obtener la carrera");
+        const data = await response.json();
+        return { name: data[0].name, universityName: data[0].university_name ?? null };
+    } catch (error) {
+        console.error("Error en getDegreeInfo :", error);
+        throw error;
+    }
+};

@@ -5,59 +5,72 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0002_initial'),
-        ('users', '0002_alter_student_options_and_more'),
+        ("courses", "0002_initial"),
+        ("users", "0002_alter_student_options_and_more"),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='course',
-            name='courses_cou_name_eb4cc3_idx',
+            model_name="course",
+            name="courses_cou_name_eb4cc3_idx",
         ),
         migrations.AlterUniqueTogether(
-            name='course',
+            name="course",
             unique_together=set(),
         ),
         migrations.AlterUniqueTogether(
-            name='degree',
+            name="degree",
             unique_together=set(),
         ),
         migrations.AlterField(
-            model_name='course',
-            name='semester',
+            model_name="course",
+            name="semester",
             field=models.PositiveSmallIntegerField(),
         ),
         migrations.AlterField(
-            model_name='year',
-            name='degree',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='courses.degree'),
+            model_name="year",
+            name="degree",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="courses.degree",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='year',
-            name='year',
+            model_name="year",
+            name="year",
             field=models.PositiveSmallIntegerField(),
         ),
         migrations.AddConstraint(
-            model_name='course',
-            constraint=models.UniqueConstraint(fields=('name', 'year', 'semester'), name='unique_course'),
+            model_name="course",
+            constraint=models.UniqueConstraint(
+                fields=("name", "year", "semester"), name="unique_course"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='degree',
-            constraint=models.UniqueConstraint(fields=('university', 'name'), name='unique_university_degree'),
+            model_name="degree",
+            constraint=models.UniqueConstraint(
+                fields=("university", "name"), name="unique_university_degree"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='subscription',
-            constraint=models.UniqueConstraint(fields=('user', 'course'), name='unique_subscription'),
+            model_name="subscription",
+            constraint=models.UniqueConstraint(
+                fields=("user", "course"), name="unique_subscription"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='university',
-            constraint=models.UniqueConstraint(fields=('name', 'location'), name='unique_university'),
+            model_name="university",
+            constraint=models.UniqueConstraint(
+                fields=("name", "location"), name="unique_university"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='year',
-            constraint=models.UniqueConstraint(fields=('year', 'degree'), name='unique_year_degree'),
+            model_name="year",
+            constraint=models.UniqueConstraint(
+                fields=("year", "degree"), name="unique_year_degree"
+            ),
         ),
     ]

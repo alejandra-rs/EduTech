@@ -1,6 +1,6 @@
 import { AcademicCapIcon } from "@heroicons/react/24/solid";
 
-export const CourseWidget = ({
+export const YearWidget = ({
   courseName = "Curso",
   onNavigate,
   className = "",
@@ -34,4 +34,4 @@ export const CourseWidget = ({
   );
 };
 
-export default CourseWidget;
+export default YearWidget;

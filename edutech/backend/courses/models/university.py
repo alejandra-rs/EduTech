@@ -9,8 +9,11 @@ class University(models.Model):
     )
 
     class Meta:
-        constraints  = [
-            models.UniqueConstraint(fields=['name', 'location'], name='unique_university')
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "location"], name="unique_university"
+            )
         ]
+
     def __str__(self):
         return self.name

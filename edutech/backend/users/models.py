@@ -1,5 +1,5 @@
 from django.db import models
-from courses.models import  Degree
+from courses.models import Degree
 
 
 class Student(models.Model):

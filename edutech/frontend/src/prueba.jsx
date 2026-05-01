@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
-import Courses from "./pages/AllCourses";
+import AllYears from "./pages/AllYears";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
 import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
 import VistaPreviaVideo from "./pages/VistaPreviaVideo";
@@ -55,7 +55,7 @@ export default function App() {
               userData?.degree.length !== 0 ? (
               <Layout accounts={accounts} instance={instance}>
                 <Routes>
-                  <Route path="/" element={<Courses />} />
+                  <Route path="/" element={<AllYears />} />
                   <Route path="/:id/asignaturas" element={<Subject />} />
                   <Route
                     path="/:id/:subjectId/post"
