@@ -6,7 +6,7 @@ import { useCurrentUser } from "@services/useCurrentUser";
 import SearchBar from "../components/SearchBar";
 import PostGrid from "../components/PostGrid";
 import YearWidget from "../components/core-structure/YearWidget";
-import {CalendarDaysIcon} from "@heroicons/react/24/outline/index.d.ts";
+import {CalendarDaysIcon} from "@heroicons/react/24/outline";
 
 const AllYears = () => {
   const [groupedDegrees, setGroupedDegrees] = useState([]);
