@@ -1,13 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from .models import Course, Year, Subscription
-
-
-class YearSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Year
-        fields = ["id", "year"]
-
+from ..models import Course, Year
+from .year import YearSerializer
 
 class CourseSerializer(serializers.ModelSerializer):
     year = YearSerializer(read_only=True)
@@ -23,9 +17,3 @@ class CourseSerializer(serializers.ModelSerializer):
                 queryset=Course.objects.all(), fields=["name", "year"]
             )
         ]
-
-
-class SubscriptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscription
-        fields = ["user", "course"]

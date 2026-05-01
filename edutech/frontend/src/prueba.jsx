@@ -29,6 +29,7 @@ import {
 export default function App() {
   const { accounts, instance } = useMsal();
   const { userData, isLoading } = useCurrentUser();
+
   useEffect(() => {
     if (accounts.length > 0) {
       syncUser(instance, accounts[0]);

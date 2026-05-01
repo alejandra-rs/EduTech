@@ -13,12 +13,13 @@ const Courses = () => {
 
   const navigate = useNavigate();
   const { userData } = useCurrentUser();
+  const userId = userData?.id;
 
   useEffect(() => {
-    if (!userData?.id) return;
+    if (!userId) return;
     const fetchCoursesAndDegrees = async () => {
       try {
-        const yearsData = await getYears(userData.id);
+        const yearsData = await getYears(userId);
         if (!yearsData || yearsData.length === 0) return;
 
         const uniqueDegreeIds = [
@@ -47,7 +48,7 @@ const Courses = () => {
       }
     };
     fetchCoursesAndDegrees();
-  }, [userData?.id]);
+  }, [userId]);
 
   const handlePostClick = (post) => {
     const route = post.post_type === "PDF" ? "documento" : "video";
