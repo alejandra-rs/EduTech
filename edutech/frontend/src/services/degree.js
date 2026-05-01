@@ -13,6 +13,18 @@ export const getUniversities = async () => {
     }
 };
 
+export const getYearById = async (yearId) => {
+    let fetchUrl = `${BASE_URL}/courses/years/${yearId}`;
+    try {
+        const response = await fetch(fetchUrl);
+        if (!response.ok) throw new Error("Error al obtener el año");
+        return await response.json();
+    } catch (error) {
+        console.error("Error en getYearById :", error);
+        throw error;
+    }
+};
+
 export const getDegrees = async (universityId) => {
     let fetchUrl = `${BASE_URL}/courses/degree?university=${universityId}`;
     try {
@@ -42,3 +54,16 @@ export const saveUserDegree = async (userId, degreeId) => {
         throw error;
     }
 }
+
+export const getDegreeName = async (degreeId) => {
+    let fetchUrl = `${BASE_URL}/courses/degree?id=${degreeId}`;
+    try {
+        const response = await fetch(fetchUrl);
+        if (!response.ok) throw new Error("Error al obtener el nombre de la carrera");
+        const data = await response.json();
+        return data[0].name; 
+    } catch (error) {
+        console.error("Error en getDegreeName :", error);
+        throw error;
+    }
+};

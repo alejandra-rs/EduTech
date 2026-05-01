@@ -1,12 +1,12 @@
-import { AcademicCapIcon } from '@heroicons/react/24/solid';
+import { AcademicCapIcon } from "@heroicons/react/24/solid";
 
-export const CourseWidget = ({ 
-  courseName = "Curso", 
+export const CourseWidget = ({
+  courseName = "Curso",
   onNavigate,
-  className = "" 
+  className = "",
 }) => {
   return (
-    <div 
+    <div
       onClick={onNavigate}
       className={`
         group relative flex items-center w-full max-w-[400px] p-5 
@@ -18,7 +18,6 @@ export const CourseWidget = ({
       `}
     >
       <div className="flex items-center gap-5 w-full">
-        
         <div className="flex-shrink-0 w-14 h-14 bg-black/10 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
           <AcademicCapIcon className="w-8 h-8 text-black" />
         </div>
