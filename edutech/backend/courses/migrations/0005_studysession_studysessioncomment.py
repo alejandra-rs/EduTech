@@ -3,10 +3,12 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
+
 def create_if_not_exists(apps, schema_editor):
     if "courses_studysession" in schema_editor.connection.introspection.table_names():
         return
     from courses.models import StudySession, StudySessionComment
+
     schema_editor.create_model(StudySession)
     schema_editor.create_model(StudySessionComment)
 

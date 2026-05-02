@@ -53,9 +53,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name="course",
-            index=models.Index(
-                fields=["name"], name="courses_cou_name_eb4cc3_idx"
-            ),
+            index=models.Index(fields=["name"], name="courses_cou_name_eb4cc3_idx"),
         ),
         migrations.AlterUniqueTogether(
             name="course",
