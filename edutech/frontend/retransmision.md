@@ -13,3 +13,11 @@ npm install peerjs
 # Este no es necesario ya que Daily.co no se usa
 npm install @daily-co/daily-react
 ```
+
+Para la ejecución:
+```bash
+cd edutech/frontend/docker-jitsi-meet
+docker-compose up -d 
+```
+
+Y ejecutar manualmente el contenedor "todo-docker-lab" en el caso de no funcionar

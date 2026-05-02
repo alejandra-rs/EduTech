@@ -40,7 +40,9 @@ export default function App() {
   const isDomainValid = accounts.length > 0;
   useEffect(() => {
     if (accounts.length > 0) {
-      // syncUser(instance, accounts[0]);
+      // Si se busca ejecutar la retransmisión sin el backend encendido,
+      // se puede comentar esta línea para evitar errores relacionados con la sincronización del usuario. 
+      syncUser(instance, accounts[0]);
     }
   }, [accounts, instance]);
   return (
