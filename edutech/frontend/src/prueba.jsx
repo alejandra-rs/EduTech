@@ -22,7 +22,6 @@ import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 import { useCurrentUser } from "@services/useCurrentUser";
 import StudySessions from "./pages/StudySessions";
-import MyDocuments from "./pages/MyDocuments";
 import MySubjects from "./pages/MySubjects";
 
 import StudySessionDetail from "./pages/StudySessionDetail";

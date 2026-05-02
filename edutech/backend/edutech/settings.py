@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "storages",
     "users",
     "courses",
+    "ai_agent",
     "documents.apps.DocumentsConfig",
 ]
 

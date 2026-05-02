@@ -28,8 +28,7 @@ class StudentView(views.APIView):
             first_name=request.data["first_name"],
             last_name=request.data["last_name"],
             email=request.data["email"],
-            picture=request.FILES.get("picture"),
-            password="x",
+            picture=request.FILES.get("picture")
         )
         return Response(
             StudentSerializer(student, context={"request": request}).data,

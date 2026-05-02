@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCurrentUser } from "../services/useCurrentUser";
 import UploadDropzone from "../components/forms-components/UploadDropzone";
 import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
-import { uploadPDFDraft, updateDraft } from "../services/connections-documents"
+import { uploadPDFDraft, updateDraft } from "../services/connections-documents";
 
 export default function UploadDocument() {
   const navigate = useNavigate();
@@ -17,6 +17,17 @@ export default function UploadDocument() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [published, setPublished] = useState(false);
+
+  // --- NUEVOS ESTADOS PARA EL WEBSOCKET ---
+  const [documentStatus, setDocumentStatus] = useState<string>("");
+  const socketRef = useRef<WebSocket | null>(null);
+
+  // Limpieza del socket cuando el usuario sale de la página
+  useEffect(() => {
+    return () => {
+      if (socketRef.current) socketRef.current.close();
+    };
+  }, []);
 
   const handleConfirm = async () => {
     if (!file || !subjectId || !userData?.id) return;
@@ -37,8 +48,23 @@ export default function UploadDocument() {
       );
       
       setDraftId(data.post_id);
-      
       setIsConfirmed(true);
+
+
+      //TODO meter en connections
+      if (data.attachment_id) {
+        const wsUrl = `ws://127.0.0.1:8000/ws/documents/${data.attachment_id}/`;
+        const socket = new WebSocket(wsUrl);
+
+        socket.onmessage = (event) => {
+          const wsData = JSON.parse(event.data);
+          setDocumentStatus(wsData.message); 
+        };
+
+        socket.onclose = () => console.log("WebSocket desconectado");
+        socketRef.current = socket;
+      }
+
     } catch (error) {
       console.error("Fallo al subir el borrador:", error);
     }
@@ -113,20 +139,30 @@ export default function UploadDocument() {
           />
           <Input
             label="Descripción"
-            value={description} // Enlazamos el valor
+            value={description}
             placeholder="Escribe una breve descripción..."
             rows={8}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <button 
-            type="submit"
-            disabled={!title.trim() || !description.trim()}
-            className="mt-4 w-full bg-[#2d2d2d] hover:bg-black text-white py-4 rounded-lg font-bold uppercase tracking-[0.2em] shadow-lg disabled:bg-gray-400 transition-colors"
-          >
-            Publicar
-          </button>
-        </form>
+          
+          <div className="mt-4 w-full flex flex-col items-center">
+            {/* ESTADO EN VERDE JUSTO ENCIMA DEL BOTÓN */}
+            {documentStatus && (
+              <p className="text-green-600 font-semibold mb-2 animate-pulse text-sm uppercase tracking-wider">
+                {documentStatus}
+              </p>
+            )}
+            
+            <button 
+              type="submit"
+              disabled={!title.trim() || !description.trim()}
+              className="w-full bg-[#2d2d2d] hover:bg-black text-white py-4 rounded-lg font-bold uppercase tracking-[0.2em] shadow-lg disabled:bg-gray-400 transition-colors"
+            >
+              Publicar
+            </button>
+          </div>
 
+        </form>
       </div>
     </div>
   );
