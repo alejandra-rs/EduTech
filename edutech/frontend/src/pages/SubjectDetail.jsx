@@ -2,11 +2,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from 'react';
 import { PlusCircleIcon, DocumentTextIcon, PlayCircleIcon, ClipboardDocumentListIcon, Square3Stack3DIcon } from "@heroicons/react/24/outline";
 import SearchBar from "../components/SearchBar";
-import BellButton from "../components/BellButton";
+import BellButton from "../components/interactions/BellButton";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
 import { getPosts, getCourse } from "@services/connections";
+import { getYearById, getDegreeInfo } from "@services/degree";
 import { ChatbotWidget } from "../components/chatbot/ChatbotWidget";
 
 const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLC: "flashcard" };
@@ -19,6 +20,7 @@ const SubjectDetail = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [activeTabs, setActiveTabs] = useState([]);
   const [subjectName, setSubjectName] = useState("Cargando...");
+  const [degreeName, setDegreeName] = useState(null);
   const [showUploadMenu, setShowUploadMenu] = useState(false);
   const uploadMenuRef = useRef(null);
 
@@ -35,6 +37,14 @@ const SubjectDetail = () => {
     };
     if (subjectId) cargarDatos();
   }, [subjectId]);
+
+  useEffect(() => {
+    if (!id) return;
+    getYearById(id)
+      .then((year) => year?.degree ? getDegreeInfo(year.degree) : null)
+      .then((info) => { if (info) setDegreeName(info.name); })
+      .catch(() => {});
+  }, [id]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -73,6 +83,7 @@ const SubjectDetail = () => {
       <div className="shrink-0 bg-white">
         <TitlePage
           PageName={subjectName}
+          subtitle={degreeName}
           backLabel="Asignaturas"
           onBack={() => navigate(`/${id}/asignaturas`)}
         >

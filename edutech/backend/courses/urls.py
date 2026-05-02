@@ -21,5 +21,25 @@ urlpatterns = [
         name="university_detail",
     ),
     path("degree/", views.DegreeListCreate.as_view(), name="list_degree"),
+    path(
+        "study-sessions/",
+        views.StudySessionListCreateView.as_view(),
+        name="study_sessions",
+    ),
+    path(
+        "study-sessions/<int:pk>/",
+        views.StudySessionDetailView.as_view(),
+        name="study_session_detail",
+    ),
+    path(
+        "study-sessions/<int:pk>/star/",
+        views.StudySessionStarView.as_view(),
+        name="study_session_star",
+    ),
+    path(
+        "study-sessions/<int:pk>/comments/",
+        views.StudySessionCommentView.as_view(),
+        name="study_session_comments",
+    ),
     path("", views.CourseListCreate.as_view(), name="list_courses"),
 ]

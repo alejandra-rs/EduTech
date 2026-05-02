@@ -1,7 +1,6 @@
-// src/hooks/useCurrentUser.ts
 import { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
-import { AccountInfo } from "@azure/msal-browser"; 
+import { AccountInfo } from "@azure/msal-browser";
 import { getUserByEmail } from "./connections-students";
 import { Student } from "../models/student.model";
 interface CurrentUserHook {
@@ -10,26 +9,30 @@ interface CurrentUserHook {
 }
 
 export const useCurrentUser = (): CurrentUserHook => {
-    const { accounts } = useMsal();
-    
+    const { accounts, inProgress } = useMsal();
     const [userData, setUserData] = useState<Student | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (accounts.length > 0) {
-                console.log("Cuenta MSAL detectada:", accounts[0]);
-                console.log("Cuenta MSAL detectada:", accounts[0].username);
-
-                const user = await getUserByEmail(accounts[0].username);
-                setUserData(user);
-                console.log("Usuario actual:", user); 
+            if (inProgress === "none") {
+                if (accounts.length > 0) {
+                    try {
+                        const user = await getUserByEmail(accounts[0].username);
+                        setUserData(user);
+                    } catch (error) {
+                        console.error("Error obteniendo el usuario:", error);
+                    }
+                }
+                setIsLoading(false);
             }
         };
         fetchData();
-    }, [accounts]);
-
+    }, [accounts, inProgress]);
     return {
         userData,
-        account: (accounts[0] as AccountInfo) ?? null, 
+        isAdmin: Boolean(userData?.is_admin),
+        isLoading,
+        account:  (accounts[0] as AccountInfo)  ?? null,
     };
 };

@@ -20,7 +20,7 @@ class Like(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['post', 'user'], name='unique_like')
+            models.UniqueConstraint(fields=["post", "user"], name="unique_like")
         ]
 
 
@@ -30,18 +30,18 @@ class Dislike(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.post}"
-    
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-    
+
     def clean(self):
         if Like.objects.filter(user_id=self.user_id, post_id=self.post_id).exists():
             raise ValidationError("No puedes dar like y dislike al mismo tiempo.")
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['post', 'user'], name='unique_dislike')
+            models.UniqueConstraint(fields=["post", "user"], name="unique_dislike")
         ]
 
 
@@ -53,8 +53,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.post}"
-    
+
     class Meta:
         indexes = [
-            models.Index(fields=['post', '-created_at']),
+            models.Index(fields=["post", "-created_at"]),
         ]

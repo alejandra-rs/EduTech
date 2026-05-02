@@ -6,46 +6,131 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('courses', '0002_initial'),
-        ('users', '0001_initial'),
+        ("courses", "0001_initial"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FlashCardDeck',
+            name="FlashCardDeck",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Question',
+            name="Question",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=500)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=500)),
             ],
         ),
         migrations.CreateModel(
-            name='ReportReason',
+            name="ReportReason",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reason', models.CharField(max_length=200)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("reason", models.CharField(max_length=200)),
             ],
         ),
         migrations.CreateModel(
-            name='FlashCard',
+            name="FlashCard",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question', models.TextField()),
-                ('answer', models.TextField()),
-                ('deck', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cards', to='documents.flashcarddeck')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("question", models.TextField()),
+                ("answer", models.TextField()),
+                (
+                    "deck",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cards",
+                        to="documents.flashcarddeck",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Post',
+            name="Post",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("description", models.TextField()),
+                (
+                    "post_type",
+                    models.CharField(
+                        choices=[
+                            ("PDF", "Documento PDF"),
+                            ("VID", "Vídeo de YouTube"),
+                            ("QUI", "Cuestionario"),
+                            ("FLA", "Flashcards"),
+                        ],
+                        max_length=3,
+                    ),
+                ),
+                ("views", models.PositiveIntegerField(default=0)),
+                ("is_draft", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="courses.course"
+                    ),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="users.student",
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="PDFAttachment",
             fields=[
                 (
                     "id",
@@ -61,8 +146,8 @@ class Migration(migrations.Migration):
                     models.FileField(
                         upload_to="documents/",
                         validators=[
-                            documents.models.validate_pdf_extension,
-                            documents.models.validate_pdf_size,
+                            documents.models.attachments.validate_pdf_extension,
+                            documents.models.attachments.validate_pdf_size,
                         ],
                     ),
                 ),
@@ -77,119 +162,315 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Like',
+            name="Like",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.student')),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='documents.post')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="users.student"
+                    ),
+                ),
+                (
+                    "post",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="documents.post"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='flashcarddeck',
-            name='post',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='fla', to='documents.post'),
+            model_name="flashcarddeck",
+            name="post",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="fla",
+                to="documents.post",
+            ),
         ),
         migrations.CreateModel(
-            name='Dislike',
+            name="Dislike",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.student')),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='documents.post')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="users.student"
+                    ),
+                ),
+                (
+                    "post",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="documents.post"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Comment',
+            name="Comment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('message', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.student')),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='documents.post')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("message", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="users.student"
+                    ),
+                ),
+                (
+                    "post",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="documents.post"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Answer',
+            name="Answer",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('text', models.CharField(max_length=500)),
-                ('is_correct', models.BooleanField(default=False)),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answers', to='documents.question')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("text", models.CharField(max_length=500)),
+                ("is_correct", models.BooleanField(default=False)),
+                (
+                    "question",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="answers",
+                        to="documents.question",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Quiz',
+            name="Quiz",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('post', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='qui', to='documents.post')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "post",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="qui",
+                        to="documents.post",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='question',
-            name='quiz',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='documents.quiz'),
+            model_name="question",
+            name="quiz",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="questions",
+                to="documents.quiz",
+            ),
         ),
         migrations.CreateModel(
-            name='Report',
+            name="Report",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reports', to='documents.post')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reports', to='users.student')),
-                ('reason', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reports', to='documents.reportreason')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "post",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reports",
+                        to="documents.post",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reports",
+                        to="users.student",
+                    ),
+                ),
+                (
+                    "reason",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reports",
+                        to="documents.reportreason",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='CommentReport',
+            name="CommentReport",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reports', to='documents.comment')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_reports', to='users.student')),
-                ('reason', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_reports', to='documents.reportreason')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "comment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reports",
+                        to="documents.comment",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comment_reports",
+                        to="users.student",
+                    ),
+                ),
+                (
+                    "reason",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comment_reports",
+                        to="documents.reportreason",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ReportResolution',
+            name="ReportResolution",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('message', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('report', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='resolution', to='documents.report')),
-                ('resolved_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='resolved_reports', to='users.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("message", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "report",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="resolution",
+                        to="documents.report",
+                    ),
+                ),
+                (
+                    "resolved_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="resolved_reports",
+                        to="users.student",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='YoutubeVideo',
+            name="YoutubeVideo",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('vid', models.URLField()),
-                ('post', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='vid', to='documents.post')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("vid", models.URLField()),
+                (
+                    "post",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vid",
+                        to="documents.post",
+                    ),
+                ),
             ],
         ),
         migrations.AddIndex(
-            model_name='post',
-            index=models.Index(fields=['course', 'post_type'], name='documents_p_course__396f2b_idx'),
+            model_name="post",
+            index=models.Index(
+                fields=["course", "post_type"], name="documents_p_course__396f2b_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='post',
-            index=models.Index(fields=['student'], name='documents_p_student_de4a44_idx'),
+            model_name="post",
+            index=models.Index(
+                fields=["student"], name="documents_p_student_de4a44_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='like',
-            index=models.Index(fields=['user', 'post'], name='documents_l_user_id_a3eed4_idx'),
+            model_name="like",
+            index=models.Index(
+                fields=["user", "post"], name="documents_l_user_id_a3eed4_idx"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='like',
-            unique_together={('user', 'post')},
+            name="like",
+            unique_together={("user", "post")},
         ),
         migrations.AddIndex(
-            model_name='dislike',
-            index=models.Index(fields=['user', 'post'], name='documents_d_user_id_553b09_idx'),
+            model_name="dislike",
+            index=models.Index(
+                fields=["user", "post"], name="documents_d_user_id_553b09_idx"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='dislike',
-            unique_together={('user', 'post')},
+            name="dislike",
+            unique_together={("user", "post")},
         ),
     ]

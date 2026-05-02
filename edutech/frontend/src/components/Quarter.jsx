@@ -1,15 +1,13 @@
-import { WidgetSubject } from "./Subject";
+import { SubjectWidget } from "./SubjectWidget";
 import { getCourses } from "@services/connections.js";
 import { useState, useEffect } from "react";
 
-export function Quarter({ quarter, title, navigate, yearId }) {
+export function Quarter({ quarter, title, navigate, yearId, degreeName }) {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     getCourses(yearId, quarter)
-      .then((data) => {
-        setCourses(data);
-      })
+      .then((data) => setCourses(data))
       .catch((error) => {});
   }, []);
 
@@ -22,10 +20,11 @@ export function Quarter({ quarter, title, navigate, yearId }) {
       <div className="flex-grow overflow-y-auto max-h-[75vh] pr-2 space-y-4 custom-scrollbar">
         {courses.map((sub) => {
           return (
-            <WidgetSubject
+            <SubjectWidget
               key={sub.id}
               subjectName={sub.name}
               subjectId={sub.id}
+              degreeName={degreeName}
               onNavigate={() => navigate(`/${yearId}/${sub.id}/post`)}
             />
           );

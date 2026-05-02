@@ -1,4 +1,3 @@
-from django.core.serializers import serialize
 from rest_framework import views, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -12,6 +11,7 @@ class YearDetailView(views.APIView):
         year = get_object_or_404(Year, pk=pk)
         serializer = YearSerializer(year)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserYearListView(views.APIView):
     def get(self, request):

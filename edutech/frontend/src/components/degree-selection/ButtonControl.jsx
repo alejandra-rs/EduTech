@@ -6,7 +6,7 @@ export const ButtonControl = ({
   <div className="mt-8">
     {isSaveDisabled && (
       <p className="text-red-500 text-sm font-medium mb-4">
-        * Debes seleccionar al menos una carrera para poder continuar.
+        Debes seleccionar al menos una carrera para poder continuar.
       </p>
     )}
     <div className="flex flex-col-reverse sm:flex-row gap-4">

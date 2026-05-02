@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
-import Courses from "./pages/AllCourses";
+import AllYears from "./pages/AllYears";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
 import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
 import VistaPreviaVideo from "./pages/VistaPreviaVideo";
@@ -21,7 +21,11 @@ import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections";
 import { useCurrentUser } from "@services/useCurrentUser";
+import StudySessions from "./pages/StudySessions";
+import MyDocuments from "./pages/MyDocuments";
+import MySubjects from "./pages/MySubjects";
 
+import StudySessionDetail from "./pages/StudySessionDetail";
 import {
   AuthenticatedTemplate,
   UnauthenticatedTemplate,
@@ -33,100 +37,109 @@ import MyDocuments from "./pages/MyDocuments";
 export default function App() {
   const { accounts, instance } = useMsal();
   const { userData, isLoading } = useCurrentUser();
+  const isDomainValid = accounts.length > 0;
 
   useEffect(() => {
-    if (accounts.length > 0) {
-      syncUser(instance, accounts[0]);
-    }
+    if (isDomainValid) syncUser(instance, accounts[0]);
   }, [accounts, instance]);
+
   return (
     <>
       <BrowserRouter>
         <NavigationGuardProvider>
-          <UnauthenticatedTemplate>
-            <SignIn />
-          </UnauthenticatedTemplate>
-          <AuthenticatedTemplate>
+        <UnauthenticatedTemplate>
+          <SignIn />
+        </UnauthenticatedTemplate>
+        <AuthenticatedTemplate>
             {isLoading || !userData ? (
-              <div>
-                {/* loader component here */}
                 <h1>Cargando datos del usuario...</h1>
-              </div>
             ) : userData?.degree !== null &&
-              userData?.degree !== undefined &&
-              userData?.degree.length !== 0 ? (
-              <Layout accounts={accounts} instance={instance}>
-                <Routes>
-                  <Route path="/" element={<Courses />} />
-                  <Route path="/:id/asignaturas" element={<Subject />} />
-                  <Route
-                    path="/:id/:subjectId/post"
-                    element={<SubjectDetail />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/upload"
-                    element={<Navigate to="PDF" replace />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/upload/PDF"
-                    element={<UploadWizard />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/upload/Video"
-                    element={<CargarPublicacionVideo />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/documento/:postId"
-                    element={<VistaPreviaDocumento />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/video/:postId"
-                    element={<VistaPreviaVideo />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/upload/quiz"
-                    element={<CreateQuiz />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/upload/flashcard"
-                    element={<CreateFlashCard />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/quiz/:postId"
-                    element={<TakeQuiz />}
-                  />
-                  <Route
-                    path="/:id/:subjectId/flashcard/:postId"
-                    element={<TakeFlashCard />}
-                  />
-                  <Route path="/borradores" element={<Drafts />} />
-                  <Route
-                    path="/borradores/flashcard/:draftId"
-                    element={<CreateFlashCard />}
-                  />
-                  <Route
-                    path="/borradores/quiz/:draftId"
-                    element={<CreateQuiz />}
-                  />
-                  <Route
+            userData?.degree !== undefined &&
+            userData?.degree.length !== 0 ? (
+            <Layout accounts={accounts} instance={instance}>
+              <Routes>
+                <Route path="/" element={<AllYears />} />
+                <Route path="/:id/asignaturas" element={<Subject />} />
+                <Route
                     path="/degrees/"
                     element={<ChangeDegree userData={userData} />}
-                  />
-                  <Route
-                    path="/reports"
-                    element={<ReportsPage />}
-                  />
-                  <Route
-                    path="/admin/report-form/:id"
-                    element={<ReportFormPage />}
-                  />
-                  <Route path="/mis-publicaciones/" element={<MyDocuments/>}/>
-                </Routes>
-              </Layout>
-            ) : (
-              <SelectDegree userId={userData.id} />
-            )}
-          </AuthenticatedTemplate>
+                />
+                <Route
+                  path="/:id/:subjectId/post"
+                  element={<SubjectDetail />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload"
+                  element={<Navigate to="PDF" replace />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/PDF"
+                  element={<UploadWizard />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/Video"
+                  element={<CargarPublicacionVideo />}
+                />
+                <Route
+                  path="/:id/:subjectId/documento/:postId"
+                  element={<VistaPreviaDocumento />}
+                />
+                <Route
+                  path="/:id/:subjectId/video/:postId"
+                  element={<VistaPreviaVideo />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/quiz"
+                  element={<CreateQuiz />}
+                />
+                <Route
+                  path="/:id/:subjectId/upload/flashcard"
+                  element={<CreateFlashCard />}
+                />
+                <Route
+                  path="/:id/:subjectId/quiz/:postId"
+                  element={<TakeQuiz />}
+                />
+                <Route
+                  path="/:id/:subjectId/flashcard/:postId"
+                  element={<TakeFlashCard />}
+                />
+                <Route
+                    path="/borradores"
+                    element={<Drafts />}
+                />
+                <Route
+                    path="/borradores/flashcard/:draftId"
+                    element={<CreateFlashCard />}
+                />
+                <Route
+                    path="/borradores/quiz/:draftId"
+                    element={<CreateQuiz />}
+                />
+                <Route
+                  path="/reports"
+                  element={<ReportsPage />}
+                />
+                <Route
+                  path="/admin/report-form/:id"
+                  element={<ReportFormPage />}
+                />
+                <Route
+                    path="/sesiones"
+                    element={<StudySessions />}
+                />
+                <Route
+                    path="/sesiones/:sessionId"
+                    element={<StudySessionDetail />}
+                />
+                <Route path="/mis-publicaciones/" element={<MyDocuments/>}/>
+                <Route path="/suscripciones" element={<MySubjects/>}/>
+              </Routes>
+            </Layout>
+          ) : (
+                <SelectDegree userId={userData.id} />
+         )}
+        </AuthenticatedTemplate>
         </NavigationGuardProvider>
       </BrowserRouter>
     </>

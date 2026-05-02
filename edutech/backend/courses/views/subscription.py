@@ -14,10 +14,23 @@ class SubscriptionView(views.APIView):
         user = request.query_params.get("user")
         course = request.query_params.get("course")
 
-        subscription = Subscription.objects.filter(user=user, course=course).first()
-        if subscription:
-            return Response({"id": subscription.id}, status=status.HTTP_200_OK)
-        return Response({}, status=status.HTTP_200_OK)
+        if not user:
+            return Response(
+                {"detail": "Se requiere el parámetro user."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if course:
+            subscription = Subscription.objects.filter(user=user, course=course).first()
+            return Response(
+                {"id": subscription.id} if subscription else {},
+                status=status.HTTP_200_OK,
+            )
+
+        subscriptions = Subscription.objects.filter(user_id=user).select_related(
+            "course__year"
+        )
+        serializer = self.serializer_class(subscriptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         user = get_object_or_404(Student, pk=request.data.get("user"))

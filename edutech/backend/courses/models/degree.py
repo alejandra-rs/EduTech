@@ -8,7 +8,9 @@ class Degree(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['university', 'name'], name='unique_university_degree')
+            models.UniqueConstraint(
+                fields=["university", "name"], name="unique_university_degree"
+            )
         ]
 
     def __str__(self):

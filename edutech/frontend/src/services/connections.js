@@ -101,6 +101,17 @@ export const postDocument = async (courseId, userId, title, description, docType
   }
 };
 
+export const getSubscriptions = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}`);
+    if (!response.ok) throw new Error("Error al obtener las suscripciones");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getSubscriptions:", error);
+    throw error;
+  }
+};
+
 export const checkSubscription = async (userId, courseId) => {
   try {
     const response = await fetch(`${BASE_URL}/courses/sub/?user=${userId}&course=${courseId}`);
