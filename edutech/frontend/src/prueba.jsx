@@ -23,10 +23,8 @@ import StreamHost from "./retransmission/jitsi_sin_docker/StreamHost";
 import StreamViewer from "./retransmission/jitsi_sin_docker/StreamViewer";
 import StreamHost2 from "./retransmission/jitsi/StreamHost";
 import StreamViewer2 from "./retransmission/jitsi/StreamViewer";
-import StreamHost3 from "./retransmission/peer_js/StreamHost";
-import StreamViewer3 from "./retransmission/peer_js/StreamViewer";
-import StreamHostAgora from "./retransmission/agora/StreamHost";
-import StreamViewerAgora from "./retransmission/agora/StreamViewer";
+import StreamHostAgora from "./retransmission/Agora_and_PeerJS/StreamHost";
+import StreamViewerAgora from "./retransmission/Agora_and_PeerJS/StreamViewer";
 
 import { syncUser } from "@services/connections";
 
@@ -42,7 +40,7 @@ export default function App() {
   const isDomainValid = accounts.length > 0;
   useEffect(() => {
     if (accounts.length > 0) {
-      syncUser(instance, accounts[0]);
+      // syncUser(instance, accounts[0]);
     }
   }, [accounts, instance]);
   return (
@@ -113,8 +111,6 @@ export default function App() {
                 <Route path="/stream/watch" element={<StreamViewer />} />
                 <Route path="/stream/host2" element={<StreamHost2 />} />
                 <Route path="/stream/watch2" element={<StreamViewer2 />} />
-                <Route path="/stream/host3" element={<StreamHost3 />} />
-                <Route path="/stream/watch3" element={<StreamViewer3 />} />
                 <Route path="/stream/host4" element={<StreamHostAgora />} />
                 <Route path="/stream/watch4" element={<StreamViewerAgora />} />
               </Routes>
