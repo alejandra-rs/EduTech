@@ -35,6 +35,11 @@ const AllYears = () => {
     navigate(`/${p.course}/${p.year}/${type}/${p.id}`);
   };
 
+  const processedDegrees = groupedDegrees.map(degree => ({
+  ...degree,
+  upperName: degree.name.match(/[A-Z]/g)?.join('') ?? ''
+}));
+
   return (
     <main className="h-screen overflow-y-auto custom-scrollbar">
       <div className="px-8 pt-12 w-full flex justify-between items-center gap-4">
@@ -68,8 +73,7 @@ const AllYears = () => {
                 {years.map((y) => (
                   <Link key={y.id} to={`/${y.id}/asignaturas`} className="block w-full transition hover:opacity-80" >
                     <YearWidget 
-                      courseName={`${y.year}º Curso (${name})`} 
-                      className="w-full h-full max-w-none" 
+                      courseName={`${y.year}º CURSO - ${name.match(/[A-Z]/g)?.join('') ?? ''}`}  
                     />
                   </Link> ))}
               </div>

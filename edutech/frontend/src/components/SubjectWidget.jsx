@@ -1,7 +1,7 @@
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 import BellButton from "./interactions/BellButton";
 
-export const SubjectWidget = ({ subjectName, subjectId, degreeName, onNavigate}) => {
+export const SubjectWidget = ({ subjectName, subjectId, onNavigate}) => {
   return (
     <div
       onClick={onNavigate}
@@ -15,9 +15,6 @@ export const SubjectWidget = ({ subjectName, subjectId, degreeName, onNavigate})
           <h3 className="text-lg font-bold text-black truncate">
             {subjectName}
           </h3>
-          {degreeName && (
-            <span className="text-xs font-medium text-gray-400 truncate">{degreeName}</span>
-          )}
         </div>
         <BellButton subjectId={subjectId} />
       </div>

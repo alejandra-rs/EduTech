@@ -18,6 +18,7 @@ const Subject = () => {
         setYearData(year);
         if (year.degree) {
           const info = await getDegreeInfo(year.degree);
+          console.log(info);
           setDegreeInfo(info);
         }
       })
@@ -27,16 +28,14 @@ const Subject = () => {
       });
   }, [id, navigate]);
 
-  const subtitle = degreeInfo
-    ? [degreeInfo.name, degreeInfo.universityName].filter(Boolean).join(" - ")
-    : null;
+
 
   return (
     <div className="h-[calc(100vh-2px)]">
       <div className="flex flex-col w-full overflow-y-auto">
         <TitlePage
-          PageName={`${yearData ? yearData.year : id}º Curso`}
-          subtitle={subtitle}
+          PageName={`${yearData ? yearData.year : id}º Año`}
+          subtitle={degreeInfo.universityName}
           backLabel="Cursos"
           onBack={() => navigate("/")}
         />
@@ -46,14 +45,12 @@ const Subject = () => {
             title="1º Cuatrimestre"
             navigate={navigate}
             yearId={id}
-            degreeName={degreeInfo?.name}
           />
           <Quarter
             quarter={2}
             title="2º Cuatrimestre"
             navigate={navigate}
             yearId={id}
-            degreeName={degreeInfo?.name}
           />
         </div>
       </div>

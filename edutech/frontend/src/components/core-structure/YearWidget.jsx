@@ -9,7 +9,7 @@ export const YearWidget = ({
     <div
       onClick={onNavigate}
       className={`
-        group relative flex items-center w-full max-w-[400px] p-5 
+        group relative flex items-center w-full max-w-none p-5 h-full
         bg-gray-200 border-2 border-black/5 rounded-[18px] 
         shadow-sm hover:shadow-md hover:bg-gray-300/50
         transition-all duration-200 cursor-pointer 
@@ -22,11 +22,9 @@ export const YearWidget = ({
           <AcademicCapIcon className="w-8 h-8 text-black" />
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <h3 className="text-xl font-black text-black italic leading-tight truncate uppercase tracking-tight">
+          <h3 className="text-xl font-black text-black italic leading-tight truncate tracking-tight">
             {courseName}
           </h3>
-        </div>
       </div>
 
       <div className="absolute right-0 top-0 bottom-0 w-1 bg-black/10 group-hover:bg-black/30 transition-all" />

@@ -2,7 +2,7 @@ import { SubjectWidget } from "./SubjectWidget";
 import { getCourses } from "@services/connections-courses";
 import { useState, useEffect } from "react";
 
-export function Quarter({ quarter, title, navigate, yearId, degreeName }) {
+export function Quarter({ quarter, title, navigate, yearId }) {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -24,7 +24,6 @@ export function Quarter({ quarter, title, navigate, yearId, degreeName }) {
               key={sub.id}
               subjectName={sub.name}
               subjectId={sub.id}
-              degreeName={degreeName}
               onNavigate={() => navigate(`/${yearId}/${sub.id}/post`)}
             />
           );
