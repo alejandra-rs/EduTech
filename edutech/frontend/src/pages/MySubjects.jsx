@@ -15,12 +15,14 @@ const MySubjects = () => {
 
   const [subscriptions, setSubscriptions] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!userData?.id) return;
     getSubscriptions(userData.id)
       .then(setSubscriptions)
-      .catch((err) => console.error("Error cargando suscripciones:", err));
+      .catch((err) => console.error("Error cargando suscripciones:", err))
+      .finally(() => setLoading(false));
   }, [userData?.id]);
 
   const subscribedCourseIds = new Set(subscriptions.map((sub) => sub.course?.id).filter(Boolean));
@@ -53,7 +55,9 @@ const MySubjects = () => {
             : <p className="text-gray-400 italic text-center py-12">Sin resultados en mis asignaturas.</p>
         ) : (
           <div className="max-w-2xl mx-auto space-y-4">
-            {subscriptions.length === 0 ? (
+            {loading ? (
+              <p className="text-gray-500 italic text-center py-12">Cargando...</p>
+            ) : subscriptions.length === 0 ? (
               <p className="text-gray-400 italic text-center py-12">No estás suscrito a ninguna asignatura.</p>
             ) : (
               subscriptions.map((sub) => (

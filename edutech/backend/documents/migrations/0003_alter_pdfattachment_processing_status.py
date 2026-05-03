@@ -4,15 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('documents', '0002_add_missing_models_and_fields'),
+        ("documents", "0002_add_missing_models_and_fields"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pdfattachment',
-            name='processing_status',
-            field=models.CharField(choices=[('pendiente', 'En cola para procesar...'), ('subiendo', 'Subiendo fichero...'), ('extrayendo_txt', 'Extrayendo texto del PDF...'), ('reconociendo_img', 'Gemma 3: Analizando imágenes...'), ('vectorizando', 'Vectorizando...'), ('etiquetando', 'Etiquetando...'), ('completado', '¡Listo para IA!'), ('error', 'Error en el procesamiento')], default='subiendo', max_length=20),
+            model_name="pdfattachment",
+            name="processing_status",
+            field=models.CharField(
+                choices=[
+                    ("pendiente", "En cola para procesar..."),
+                    ("subiendo", "Subiendo fichero..."),
+                    ("extrayendo_txt", "Extrayendo texto del PDF..."),
+                    ("reconociendo_img", "Gemma 3: Analizando imágenes..."),
+                    ("vectorizando", "Vectorizando..."),
+                    ("etiquetando", "Etiquetando..."),
+                    ("completado", "¡Listo para IA!"),
+                    ("error", "Error en el procesamiento"),
+                ],
+                default="subiendo",
+                max_length=20,
+            ),
         ),
     ]

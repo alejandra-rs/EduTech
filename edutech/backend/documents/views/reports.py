@@ -1,5 +1,3 @@
-from django.core.mail import EmailMessage
-from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
@@ -14,6 +12,7 @@ from ..serializers import (
     CommentReportSerializer,
 )
 from ..models.post import Post
+from ..notifications import notify_author_of_removal
 
 
 def _get_admin(request):
@@ -113,25 +112,9 @@ class ReportResolveView(views.APIView):
         author = post.student
         post_title = post.title
 
-        if author and author.email:
-            body = (
-                f"Hola {author.first_name},\n\n"
-                f"Tu publicación «{post_title}» ha sido revisada por nuestro equipo "
-                f"y ha sido retirada de la plataforma por el siguiente motivo:\n\n"
-                f"{message}\n\n"
-                f"Si tienes alguna duda, contacta con soporte.\n\n"
-                f"El equipo de EduTech"
-            )
-            email = EmailMessage(
-                subject="Tu publicación ha sido eliminada de EduTech",
-                body=body,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[author.email],
-            )
-            image = request.FILES.get("image")
-            if image:
-                email.attach(image.name, image.read(), image.content_type)
-            email.send(fail_silently=True)
+        notify_author_of_removal(
+            author, post_title, message, request.FILES.get("image")
+        )
 
         post.delete()
         return Response(

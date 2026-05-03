@@ -1,5 +1,5 @@
 import logging
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.conf import settings
 from courses.models import Subscription
 
@@ -53,3 +53,32 @@ def notify_subscribers_of_new_post(post):
             logger.exception(
                 "Failed to send notification to %s for post %s", student.email, post.pk
             )
+
+
+def notify_author_of_removal(author, post_title, message, image=None):
+    if not (author and author.email):
+        return
+    body = (
+        f"Hola {author.first_name},\n\n"
+        f"Tu publicación «{post_title}» ha sido revisada por nuestro equipo "
+        f"y ha sido retirada de la plataforma por el siguiente motivo:\n\n"
+        f"{message}\n\n"
+        f"Si tienes alguna duda, contacta con soporte.\n\n"
+        f"El equipo de EduTech"
+    )
+    try:
+        email = EmailMessage(
+            subject="Tu publicación ha sido eliminada de EduTech",
+            body=body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[author.email],
+        )
+        if image:
+            email.attach(image.name, image.read(), image.content_type)
+        email.send(fail_silently=True)
+    except Exception:
+        logger.exception(
+            "Failed to send removal notification to %s for post %s",
+            author.email,
+            post_title,
+        )

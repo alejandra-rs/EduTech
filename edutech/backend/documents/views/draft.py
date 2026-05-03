@@ -8,6 +8,7 @@ from ..serializers import (
     DraftCreateSerializer,
     DraftUpdateSerializer,
 )
+from ..notifications import notify_subscribers_of_new_post
 
 
 def _write_post_content(post, data):
@@ -66,11 +67,12 @@ class DraftDetailView(views.APIView):
         post.title = data["title"]
         post.description = data["description"]
 
-        if request.data.get("publish") is True:
+        publishing = request.data.get("publish") is True
+        if publishing:
             post.is_draft = False
-        
+
         post.save()
-            
+
         if hasattr(post, "fla"):
             post.fla.delete()
         if hasattr(post, "qui"):
@@ -78,6 +80,8 @@ class DraftDetailView(views.APIView):
 
         _write_post_content(post, data)
         post.refresh_from_db()
+        if publishing:
+            notify_subscribers_of_new_post(post)
         return Response(DraftPostSerializer(post).data)
 
     def delete(self, request, pk):

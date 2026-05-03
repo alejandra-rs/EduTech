@@ -33,7 +33,10 @@ DEBUG = env("DEBUG")
 
 # Accepts a comma-separated list via ALLOWED_HOSTS env var.
 # "web" is the internal Docker service name used by Tailscale Serve → Vite proxy.
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "web", "edutech-app.tail6b7334.ts.net"])
+ALLOWED_HOSTS = env.list(
+    "ALLOWED_HOSTS",
+    default=["localhost", "127.0.0.1", "web", "edutech-app.tail6b7334.ts.net"],
+)
 
 # CORS: static origins + any extras from env (e.g. your Tailscale HTTPS URL).
 CORS_ALLOWED_ORIGINS = [
@@ -183,9 +186,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
-
+STATIC_URL = "static/"
 
 
 # ==========================================
@@ -193,46 +194,46 @@ STATIC_URL = 'static/'
 # ==========================================
 AI_SETTINGS = {
     # 1. Servicio de Vectorización (Traductor de texto a números)
-    "EMBEDDING_URL": os.environ.get("EMBEDDING_URL", "http://host.docker.internal:11434"),
+    "EMBEDDING_URL": os.environ.get(
+        "EMBEDDING_URL", "http://host.docker.internal:11434"
+    ),
     "EMBEDDING_MODEL": os.environ.get("EMBEDDING_MODEL", "nomic-embed-text"),
-    
     # 2. Servicio de Visión (Lector de imágenes)
     "VISION_URL": os.environ.get("VISION_URL", "http://host.docker.internal:11434"),
     "VISION_MODEL": os.environ.get("VISION_MODEL", "gemma3:4b"),
-
-
-    "CODE_DETECT_URL": os.environ.get("CODE_DETECT_URL", "http://host.docker.internal:11434"),
+    "CODE_DETECT_URL": os.environ.get(
+        "CODE_DETECT_URL", "http://host.docker.internal:11434"
+    ),
     "CODE_DETECT_MODEL": os.environ.get("CODE_DETECT_MODEL", "llama3.2"),
-    
     # 3. Servicio de Chat (El cerebro que responde al alumno)
     "CHAT_URL": os.environ.get("CHAT_URL", "http://host.docker.internal:11434"),
-    #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
+    # "CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.2"),
     "CHAT_MODEL": os.environ.get("CHAT_MODEL", "gemma3:4b"),
-    #"CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.1:8b"),
-    
+    # "CHAT_MODEL": os.environ.get("CHAT_MODEL", "llama3.1:8b"),
     # Base de datos
     "VECTOR_DB_COLLECTION": "apuntes_universidad",
-
 }
 
 # ==========================================
 # CONFIGURACIÓN DE CELERY Y REDIS
 # ==========================================
 # Dónde está el mensajero (Redis) que guarda la cola de tareas
-CELERY_BROKER_URL = env('REDIS_URL', default='redis://redis:6379/0')
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://redis:6379/0")
 
 # Dónde guarda Celery el resultado de la tarea cuando termina
-CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://redis:6379/0')
+CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://redis:6379/0")
 
 # Forzamos a que Celery acepte formato JSON al comunicarse
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)], # Apunta al servicio 'redis' de tu docker-compose
+            "hosts": [
+                ("redis", 6379)
+            ],  # Apunta al servicio 'redis' de tu docker-compose
         },
     },
 }

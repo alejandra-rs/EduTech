@@ -67,7 +67,7 @@ export const checkSubscription = async (userId: number, courseId: number): Promi
 
 export const subscribeToCourse = async (subscriptionData: Subscription): Promise<boolean> => {
   try {
-    const response = await fetch(`/api/subscriptions/`, {
+    const response = await fetch(`/api/courses/sub/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(subscriptionData),

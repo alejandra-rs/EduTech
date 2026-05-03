@@ -52,7 +52,7 @@ export default function StudySessionDetail() {
         </div>
 
         <main className="flex-grow px-6 md:px-20 py-10">
-          <div className="max-w-4xl mx-auto space-y-12">            
+          <div className="mx-auto space-y-12">            
             <SessionHeader 
               session={session} 
               currentUserId={currentUser?.id}

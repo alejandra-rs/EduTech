@@ -36,25 +36,25 @@ const AllYears = () => {
   };
 
   return (
-    <main className="h-screen overflow-y-auto p-6 md:p-12 custom-scrollbar">
-      <div className="max-w-6xl mx-auto space-y-10">
-        <div className="mb-10 w-full flex justify-between items-center gap-4">
-          <div className="flex-1">
-            <SearchBar
-                placeholder="Buscar documento..."
-                color="bg-slate-800"
-                onSearch={setSearchResults}
-            />
-          </div>
-
-          <button
-              onClick={() => navigate('/sesiones')}
-              className="p-2 rounded-lg bg-slate-400 hover:bg-slate-700 transition-colors shrink-0"
-          >
-            <CalendarDaysIcon className="w-8 h-8 text-white" />
-          </button>
+    <main className="h-screen overflow-y-auto custom-scrollbar">
+      <div className="px-8 pt-12 w-full flex justify-between items-center gap-4">
+        <div className="flex-1">
+          <SearchBar
+              placeholder="Buscar documento..."
+              color="bg-slate-800"
+              onSearch={setSearchResults}
+          />
         </div>
 
+        <button
+            onClick={() => navigate('/sesiones')}
+            className="p-2 rounded-lg bg-slate-400 hover:bg-slate-700 transition-colors shrink-0"
+        >
+          <CalendarDaysIcon className="w-8 h-8 text-white" />
+        </button>
+      </div>
+
+      <div className="px-8 md:px-12 pb-12 pt-8 mx-auto space-y-10">
         {searchResults ? (
           <PostGrid posts={searchResults} onPostClick={handlePostClick} />
         ) : (

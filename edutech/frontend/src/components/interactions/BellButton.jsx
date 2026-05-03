@@ -41,7 +41,7 @@ const BellButton = ({ subjectId }) => {
         await unsubscribe(previousSubscriptionId);
       } else {
         setSubscriptionId("temp");
-        const newSubscription = await subscribeToCourse(userId, subjectId);
+        const newSubscription = await subscribeToCourse({ user: userId, course: subjectId });
         setSubscriptionId(newSubscription.id);
       }
     } catch (error) {

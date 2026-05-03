@@ -8,7 +8,7 @@ import { getReports, rejectPostReports } from '../services/connections-reports';
 export default function ReportsPage() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { userData, isAdmin, loading: userLoading } = useCurrentUser();
+  const { userData, isLoading: userLoading } = useCurrentUser();
   const navigate = useNavigate();
 
   const fetchReports = async () => {
@@ -23,8 +23,9 @@ export default function ReportsPage() {
   };
   
   useEffect(() => {
-    if (!userLoading && (!userData || !isAdmin)) navigate('/');
-  }, [userData, isAdmin, userLoading, navigate]);
+    console.log("User data:", userData, "Is admin:", userData?.is_admin, "User loading:", userLoading);
+    if (!userLoading && (!userData || !userData.is_admin)) navigate('/');
+  }, [userData, userLoading, navigate]);
 
   useEffect(() => {
     if (!userData?.id) return;
@@ -74,12 +75,12 @@ export default function ReportsPage() {
 
   return (
     <>
-      <div className="flex flex-col max-w-4xl mx-auto px-4 gap-7">
+      <div className="flex flex-col mx-auto px-4 gap-7">
         <TitlePage
           PageName="Panel de Reportes"
           onBack={() => navigate(-1)}
         />
-        <section className="space-y-4">
+        <section className="space-y-4 px-10">
           {reports.length > 0 ? (
             reports.map((report) => (
               <ReportWidget

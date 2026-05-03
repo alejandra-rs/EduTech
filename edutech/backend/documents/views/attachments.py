@@ -8,6 +8,7 @@ from ..models import Post, PDFAttachment, YoutubeVideo
 from ..serializers import PDFUploadSerializer, VideoUploadSerializer, PostSerializer
 from ai_agent.tasks import procesar_pdf_y_vectorizar
 
+
 class PDFUploadView(generics.GenericAPIView):
     serializer_class = PDFUploadSerializer
 
@@ -32,35 +33,35 @@ class UploadPDFDraftView(generics.GenericAPIView):
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
-        
+
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
 
         post = Post.objects.create(
-            title=data["title"], 
+            title=data["title"],
             description=data["description"],
             course=data["course"],
             student=data.get("student"),
             post_type="PDF",
-            is_draft=True
+            is_draft=True,
         )
 
         pdf_attachment = PDFAttachment.objects.create(
-            post=post,
-            file=data["file"],
-            processing_status='pending' 
+            post=post, file=data["file"], processing_status="pending"
         )
 
         procesar_pdf_y_vectorizar.delay(pdf_attachment.id)
 
-        return Response({
-            "post_id": post.id,
-            "attachment_id": pdf_attachment.id,
-            "message": "Archivo subiendo y vectorización iniciada."
-        }, status=status.HTTP_201_CREATED)
-
+        return Response(
+            {
+                "post_id": post.id,
+                "attachment_id": pdf_attachment.id,
+                "message": "Archivo subiendo y vectorización iniciada.",
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class VideoUploadView(generics.GenericAPIView):

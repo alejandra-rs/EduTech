@@ -17,13 +17,13 @@ export default function ReportFormPage() {
   const [error, setError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { userData, isAdmin } = useCurrentUser();
+  const { userData } = useCurrentUser();
   const contentTitle = location.state?.title || 'Contenido seleccionado';
   const contentSubject = location.state?.subject || '';
 
   useEffect(() => {
-    if (userData && !isAdmin) navigate('/');
-  }, [userData, isAdmin, navigate]);
+    if (userData && !userData.is_admin) navigate('/');
+  }, [userData, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ export default function ReportFormPage() {
   };
 
   return (
-    <main className="min-h-screen p-4 items-center justify-center gap-6">
+    <main className="min-h-screen items-center justify-center gap-6">
       <TitlePage PageName="Confirmar eliminación" onBack={() => navigate(-1)} />
       <form onSubmit={handleSubmit} className="p-6 gap-5 flex flex-col">
 

@@ -82,9 +82,13 @@ const StudySessions = () => {
 
   const handleDateChange = (day) => setSelectedDate((d) => (d === day ? null : day));
 
-  const daysWithSessions = sessions.map((s) => new Date(s.scheduled_at).getDate());
+  const toLocalDateStr = (dateStr) => {
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const daysWithSessions = sessions.map((s) => toLocalDateStr(s.scheduled_at));
   const displayedSessions = selectedDate
-    ? sessions.filter((s) => new Date(s.scheduled_at).getDate() === selectedDate)
+    ? sessions.filter((s) => toLocalDateStr(s.scheduled_at) === selectedDate)
     : sessions;
 
   return (

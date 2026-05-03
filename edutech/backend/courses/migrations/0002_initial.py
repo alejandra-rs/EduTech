@@ -5,78 +5,111 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('courses', '0001_initial'),
-        ('users', '0001_initial'),
+        ("courses", "0001_initial"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='studysession',
-            name='creator',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='study_sessions', to='users.student'),
+            model_name="studysession",
+            name="creator",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="study_sessions",
+                to="users.student",
+            ),
         ),
         migrations.AddField(
-            model_name='studysession',
-            name='participants',
-            field=models.ManyToManyField(blank=True, related_name='participating_sessions', to='users.student'),
+            model_name="studysession",
+            name="participants",
+            field=models.ManyToManyField(
+                blank=True, related_name="participating_sessions", to="users.student"
+            ),
         ),
         migrations.AddField(
-            model_name='studysessioncomment',
-            name='session',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='session_comments', to='courses.studysession'),
+            model_name="studysessioncomment",
+            name="session",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="session_comments",
+                to="courses.studysession",
+            ),
         ),
         migrations.AddField(
-            model_name='studysessioncomment',
-            name='student',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='study_session_comments', to='users.student'),
+            model_name="studysessioncomment",
+            name="student",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="study_session_comments",
+                to="users.student",
+            ),
         ),
         migrations.AddField(
-            model_name='subscription',
-            name='course',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.course'),
+            model_name="subscription",
+            name="course",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.course"
+            ),
         ),
         migrations.AddField(
-            model_name='subscription',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.student'),
+            model_name="subscription",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="users.student"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='university',
-            constraint=models.UniqueConstraint(fields=('name', 'location'), name='unique_university'),
+            model_name="university",
+            constraint=models.UniqueConstraint(
+                fields=("name", "location"), name="unique_university"
+            ),
         ),
         migrations.AddField(
-            model_name='degree',
-            name='university',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.university'),
+            model_name="degree",
+            name="university",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.university"
+            ),
         ),
         migrations.AddField(
-            model_name='year',
-            name='degree',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.degree'),
+            model_name="year",
+            name="degree",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.degree"
+            ),
         ),
         migrations.AddField(
-            model_name='course',
-            name='year',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.year'),
+            model_name="course",
+            name="year",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="courses.year"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='subscription',
-            constraint=models.UniqueConstraint(fields=('user', 'course'), name='unique_subscription'),
+            model_name="subscription",
+            constraint=models.UniqueConstraint(
+                fields=("user", "course"), name="unique_subscription"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='degree',
-            constraint=models.UniqueConstraint(fields=('university', 'name'), name='unique_university_degree'),
+            model_name="degree",
+            constraint=models.UniqueConstraint(
+                fields=("university", "name"), name="unique_university_degree"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='year',
-            constraint=models.UniqueConstraint(fields=('year', 'degree'), name='unique_year_degree'),
+            model_name="year",
+            constraint=models.UniqueConstraint(
+                fields=("year", "degree"), name="unique_year_degree"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='course',
-            constraint=models.UniqueConstraint(fields=('name', 'year', 'semester'), name='unique_course'),
+            model_name="course",
+            constraint=models.UniqueConstraint(
+                fields=("name", "year", "semester"), name="unique_course"
+            ),
         ),
     ]

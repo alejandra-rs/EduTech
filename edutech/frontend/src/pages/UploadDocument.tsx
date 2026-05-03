@@ -22,11 +22,9 @@ export default function UploadDocument() {
   const [description, setDescription] = useState("");
   const [published, setPublished] = useState(false);
 
-  // --- NUEVOS ESTADOS PARA EL WEBSOCKET ---
   const [documentStatus, setDocumentStatus] = useState<string>("");
   const socketRef = useRef<WebSocket | null>(null);
 
-  // Limpieza del socket cuando el usuario sale de la página
   useEffect(() => {
     return () => {
       if (socketRef.current) socketRef.current.close();
@@ -144,7 +142,6 @@ export default function UploadDocument() {
           />
           
           <div className="mt-4 w-full flex flex-col items-center">
-            {/* ESTADO EN VERDE JUSTO ENCIMA DEL BOTÓN */}
             {documentStatus && (
               <p className="text-green-600 font-semibold mb-2 animate-pulse text-sm uppercase tracking-wider">
                 {documentStatus}

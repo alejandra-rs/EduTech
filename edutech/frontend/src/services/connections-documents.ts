@@ -51,7 +51,7 @@ export interface QuizCheckResponse {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const TYPE_MAP = {
-  PDF: 'pdf',
+  PDF: 'documento',
   VID: 'video',
   QUI: 'cuestionario',
   FLA: 'flashcard',
@@ -401,7 +401,7 @@ export const askChatbot = async (question: string, course_id = "", mode = "estri
 };
 
 
-export const connectToDocumentStatus = (attachmentId, onMessage) => {
+export const connectToDocumentStatus = (attachmentId: any, onMessage: (data: any) => void) => {
   if (!attachmentId) return null;
 
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';

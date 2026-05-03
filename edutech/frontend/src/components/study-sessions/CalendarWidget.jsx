@@ -14,15 +14,26 @@ const CalendarWidget = ({ daysWithSessions = [], selectedDate, onDateChange }) =
     const shiftFirstDay = (firstDayIndex + 6) % 7;
     const totalDays = new Date(year, month + 1, 0).getDate();
     
-    const daysArray = [
-      ...Array(shiftFirstDay).fill(null), 
-      ...Array.from({ length: totalDays }, (_, i) => i + 1)
-    ];
+    const totalCellsNeeded = shiftFirstDay + totalDays;
+    const totalGridSlots = Math.ceil(totalCellsNeeded / 7) * 7;
     
+    const daysArray = Array.from({ length: totalGridSlots }, (_, index) => {
+      const dayNumber = index - shiftFirstDay + 1;
+      
+      if (dayNumber > 0 && dayNumber <= totalDays) {
+        const formattedMonth = String(month + 1).padStart(2, '0');
+        const formattedDay = String(dayNumber).padStart(2, '0');
+        const fullDate = `${year}-${formattedMonth}-${formattedDay}`;
+        return { dayNumber, fullDate };
+      }
+      return null;
+    });
     return { days: daysArray, monthName, year };
   }, [viewDate]);
 
-  const changeMonth = (offset) => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1));;
+  const changeMonth = (offset) => {
+    setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1));
+  };
 
   return (
     <div className="bg-white border border-gray-100 rounded-3xl shadow-sm p-6 w-full max-w-sm mx-auto">
@@ -43,19 +54,21 @@ const CalendarWidget = ({ daysWithSessions = [], selectedDate, onDateChange }) =
       </div>
 
       <div className="grid grid-cols-7 gap-y-1 text-center text-sm">
-        {days.map((day) => {
-          const hasSession = day && daysWithSessions.includes(day);
+        {days.map((day, idx) => {
+          const hasSession = day && daysWithSessions.includes(day.fullDate);
+          const isSelected = day && selectedDate === day.fullDate;
+
           return (
-            <div key={day} className="flex justify-center items-center h-10">
+            <div key={day?.fullDate || idx} className="flex justify-center items-center h-10">
               {day && (
                 <button
-                  onClick={() => onDateChange(day)}
+                  onClick={() => onDateChange(day.fullDate)} 
                   className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all font-semibold hover:bg-gray-100
                     ${hasSession ? 'text-blue-500 border border-blue-500' : 'text-gray-600'}
-                    ${selectedDate === day ? 'border-2 border-blue-500 bg-blue-100 transition-colors' : ''}
+                    ${isSelected ? 'border-2 border-blue-500 bg-blue-100 transition-colors' : ''}
                   `}
                 >
-                  {day}
+                  {day.dayNumber}
                 </button>
               )}
             </div>

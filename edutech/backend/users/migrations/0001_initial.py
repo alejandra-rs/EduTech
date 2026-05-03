@@ -4,24 +4,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('courses', '0001_initial'),
+        ("courses", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Student',
+            name="Student",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=50)),
-                ('last_name', models.CharField(max_length=50)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('picture', models.ImageField(blank=True, max_length=255, null=True, upload_to='images/')),
-                ('is_admin', models.BooleanField(default=False)),
-                ('degree', models.ManyToManyField(blank=True, to='courses.degree')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=50)),
+                ("last_name", models.CharField(max_length=50)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                (
+                    "picture",
+                    models.ImageField(
+                        blank=True, max_length=255, null=True, upload_to="images/"
+                    ),
+                ),
+                ("is_admin", models.BooleanField(default=False)),
+                ("degree", models.ManyToManyField(blank=True, to="courses.degree")),
             ],
         ),
     ]

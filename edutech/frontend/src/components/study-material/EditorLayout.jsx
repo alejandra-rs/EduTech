@@ -136,7 +136,7 @@ export function EditorLayout({
         }}
       />
 
-      <main className={`flex-1 transition-all max-w-4xl mx-auto px-8 py-6 pb-32 duration-300 ${showSidebar ? 'pr-80' : ''}`}>
+      <main className={`flex-1 transition-all mx-auto px-8 py-6 pb-32 duration-300 ${showSidebar ? 'pr-80' : ''}`}>
         <EditorHeader
           title={header.title}
           description={header.description}

@@ -24,16 +24,11 @@ class StudentView(views.APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        student = Student.objects.create(
-            first_name=request.data["first_name"],
-            last_name=request.data["last_name"],
-            email=request.data["email"],
-            picture=request.FILES.get("picture")
-        )
-        return Response(
-            StudentSerializer(student, context={"request": request}).data,
-            status=status.HTTP_201_CREATED,
-        )
+        serializer = StudentSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         student = get_object_or_404(Student, pk=pk)
