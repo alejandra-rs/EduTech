@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getDegreeInfo } from "@services/degree";
-import { getYears } from "@services/connections";
+import { getDegreeInfo } from "@services/connections-degrees";
+import { getYears } from "@services/connections-courses";
 import { useCurrentUser } from "@services/useCurrentUser";
 import SearchBar from "../components/SearchBar";
 import PostGrid from "../components/PostGrid";

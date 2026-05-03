@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
-import { askChatbot } from "@services/connections.js";
+import { askChatbot } from "@services/connections-documents.ts";
 
 import { ChatbotHeader } from './ChatbotHeader.jsx'; 
 import { ChatbotMessageBox } from './ChatbotMessageBox.jsx';

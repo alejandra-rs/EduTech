@@ -5,7 +5,7 @@ import {
   checkSubscription,
   unsubscribe,
   subscribeToCourse,
-} from "@services/connections.js";
+} from "@services/connections-courses";
 
 const BellButton = ({ subjectId }) => {
   const [subscriptionId, setSubscriptionId] = useState(null);

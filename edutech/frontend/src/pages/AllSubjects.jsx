@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Quarter } from "../components/Quarter.jsx";
 import { TitlePage } from "../components/TitlePage.jsx";
-import { getYearById, getDegreeInfo } from "@services/degree";
+import { getYearById, getDegreeInfo } from "@services/connections-degrees";
 
 
 const Subject = () => {

@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getDocument, getCourse } from '@services/connections';
+import { getDocument } from '@services/connections-documents';
+import { getCourse } from '@services/connections-courses';
 import { TitlePage } from '../components/TitlePage';
 import { DocumentInfo } from '../components/DocumentInfo';
 import { CommentsSection } from '../components/interactions/CommentsSection';

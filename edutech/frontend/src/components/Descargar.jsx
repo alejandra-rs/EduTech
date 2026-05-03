@@ -1,4 +1,4 @@
-import { getLinkDescarga } from '@services/connections';
+import { getLinkDescarga } from '@services/connections-documents';
 
 export default function Descargar({ postId }) {
   const handleDownload = () => {

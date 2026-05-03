@@ -5,6 +5,7 @@ from .post import (
 )
 from .attachments import (
     PDFUploadView as PDFUploadView,
+    UploadPDFDraftView as UploadPDFDraftView,
     VideoUploadView as VideoUploadView,
     PDFDownloadView as PDFDownloadView,
 )

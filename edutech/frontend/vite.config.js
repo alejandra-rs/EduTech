@@ -18,11 +18,17 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
+    allowedHosts: ['edutech-app.tail6b7334.ts.net'],
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8000',
+        target: process.env.VITE_API_TARGET || 'http://host.docker.internal:8000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/ws': {
+        target: 'http://host.docker.internal:8000',
+        ws: true,
       },
     },
   },

@@ -1,5 +1,33 @@
 import { useState, useEffect } from "react";
-import { getLikes, addLike, removeLike, getDislikes, addDislike, removeDislike } from "./connections";
+
+export const getLikes = async (userId, postId) => {
+  const res = await fetch(`/api/likes/?user=${userId}&post=${postId}`);
+  if (!res.ok) throw new Error("Error al obtener likes");
+  return res.json();
+};
+export const addLike = async (userId, postId) => {
+  const res = await fetch(`/api/likes/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: userId, post: postId }) });
+  if (!res.ok) throw new Error("Error al añadir like");
+  return res.json();
+};
+export const removeLike = async (likeId) => {
+  const res = await fetch(`/api/likes/${likeId}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error("Error al eliminar like");
+};
+export const getDislikes = async (userId, postId) => {
+  const res = await fetch(`/api/dislikes/?user=${userId}&post=${postId}`);
+  if (!res.ok) throw new Error("Error al obtener dislikes");
+  return res.json();
+};
+export const addDislike = async (userId, postId) => {
+  const res = await fetch(`/api/dislikes/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: userId, post: postId }) });
+  if (!res.ok) throw new Error("Error al añadir dislike");
+  return res.json();
+};
+export const removeDislike = async (dislikeId) => {
+  const res = await fetch(`/api/dislikes/${dislikeId}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error("Error al eliminar dislike");
+};
 
 export function useLikeDislike(userId, postId) {
   const [likeId, setLikeId] = useState(-1);

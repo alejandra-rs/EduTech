@@ -4,7 +4,11 @@ import { useCurrentUser } from "../services/useCurrentUser";
 import UploadDropzone from "../components/forms-components/UploadDropzone";
 import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
-import { uploadPDFDraft, updateDraft } from "../services/connections-documents";
+import { 
+  uploadPDFDraft, 
+  updateDraft, 
+  connectToDocumentStatus
+} from "../services/connections-documents";
 
 export default function UploadDocument() {
   const navigate = useNavigate();
@@ -39,35 +43,29 @@ export default function UploadDocument() {
     setDescription(defaultDesc);
 
     try {
-      const data = await uploadPDFDraft(
-        subjectId,
-        userData.id,
-        defaultTitle,
-        defaultDesc,
-        file
-      );
-      
-      setDraftId(data.post_id);
-      setIsConfirmed(true);
+    const data = await uploadPDFDraft(
+      subjectId,
+      userData.id,
+      defaultTitle,
+      defaultDesc,
+      file
+    );
+    
+    setDraftId(data.post_id);
+    setIsConfirmed(true);
 
-
-      //TODO meter en connections
-      if (data.attachment_id) {
-        const wsUrl = `ws://127.0.0.1:8000/ws/documents/${data.attachment_id}/`;
-        const socket = new WebSocket(wsUrl);
-
-        socket.onmessage = (event) => {
-          const wsData = JSON.parse(event.data);
-          setDocumentStatus(wsData.message); 
-        };
-
-        socket.onclose = () => console.log("WebSocket desconectado");
-        socketRef.current = socket;
-      }
-
-    } catch (error) {
-      console.error("Fallo al subir el borrador:", error);
+    if (data.attachment_id) {
+      socketRef.current = connectToDocumentStatus(data.attachment_id, (wsData) => {
+        setDocumentStatus(wsData.message); 
+        if (wsData.status === "completed") {
+          socketRef.current?.close();
+        }
+      });
     }
+
+  } catch (error) {
+    console.error("Fallo al subir el borrador:", error);
+  }
   };
 
   const handleUpload = async (e: React.FormEvent) => {

@@ -1,6 +1,7 @@
 export interface Year {
   id: number;
   year: number;
+  degree: number;
 }
 
 export interface Course {

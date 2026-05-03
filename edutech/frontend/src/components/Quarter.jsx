@@ -1,5 +1,5 @@
 import { SubjectWidget } from "./SubjectWidget";
-import { getCourses } from "@services/connections.js";
+import { getCourses } from "@services/connections-courses";
 import { useState, useEffect } from "react";
 
 export function Quarter({ quarter, title, navigate, yearId, degreeName }) {

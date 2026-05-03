@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDrafts, deleteDraft } from '@services/connections';
+import { getDrafts, deleteDraft } from '@services/connections-documents';
 import { useCurrentUser } from '@services/useCurrentUser';
 import { TitlePage } from '../components/TitlePage';
 import DraftCard from '../components/DraftCard';

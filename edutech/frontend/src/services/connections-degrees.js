@@ -1,8 +1,5 @@
-const BASE_URL = "http://127.0.0.1:8000";
-
-
 export const getUniversities = async () => {
-    let fetchUrl = `${BASE_URL}/courses/universities/`;
+    let fetchUrl = `/api/courses/universities/`;
     try {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error("Error al obtener las universidades");
@@ -14,7 +11,7 @@ export const getUniversities = async () => {
 };
 
 export const getYearById = async (yearId) => {
-    let fetchUrl = `${BASE_URL}/courses/years/${yearId}`;
+    let fetchUrl = `/api/courses/years/${yearId}`;
     try {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error("Error al obtener el año");
@@ -26,7 +23,7 @@ export const getYearById = async (yearId) => {
 };
 
 export const getDegrees = async (universityId) => {
-    let fetchUrl = `${BASE_URL}/courses/degree?university=${universityId}`;
+    let fetchUrl = `/api/courses/degree/?university=${universityId}`;
     try {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error("Error al obtener las carreras");
@@ -38,7 +35,7 @@ export const getDegrees = async (universityId) => {
 };
 
 export const getDegreesByUserId = async (userId) => {
-    let fetchUrl = `${BASE_URL}/students/${userId}/`;
+    let fetchUrl = `/api/students/${userId}/`;
     try {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error("Error al obtener la carrera del usuario");
@@ -50,7 +47,7 @@ export const getDegreesByUserId = async (userId) => {
 };
 
 export const saveUserDegree = async (userId, degreeId) => {
-    let fetchUrl = `${BASE_URL}/students/${userId}/`;
+    let fetchUrl = `/api/students/${userId}/`;
     try {
         const response = await fetch(fetchUrl, {
             method: "PATCH",
@@ -68,7 +65,7 @@ export const saveUserDegree = async (userId, degreeId) => {
 }
 
 export const getDegreeName = async (degreeId) => {
-    let fetchUrl = `${BASE_URL}/courses/degree?id=${degreeId}`;
+    let fetchUrl = `/api/courses/degree/?id=${degreeId}`;
     try {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error("Error al obtener el nombre de la carrera");
@@ -81,7 +78,7 @@ export const getDegreeName = async (degreeId) => {
 };
 
 export const getDegreeInfo = async (degreeId) => {
-    let fetchUrl = `${BASE_URL}/courses/degree?id=${degreeId}`;
+    let fetchUrl = `/api/courses/degree/?id=${degreeId}`;
     try {
         const response = await fetch(fetchUrl);
         if (!response.ok) throw new Error("Error al obtener la carrera");

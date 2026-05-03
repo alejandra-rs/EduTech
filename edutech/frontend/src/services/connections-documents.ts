@@ -246,85 +246,6 @@ export const postComment = async (userId: number, postId: number, message: strin
   }
 };
 
-// ── Likes ─────────────────────────────────────────────────────────────────────
-
-export const getLikes = async (userId: number, postId: number): Promise<LikeStatus> => {
-  try {
-    const response = await fetch(`/api/documents/likes/?user=${userId}&post=${postId}`);
-    if (!response.ok) throw new Error("Error al obtener el estado del like");
-    return await response.json() as LikeStatus;
-  } catch (error) {
-    console.error("Error en getLikes:", error);
-    throw error;
-  }
-};
-
-export const addLike = async (userId: number, postId: number): Promise<LikeStatus> => {
-  try {
-    const dislikes = await getDislikes(userId, postId);
-    if (dislikes.id !== -1) await removeDislike(dislikes.id);
-    const response = await fetch(`/api/documents/likes/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: userId, post: postId }),
-    });
-    if (!response.ok) throw new Error("Error al dar like");
-    return await response.json() as LikeStatus;
-  } catch (error) {
-    console.error("Error en addLike:", error);
-    throw error;
-  }
-};
-
-export const removeLike = async (likeId: number): Promise<void> => {
-  try {
-    const response = await fetch(`/api/documents/likes/${likeId}`, { method: "DELETE" });
-    if (!response.ok) throw new Error("Error al quitar el like");
-  } catch (error) {
-    console.error("Error en removeLike:", error);
-    throw error;
-  }
-};
-
-// ── Dislikes ──────────────────────────────────────────────────────────────────
-
-export const getDislikes = async (userId: number, postId: number): Promise<LikeStatus> => {
-  try {
-    const response = await fetch(`/api/documents/dislikes/?user=${userId}&post=${postId}`);
-    if (!response.ok) throw new Error("Error al obtener el estado del dislike");
-    return await response.json() as LikeStatus;
-  } catch (error) {
-    console.error("Error en getDislikes:", error);
-    throw error;
-  }
-};
-
-export const addDislike = async (userId: number, postId: number): Promise<LikeStatus> => {
-  try {
-    const likes = await getLikes(userId, postId);
-    if (likes.id !== -1) await removeLike(likes.id);
-    const response = await fetch(`/api/documents/dislikes/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: userId, post: postId }),
-    });
-    if (!response.ok) throw new Error("Error al dar dislike");
-    return await response.json() as LikeStatus;
-  } catch (error) {
-    console.error("Error en addDislike:", error);
-    throw error;
-  }
-};
-
-export const removeDislike = async (dislikeId: number): Promise<void> => {
-  try {
-    const response = await fetch(`/api/documents/dislikes/${dislikeId}`, { method: "DELETE" });
-    if (!response.ok) throw new Error("Error al quitar el dislike");
-  } catch (error) {
-    console.error("Error en removeDislike:", error);
-    throw error;
-  }
-};
 
 // ── Drafts ────────────────────────────────────────────────────────────────────
 
@@ -417,7 +338,6 @@ export const uploadPDFDraft = async (
     formData.append("student", userId.toString());
     formData.append("file", file);
 
-    // Asegúrate de que esta URL coincide con la que pongas en tu urls.py de Django
     const response = await fetch(`/api/documents/upload-draft/`, {
       method: "POST",
       body: formData,
@@ -427,6 +347,16 @@ export const uploadPDFDraft = async (
     return await response.json();
   } catch (error) {
     console.error("Error en uploadPDFDraft:", error);
+    throw error;
+  }
+};
+
+export const deleteDraft = async (draftId: string) => {
+  try {
+    const response = await fetch(`/api/documents/drafts/${draftId}/`, { method: "DELETE" });
+    if (!response.ok) throw new Error("Error al eliminar el borrador");
+  } catch (error) {
+    console.error("Error en deleteDraft:", error);
     throw error;
   }
 };
@@ -442,4 +372,46 @@ export const deleteDocument = async (postId: number, studentId: number): Promise
     console.error("Error en deleteDocument:", error);
     throw error;
   }
+};
+
+export const askChatbot = async (question: string, course_id = "", mode = "estricto", deep_thinking = false) => {
+    try {
+        const response = await fetch(`/api/ai/chat/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                student_question: question,
+                course: course_id,
+                mode: mode,
+                deep_thinking: deep_thinking
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Error en la comunicación con el asistente");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Chatbot Connection Error:", error);
+        throw error;
+    }
+};
+
+
+export const connectToDocumentStatus = (attachmentId, onMessage) => {
+  if (!attachmentId) return null;
+
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const host = window.location.host;
+  
+  const socket = new WebSocket(`${protocol}//${host}/ws/documents/${attachmentId}/`);
+
+  socket.onmessage = (event) => onMessage(JSON.parse(event.data));
+  socket.onopen = () => console.log("✅ RAG WebSocket Activo");
+  socket.onclose = () => console.log("🔌 RAG WebSocket Cerrado");
+
+  return socket;
 };

@@ -9,7 +9,7 @@ import StudyProgressBar from '../components/study-material/flashcards/StudyProgr
 import CardCarousel from '../components/study-material/flashcards/CardCarousel';
 import CompletionBanner from '../components/study-material/CompletionBanner';
 import ReactionsContainer from '../components/ReactionsContainer';
-import { getDocument } from '@services/connections';
+import { getDocument } from '@services/connections-documents';
 
 const TakeFlashCard = () => {
   const { id, subjectId, postId } = useParams();

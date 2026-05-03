@@ -22,8 +22,8 @@ export const getUserByEmail = async (email: string): Promise<Student | null> => 
     const response = await fetch(`/api/students/?email=${email}`);
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
     const data = await response.json();
-    // Backend returns a list; extract the first match
-    return (Array.isArray(data) ? data[0] : data) ?? null;
+    if (data.length > 1) console.error(`Se encontraron múltiples usuarios con el email ${email}`);
+    return data[0] || null;
   } catch (error) {
     console.error("Error al obtener el usuario por email:", error);
     return null;
@@ -85,11 +85,21 @@ export const postUser = async (instance: MsalInstance, account: MsalAccount): Pr
 export const syncUser = async (instance: MsalInstance, account: MsalAccount): Promise<void> => {
   try {
     const existing = await getUserByEmail(account.username);
-    if (!existing) {
-      await postUser(instance, account);
-    }
+    if (!existing) await postUser(instance, account);
   } catch (error) {
     console.error("Error en syncUser:", error);
     throw error;
+  }
+};
+
+export const checkIsAdmin = async (userId: string) => {
+  try {
+    const response = await fetch(`/api/students/${userId}/is-admin/`);
+    if (!response.ok) return false;
+    const data = await response.json();
+    return data.is_admin === true;
+  } catch (error) {
+    console.error("Error en checkIsAdmin:", error);
+    return false;
   }
 };

@@ -4,7 +4,7 @@ import {
   getUniversities,
   saveUserDegree,
   getDegreesByUserId,
-} from "@services/degree";
+} from "@services/connections-degrees";
 
 export const UseDegreeSelection = (userId, usuarioAceptado) => {
   const [step, setStep] = useState(1);
@@ -15,6 +15,7 @@ export const UseDegreeSelection = (userId, usuarioAceptado) => {
 
   useEffect(() => {
     const fetchInitialData = async () => {
+      if (!userId) return;
       try {
         const data = await getUniversities();
         setUniversities(data);

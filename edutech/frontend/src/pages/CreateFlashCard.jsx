@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import FlashCardItem from '../components/study-material/flashcards/FlashCardItem';
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import { EditorLayout } from '../components/study-material/EditorLayout';
-import { postFlashCardDeck, saveDraft, updateDraft, deleteDraft, getDraft } from '@services/connections';
+import { postFlashCardDeck, saveDraft, updateDraft, deleteDraft, getDraft } from '@services/connections-documents';
 import { useCurrentUser } from '@services/useCurrentUser';
 
 const CreateFlashCard = () => {

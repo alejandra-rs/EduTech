@@ -28,19 +28,24 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = env("SECRET_KEY")
 
-# CORS Settings
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env("DEBUG")
+
+# Accepts a comma-separated list via ALLOWED_HOSTS env var.
+# "web" is the internal Docker service name used by Tailscale Serve → Vite proxy.
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "web", "edutech-app.tail6b7334.ts.net"])
+
+# CORS: static origins + any extras from env (e.g. your Tailscale HTTPS URL).
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
-]
+    "http://localhost:8000",
+    "https://edutech-app.tail6b7334.ts.net",
+] + env.list("CORS_EXTRA_ORIGINS", default=[])
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # Permit all origins in dev so Tailscale URL works.
 X_FRAME_OPTIONS = "ALLOWALL"  # dev only
-
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -102,7 +107,7 @@ REST_FRAMEWORK = {
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-]
+] + env.list("CSRF_EXTRA_ORIGINS", default=[])
 
 
 # Database
@@ -214,10 +219,10 @@ AI_SETTINGS = {
 # CONFIGURACIÓN DE CELERY Y REDIS
 # ==========================================
 # Dónde está el mensajero (Redis) que guarda la cola de tareas
-CELERY_BROKER_URL = env('REDIS_URL', default='redis://localhost:6379/0')
+CELERY_BROKER_URL = env('REDIS_URL', default='redis://redis:6379/0')
 
 # Dónde guarda Celery el resultado de la tarea cuando termina
-CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = env('REDIS_URL', default='redis://redis:6379/0')
 
 # Forzamos a que Celery acepte formato JSON al comunicarse
 CELERY_ACCEPT_CONTENT = ['json']

@@ -3,7 +3,7 @@ import Input from "../components/Input";
 import { TitlePage } from '../components/TitlePage';
 import { useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { postDocument } from "@services/connections";
+import { postDocument } from "@services/connections-documents";
 import { useCurrentUser } from "@services/useCurrentUser";
 import SuccessToast from "../components/SuccessToast";
 

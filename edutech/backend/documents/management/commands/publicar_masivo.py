@@ -13,7 +13,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         tipo_post = options['tipo_post'].upper()
-        force = options['force']
         
         # Buscamos los posts que coinciden con el tipo y son borradores
         posts_borradores = Post.objects.filter(post_type=tipo_post, is_draft=True)
@@ -25,11 +24,10 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.WARNING(f'ATENCIÓN: Se han encontrado {total} posts en borrador del tipo "{tipo_post}".'))
 
-        if not force:
-            respuesta = input(f'¿Estás seguro de que quieres publicar {total} borradores? (y/N): ')
-            if respuesta.lower() != 'y':
-                self.stdout.write(self.style.ERROR('Operación cancelada por el usuario.'))
-                return
+        respuesta = input(f'¿Estás seguro de que quieres publicar {total} borradores? (y/N): ')
+        if respuesta.lower() != 'y':
+            self.stdout.write(self.style.ERROR('Operación cancelada por el usuario.'))
+            return
 
         # Realizamos el Update masivo de forma eficiente
         posts_borradores.update(is_draft=False)

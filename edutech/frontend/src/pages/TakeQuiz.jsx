@@ -7,7 +7,7 @@ import StudySidebar from '../components/study-material/StudySidebar';
 import StudyHeader from '../components/study-material/StudyHeader';
 import CompletionBanner from '../components/study-material/CompletionBanner';
 import ReactionsContainer from '../components/ReactionsContainer';
-import { getDocument } from '@services/connections';
+import { getDocument } from '@services/connections-documents';
 
 const TakeQuiz = () => {
   const { id, subjectId, postId } = useParams();

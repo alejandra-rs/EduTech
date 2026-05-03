@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import QuizQuestion from '../components/study-material/quiz/QuizQuestion';
 import { DocumentCheckIcon } from "@heroicons/react/24/solid";
 import { EditorLayout } from '../components/study-material/EditorLayout';
-import { postQuiz, saveDraft, updateDraft, deleteDraft, getDraft } from '@services/connections';
+import { postQuiz, saveDraft, updateDraft, deleteDraft, getDraft } from '@services/connections-documents';
 import { useCurrentUser } from '@services/useCurrentUser';
 
 const createAnswer = () => ({ id: crypto.randomUUID(), text: '', isCorrect: false });

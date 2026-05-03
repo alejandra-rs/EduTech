@@ -2,12 +2,13 @@ import { Course, Subscription, Year } from '../models/course.model';
 
 export const getYears = async (userId: number): Promise<Year[]> => {
   try {
-    const response = await fetch(`/api/courses/years?user=${userId}`, {
+    const response = await fetch(`/api/courses/years/?user=${userId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) throw new Error("Error al obtener los años");
-    return await response.json() as Year[];
+    const data = await response.json();
+    return data as Year[];
   } catch (error) {
     console.error("Error en getYears:", error);
     return [];
@@ -38,6 +39,17 @@ export const getCourse = async (courseId: string | number): Promise<Course | nul
   } catch (error) {
     console.error(`Error en getCourse con id ${courseId}:`, error);
     return null;
+  }
+};
+
+export const getSubscriptions = async (userId: string) => {
+  try {
+    const response = await fetch(`/api/courses/sub/?user=${userId}`);
+    if (!response.ok) throw new Error("Error al obtener las suscripciones");
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getSubscriptions:", error);
+    throw error;
   }
 };
 

@@ -1,6 +1,7 @@
 import VisorPDF from '../components/VisorPDF';
 import { TitlePage } from '../components/TitlePage';
-import { getDocument, getCourse } from '@services/connections';
+import { getDocument } from '@services/connections-documents';
+import { getCourse } from '@services/connections-courses';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DocumentInfo } from '../components/DocumentInfo';

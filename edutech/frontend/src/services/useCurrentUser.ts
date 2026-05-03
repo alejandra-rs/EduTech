@@ -5,6 +5,8 @@ import { getUserByEmail } from "./connections-students";
 import { Student } from "../models/student.model";
 interface CurrentUserHook {
     userData: Student | null;
+    isAdmin: boolean;
+    isLoading: boolean;
     account: AccountInfo | null;
 }
 
@@ -31,7 +33,7 @@ export const useCurrentUser = (): CurrentUserHook => {
     }, [accounts, inProgress]);
     return {
         userData,
-        isAdmin: Boolean(userData?.is_admin),
+        isAdmin: Boolean(userData?.isAdmin),
         isLoading,
         account:  (accounts[0] as AccountInfo)  ?? null,
     };

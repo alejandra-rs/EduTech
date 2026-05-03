@@ -8,7 +8,7 @@ import CreateSessionModal from "../components/study-sessions/CreateSessionModal"
 import SessionItem from "../components/study-sessions/SessionItem";
 import { useCurrentUser } from "../services/useCurrentUser";
 import { getStudySessions, createStudySession } from "@services/connections-study-sessions";
-import { getYears, getCourses, getCourse } from "@services/connections";
+import { getYears, getCourses, getCourse } from "@services/connections-courses";
 import { SubjectDropdown } from "../components/study-sessions/SubjectDropdown";
 
 const StudySessions = () => {

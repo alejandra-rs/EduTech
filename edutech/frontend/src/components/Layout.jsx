@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { useLocation } from "react-router-dom";
-import { getUserByEmail } from "../services/connections";
-import { checkIsAdmin } from "../services/connections";
+import { getUserByEmail } from "@services/connections-students";
+import { checkIsAdmin } from "@services/connections-students";
 
 export default function Layout({ accounts, instance, children }) {
   const [isOpen, setIsOpen] = useState(false);

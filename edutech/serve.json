@@ -1,0 +1,22 @@
+{
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },
+  "Web": {
+    "edutech-app.tail6b7334.ts.net:443": {
+      "Handlers": {
+        "/api": {
+          "Proxy": "http://web:8000"
+        },
+        "/admin": {
+          "Proxy": "http://web:8000"
+        },
+        "/": {
+          "Proxy": "http://frontend:5173"
+        }
+      }
+    }
+  }
+}

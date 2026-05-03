@@ -5,7 +5,7 @@ import { SubjectWidget } from '../components/SubjectWidget';
 import SearchBar from '../components/SearchBar';
 import PostGrid from '../components/PostGrid';
 import { useCurrentUser } from '../services/useCurrentUser';
-import { getSubscriptions } from '../services/connections';
+import { getSubscriptions } from '@services/connections-courses';
 
 const TYPE_TO_ROUTE = { PDF: 'documento', VID: 'video', QUI: 'quiz', FLA: 'flashcard' };
 

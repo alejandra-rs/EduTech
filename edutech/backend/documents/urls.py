@@ -8,6 +8,7 @@ urlpatterns = [
         views.PostDeleteView.as_view(),
         name="delete_post",
     ),
+    path("upload-draft/", views.UploadPDFDraftView.as_view(), name="upload_pdf_draft"),
     path("upload/pdf/", views.PDFUploadView.as_view(), name="upload_pdf"),
     path("upload/vid/", views.VideoUploadView.as_view(), name="upload_video"),
     path("upload/quiz/", views.QuizUploadView.as_view(), name="upload_quiz"),

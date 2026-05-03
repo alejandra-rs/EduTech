@@ -19,7 +19,7 @@ import ReportFormPage from "./pages/ReportFormPage";
 import SelectDegree from "./pages/SelectDegree";
 import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
-import { syncUser } from "@services/connections";
+import { syncUser } from "@services/connections-students";
 import { useCurrentUser } from "@services/useCurrentUser";
 import StudySessions from "./pages/StudySessions";
 import MySubjects from "./pages/MySubjects";

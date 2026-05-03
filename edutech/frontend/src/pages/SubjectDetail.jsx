@@ -6,8 +6,9 @@ import BellButton from "../components/interactions/BellButton";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
-import { getPosts, getCourse } from "@services/connections";
-import { getYearById, getDegreeInfo } from "@services/degree";
+import { getPosts } from "@services/connections-documents";
+import { getCourse } from "@services/connections-courses";
+import { getYearById, getDegreeInfo } from "@services/connections-degrees";
 import { ChatbotWidget } from "../components/chatbot/ChatbotWidget";
 
 const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLC: "flashcard" };
