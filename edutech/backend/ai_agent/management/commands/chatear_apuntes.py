@@ -40,7 +40,7 @@ class Command(BaseCommand):
         )
 
         prompts = {
-            "propmt_ejercicios" : ChatPromptTemplate.from_messages(
+            "propmt_ejercicios": ChatPromptTemplate.from_messages(
                 [
                     (
                         "system",
@@ -62,12 +62,11 @@ class Command(BaseCommand):
                     ("human", "{question}"),
                 ]
             ),
-
-        "propmt_explicacion" : ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    """Eres un asistente académico. Responde usando el contexto proporcionado trata de hacer referencias a los fragmentos del contexto usando el formato [Ref: X] donde X es el número de referencia del fragmento.
+            "propmt_explicacion": ChatPromptTemplate.from_messages(
+                [
+                    (
+                        "system",
+                        """Eres un asistente académico. Responde usando el contexto proporcionado trata de hacer referencias a los fragmentos del contexto usando el formato [Ref: X] donde X es el número de referencia del fragmento.
              cuanto más cercano/similar sea tu respuesta al texto de un fragmento, mejor. 
              Si no estás seguro, es mejor no usar una referencia que inventar una. 
              SOLO si el contexto no tiene información relevante, puedes responde de la mejor manera posible sin referencias.
@@ -82,16 +81,15 @@ class Command(BaseCommand):
              "Formatea tu respuesta utilizando Markdown (usa negritas, listas, y bloques de código ``` cuando sea necesario)."
              "NO OLVIDES REFERENCIAR LOS FRAGMENTOS USADOS CON [Ref: X]"
              """,
-                ),
-                ("human", "{question}"),
-            ]
-        ),
-
-        "prompt_estricto" : ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    """Eres un asistente académico MUY ESTRICTO. Tu única tarea es responder usando EXCLUSIVAMENTE el contexto proporcionado.
+                    ),
+                    ("human", "{question}"),
+                ]
+            ),
+            "prompt_estricto": ChatPromptTemplate.from_messages(
+                [
+                    (
+                        "system",
+                        """Eres un asistente académico MUY ESTRICTO. Tu única tarea es responder usando EXCLUSIVAMENTE el contexto proporcionado.
             
             REGLAS INQUEBRANTABLES:
             1. PROHIBIDO INVENTAR. Si no está en el contexto, di: "Se recomienda mirar la documentación oficial."
@@ -107,10 +105,10 @@ class Command(BaseCommand):
              "Formatea tu respuesta utilizando Markdown (usa negritas, listas, y bloques de código ``` cuando sea necesario)."
              "NO OLVIDES REFERENCIAR LOS FRAGMENTOS USADOS CON [Ref: X]"
              """,
-                ),
-                ("human", "{question}"),
-            ]
-        )
+                    ),
+                    ("human", "{question}"),
+                ]
+            ),
         }
 
         def mapear_fuentes_a_json(respuesta_texto, documentos):

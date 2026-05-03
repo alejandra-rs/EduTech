@@ -11,7 +11,7 @@ import os
 from .etiquetator import generar_etiquetas
 
 
-url_original= os.environ.get("DATABASE_URL")
+url_original = os.environ.get("DATABASE_URL")
 if url_original:
     CONNECTION_STRING = url_original.replace("postgres://", "postgresql+psycopg://")
 
