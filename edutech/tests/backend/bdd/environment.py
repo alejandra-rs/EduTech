@@ -4,9 +4,8 @@ base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
-# Must be set before django.setup() so read_env() doesn't override with Docker 'db' hostname
-os.environ["DATABASE_URL"] = "postgres://admin_edutech:1234@localhost:5432/edutech_db"
-os.environ["REDIS_URL"] = "redis://localhost:6379/0"
+os.environ.setdefault("DATABASE_URL", "sqlite:///test_local.db")
+os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.edutech.settings")
 
 import django

@@ -29,3 +29,4 @@ __pycache__/
 __pycache__
 # Archivos multimedia subidos por los usuarios (fotos, pdfs, etc.)
 media/
+*.db
