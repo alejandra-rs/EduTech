@@ -15,7 +15,10 @@ export default function Drafts() {
   useEffect(() => {
     if (!userData?.id) return;
     getDrafts(userData.id)
-      .then(setDrafts)
+      .then(data => { 
+        const filtered = data.filter(d => d.post_type === "FLA" || d.post_type === "QUI");
+        setDrafts(filtered);
+      })
       .finally(() => setLoading(false));
   }, [userData?.id]);
 

@@ -53,7 +53,7 @@ export interface QuizCheckResponse {
 const TYPE_MAP = {
   PDF: 'documento',
   VID: 'video',
-  QUI: 'cuestionario',
+  QUI: 'quiz',
   FLA: 'flashcard',
 } as const;
 
@@ -127,7 +127,8 @@ export const postDocument = async (
   title: string,
   description: string,
   docType: 'pdf' | 'vid',
-  file: File
+  file: File,
+  isDraft = false
 ): Promise<PostPDF | PostVideo> => {
   try {
     const formData = new FormData();
@@ -136,6 +137,7 @@ export const postDocument = async (
     formData.append("course", courseId.toString());
     formData.append("student", userId.toString());
     formData.append("file", file);
+    if (isDraft) formData.append("is_draft", "true");
 
     const response = await fetch(`/api/documents/upload/${docType}/`, { method: "POST", body: formData });
     if (!response.ok) throw new Error("Error al publicar el documento");

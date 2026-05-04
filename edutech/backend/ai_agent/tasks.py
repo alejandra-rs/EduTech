@@ -19,15 +19,9 @@ def procesar_pdf_y_vectorizar(attachment_id):
         from documents.models import PDFAttachment
 
         pdf_instance = PDFAttachment.objects.get(id=attachment_id)
-        notificar_frontend(
-            attachment_id, "processing", "Iniciando extracción de texto..."
-        )
-
-        pdf_instance.processing_status = "extrayendo_txt"
-        pdf_instance.save(update_fields=["processing_status"])
-        ingerir_nuevo_documento(pdf_instance)
-        notificar_frontend(
-            attachment_id, "completed", "¡Documento vectorizado con éxito!"
+        ingerir_nuevo_documento(
+            pdf_instance,
+            notify_fn=lambda status, message: notificar_frontend(attachment_id, status, message),
         )
         return f"Éxito: PDF {attachment_id} vectorizado."
     except Exception as e:

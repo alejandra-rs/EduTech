@@ -7,7 +7,6 @@ import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
 import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
 import VistaPreviaVideo from "./pages/VistaPreviaVideo";
 import SubjectDetail from "./pages/SubjectDetail";
-import CargarPublicacionPDF from "./pages/CargarPublicacionPDF";
 import Subject from "./pages/AllSubjects";
 import SignIn from "./pages/SignIn";
 import CreateQuiz from "./pages/CreateQuiz";

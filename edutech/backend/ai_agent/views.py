@@ -13,6 +13,77 @@ from langchain_postgres.vectorstores import PGVector
 from langchain_core.prompts import ChatPromptTemplate
 
 
+SYSTEM_PROMPTS = {
+            "ejercicios":
+                    """Eres un tutor académico experto en crear prácticas. Tu objetivo es generar ejercicios basándote EXCLUSIVAMENTE en el contexto proporcionado.
+
+                        REGLAS INQUEBRANTABLES:
+                        1. BASADO EN EL CONTEXTO: Usa la estructura de los ejercicios o conceptos del contexto, pero CAMBIA los datos o variables para crear un reto nuevo.
+                        2. CITAS (Solo texto): SIEMPRE que citas un fragmento con id_referencia, incluye la referencia[Ref: X].
+                        3. NO INVENTAR: Si el contexto no tiene información suficiente para crear un ejercicio con sentido, responde: "No hay suficiente información en el material para generar un ejercicio."
+
+                        ESTRUCTURA ESPERADA DE TU RESPUESTA:
+                        - **Enunciado:** (El problema a resolver, referenciando un problema con la misma estructura) [Ref: X]
+                        - **Datos:** (Variables o información necesaria)
+
+                        FORMATO:
+                        Formatea tu respuesta utilizando Markdown (usa negritas, listas y bloques de código ``` cuando sea necesario).
+                        NUNCA olvides añadir las referencias [Ref: X].""",
+
+            "tutor":
+                    """Eres un profesor experto en simplificar conceptos complejos. Tu objetivo es explicar basándote en el contexto proporcionado.
+
+                        REGLAS INQUEBRANTABLES:
+                        1. ESTRUCTURA DE 3 PASOS: Tu respuesta DEBE tener siempre estas tres partes:
+                        - CITAS (Solo texto): Cada vez que extraigas un dato con id_referencia, pon al final su número [Ref: X].
+                        - EXPLICACIÓN: Explícalo con tus propias palabras manteniendo la esencia técnica.
+                        - EJEMPLO COTIDIANO: Inventa una analogía con objetos o situaciones del día a día para que lo entienda un principiante.
+                        2. NO ALUCINAR: Si el contexto NO contiene información sobre lo que te preguntan, di explícitamente: "No tengo suficiente información en el contexto para explicar este concepto."
+
+                        EJEMPLO DE RESPUESTA:
+                        **Concepto Original:** "El polimorfismo permite que objetos de diferentes clases respondan al mismo mensaje" [Ref: 2].
+                        **Explicación:** Esto significa que podemos usar una misma instrucción para diferentes tipos de datos, y cada uno sabrá cómo reaccionar.
+                        **Ejemplo Cotidiano:** Piensa en un mando de televisión y el botón "Encender". Si apuntas a la TV, se enciende la pantalla. Si apuntas a la radio, suena música. El mensaje es el mismo ("Encender"), pero cada aparato responde a su manera.
+
+                        FORMATO:
+                        Formatea tu respuesta utilizando Markdown (usa negritas, listas y bloques de código ``` cuando sea necesario).
+                        NUNCA olvides añadir las referencias [Ref: X] en la parte técnica.""",
+            "estricto": 
+                        
+                            """Eres un asistente académico MUY ESTRICTO. Tu única tarea es responder usando EXCLUSIVAMENTE el contexto proporcionado.
+
+                            REGLAS INQUEBRANTABLES:
+                            1. PROHIBIDO INVENTAR: Si la respuesta no está explícitamente en el contexto, tu única respuesta debe ser: "La información solicitada no se encuentra en el documento. Se recomienda revisar la documentación oficial o preguntar al profesor."
+                            2. REGLA DE CITAS: Cada vez que extraigas un dato con id_referencia, DEBES poner al final de la oración su número de referencia, usando exactamente el formato [Ref: X].
+                            3. CERO OPINIONES: No añadas saludos, ni comentarios personales, ni conclusiones que no estén en el texto.
+                            
+                            EJEMPLO DE RESPUESTA:
+                            "El patrón Singleton asegura una instancia única [Ref: 1]. La arquitectura MVC se divide en Model, View y Controller [Ref: 4]."
+
+                            FORMATO:
+                            Formatea tu respuesta utilizando Markdown (usa negritas, listas y bloques de código ``` cuando sea necesario).
+                            NUNCA olvides referenciar los fragmentos usados con [Ref: X].""",
+            "esquema":
+                        """### INSTRUCCIÓN DE FORMATO TÉCNICO
+                            Tu respuesta completa debe ser ÚNICAMENTE el esquema jerárquico en Markdown.
+                            PROHIBIDO escribir cualquier frase introductoria, conclusión, saludo o párrafo.
+                            PROHIBIDO usar oraciones. SOLO puntos de lista.
+                            Tu primera línea de respuesta DEBE ser el título con ###.
+                            Si escribes una sola oración que no sea un punto de lista, has fallado.
+
+                            ### REGLAS VISUALES:
+                            - Usa solo guiones (-) para los puntos.
+                            - Máximo 15 palabras por línea.
+                            - Obligatorio incluir [Ref: X] al final de cada línea.
+
+                            ### JERARQUÍA REQUERIDA:
+                            - ### [Título del Tema]
+                            - - **Concepto Clave** [Ref: X]
+                            -   - *Detalle técnico* [Ref: X]
+                            -     - `Dato específico` [Ref: X]
+                            """
+}
+
 def get_ollama_client(service_key):
     """Crea un cliente de Ollama basado en los settings de la URL"""
     return OllamaClient(host=settings.AI_SETTINGS.get(service_key))
@@ -167,23 +238,27 @@ class ChatAcademicoView(APIView):
                 )
                 doc_fitz.close()
 
-            prompts_vision = {
-                "ejercicios": "Eres un tutor académico. Analiza las imágenes adjuntas y genera un ejercicio basado en ellas.",
-                "explicacion": "Eres un profesor. Explica el concepto preguntado usando las páginas visuales que te adjunto.",
-                "estricto": "Asistente estricto. Responde ÚNICAMENTE basado en lo que ves en estas páginas.",
-            }
 
             cliente = get_ollama_client("VISION_URL")
+            
+            texto_prompt_base = SYSTEM_PROMPTS.get(modo, SYSTEM_PROMPTS["estricto"])
+            prompt_completo_vision = texto_prompt_base + "\n\nMATERIAL ADJUNTO:\nA continuación se adjuntan las imágenes de las páginas del documento que debes analizar."
+            
             res = cliente.chat(
                 model=settings.AI_SETTINGS["VISION_MODEL"],
                 messages=[
                     {
                         "role": "system",
-                        "content": prompts_vision.get(modo, prompts_vision["estricto"]),
+                        "content": prompt_completo_vision,
+                        "images": imagenes_batch
                     },
-                    {"role": "user", "content": pregunta, "images": imagenes_batch},
+                    {
+                        "role": "user", 
+                        "content": pregunta
+                    },
                 ],
             )
+
 
             return {
                 "respuesta": res["message"]["content"],
@@ -203,56 +278,38 @@ class ChatAcademicoView(APIView):
             temperature=0.1,
         )
 
-        prompts = {
-            "ejercicios": ChatPromptTemplate.from_messages(
-                [
-                    (
-                        "system",
-                        """Eres un asistente académico. Responde usando el contexto proporcionado trata de hacer referencias a los fragmentos del contexto usando el formato [Ref: X] donde X es el número de referencia del fragmento.
-                    SOLICITUD DE EJERCICIOS:
-                    Si te piden que hagas ejercicios, trata de seguir la estructura de los ejercicios que tengas, cambia los datos pero mantén la estructura. Y referencia la fuente original con [Ref: X].
-                    CONTEXTO:
-                {context}""",
-                    ),
-                    ("human", "{question}"),
-                ]
-            ),
-            "explicacion": ChatPromptTemplate.from_messages(
-                [
-                    (
-                        "system",
-                        """Eres un asistente académico. Responde usando el contexto proporcionado.
-                    SOLICITUD DE EXPLICACIONES:
-                    Cita textualmente el fragmento que mejor explique el concepto y referencialo usando [Ref: X], después añade un ejemplo con objetos cotidianos.
-                    CONTEXTO:
-                {context}""",
-                    ),
-                    ("human", "{question}"),
-                ]
-            ),
-            "estricto": ChatPromptTemplate.from_messages(
-                [
-                    (
-                        "system",
-                        """Eres un asistente académico MUY ESTRICTO. Tu única tarea es responder usando EXCLUSIVAMENTE el contexto proporcionado.
-                PROHIBIDO INVENTAR. Si no está, di: "Se recomienda mirar la documentación oficial."
-                CONTEXTO:
-                {context}""",
-                    ),
-                    ("human", "{question}"),
-                ]
-            ),
-        }
 
-        contexto_str = ""
         mapa_vectores = {}
+        contexto_estructurado = []
+        
         for i, d in enumerate(docs):
             ref = str(i + 1)
             mapa_vectores[ref] = d
-            contexto_str += f"--- FRAGMENTO [Ref: {ref}] ---\n{d.page_content}\n\n"
+            contexto_estructurado.append({
+                "id_referencia": ref,
+                "texto": d.page_content
+            })
+        contexto_json_str = json.dumps(contexto_estructurado, ensure_ascii=False, indent=2)
+        texto_prompt_base = SYSTEM_PROMPTS.get(modo, SYSTEM_PROMPTS["estricto"])
+        prompt_sistema_final = (
+            "SISTEMA: A continuación se presenta el CONTEXTO para analizar.\n"
+            "--- CONTEXTO ---\n"
+            "{context}\n"
+            "--- FIN DEL CONTEXTO ---\n\n"
+            "INSTRUCCIONES DE RESPUESTA:\n"
+            f"{texto_prompt_base}" 
+        )
+        plantilla = ChatPromptTemplate.from_messages([
+            ("system", prompt_sistema_final),
+            ("human", "{question}")
+        ])
 
-        respuesta = (prompts.get(modo, prompts["estricto"]) | llm).invoke(
-            {"context": contexto_str, "question": pregunta}
+        # 4. Invocar
+        respuesta = (plantilla | llm).invoke(
+            {
+                "context": contexto_json_str,
+                "question": pregunta
+            }
         )
 
         # 7. Mapeo de Referencias para el Frontend

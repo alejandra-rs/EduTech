@@ -8,7 +8,6 @@ export function ChatbotHeader({ lista, seleccionado, onCambiar, onClose, isDeepT
     <div className="bg-[#130032] text-sm text-white p-4 flex justify-between items-center relative z-50">
       
       <div className="flex items-center space-x-3">
-        {/* Contenedor del selector */}
         <div className="relative">
           <button 
             onClick={() => setMenuAbierto(!menuAbierto)}
@@ -35,7 +34,6 @@ export function ChatbotHeader({ lista, seleccionado, onCambiar, onClose, isDeepT
           )}
         </div>
 
-        {/* 🧠 EL TOGGLE DEL CEREBRO */}
         <button
           onClick={() => setIsDeepThinking(!isDeepThinking)}
           title="Activar Pensamiento Profundo"

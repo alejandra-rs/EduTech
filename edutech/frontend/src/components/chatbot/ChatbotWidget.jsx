@@ -9,8 +9,9 @@ import { ChatBotFooterInput } from './ChatbotFooterIntput.jsx';
 
 const AGENTES = [
   { id: 'estricto', label: 'Asistente Estricto' },
-  { id: 'explicacion', label: 'Tutor' },
+  { id: 'tutor', label: 'Tutor' },
   { id: 'ejercicios', label: 'Ejercicios' },
+  { id: 'esquemas', label: 'Esquemas' },
 ];
 
 export function ChatbotWidget({ courseId }) {
@@ -52,7 +53,7 @@ export function ChatbotWidget({ courseId }) {
   return (
     <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end">
       {isOpen && (
-        <div className="w-80 sm:w-96 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col h-[500px] border border-gray-200 mb-4 origin-bottom-right transition-all">
+        <div className="w-96 sm:w-[450px] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col h-[600px] border border-gray-200 mb-4 origin-bottom-right transition-all">
           
           <ChatbotHeader 
                   lista={AGENTES} 
@@ -77,7 +78,6 @@ export function ChatbotWidget({ courseId }) {
         </div>
       )}
 
-      {/* Botón flotante */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}

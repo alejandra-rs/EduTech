@@ -18,7 +18,6 @@ const Subject = () => {
         setYearData(year);
         if (year.degree) {
           const info = await getDegreeInfo(year.degree);
-          console.log(info);
           setDegreeInfo(info);
         }
       })
@@ -34,8 +33,8 @@ const Subject = () => {
     <div className="h-[calc(100vh-2px)]">
       <div className="flex flex-col w-full overflow-y-auto">
         <TitlePage
-          PageName={`${yearData ? yearData.year : id}º Año`}
-          subtitle={degreeInfo.universityName}
+          PageName={`${yearData ? yearData.year : id}º Curso - ${degreeInfo?.name}`}
+          subtitle={degreeInfo?.universityName}
           backLabel="Cursos"
           onBack={() => navigate("/")}
         />

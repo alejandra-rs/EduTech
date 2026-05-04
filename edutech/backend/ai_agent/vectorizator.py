@@ -69,7 +69,7 @@ def analizar_imagen_con_gemma(imagen_bytes, titulo, asignatura, descripcion):
         return f"[Error visión: {e}]"
 
 
-def ingerir_nuevo_documento(pdfAttachment):
+def ingerir_nuevo_documento(pdfAttachment, notify_fn=None):
     nombre_asignatura = pdfAttachment.post.course.name
     titulo_doc = pdfAttachment.post.title
     descripcion_doc = pdfAttachment.post.description
@@ -79,6 +79,12 @@ def ingerir_nuevo_documento(pdfAttachment):
     doc = None
     pdf_bytes = None
     documentos_a_guardar = []
+    _notified = set()
+
+    def notify_once(status, message):
+        if notify_fn and status not in _notified:
+            _notified.add(status)
+            notify_fn(status, message)
 
     try:
         print(f"☁️ Descargando '{titulo_doc}' desde Cloudflare a la RAM...")
@@ -99,6 +105,7 @@ def ingerir_nuevo_documento(pdfAttachment):
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
         texto_total_extraido = 0
 
+        notify_once("extrayendo_txt", "Extrayendo texto del PDF...")
         for num_pag, pagina in enumerate(doc):
             pdfAttachment.processing_status = "extrayendo_txt"
             pdfAttachment.save(update_fields=["processing_status"])
@@ -114,6 +121,7 @@ def ingerir_nuevo_documento(pdfAttachment):
 
             pdfAttachment.processing_status = "reconociendo_img"
             pdfAttachment.save(update_fields=["processing_status"])
+            notify_once("reconociendo_img", "Analizando imágenes con IA...")
             for img in pagina.get_images():
                 xref = img[0]
                 pix = fitz.Pixmap(doc, xref)
@@ -155,6 +163,7 @@ def ingerir_nuevo_documento(pdfAttachment):
                         metadata={"p": num_pag + 1, "tipo": "vision_chunk_forced"},
                     )
                 )
+        notify_once("vectorizando", "Vectorizando contenido...")
         pdfAttachment.processing_status = "vectorizando"
         pdfAttachment.save(update_fields=["processing_status"])
 
@@ -188,6 +197,7 @@ def ingerir_nuevo_documento(pdfAttachment):
 
             pdfAttachment.processing_status = "etiquetando"
             pdfAttachment.save(update_fields=["processing_status"])
+            notify_once("etiquetando", "Etiquetando fragmentos...")
             try:
                 d.metadata["tags"] = generar_etiquetas(d.page_content)
             except Exception:
@@ -209,6 +219,7 @@ def ingerir_nuevo_documento(pdfAttachment):
 
         pdfAttachment.processing_status = "completado"
         pdfAttachment.save(update_fields=["processing_status"])
+        notify_once("completed", "¡Documento vectorizado con éxito!")
     finally:
         if doc is not None:
             doc.close()
