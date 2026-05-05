@@ -14,6 +14,7 @@ const Tabs = ({ activeTabs, onTabChange }) => {
     } else {
       onTabChange([...activeTabs, tabId]);
     }
+    console.log(activeTabs);
   };
 
   return (

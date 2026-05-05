@@ -11,6 +11,7 @@ import {
   uploadPDFDraft,
   updateDraft,
   connectToDocumentStatus,
+  generateDocumentDescription,
 } from "../services/connections-documents";
 import { ProcessingStatus } from "../components/ProcessingToast";
 
@@ -35,6 +36,8 @@ export default function UploadDocument() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [published, setPublished] = useState(false);
+
+  const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
 
   const [processingStatus, setProcessingStatus] = useState<ProcessingStatus | null>(null);
   const [processingError, setProcessingError] = useState<string | undefined>();
@@ -80,6 +83,19 @@ export default function UploadDocument() {
       setPublished(true);
     } catch (error) {
       console.error("Fallo al publicar el documento:", error);
+    }
+  };
+
+  const handleGenerateDescription = async () => {
+    if (!draftId) return;
+    setIsGeneratingDesc(true);
+    try {
+      const generatedText = await generateDocumentDescription(draftId);
+      setDescription(generatedText);
+    } catch (error) {
+      console.error("Fallo al generar la descripción con IA:", error);
+    } finally {
+      setIsGeneratingDesc(false);
     }
   };
 
@@ -140,12 +156,25 @@ export default function UploadDocument() {
             placeholder="Introduce el título de la publicación"
             onChange={(e) => setTitle(e.target.value)}
           />
-          <Input
-            label="Descripción"
-            value={description}
-            placeholder="Escribe una breve descripción..."
-            onChange={(e) => setDescription(e.target.value)}
-          />
+          <div className="flex flex-col">
+            <Input
+              label="Descripción"
+              value={description}
+              placeholder="Escribe una breve descripción..."
+              textarea
+              row={4}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={isGeneratingDesc || !draftId}
+              className="self-end mt-2 flex items-center gap-1 text-sm text-purple-600 hover:text-purple-800 disabled:text-gray-400 font-semibold transition-colors"
+            >
+              <span>✨</span>
+              {isGeneratingDesc ? "Generando resumen..." : "Autocompletar con IA"}
+            </button>
+          </div>
 
           {processingStatus && (
             <div className={`rounded-xl border overflow-hidden ${

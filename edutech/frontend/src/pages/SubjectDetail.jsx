@@ -11,7 +11,7 @@ import { getCourse } from "@services/connections-courses";
 import { getYearById, getDegreeInfo } from "@services/connections-degrees";
 import { ChatbotWidget } from "../components/chatbot/ChatbotWidget";
 
-const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLC: "flashcard" };
+const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLA: "flashcard" };
 
 const SubjectDetail = () => {
   const { id, subjectId } = useParams();

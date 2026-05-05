@@ -15,20 +15,20 @@ from langchain_core.prompts import ChatPromptTemplate
 
 SYSTEM_PROMPTS = {
             "ejercicios":
-                    """Eres un tutor académico experto en crear prácticas. Tu objetivo es generar ejercicios basándote EXCLUSIVAMENTE en el contexto proporcionado.
+                                """Eres un tutor académico experto en crear prácticas. Tu objetivo es generar ejercicios basándote EXCLUSIVAMENTE en el contexto proporcionado.
 
-                        REGLAS INQUEBRANTABLES:
-                        1. BASADO EN EL CONTEXTO: Usa la estructura de los ejercicios o conceptos del contexto, pero CAMBIA los datos o variables para crear un reto nuevo.
-                        2. CITAS (Solo texto): SIEMPRE que citas un fragmento con id_referencia, incluye la referencia[Ref: X].
-                        3. NO INVENTAR: Si el contexto no tiene información suficiente para crear un ejercicio con sentido, responde: "No hay suficiente información en el material para generar un ejercicio."
+                                    REGLAS INQUEBRANTABLES:
+                                    1. BASADO EN EL CONTEXTO: Usa la estructura de los ejercicios o conceptos del contexto, pero CAMBIA los datos o variables para crear un reto nuevo.
+                                    2. CITAS (Solo texto): SIEMPRE que citas un fragmento con id_referencia, incluye la referencia[Ref: X].
+                                    3. NO INVENTAR: Si el contexto no tiene información suficiente para crear un ejercicio con sentido, responde: "No hay suficiente información en el material para generar un ejercicio."
 
-                        ESTRUCTURA ESPERADA DE TU RESPUESTA:
-                        - **Enunciado:** (El problema a resolver, referenciando un problema con la misma estructura) [Ref: X]
-                        - **Datos:** (Variables o información necesaria)
+                                    ESTRUCTURA ESPERADA DE TU RESPUESTA:
+                                    - **Enunciado:** (El problema a resolver, referenciando un problema con la misma estructura) [Ref: X]
+                                    - **Datos:** (Variables o información necesaria)
 
-                        FORMATO:
-                        Formatea tu respuesta utilizando Markdown (usa negritas, listas y bloques de código ``` cuando sea necesario).
-                        NUNCA olvides añadir las referencias [Ref: X].""",
+                                    FORMATO:
+                                    Formatea tu respuesta utilizando Markdown (usa negritas, listas y bloques de código ``` cuando sea necesario).
+                                    NUNCA olvides añadir las referencias [Ref: X].""",
 
             "tutor":
                     """Eres un profesor experto en simplificar conceptos complejos. Tu objetivo es explicar basándote en el contexto proporcionado.
@@ -63,7 +63,7 @@ SYSTEM_PROMPTS = {
                             FORMATO:
                             Formatea tu respuesta utilizando Markdown (usa negritas, listas y bloques de código ``` cuando sea necesario).
                             NUNCA olvides referenciar los fragmentos usados con [Ref: X].""",
-            "esquema":
+            "esquema": 
                         """### INSTRUCCIÓN DE FORMATO TÉCNICO
                             Tu respuesta completa debe ser ÚNICAMENTE el esquema jerárquico en Markdown.
                             PROHIBIDO escribir cualquier frase introductoria, conclusión, saludo o párrafo.
@@ -82,7 +82,7 @@ SYSTEM_PROMPTS = {
                             -   - *Detalle técnico* [Ref: X]
                             -     - `Dato específico` [Ref: X]
                             """
-}
+        }
 
 def get_ollama_client(service_key):
     """Crea un cliente de Ollama basado en los settings de la URL"""
@@ -291,14 +291,7 @@ class ChatAcademicoView(APIView):
             })
         contexto_json_str = json.dumps(contexto_estructurado, ensure_ascii=False, indent=2)
         texto_prompt_base = SYSTEM_PROMPTS.get(modo, SYSTEM_PROMPTS["estricto"])
-        prompt_sistema_final = (
-            "SISTEMA: A continuación se presenta el CONTEXTO para analizar.\n"
-            "--- CONTEXTO ---\n"
-            "{context}\n"
-            "--- FIN DEL CONTEXTO ---\n\n"
-            "INSTRUCCIONES DE RESPUESTA:\n"
-            f"{texto_prompt_base}" 
-        )
+        prompt_sistema_final = texto_prompt_base + "\n\nCONTEXTO (JSON):\n{context}\n"
         plantilla = ChatPromptTemplate.from_messages([
             ("system", prompt_sistema_final),
             ("human", "{question}")
@@ -329,3 +322,75 @@ class ChatAcademicoView(APIView):
                 )
 
         return Response({"respuesta": respuesta.content, "fuentes": fuentes})
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.conf import settings
+import fitz  # PyMuPDF
+
+# Asegúrate de importar tu modelo (ajusta la ruta si es necesario)
+from documents.models import PDFAttachment 
+
+class GenerateDescriptionView(APIView):
+    def post(self, request, draft_id):
+        try:
+            try:
+                pdf_instancia = PDFAttachment.objects.get(post_id=draft_id)
+            except PDFAttachment.DoesNotExist:
+                return Response({"error": "No se encontró el documento"}, status=404)
+
+            print(f"📥 Descargando PDF borrador {draft_id} desde S3...")
+            pdf_bytes = descargar_pdf_s3(pdf_instancia)
+            
+            doc_fitz = fitz.open(stream=pdf_bytes, filetype="pdf")
+            imagenes_batch = []
+            
+            num_paginas_a_leer = min(3, len(doc_fitz)) 
+            
+            for p in range(num_paginas_a_leer):
+                # Usamos una matriz un poco más pequeña para que el payload sea ligero y rápido
+                pix = doc_fitz.load_page(p).get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
+                imagenes_batch.append(pix.tobytes("png"))
+                
+            doc_fitz.close()
+
+            prompt_sistema = """Eres un asistente académico experto en catalogar información. 
+Tu única tarea es leer las primeras páginas de un documento adjunto y generar una descripción breve, clara y profesional sobre su contenido.
+
+REGLAS:
+1. Sé directo: No uses saludos ni introducciones (ej. "Este documento trata sobre..."). Ve al grano.
+2. Longitud: Máximo 6 o 7 lineas.
+3. Enfoque: Identifica la temática principal, a quién va dirigido (si se sabe) y el tipo de documento (ej. apuntes, examen, guía docente).
+4 nombrar los puntos más importante que trata, tiene que ser en texto plano
+
+"""
+
+            # 5. Llamar al VLM (Gemma / Llama-Vision)
+            print("🧠 Solicitando resumen al modelo de visión...")
+            cliente = get_ollama_client("VISION_URL")
+            
+            res = cliente.chat(
+                model=settings.AI_SETTINGS["VISION_MODEL"],
+                messages=[
+                    {
+                        "role": "system",
+                        "content": prompt_sistema,
+                        "images": imagenes_batch
+                    },
+                    {
+                        "role": "user",
+                        "content": "genera la descripción para este documento."
+                    },
+                ],
+            )
+
+            descripcion_generada = res["message"]["content"].strip()
+            
+            return Response({
+                "description": descripcion_generada
+            }, status=200)
+
+        except Exception as e:
+            print(f"❌ Error generando descripción con IA: {e}")
+            return Response({"error": "Fallo interno al generar la descripción"}, status=500)

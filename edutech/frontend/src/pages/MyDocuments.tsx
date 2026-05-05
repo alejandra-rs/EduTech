@@ -42,9 +42,13 @@ const MyDocuments = () => {
     }
   };
 
-  const filteredPosts = (searchResults ?? posts).filter((post) =>
-    activeTabs.length === 0 || activeTabs.includes(post.extendedType)
-  );
+  
+  const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLA: "flashcard" };
+  const filteredPosts = (searchResults ?? posts).filter((post) => {
+    if (activeTabs.length === 0) return true;
+    return activeTabs.includes(TYPE_TO_TAB[post.post_type]);
+  });
+
 
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">

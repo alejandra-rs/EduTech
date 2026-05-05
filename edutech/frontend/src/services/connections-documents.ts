@@ -402,7 +402,27 @@ export const askChatbot = async (question: string, course_id = "", mode = "estri
     }
 };
 
+export const generateDocumentDescription = async (draftId: number): Promise<string> => {
+    try {
+        const response = await fetch(`/api/ai/documents/${draftId}/generate-description/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
+        if (!response.ok) {
+            throw new Error("Error en la comunicación al generar la descripción");
+        }
+
+        const data = await response.json();
+        return data.description;
+        
+    } catch (error) {
+        console.error("Generate Description Error:", error);
+        throw error;
+    }
+};
 export const connectToDocumentStatus = (attachmentId: any, onMessage: (data: any) => void) => {
   if (!attachmentId) return null;
 
@@ -417,3 +437,4 @@ export const connectToDocumentStatus = (attachmentId: any, onMessage: (data: any
 
   return socket;
 };
+
