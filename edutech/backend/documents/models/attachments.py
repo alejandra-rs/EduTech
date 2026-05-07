@@ -32,7 +32,7 @@ class PDFAttachment(models.Model):
     )
     
     processing_status = models.CharField(
-        max_length=20, choices=ProcessingStages.choices, default=ProcessingStages.PENDING
+        max_length=50, choices=ProcessingStages.choices, default=ProcessingStages.PENDING
     )
 
 

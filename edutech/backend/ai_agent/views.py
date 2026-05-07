@@ -1,12 +1,12 @@
 import re
 import json
-import fitz  # PyMuPDF
+import fitz 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from edutech.backend.ai_agent.agent_setings import get_vector_store, getDocument, send_prompt
-from edutech.backend.ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
+from ai_agent.agent_setings import get_vector_store, getDocument, send_prompt
+from ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
 
 
 import fitz 
@@ -222,7 +222,7 @@ class GenerateDescriptionView(APIView):
                 system_content=SYSTEM_PROMPTS["generate_description"],
                 user_content="Genera descripción para este documento.",
                 model="VISION",
-                imagenes=image_batch
+                images=image_batch
             )
             
             return Response({

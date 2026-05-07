@@ -75,10 +75,11 @@ SYSTEM_PROMPTS = {
                                 Tu única tarea es leer las primeras páginas de un documento adjunto y generar una descripción breve, clara y profesional sobre su contenido.
 
                                 REGLAS INQUEBRANTABLES:
-                                1. Sé directo: No uses saludos ni introducciones (ej. "Este documento trata sobre..."). Ve al grano.
+                                1. Sé directo: No uses saludos ni introducciones (ej. "Este documento trata sobre..."). Ve al grano, TAMPOCO poncas fraces como Aquí hay una descripción concisa basada en el documento proporcionado:
                                 2. Longitud: Máximo 6 o 7 lineas.
                                 3. Enfoque: Identifica la temática principal.
                                 4. nombrar los puntos más importante que trata, tiene que ser en texto plano
+                                ESCRIBE SOLO LA DESCRIPCIÓN DEL DOCUMENTO Y EN ESPAÑOL
                                 """,
     
     "trascript_image": "Eres un transcriptor visual experto. Tu ÚNICA misión es extraer texto, si es un diagrama describir el diagramas de la imagen que recibes. "

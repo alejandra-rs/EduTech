@@ -4,8 +4,8 @@ from sqlalchemy import create_engine, text
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from documents.models import PDFAttachment
 
-from edutech.backend.ai_agent.agent_setings import CONNECTION_STRING, get_vector_store, getDocument, send_prompt
-from edutech.backend.ai_agent.agents_pronts import SYSTEM_PROMPTS
+from ai_agent.agent_setings import CONNECTION_STRING, get_vector_store, getDocument, send_prompt
+from ai_agent.agents_pronts import SYSTEM_PROMPTS
 from .etiquetator import generar_etiquetas
 
 
