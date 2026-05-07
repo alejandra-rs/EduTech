@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Input from "../Input";
-import { postComment } from "@services/connections-documents";
+import { postComment } from "@services/connections-interactions";
 import { useCurrentUser } from "@services/useCurrentUser";
 import { addStudySessionComment } from "@services/connections-study-sessions";
 

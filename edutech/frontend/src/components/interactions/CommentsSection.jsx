@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Comment from "./Comment";
 import CommentModal from "./CommentModal";
-import { getComments, postComment } from "@services/connections-documents";
+import { getComments, postComment } from "@services/connections-interactions";
 import { getStudySessionComments, addStudySessionComment } from "@services/connections-study-sessions";
 import { useCurrentUser } from "@services/useCurrentUser";
 

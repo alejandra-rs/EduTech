@@ -41,7 +41,7 @@ const CreateFlashCard = () => {
   ];
 
   const handlePublish = async (header) => {
-    await postFlashCardDeck(courseId, userData?.id, header.title, header.description, cards);
+    await postFlashCardDeck({post_type: 'FLA', title: header.title, description: header.description, courseId: courseId, studentId: userData?.id, flashcards: cards});
     if (draftPostId) await deleteDraft(draftPostId);
   };
 

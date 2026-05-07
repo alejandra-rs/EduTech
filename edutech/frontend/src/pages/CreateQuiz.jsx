@@ -50,7 +50,8 @@ const CreateQuiz = () => {
   ];
 
   const handlePublish = async (header) => {
-    await postQuiz(courseId, userData?.id, header.title, header.description, questions);
+    
+    await postQuiz({post_type: 'QUI', title: header.title,  description: header.description, courseId: courseId, studentId: userData?.id, questions: questions});
     if (draftPostId) await deleteDraft(draftPostId);
   };
 

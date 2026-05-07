@@ -197,7 +197,7 @@ class ChatAcademicoView(APIView):
                                 )
         sources = self._extract_sources(ia_response, mapa_vectores)
 
-        return Response({"respuesta": ia_response.content, "fuentes": sources})
+        return Response({"respuesta": ia_response, "fuentes": sources})
 
 
 class GenerateDescriptionView(APIView):
