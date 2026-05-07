@@ -13,17 +13,7 @@ import {
   connectToDocumentStatus,
   generateDocumentDescription,
 } from "../services/connections-documents";
-import { ProcessingStatus } from "../components/ProcessingToast";
-
-const STAGES: { key: ProcessingStatus; label: string }[] = [
-  { key: "uploading",        label: "Subiendo fichero…" },
-  { key: "extrayendo_txt",   label: "Extrayendo texto del PDF…" },
-  { key: "reconociendo_img", label: "Analizando imágenes con IA…" },
-  { key: "vectorizando",     label: "Vectorizando contenido…" },
-  { key: "etiquetando",      label: "Etiquetando fragmentos…" },
-  { key: "completed",        label: "¡Listo para IA!" },
-];
-const ORDER = STAGES.map((s) => s.key);
+import { PDF_STATES } from "../models/post.model";
 
 export default function UploadDocument() {
   const navigate = useNavigate();
@@ -39,7 +29,7 @@ export default function UploadDocument() {
 
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
 
-  const [processingStatus, setProcessingStatus] = useState<ProcessingStatus | null>(null);
+  const [processingStatus, setProcessingStatus] = useState<PDF_STATES>("pending");
   const [processingError, setProcessingError] = useState<string | undefined>();
   const socketRef = useRef<WebSocket | null>(null);
 
@@ -51,7 +41,7 @@ export default function UploadDocument() {
     if (!file || !subjectId || !userData?.id) return;
 
     const defaultTitle = file.name.replace(/\.[^/.]+$/, "");
-    const defaultDesc = `Borrador del documento ${file.name}`;
+    const defaultDesc = `Descripción del documento ${file.name}`;
     setTitle(defaultTitle);
     setDescription(defaultDesc);
     setProcessingStatus("uploading");
@@ -64,12 +54,11 @@ export default function UploadDocument() {
       if (data.attachment_id) {
         socketRef.current = connectToDocumentStatus(data.attachment_id, (wsData) => {
           if (wsData.status === "error") setProcessingError(wsData.message);
-          setProcessingStatus(wsData.status as ProcessingStatus);
+          setProcessingStatus(wsData.status as PDF_STATES);
           if (wsData.status === "completed") socketRef.current?.close();
         });
       }
     } catch (error) {
-      console.error("Fallo al subir el borrador:", error);
       setProcessingError("No se pudo subir el archivo. Inténtalo de nuevo.");
       setProcessingStatus("error");
     }
@@ -154,7 +143,7 @@ export default function UploadDocument() {
             label="Título"
             value={title}
             placeholder="Introduce el título de la publicación"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
           />
           <div className="flex flex-col">
             <Input
@@ -163,7 +152,7 @@ export default function UploadDocument() {
               placeholder="Escribe una breve descripción..."
               textarea
               row={4}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
             />
             <button
               type="button"

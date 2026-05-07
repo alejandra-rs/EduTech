@@ -58,7 +58,6 @@ class UploadPDFDraftView(generics.GenericAPIView):
             {
                 "post_id": post.id,
                 "attachment_id": pdf_attachment.id,
-                "message": "Archivo subiendo y vectorización iniciada.",
             },
             status=status.HTTP_201_CREATED,
         )

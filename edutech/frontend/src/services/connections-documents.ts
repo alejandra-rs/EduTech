@@ -423,7 +423,7 @@ export const generateDocumentDescription = async (draftId: number): Promise<stri
         throw error;
     }
 };
-export const connectToDocumentStatus = (attachmentId: any, onMessage: (data: any) => void) => {
+export const connectToDocumentStatus = (attachmentId: number, onMessage: (data: any) => void) => {
   if (!attachmentId) return null;
 
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -432,9 +432,7 @@ export const connectToDocumentStatus = (attachmentId: any, onMessage: (data: any
   const socket = new WebSocket(`${protocol}//${host}/ws/documents/${attachmentId}/`);
 
   socket.onmessage = (event) => onMessage(JSON.parse(event.data));
-  socket.onopen = () => console.log("✅ RAG WebSocket Activo");
-  socket.onclose = () => console.log("🔌 RAG WebSocket Cerrado");
-
+  
   return socket;
 };
 
