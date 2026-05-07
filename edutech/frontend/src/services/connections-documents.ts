@@ -24,11 +24,10 @@ function _buildDraftItems(base: Draft, postType: PostType, items: QuizQuestion[]
 
 // ── Posts / Documents ─────────────────────────────────────────────────────────
 
-export const getLinkDescarga = (postId: number): string =>
-  `/documents/download/pdf/${postId}`;
+export const getLinkDescarga = (postId: number): string => `/documents/download/pdf/${postId}`;
 
-export const getMyPosts = async (userId: string): Promise<PostPreview[]> => {
-  try{
+export async function getMyPosts(userId: string): Promise<PostPreview[]> {
+  try {
     const response = await fetch(`/api/documents/?student=${userId}`);
     if (!response.ok) throw new Error("Error al obtener los posts");
     const data = await response.json();
@@ -37,10 +36,10 @@ export const getMyPosts = async (userId: string): Promise<PostPreview[]> => {
     console.error("Error en getMyPosts:", error);
     throw error;
   }
-};
+}
 
 
-export const getPosts = async (courseId: number): Promise<PostPreview[]> => {
+export async function getPosts(courseId: number): Promise<PostPreview[]> {
   try {
     const response = await fetch(`/api/documents/?course=${courseId}`);
     if (!response.ok) throw new Error("Error al obtener los posts");
@@ -50,11 +49,11 @@ export const getPosts = async (courseId: number): Promise<PostPreview[]> => {
     console.error("Error en getPosts:", error);
     throw error;
   }
-};
+}
 
-export const getFilteredPosts = async (courseId: string | null, title: string, userId: string | null): Promise<PostPreview[]> => {
+export async function getFilteredPosts(courseId: string | null, title: string, userId: string | null): Promise<PostPreview[]> {
   try {
-    const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}`  : ""} ${userId ? `&student=${userId}` : ""}`;
+    const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""} ${userId ? `&student=${userId}` : ""}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Error al obtener los posts filtrados");
     const data = await response.json();
@@ -63,9 +62,9 @@ export const getFilteredPosts = async (courseId: string | null, title: string, u
     console.error("Error en getFilteredPosts:", error);
     throw error;
   }
-};
+}
 
-export const getDocument = async (postId: number): Promise<PostPreview> => {
+export async function getDocument(postId: number): Promise<PostPreview> {
   try {
     const response = await fetch(`/api/documents/${postId}`);
     if (!response.ok) throw new Error("Error al obtener el documento");
@@ -74,11 +73,9 @@ export const getDocument = async (postId: number): Promise<PostPreview> => {
     console.error("Error en getDocument:", error);
     throw error;
   }
-};
+}
 
-export const postDocument = async (
-  document: CreateDocumentPayload
-): Promise<PostPDF | PostVideo> => {
+export async function postDocument(document: CreateDocumentPayload): Promise<PostPDF | PostVideo> {
   try {
     const formData = new FormData();
     formData.append("title", document.title);
@@ -95,11 +92,9 @@ export const postDocument = async (
     console.error("Error en postDocument:", error);
     throw error;
   }
-};
+}
 
-export const postVideo = async (
-    video: CreateVideoPayload
-): Promise<PostVideo> => {
+export async function postVideo(video: CreateVideoPayload): Promise<PostVideo> {
   try {
     const formData = new FormData();
     formData.append("title", video.title);
@@ -116,11 +111,9 @@ export const postVideo = async (
     console.error("Error en postDocument:", error);
     throw error;
   }
-};
+}
 
-export const postQuiz = async (
-  quiz: CreateQuizPayload
-): Promise<PostQuiz> => {
+export async function postQuiz(quiz: CreateQuizPayload): Promise<PostQuiz> {
   try {
     const response = await fetch(`/api/documents/upload/quiz/`, {
       method: "POST",
@@ -142,11 +135,9 @@ export const postQuiz = async (
     console.error("Error en postQuiz:", error);
     throw error;
   }
-};
+}
 
-export const postFlashCardDeck = async (
-  flashcardDeck: CreateFlashcardPayload
-): Promise<PostFlashcard> => {
+export async function postFlashCardDeck(flashcardDeck: CreateFlashcardPayload): Promise<PostFlashcard> {
   try {
     const response = await fetch(`/api/documents/upload/flashcards/`, {
       method: "POST",
@@ -165,9 +156,9 @@ export const postFlashCardDeck = async (
     console.error("Error en postFlashCardDeck:", error);
     throw error;
   }
-};
+}
 
-export const checkQuizAnswers = async (postId: number, responses: number[]): Promise<QuizCheckResponse> => {
+export async function checkQuizAnswers(postId: number, responses: number[]): Promise<QuizCheckResponse> {
   try {
     const response = await fetch(`/api/documents/${postId}/quiz/check/`, {
       method: "POST",
@@ -180,7 +171,7 @@ export const checkQuizAnswers = async (postId: number, responses: number[]): Pro
     console.error("Error en checkQuizAnswers:", error);
     throw error;
   }
-};
+}
 
 // ── Drafts ────────────────────────────────────────────────────────────────────
 
