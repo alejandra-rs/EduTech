@@ -1,6 +1,5 @@
 import React from "react";
 import StreamIframe from "./StreamIframe.jsx";
-import TwitchChat from "./TwitchChat.jsx";
 
 const Dashboard = () => {
   const channelName = "elBokeron";
