@@ -1,4 +1,5 @@
-import { PostPreview, PostPDF, PostVideo, PostQuiz, PostFlashcard, PDF_STATES } from '../models/post.model';
+import { PostPreview, PostPDF, PostVideo, PostQuiz, PostFlashcard } from '../models/post.model';
+import { PDF_STATES } from '../models/states.model';
 import { Student } from '../models/student.model';
 
 // ── Local types ───────────────────────────────────────────────────────────────
