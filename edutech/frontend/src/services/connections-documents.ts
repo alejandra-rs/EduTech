@@ -1,76 +1,23 @@
-import { PostPreview, PostPDF, PostVideo, PostQuiz, PostFlashcard } from '../models/post.model';
 import { PDF_STATES } from '../models/states.model';
-import { Student } from '../models/student.model';
+import { PostPreview, PostType, POST_TYPE_LABELS, PostPDF, PostVideo, PostQuiz, PostFlashcard } from "../models/post.model";
+import { Draft, DraftBase } from '../models/draft.models';
+import { QuizCheckResponse, QuizQuestion } from '../models/postsTypesModels/quiz.models';
+import { Deck, FlashCard } from '../models/postsTypesModels/flashcard.model';
+import { CreateDocumentPayload, CreateFlashcardPayload, CreateQuizPayload, CreateVideoPayload } from '../models/payload.model';
 
-// ── Local types ───────────────────────────────────────────────────────────────
-
-export type PostType = 'PDF' | 'VID' | 'QUI' | 'FLA';
-
-export interface Comment {
-  id: number;
-  message: string;
-  user: Student;
-  created_at: string;
+export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): PostPreview {
+  return { ...post, extendedType: POST_TYPE_LABELS[post.post_type as PostType] } as PostPreview;
 }
 
-export interface LikeStatus {
-  id: number;
-  count: number;
-}
-
-export interface QuizAnswer {
-  text: string;
-  isCorrect: boolean;
-}
-
-export interface QuizQuestion {
-  title: string;
-  answers: QuizAnswer[];
-}
-
-export interface FlashCard {
-  question: string;
-  answer: string;
-}
-
-export interface Draft {
-  id: number;
-  title: string;
-  description: string;
-  post_type: PostType;
-  student: number;
-  course: number;
-  cards?: Array<{ question: string; answer: string }>;
-  questions?: Array<{ title: string; answers: Array<{ text: string; is_correct: boolean }> }>;
-}
-
-export interface QuizCheckResponse {
-  score: number;
-  results: Array<{ answer_id: number; is_correct: boolean }>;
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const TYPE_MAP = {
-  PDF: 'documento',
-  VID: 'video',
-  QUI: 'quiz',
-  FLA: 'flashcard',
-} as const;
-
-function _withExtendedType(post: any): PostPreview {
-  return { ...post, extendedType: TYPE_MAP[post.post_type as keyof typeof TYPE_MAP] } as PostPreview;
-}
-
-function _buildDraftItems(base: object, postType: PostType, items: QuizQuestion[] | FlashCard[]) {
+function _buildDraftItems(base: Draft, postType: PostType, items: QuizQuestion[] | Deck) {
   if (postType === 'FLA') {
-    return { ...base, cards: (items as FlashCard[]).map(c => ({ question: c.question, answer: c.answer })) };
+    return { ...base, cards: (items as FlashCard[]).map(card => ({ question: card.question, answer: card.answer })) };
   }
   return {
     ...base,
-    questions: (items as QuizQuestion[]).map(q => ({
-      title: q.title,
-      answers: q.answers.map(a => ({ text: a.text, is_correct: a.isCorrect })),
+    questions: (items as QuizQuestion[]).map(question => ({
+      title: question.title,
+      answers: question.answers.map(answer => ({ text: answer.text, is_correct: answer.is_correct })),
     })),
   };
 }
@@ -80,11 +27,18 @@ function _buildDraftItems(base: object, postType: PostType, items: QuizQuestion[
 export const getLinkDescarga = (postId: number): string =>
   `/documents/download/pdf/${postId}`;
 
-export const getMyPosts = async (userId: string | number): Promise<PostPreview[]> => {
-  const response = await fetch(`/api/documents/?student=${userId}`);
-  const data = await response.json();
-  return data.map(_withExtendedType);
+export const getMyPosts = async (userId: string): Promise<PostPreview[]> => {
+  try{
+    const response = await fetch(`/api/documents/?student=${userId}`);
+    if (!response.ok) throw new Error("Error al obtener los posts");
+    const data = await response.json();
+    return data.map(_withExtendedType);
+  } catch (error) {
+    console.error("Error en getMyPosts:", error);
+    throw error;
+  }
 };
+
 
 export const getPosts = async (courseId: number): Promise<PostPreview[]> => {
   try {
@@ -123,26 +77,41 @@ export const getDocument = async (postId: number): Promise<PostPreview> => {
 };
 
 export const postDocument = async (
-  courseId: number,
-  userId: number,
-  title: string,
-  description: string,
-  docType: 'pdf' | 'vid',
-  file: File,
-  isDraft = false
+  document: CreateDocumentPayload
 ): Promise<PostPDF | PostVideo> => {
   try {
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("course", courseId.toString());
-    formData.append("student", userId.toString());
-    formData.append("file", file);
-    if (isDraft) formData.append("is_draft", "true");
+    formData.append("title", document.title);
+    formData.append("description", document.description);
+    formData.append("course", document.courseId.toString());
+    formData.append("student", document.studentId.toString());
+    formData.append("file", document.file);
+    if (document.isDraft) formData.append("is_draft", "true");
 
-    const response = await fetch(`/api/documents/upload/${docType}/`, { method: "POST", body: formData });
+    const response = await fetch(`/api/documents/upload/pdf/`, { method: "POST", body: formData });
     if (!response.ok) throw new Error("Error al publicar el documento");
-    return _withExtendedType(await response.json()) as PostPDF | PostVideo;
+    return _withExtendedType(await response.json()) as PostPDF;
+  } catch (error) {
+    console.error("Error en postDocument:", error);
+    throw error;
+  }
+};
+
+export const postVideo = async (
+    video: CreateVideoPayload
+): Promise<PostVideo> => {
+  try {
+    const formData = new FormData();
+    formData.append("title", video.title);
+    formData.append("description", video.description);
+    formData.append("course", video.courseId.toString());
+    formData.append("student", video.studentId.toString());
+    formData.append("url", video.url);
+    if (video.isDraft) formData.append("is_draft", "true");
+
+    const response = await fetch(`/api/documents/upload/vid/`, { method: "POST", body: formData });
+    if (!response.ok) throw new Error("Error al publicar el documento");
+    return _withExtendedType(await response.json()) as PostVideo;
   } catch (error) {
     console.error("Error en postDocument:", error);
     throw error;
@@ -150,24 +119,20 @@ export const postDocument = async (
 };
 
 export const postQuiz = async (
-  courseId: number,
-  userId: number,
-  title: string,
-  description: string,
-  questions: QuizQuestion[]
+  quiz: CreateQuizPayload
 ): Promise<PostQuiz> => {
   try {
     const response = await fetch(`/api/documents/upload/quiz/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
-        description,
-        course: courseId,
-        student: userId,
-        questions: questions.map(q => ({
-          title: q.title,
-          answers: q.answers.map(a => ({ text: a.text, is_correct: a.isCorrect })),
+        title: quiz.title,
+        description: quiz.description,
+        course: quiz.courseId,
+        student: quiz.studentId,
+        questions: quiz.questions.map(question => ({
+          title: question.title,
+          answers: question.answers.map(answer => ({ text: answer.text, is_correct: answer.is_correct })),
         })),
       }),
     });
@@ -180,22 +145,18 @@ export const postQuiz = async (
 };
 
 export const postFlashCardDeck = async (
-  courseId: number,
-  userId: number,
-  title: string,
-  description: string,
-  cards: FlashCard[]
+  flashcardDeck: CreateFlashcardPayload
 ): Promise<PostFlashcard> => {
   try {
     const response = await fetch(`/api/documents/upload/flashcards/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
-        description,
-        course: courseId,
-        student: userId,
-        cards: cards.map(c => ({ question: c.question, answer: c.answer })),
+        title: flashcardDeck.title,
+        description: flashcardDeck.description,
+        course: flashcardDeck.courseId,
+        student: flashcardDeck.studentId,
+        cards: flashcardDeck.flashcards.map(card => ({ question: card.question, answer: card.answer })),
       }),
     });
     if (!response.ok) throw new Error("Error al publicar las flashcards");
@@ -220,35 +181,6 @@ export const checkQuizAnswers = async (postId: number, responses: number[]): Pro
     throw error;
   }
 };
-
-// ── Comments ──────────────────────────────────────────────────────────────────
-
-export const getComments = async (documentId: number): Promise<Comment[]> => {
-  try {
-    const response = await fetch(`/api/documents/comments/?post=${documentId}`);
-    if (!response.ok) throw new Error("Error al obtener los comentarios");
-    return await response.json() as Comment[];
-  } catch (error) {
-    console.error("Error en getComments:", error);
-    throw error;
-  }
-};
-
-export const postComment = async (userId: number, postId: number, message: string): Promise<Comment> => {
-  try {
-    const response = await fetch(`/api/documents/comments/?user=${userId}&post=${postId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: userId, post: postId, message }),
-    });
-    if (!response.ok) throw new Error("Error al agregar el comentario");
-    return await response.json() as Comment;
-  } catch (error) {
-    console.error("Error en postComment:", error);
-    throw error;
-  }
-};
-
 
 // ── Drafts ────────────────────────────────────────────────────────────────────
 

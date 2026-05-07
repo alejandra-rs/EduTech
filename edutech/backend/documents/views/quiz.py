@@ -19,7 +19,7 @@ class QuizUploadView(generics.GenericAPIView):
             description=data["description"],
             course=data["course"],
             student=data.get("student"),
-            post_type="QUI",
+            post_type=data.get("post_type"),
         )
         quiz = Quiz.objects.create(post=post)
         for q_data in data["questions"]:
