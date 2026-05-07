@@ -18,13 +18,13 @@ import ReportsPage from "./pages/ReportsPage";
 import ReportFormPage from "./pages/ReportFormPage";
 import Drafts from "./pages/Drafts";
 
-
 import StreamHost from "./retransmission/jitsi_sin_docker/StreamHost";
 import StreamViewer from "./retransmission/jitsi_sin_docker/StreamViewer";
 import StreamHost2 from "./retransmission/jitsi/StreamHost";
 import StreamViewer2 from "./retransmission/jitsi/StreamViewer";
 import StreamHostAgora from "./retransmission/Agora_and_PeerJS/StreamHost";
 import StreamViewerAgora from "./retransmission/Agora_and_PeerJS/StreamViewer";
+import Dashboard from "./retransmission/Plataformas/StreamViewer";
 
 import { syncUser } from "@services/connections";
 
@@ -41,7 +41,7 @@ export default function App() {
   useEffect(() => {
     if (accounts.length > 0) {
       // Si se busca ejecutar la retransmisión sin el backend encendido,
-      // se puede comentar esta línea para evitar errores relacionados con la sincronización del usuario. 
+      // se puede comentar esta línea para evitar errores relacionados con la sincronización del usuario.
       syncUser(instance, accounts[0]);
     }
   }, [accounts, instance]);
@@ -49,76 +49,83 @@ export default function App() {
     <>
       <BrowserRouter>
         <NavigationGuardProvider>
-        <UnauthenticatedTemplate>
-          <SignIn />
-        </UnauthenticatedTemplate>
-        <AuthenticatedTemplate>
-          {isDomainValid ? (
-            <Layout accounts={accounts} instance={instance}>
-              <Routes>
-                <Route path="/" element={<Courses />} />
-                <Route path="/:id/asignaturas" element={<Subject />} />
-                <Route
-                  path="/:id/:subjectId/post"
-                  element={<SubjectDetail />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload"
-                  element={<Navigate to="PDF" replace />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/PDF"
-                  element={<CargarPublicacionPDF />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/Video"
-                  element={<CargarPublicacionVideo />}
-                />
-                <Route
-                  path="/:id/:subjectId/documento/:postId"
-                  element={<VistaPreviaDocumento />}
-                />
-                <Route
-                  path="/:id/:subjectId/video/:postId"
-                  element={<VistaPreviaVideo />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/quiz"
-                  element={<CreateQuiz />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/flashcard"
-                  element={<CreateFlashCard />}
-                />
-                <Route
-                  path="/:id/:subjectId/quiz/:postId"
-                  element={<TakeQuiz />}
-                />
-                <Route
-                  path="/:id/:subjectId/flashcard/:postId"
-                  element={<TakeFlashCard />}
-                />
-                <Route path="/borradores" element={<Drafts />} />
-                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
-                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
-                <Route
-                  path="/reports"
-                  element={<ReportsPage />}
-                />
-                <Route
-                  path="/admin/report-form/:id"
-                  element={<ReportFormPage />}
-                />
-                <Route path="/stream/host" element={<StreamHost />} />
-                <Route path="/stream/watch" element={<StreamViewer />} />
-                <Route path="/stream/host2" element={<StreamHost2 />} />
-                <Route path="/stream/watch2" element={<StreamViewer2 />} />
-                <Route path="/stream/host4" element={<StreamHostAgora />} />
-                <Route path="/stream/watch4" element={<StreamViewerAgora />} />
-              </Routes>
-            </Layout>
-          ) : null}
-        </AuthenticatedTemplate>
+          <UnauthenticatedTemplate>
+            <SignIn />
+          </UnauthenticatedTemplate>
+          <AuthenticatedTemplate>
+            {isDomainValid ? (
+              <Layout accounts={accounts} instance={instance}>
+                <Routes>
+                  <Route path="/" element={<Courses />} />
+                  <Route path="/:id/asignaturas" element={<Subject />} />
+                  <Route
+                    path="/:id/:subjectId/post"
+                    element={<SubjectDetail />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/upload"
+                    element={<Navigate to="PDF" replace />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/upload/PDF"
+                    element={<CargarPublicacionPDF />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/upload/Video"
+                    element={<CargarPublicacionVideo />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/documento/:postId"
+                    element={<VistaPreviaDocumento />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/video/:postId"
+                    element={<VistaPreviaVideo />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/upload/quiz"
+                    element={<CreateQuiz />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/upload/flashcard"
+                    element={<CreateFlashCard />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/quiz/:postId"
+                    element={<TakeQuiz />}
+                  />
+                  <Route
+                    path="/:id/:subjectId/flashcard/:postId"
+                    element={<TakeFlashCard />}
+                  />
+                  <Route path="/borradores" element={<Drafts />} />
+                  <Route
+                    path="/borradores/flashcard/:draftId"
+                    element={<CreateFlashCard />}
+                  />
+                  <Route
+                    path="/borradores/quiz/:draftId"
+                    element={<CreateQuiz />}
+                  />
+                  <Route path="/reports" element={<ReportsPage />} />
+                  <Route
+                    path="/admin/report-form/:id"
+                    element={<ReportFormPage />}
+                  />
+                  <Route path="/stream/host" element={<StreamHost />} />
+                  <Route path="/stream/watch" element={<StreamViewer />} />
+                  <Route path="/stream/host2" element={<StreamHost2 />} />
+                  <Route path="/stream/watch2" element={<StreamViewer2 />} />
+                  <Route path="/stream/host4" element={<StreamHostAgora />} />
+                  <Route
+                    path="/stream/watch4"
+                    element={<StreamViewerAgora />}
+                  />
+                  <Route path="/stream/plataformas" element={<Dashboard />} />
+                </Routes>
+              </Layout>
+            ) : null}
+          </AuthenticatedTemplate>
         </NavigationGuardProvider>
       </BrowserRouter>
     </>
