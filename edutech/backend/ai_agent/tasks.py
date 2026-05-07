@@ -4,7 +4,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 
-def notificar_frontend(attachment_id, status):
+def notify_frontend(attachment_id, status):
     """Función de ayuda para mandar mensajes por WebSocket usando Redis"""
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -14,15 +14,15 @@ def notificar_frontend(attachment_id, status):
 
 
 @shared_task
-def procesar_pdf_y_vectorizar(attachment_id):
+def vectorize_pdf(attachment_id):
     try:
         from documents.models import PDFAttachment
 
         pdf_instance = PDFAttachment.objects.get(id=attachment_id)
         vectorize_new_document(
             pdf_instance,
-            notify_fn=lambda status: notificar_frontend(attachment_id, status),
+            notify_fn=lambda status: notify_frontend(attachment_id, status),
         )
         return f"Éxito: PDF {attachment_id} vectorizado."
     except Exception as e:
-        notificar_frontend(attachment_id, "error")
+        notify_frontend(attachment_id, "error")

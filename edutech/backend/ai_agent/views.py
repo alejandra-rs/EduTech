@@ -26,11 +26,11 @@ def response_needs_code(user_query):
         return False
 
 
-def find_documents(vector_store, query, filtros, es_codigo):
+def find_documents(vector_store, query, filtros, code_required):
     """Busca y filtra documentos combinando texto y código si es necesario"""
 
     nomic_query = f"search_query: {query}"
-    if es_codigo:
+    if code_required:
         brutos = vector_store.similarity_search(nomic_query, k=15, filter=filtros)
         res_code = [d for d in brutos if "CODE" in d.metadata.get("tags", [])][:4]
         res_texto = [d for d in brutos if "CODE" not in d.metadata.get("tags", [])][:6]
@@ -62,7 +62,7 @@ class ChatAcademicoView(APIView):
         return self.generar_respuesta_llm(docs, user_query, modo_chat)
 
 
-    def _preparar_mapa_referencias(self, docs):
+    def _sources_map(self, docs):
             """Asigna un ID [Ref: X] a cada documento y extrae su info clave."""
             mapa_vectores = {}
             contexto_estructurado = []
@@ -93,7 +93,7 @@ class ChatAcademicoView(APIView):
                     "doc_id": v.metadata.get("doc_id"),
                     "p": v.metadata.get("p"),
                     "titulo": v.metadata.get("titulo"),
-                    "texto": v.page_content[:200], # Previsualización para el front
+                    "texto": v.page_content[:200],
                 })
                 
         return fuentes
@@ -116,7 +116,7 @@ class ChatAcademicoView(APIView):
         if not docs:
             return None
 
-        mapa_vectores, contexto_estructurado = self._preparar_mapa_referencias(docs[:4])
+        mapa_vectores, contexto_estructurado = self._sources_map(docs[:4])
 
         if not contexto_estructurado:
             return None
@@ -179,7 +179,7 @@ class ChatAcademicoView(APIView):
     def generar_respuesta_llm(self, docs, user_query, modo):
         """Flujo normal de ChatOllama"""
 
-        mapa_vectores, contexto_estructurado = self._preparar_mapa_referencias(docs)
+        mapa_vectores, contexto_estructurado = self._sources_map(docs)
 
         lista_json = [
         {"id_referencia": c["id_referencia"], "texto": c["texto"]} 

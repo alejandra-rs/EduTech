@@ -13,7 +13,7 @@ import {
   connectToDocumentStatus,
   generateDocumentDescription,
 } from "../services/connections-documents";
-import { PDF_STATES } from "../models/post.model";
+import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/states.model";
 
 export default function UploadDocument() {
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ export default function UploadDocument() {
   const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
 
   const [processingStatus, setProcessingStatus] = useState<PDF_STATES>("pending");
-  const [processingError, setProcessingError] = useState<string | undefined>();
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -52,14 +51,14 @@ export default function UploadDocument() {
       setIsConfirmed(true);
 
       if (data.attachment_id) {
-        socketRef.current = connectToDocumentStatus(data.attachment_id, (wsData) => {
-          if (wsData.status === "error") setProcessingError(wsData.message);
-          setProcessingStatus(wsData.status as PDF_STATES);
-          if (wsData.status === "completed") socketRef.current?.close();
+        socketRef.current = connectToDocumentStatus(data.attachment_id, (status) => {
+          setProcessingStatus(status);
+          if (status === "completed" || status === "error") {
+            socketRef.current?.close();
+          }
         });
       }
     } catch (error) {
-      setProcessingError("No se pudo subir el archivo. Inténtalo de nuevo.");
       setProcessingStatus("error");
     }
   };
@@ -88,7 +87,9 @@ export default function UploadDocument() {
     }
   };
 
-  const currentIdx = !processingStatus || processingStatus === "error" ? -1 : ORDER.indexOf(processingStatus);
+  const currentIdx = !processingStatus || processingStatus === "error" 
+    ? -1 
+    : PDF_STAGES.findIndex((stage) => stage.key === processingStatus);
 
   return (
     <div className="flex flex-col items-center w-full mx-auto p-4 md:p-8 bg-white min-h-screen relative">
@@ -178,13 +179,12 @@ export default function UploadDocument() {
               }`}>
                 {processingStatus === "error" ? "Error" : "Procesando documento"}
               </p>
-              <StageList
-                stages={STAGES}
+              <StageList<PDF_STATES>
+                stages={PDF_STAGES}
                 currentStage={processingStatus}
-                errorStage="error"
-                errorMessage={processingError}
+                errorStage={PDF_STAGES_MAP.error}
               />
-              <ProgressBar currentIdx={currentIdx} total={ORDER.length} isError={processingStatus === "error"} />
+              <ProgressBar currentIdx={currentIdx} total={PDF_STAGES.length} isError={processingStatus === "error"} />
             </div>
           )}
 

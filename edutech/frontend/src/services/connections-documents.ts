@@ -1,4 +1,4 @@
-import { PostPreview, PostPDF, PostVideo, PostQuiz, PostFlashcard } from '../models/post.model';
+import { PostPreview, PostPDF, PostVideo, PostQuiz, PostFlashcard, PDF_STATES } from '../models/post.model';
 import { Student } from '../models/student.model';
 
 // ── Local types ───────────────────────────────────────────────────────────────
@@ -423,15 +423,15 @@ export const generateDocumentDescription = async (draftId: number): Promise<stri
         throw error;
     }
 };
-export const connectToDocumentStatus = (attachmentId: number, onMessage: (data: any) => void) => {
+
+export const connectToDocumentStatus = (attachmentId: number, onMessage: (status: PDF_STATES) => void) => {
   if (!attachmentId) return null;
 
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const host = window.location.host;
   
   const socket = new WebSocket(`${protocol}//${host}/ws/documents/${attachmentId}/`);
-
-  socket.onmessage = (event) => onMessage(JSON.parse(event.data));
+  socket.onmessage = (event) => onMessage(JSON.parse(event.data).status as PDF_STATES);
   
   return socket;
 };

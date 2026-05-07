@@ -1,25 +1,20 @@
-export interface Stage<K extends string = string> {
-  key: K;
-  label: string;
-}
+import { Stage, StageSequence, ProcessingStatus } from "../../models/states.model";
 
-interface StageListProps<K extends string = string> {
-  stages: Stage<K>[];
-  currentStage: K | null;
-  errorStage: K;
-  errorMessage?: string;
+interface StageListProps<K extends ProcessingStatus> {
+  stages: StageSequence<K>;
+  currentStage: K;
+  errorStage: Stage<K>;
   required?: boolean;
 }
 
-export default function StageList<K extends string = string>({
+export default function StageList<K extends ProcessingStatus>({
   stages,
   currentStage,
   errorStage,
-  errorMessage,
   required = false,
 }: StageListProps<K>) {
   const order = stages.map((s) => s.key);
-  const isError = currentStage === errorStage;
+  const isError = currentStage === errorStage.key;
   const currentIdx = isError || !currentStage ? -1 : order.indexOf(currentStage);
 
   return (
@@ -31,7 +26,7 @@ export default function StageList<K extends string = string>({
       )}
 
       {isError ? (
-        <p className="text-sm text-red-600 font-medium">{errorMessage ?? "Error en el procesamiento"}</p>
+        <p className="text-sm text-red-600 font-medium">{errorStage.label}</p>
       ) : (
         stages.map((stage, i) => {
           const done = i < currentIdx;
