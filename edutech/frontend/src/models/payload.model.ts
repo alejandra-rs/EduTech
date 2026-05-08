@@ -1,4 +1,4 @@
-import { PostType } from "./post.model";
+import { ChatMode } from "./agent.models";
 import { Deck, FlashCard } from "./postsTypesModels/flashcard.model";
 import { QuizQuestion } from "./postsTypesModels/quiz.models";
 
@@ -9,6 +9,7 @@ export interface CreatePayloadBase<T extends PostType> {
   courseId: number;
   studentId: number;
   isDraft?: boolean;
+  publish?: boolean;
 }
 
 export interface CreateDocumentPayload extends CreatePayloadBase<'PDF'> {
@@ -26,4 +27,16 @@ export interface CreateFlashcardPayload extends CreatePayloadBase<'FLA'> {
   flashcards: FlashCard[];
 }
 
-export type CreateMediaPayload = CreateDocumentPayload | CreateVideoPayload;
+export interface QueryChatbotPayload{
+  question: string
+  course_id: string,
+  mode: ChatMode,
+  deep_thinking: boolean,
+}
+
+export type extended_item =  QuizQuestion[] | FlashCard[] |string | File;
+
+export type PostType = 'QUI' | 'FLA' | 'VID' | 'PDF';
+
+export type CreateMediaPayload = CreateDocumentPayload | CreateVideoPayload | CreateQuizPayload | CreateFlashcardPayload;
+export type UploadDdaft = CreateMediaPayload & { draftId: number };

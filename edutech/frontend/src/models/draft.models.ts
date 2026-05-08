@@ -10,8 +10,12 @@ export interface DraftBase<T extends PostType> {
   student: number;
   course: number;
 }
-export interface DraftPDF extends DraftBase<'PDF'> {}
-export interface DraftVideo extends DraftBase<'VID'> {}
+export interface DraftPDF extends DraftBase<'PDF'> {
+  attach: File;
+}
+export interface DraftVideo extends DraftBase<'VID'> {
+  url: string
+}
 
 export interface DraftQuiz extends DraftBase<'QUI'> {
   questions: QuizQuestion[]; 

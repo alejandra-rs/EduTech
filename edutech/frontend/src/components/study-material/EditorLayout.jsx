@@ -79,7 +79,6 @@ export function EditorLayout({
     try {
       await onSaveDraft(header);
       setDraftSaved(true);
-      setTimeout(() => setDraftSaved(false), 3000);
     } catch (e) {
       console.error(e);
     } finally {
