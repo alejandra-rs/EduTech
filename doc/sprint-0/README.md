@@ -1,14 +1,14 @@
-# EduTech – Sprint Uno
+# EduTech – Sprint Zero
 
 ### Equipo _D-MACH_
 
 ### Marcial Galván - Houyame Liazidi - Alejandra Rodríguez - Cristina Santana - Dácil Santana
 
-![Página inicial de la aplicación](./doc/sprint-1/images/edutech.png)
+![Página inicial de la aplicación](./images/edutech.png)
 
 ## Descripción del Proyecto
 
-Este _sprint_ tiene como objetivo ampliar con el **minimo viable** (_MVP_) desarrollado en el _Sprint Zero_ de EduTech.
+Este _sprint_ inicial tiene como objetivo construir el **primer minimo viable** (_MVP_) de EduTech.
 
 EduTech es una web que nace para resolver los siguientes problemas:
 
@@ -18,16 +18,15 @@ EduTech es una web que nace para resolver los siguientes problemas:
 
 ---
 
-## _Sprint Uno_
+## _Sprint Zero_
 
 ### Objetivos
 
-El objetivo principal de este _sprint_ es incorporar funcionalidades avanzadas con la generación de recursos de estudios, la integreación de inteligencia artificial, organizar sesiones de estudios y agregando más grados permitiendo:
+El objetivo principal de este primer _sprint_ es otorgar valor al usuario, mediante disponer una aplicación que permita:
 
-- Crear cuestionarios y flashcard.
-- Interactuar con el chatbot, permitiendo responder preguntas.
-- Organizar sesiones de estudios.
-- 
+- Centralizar el contenido académico, organizado por cursos y asignaturas.
+- Subir y visualizar contenido, como documentos PDF y vídeos.
+- Interactuar con los recursos subidos, mediante valoraciones, comentarios y suscripciones.
 
 ### Funcionalidades Incluidas
 
