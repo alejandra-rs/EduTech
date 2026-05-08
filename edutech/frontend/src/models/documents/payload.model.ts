@@ -1,4 +1,4 @@
-import { ChatMode } from "./agent.models";
+import { ChatMode } from "../agent.models";
 import { Deck, FlashCard } from "./postsTypesModels/flashcard.model";
 import { QuizQuestion } from "./postsTypesModels/quiz.models";
 

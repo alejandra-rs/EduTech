@@ -1,4 +1,7 @@
-export const getUniversities = async () => {
+import { Degree, DegreeInfo, University, Year } from "../models/courses/course.model";
+import { Student } from "../models/student/student.model";
+
+export async function getUniversities(): Promise<University[]>  {
     let fetchUrl = `/api/courses/universities/`;
     try {
         const response = await fetch(fetchUrl);
@@ -8,9 +11,9 @@ export const getUniversities = async () => {
         console.error("Error en getUniversities :", error);
         throw error;
     }
-};
+}
 
-export const getYearById = async (yearId) => {
+export async function getYearById(yearId: number): Promise<Year> {
     let fetchUrl = `/api/courses/years/${yearId}`;
     try {
         const response = await fetch(fetchUrl);
@@ -20,9 +23,9 @@ export const getYearById = async (yearId) => {
         console.error("Error en getYearById :", error);
         throw error;
     }
-};
+}
 
-export const getDegrees = async (universityId) => {
+export async function getDegrees(universityId: number): Promise<Degree[]> {
     let fetchUrl = `/api/courses/degree/?university=${universityId}`;
     try {
         const response = await fetch(fetchUrl);
@@ -32,9 +35,9 @@ export const getDegrees = async (universityId) => {
         console.error("Error en getDegrees :", error);
         throw error;
     }
-};
+}
 
-export const getDegreesByUserId = async (userId) => {
+export async function getDegreesByUserId(userId: number): Promise<Student> {
     let fetchUrl = `/api/students/${userId}/`;
     try {
         const response = await fetch(fetchUrl);
@@ -44,9 +47,9 @@ export const getDegreesByUserId = async (userId) => {
         console.error("Error en getDegreesByUserId :", error);
         throw error;
     }
-};
+}
 
-export const saveUserDegree = async (userId, degreeId) => {
+export async function saveUserDegree(userId: number, degreeId: number | number[]): Promise<Student> {
     let fetchUrl = `/api/students/${userId}/`;
     try {
         const response = await fetch(fetchUrl, {
@@ -64,7 +67,7 @@ export const saveUserDegree = async (userId, degreeId) => {
     }
 }
 
-export const getDegreeName = async (degreeId) => {
+export async function getDegreeName(degreeId: number): Promise<string> {
     let fetchUrl = `/api/courses/degree/?id=${degreeId}`;
     try {
         const response = await fetch(fetchUrl);
@@ -75,9 +78,9 @@ export const getDegreeName = async (degreeId) => {
         console.error("Error en getDegreeName :", error);
         throw error;
     }
-};
+}
 
-export const getDegreeInfo = async (degreeId) => {
+export async function getDegreeInfo(degreeId: number): Promise<DegreeInfo> {
     let fetchUrl = `/api/courses/degree/?id=${degreeId}`;
     try {
         const response = await fetch(fetchUrl);
@@ -88,4 +91,4 @@ export const getDegreeInfo = async (degreeId) => {
         console.error("Error en getDegreeInfo :", error);
         throw error;
     }
-};
+}

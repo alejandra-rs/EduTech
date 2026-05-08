@@ -1,8 +1,9 @@
 export interface Student {
-  id: string;
+  id: number;
   first_name: string;
   last_name: string;
   email: string;
-  picture: string | null; 
-  isAdmin: boolean;
+  picture?: string;
+  degree?: number;
+  is_admin: boolean;
 }

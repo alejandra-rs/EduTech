@@ -1,4 +1,4 @@
-// ── Comments ──────────────────────────────────────────────────────────────────
+import { Comment } from "../../models/documents/interactions/comment.model";
 
 export const getComments = async (documentId: number): Promise<Comment[]> => {
   try {
@@ -25,3 +25,4 @@ export const postComment = async (userId: number, postId: number, message: strin
     throw error;
   }
 };
+
