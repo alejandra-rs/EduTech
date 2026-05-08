@@ -1,5 +1,5 @@
-import { ChatMode } from "../agent.models";
-import { Deck, FlashCard } from "./postsTypesModels/flashcard.model";
+import { ChatMode } from "../ia/agent.models";
+import { FlashCard } from "./postsTypesModels/flashcard.model";
 import { QuizQuestion } from "./postsTypesModels/quiz.models";
 
 export interface CreatePayloadBase<T extends PostType> {

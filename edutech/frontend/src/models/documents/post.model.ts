@@ -31,7 +31,7 @@ export interface PostBase <T extends PostType> {
   likes: number;
   dislikes: number;
   post_type: T;
-  extendedType: ExtendedTypeMap[T];
+  extendedType?: ExtendedTypeMap[T];
 };
 
 

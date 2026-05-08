@@ -1,10 +1,15 @@
 import { AcademicCapIcon } from "@heroicons/react/24/solid";
+export interface YearWidgetProps {
+  courseName?: string;
+  onNavigate?: () => void;
+  className?: string;
+}
 
 export const YearWidget = ({
-  courseName = "Curso",
+  courseName,
   onNavigate,
-  className = "",
-}) => {
+  className,
+}: YearWidgetProps) => {
   return (
     <div
       onClick={onNavigate}

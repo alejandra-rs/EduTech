@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getDegreeInfo } from "@services/connections-degrees";
-import { getYears } from "@services/connections-courses";
-import { useCurrentUser } from "@services/useCurrentUser";
+import { getDegreeInfo } from "../services/connections-degrees";
+import { getYears } from "../services/connections-courses";
+import { useCurrentUser } from "../services/useCurrentUser";
 import SearchBar from "../components/SearchBar";
 import PostGrid from "../components/PostGrid";
 import YearWidget from "../components/core-structure/YearWidget";
 import {CalendarDaysIcon} from "@heroicons/react/24/outline";
+import { DegreeInfo, Year, GroupedDegrees } from "../models/courses/course.model";
+import { PostPreview, POST_TYPE_LABELS } from "../models/documents/post.model";
+
 
 const AllYears = () => {
-  const [groupedDegrees, setGroupedDegrees] = useState([]);
-  const [searchResults, setSearchResults] = useState(null);
+  const [groupedDegrees, setGroupedDegrees] = useState<GroupedDegrees[]>([]);
+  const [searchResults, setSearchResults] = useState<PostPreview[] | null>(null);
   const navigate = useNavigate();
   const { userData } = useCurrentUser();
 
@@ -18,11 +21,11 @@ const AllYears = () => {
     if (!userData?.id) return;
     (async () => {
       try {
-        const years = await getYears(userData.id);
-        const degreeIds = [...new Set(years.map(y => y.degree))];
+        const years: Year[] = await getYears(userData.id);
+        const degreeIds: number[] = [...new Set(years.map(year=> year.degree))];
 
         const data = await Promise.all(degreeIds.map(async (id) => {
-          const info = await getDegreeInfo(id).catch(() => ({ name: "Carrera desconocida" }));
+          const info: DegreeInfo = await getDegreeInfo(id);
           return { ...info, id, years: years.filter(y => y.degree === id) };
         }));
         setGroupedDegrees(data);
@@ -30,15 +33,9 @@ const AllYears = () => {
     })();
   }, [userData?.id]);
 
-  const handlePostClick = (p) => {
-    const type = p.post_type === "PDF" ? "documento" : "video";
-    navigate(`/${p.course}/${p.year}/${type}/${p.id}`);
+  const handlePostClick = (post: PostPreview) => {
+    navigate(`/${post.course}/${post.year}/${POST_TYPE_LABELS[post.post_type]}/${post.id}`);
   };
-
-  const processedDegrees = groupedDegrees.map(degree => ({
-  ...degree,
-  upperName: degree.name.match(/[A-Z]/g)?.join('') ?? ''
-}));
 
   return (
     <main className="h-screen overflow-y-auto custom-scrollbar">
@@ -72,9 +69,7 @@ const AllYears = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {years.map((y) => (
                   <Link key={y.id} to={`/${y.id}/asignaturas`} className="block w-full transition hover:opacity-80" >
-                    <YearWidget 
-                      courseName={`${y.year}º CURSO - ${name.match(/[A-Z]/g)?.join('') ?? ''}`}  
-                    />
+                    <YearWidget courseName={`${y.year}º CURSO - ${name.match(/[A-Z]/g)?.join('') ?? ''}`}  />
                   </Link> ))}
               </div>
             </section>

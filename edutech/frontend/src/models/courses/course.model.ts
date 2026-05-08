@@ -18,6 +18,14 @@ export interface DegreeInfo{
   name: string,
   universityName: string,
 }
+
+export interface GroupedDegrees {
+  id: number;
+  name: string;
+  universityName: string | null;
+  years: Year[];
+}
+
 export interface Year {
   id: number;
   year: number;
