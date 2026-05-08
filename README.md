@@ -22,54 +22,71 @@ EduTech es una web que nace para resolver los siguientes problemas:
 
 ### Objetivos
 
-El objetivo principal de este _sprint_ es incorporar funcionalidades avanzadas con la generación de recursos de estudios, la integreación de inteligencia artificial, organizar sesiones de estudios y agregando más grados permitiendo:
+El objetivo principal de este _sprint_ es ampliar el _MVP_ ya existente, incorporando las siguientes funcionalidades:
 
-- Crear cuestionarios y flashcard.
-- Interactuar con el chatbot, permitiendo responder preguntas.
-- Organizar sesiones de estudios.
-- 
+- Creación de cuestionarios y _flashcards_.
+- Interacción con un _chatbot_ capaz de responder preguntas y generar contenido en base a los materiales subidos.
+- Sistema de reportes como mecanismo de moderación.
+- Estructura básica para organizar sesiones de estudio, lista para ser ampliada en _sprints_ posteriores.
+
+Tras la implementación de este _sprint_, el _MVP_ ha evolucionado desde un simple repositorio de contenido hacia una
+plataforma de estudio activa, que combina material académico, inteligencia artificial y funcionalidades básicas 
+de colaboración entre estudiantes.
 
 ### Funcionalidades Incluidas
 
-Durante este sprint se han implementado las siguientes funcionalidades:
+Durante este _sprint_ se han implementado las siguientes funcionalidades:
 
-**Gestión de contenido**
+**Creación y Gestión de Recursos de Estudio**
 
-- Subida de documentos PDF y vídeos (enlace a YouTube)
-- Visualización y descarga de materiales
-- Búsqueda de material por asignatura, título y tipo
+- Elaboración y publicación de cuestionarios y _flashcards_
+- Sección de borradores de contenido para cuestionarios y _flashcards_
+- Gestión de contenido propio y suscripciones
 
-**Navegación**
+**Inteligencia Artificial**
 
-- Organización por cursos y asignaturas
-- Filtrado de contenido
+- Consultas al _chatbot_ sobre una asignatura
+- Generación de apuntes y esquemas
 
-**Interacción**
+**Moderación**
 
-- Valoración de documentos y vídeos (likes / dislikes)
-- Contadores de visualización
+- Reportes de contenido y comentarios
+- Creación del rol de administrador y revisión de reportes
+- Eliminación de contenido inadecuado
 
-**Suscripciones**
+**Estudio colaborativo**
 
-- Suscripción a asignaturas
-- Notificaciones (correo electrónico) al cambiar de contenido una asignatura sobre la que existe una suscripción.
+- Estructura de sesiones de estudio lista para incorporar retransmisiones
+
+**Ampliación del alcance**
+
+- Expansión de la aplicación a otras universidades y titulaciones
 
 > [!NOTE]
 > Para ello, se han desarrollado las siguientes historias de usuario del _product backlog_:
 >
-> - **HU-000:** Inicio de sesión
-> - **HU-100:** Subida de Documentos a Asignaturas
-> - **HU-101:** Visualización de Material de Asignatura
-> - **HU-102:** Navegación Organizada por Cursos
-> - **HU-109:** Publicación de vídeos
-> - **HU-110:** Descarga de contenido para uso offline
-> - **HU-112:** Búsqueda de documentos por título
-> - **HU-116:** Filtrado de Material por Asignatura
-> - **HU-118:** Sistema de comentarios
-> - **HU-119:** Visualización de comentarios
-> - **HU-120 / HU-121:** Valoración de contenido
-> - **HU-122:** Contadores de valoración
-> - **HU-103 / HU-104 / HU-105:** Sistema de suscripciones
+> - **HT-000:** Investigación sobre vectorización de la Base de Datos
+> - **HT-001:** Investigación de Modelos de IA
+> - **HT-002:** Configuración de Hosting
+> - **HT-003:** Investigación de Comunicación en Tiempo Real
+> - **HU-106a:** Elaboración de Cuestionarios
+> - **HU-106b:** Publicación de Cuestionarios
+> - **HU-107:** Autoevaluación con Cuestionarios
+> - **HU-108a:** Elaboración de _Flashcards_
+> - **HU-108b:** Publicación de _Flashcards_
+> - **HU-117:** Eliminar Contenido Propio
+> - **HU-123:** Expansión a Otras Universidades y Titulaciones
+> - **HU-124:** Gestionar Borradores de Contenido
+> - **HU-125:** Mis Asignaturas
+> - **HU-126:** Mi Perfil
+> - **HU-201:** Consultas al _Chatbot_ sobre una Asignatura
+> - **HU-202:** Generación de Apuntes y Esquemas por IA
+> - **HU-301:** Creación de Anuncios para Sesión de Estudio
+> - **HU-302:** Visualización de Próximas Sesiones de Estudio
+> - **HU-400:** Reportar Contenido
+> - **HU-401:** Revisar Reportes de Contenido
+> - **HU-402:** Notificación al Creador por Contenido Eliminado
+> - **HU-403:** Reportar Comentario Inadecuado
 
 ---
 
@@ -92,21 +109,23 @@ edutech/
         └── bdd/             # Tests de comportamiento (BDD + Gherkin) del backend
 ```
 
-- [`components/`](../../edutech/frontend/src/components/): Elementos reutilizados a lo largo de toda la aplicación (y con posibilidad de reutilizarlos en el futuro).
+- [`components/`](edutech/frontend/src/components/): Elementos reutilizados a lo largo de toda la aplicación (y con posibilidad de reutilizarlos en el futuro).
 
-- [`pages/`](../../edutech/frontend/src/pages): Vistas principales, a las que el usuario puede acceder y navegar.
+- [`pages/`](edutech/frontend/src/pages): Vistas principales, a las que el usuario puede acceder y navegar.
 
-- [`services/`](../../edutech/frontend/src/services): Interfaz entre el backend y los componentes del _frontend_.
+- [`services/`](edutech/frontend/src/services): Interfaz entre el backend y los componentes del _frontend_.
 
 > [!TIP]
 > _Para más información acerca de la implementación realizada, pueden consultar la documentación
-> específica de [componentes](./Components.md), [páginas](./Pages.md) y [servicios](./Services.md)_
+> específica de [componentes](doc/sprint-1/Components.md), [páginas](doc/sprint-1/Pages.md) y [servicios](doc/sprint-1/Services.md)_
 
 ---
 
 ## Integración Continua y Calidad del Código
 
-El proyecto cuenta con un pipeline de **CI/CD** configurado en [GitHub Actions](../../.github/workflows/ci.yml) que se ejecuta automáticamente con cada _push_ a las ramas `main` y `develop`.
+El proyecto cuenta con un _pipeline_ de **CI/CD** configurado en [GitHub Actions](../../.github/workflows/ci.yml) que se ejecuta automáticamente con cada _push_ a las ramas `main` y `develop`.
+<br>
+Los tests incluidos en este _pipeline_ han sido ampliados tras añadir nuevas funcionalidades en este nuevo _sprint_.
 
 ### Pasos del pipeline
 
@@ -123,19 +142,19 @@ El proyecto cuenta con un pipeline de **CI/CD** configurado en [GitHub Actions](
 - **Tests BDD** — validan los flujos de usuario mediante escenarios escritos en _Gherkin_
 
 > [!NOTE]
-> El backend cuenta con cobertura de tests de estos tres tipos. Los tests se encuentran en [`tests/backend/`](../../edutech/tests/backend/), organizados en las carpetas `unit/`, `integration/` y `bdd/`.
+> El backend cuenta con cobertura de tests de estos tres tipos. Los tests se encuentran en [`tests/backend/`](edutech/tests/backend/), organizados en las carpetas `unit/`, `integration/` y `bdd/`.
 
 ---
 
 ## Próximos pasos
 
-En el siguiente _sprint_ se buscará evolucionar el _Minimum Viable Product_ implementado,
+En el siguiente y último _sprint_ se buscará evolucionar el _Minimum Viable Product_ implementado,
 añadiendo funcionalidades como:
 
-- Integración de un chatbot basado en IA, capaz de responder a preguntas y generar material en base al contenido subido.
-- Creación y publicación de material de estudio, como cuestionarios y _flashcards_.
-- Sistema de reporte de material y comentarios.
-- Organización de sesiones de estudio en una fecha y hora determinadas.
+- Mejora del perfil de usuario, incluyendo un espacio personal que permite guardar contenido y organizarlo en carpetas.
+- Incorporación de la generación automática de cuestionarios y _flashcards_ mediante IA.
+- Sistema de revisión de contenido con IA, antes de su publicación, como medida de seguridad.
+- Implementación de sesiones de estudio colaborativas con retransmisiones en tiempo real.
 
 ---
 
