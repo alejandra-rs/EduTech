@@ -38,8 +38,8 @@ const CreateQuiz = () => {
   }, [draftId]);
 
   const addQuestion = () => setQuestions(prev => [...prev, createQuestion()]);
-  const deleteQuestion = (id: string) => setQuestions(prev => prev.filter(question => question.id !== id));
-  const updateQuestion = (id: string, updated: QuizEditorQuestion) => setQuestions(prev => prev.map(question => question.id === id ? updated : question));
+  const deleteQuestion = (id: string | number) => setQuestions(prev => prev.filter(question => question.id !== id));
+  const updateQuestion = (id: string | number, updated: QuizEditorQuestion) => setQuestions(prev => prev.map(question => question.id === id ? updated : question));
 
   const areQuestionsValid = questions.every(q =>
     q.title.trim() !== "" && q.answers.some(a => a.is_correct) && q.answers.every(a => a.text.trim() !== "")
@@ -52,7 +52,7 @@ const CreateQuiz = () => {
   ];
 
   const handlePublish = async (header: EditorHeaderData) => {
-    await postQuiz({post_type: 'QUI', title: header.title,  description: header.description, courseId: courseId!, studentId: userData!.id, questions: questions});
+    await postQuiz({post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, questions: castQuestions()});
     if (draftPostId) await deleteDraft(draftPostId);
   };
 
@@ -116,8 +116,8 @@ const CreateQuiz = () => {
       renderItem={(question: QuizEditorQuestion) => (
         <QuizQuestion
           question={question} canDelete={questions.length > 1}
-          onUpdate={(updated: QuizEditorQuestion) => updateQuestion(question.id, updated)}
-          onDelete={() => deleteQuestion(question.id)}
+          onUpdate={(updated: QuizEditorQuestion) => updateQuestion(String(question.id), updated)}
+          onDelete={() => deleteQuestion(String(question.id))}
         />
       )}
     />

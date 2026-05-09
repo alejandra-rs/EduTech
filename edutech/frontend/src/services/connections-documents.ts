@@ -8,8 +8,6 @@ export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): Post
   return { ...post, extendedType: POST_TYPE_LABELS[post.post_type as PostType] } as PostPreview;
 }
 
-// ── Posts / Documents ─────────────────────────────────────────────────────────
-
 export const getLinkDescarga = (postId: number): string => `/api/documents/download/pdf/${postId}`;
 
 export async function getMyPosts(userId: string): Promise<PostPreview[]> {
@@ -158,8 +156,6 @@ export async function checkQuizAnswers(postId: number, responses: number[]): Pro
     throw error;
   }
 }
-
-// ── Drafts ────────────────────────────────────────────────────────────────────
 
 export async function getDraft(draftId: number): Promise<Draft> {
   try {

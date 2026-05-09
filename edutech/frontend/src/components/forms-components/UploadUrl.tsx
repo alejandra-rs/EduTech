@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Input from "../components/Input";
-import UrlValidatorInput from "./UrlValidatorInput";
+import Input from "../../components/Input";
+import UrlValidatorInput from "./ValidatorInput";
 import UrlPreview from "./UrlPreview";
 
 export default function UploadUrl() {
@@ -49,14 +49,14 @@ export default function UploadUrl() {
           <Input
             label="Título"
             placeholder="Introduce el título de la publicación"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
           />
-          
+
           <Input
             label="Descripción"
             textarea
             placeholder="Escribe una breve descripción..."
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
           />
 
           {isConfirmed && (

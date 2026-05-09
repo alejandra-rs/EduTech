@@ -101,7 +101,7 @@ const CourseDetail = () => {
           </div>
         </div>
       </div>
-      <ChatbotWidget courseId={subjectId} />
+      <ChatbotWidget courseId={String(subjectId)} />
     </div>
   );
 }

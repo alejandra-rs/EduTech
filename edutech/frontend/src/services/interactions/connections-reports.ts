@@ -1,4 +1,4 @@
-import { CommentReport, ReportReason } from "../../models/documents/interactions/report.model";
+import { CommentReport, Report, ReportReason } from "../../models/documents/interactions/report.model";
 import { apiFetch } from "../api";
 
 export const getReportReasons = async (): Promise<ReportReason[]> => {

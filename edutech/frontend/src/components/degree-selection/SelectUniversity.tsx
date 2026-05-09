@@ -1,11 +1,12 @@
 import { UseDegreeSelection } from "./useDegreeSelection";
 import SelectionGrid from "./SelectionGrid";
 import { ButtonControl } from "./ButtonControl";
+import type { University, Degree } from "../../models/courses/course.model";
 
 export interface SelectUniversityProps {
-  userId: Number,
-  title: String,
-  usuarioAceptado: Boolean
+  userId: number,
+  title: string;
+  usuarioAceptado: () => void,
 }
 
 export default function SelectUniversity({ userId, title, usuarioAceptado }: SelectUniversityProps) {
@@ -30,7 +31,7 @@ export default function SelectUniversity({ userId, title, usuarioAceptado }: Sel
       <div className="text-gray-600 mb-8">
         <SelectionGrid
           data={step === 1 ? universities : degrees}
-          action={step === 1 ? handleSelectUniversity : toggleDegreeSelection}
+          action={(i) => step === 1 ? handleSelectUniversity(i as University) : toggleDegreeSelection(i as Degree)}
           selectedIds={highlightUniversities}
         />
       </div>

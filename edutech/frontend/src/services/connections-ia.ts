@@ -1,8 +1,9 @@
 import { PDF_STATES } from '../models/documents/states.model';
 import { QueryChatbotPayload } from '../models/documents/payload.model';
+import type { ChatbotResponse } from '../models/ia/chat.models';
 import { apiFetch } from './api';
 
-export async function askChatbot(query: QueryChatbotPayload): Promise<any> {
+export async function askChatbot(query: QueryChatbotPayload): Promise<ChatbotResponse> {
   try {
     const response = await apiFetch(`/api/ai/chat/`, {
       method: 'POST',

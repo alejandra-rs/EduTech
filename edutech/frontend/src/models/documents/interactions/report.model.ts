@@ -39,3 +39,20 @@ export interface CommentReport {
   user: Student;
   comment: number;
 }
+
+export interface ReportReasonEntry {
+  id?: number;
+  type: string;
+  comment: string;
+  date: string;
+}
+
+export interface GroupedReport {
+  postId: number;
+  title: string;
+  subject: string;
+  type: string;
+  courseId: number;
+  yearId: number;
+  reasons: ReportReasonEntry[];
+}

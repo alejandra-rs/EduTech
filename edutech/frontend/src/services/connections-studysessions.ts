@@ -30,14 +30,13 @@ export const getStudySessions = async ({
   const response = await apiFetch(`/api/courses/study-sessions/?${params}`);
   if (!response.ok) throw new Error("Error al obtener las sesiones de estudio");
   
-  const rawData = await response.json();
-  
-  
-  return rawData.map((session: any) => ({
+  type RawSession = Omit<StudySession, 'scheduled_at' | 'created_at'> & { scheduled_at: string; created_at: string };
+  const rawData: RawSession[] = await response.json();
+  return rawData.map((session) => ({
     ...session,
     scheduled_at: new Date(session.scheduled_at),
     created_at: new Date(session.created_at)
-  })) as StudySession[];
+  }));
 };
 
 export const getStudySession = async (sessionId: number, studentId: number | null = null): Promise<StudySession> => {
@@ -112,11 +111,13 @@ export const getStudySessionComments = async (sessionId: number): Promise<StudyS
   const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/comments/`);
   if (!response.ok) throw new Error("Error al obtener los comentarios de la sesión");
   
-  const rawData = await response.json();
-  return rawData.map((comment: any) => ({
-    ...comment,
-    created_at: new Date(comment.created_at)
-  })) as StudySessionComment[];
+  type RawComment = Omit<StudySessionComment, 'user' | 'created_at'> & { student: StudySessionComment['user']; created_at: string };
+  const rawData: RawComment[] = await response.json();
+  return rawData.map(({ student, ...rest }) => ({
+    ...rest,
+    user: student,
+    created_at: new Date(rest.created_at)
+  }));
 };
 
 export const addStudySessionComment = async (sessionId: number, studentId: number, message: string): Promise<StudySessionComment> => {

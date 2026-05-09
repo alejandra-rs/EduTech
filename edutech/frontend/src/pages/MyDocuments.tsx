@@ -27,7 +27,7 @@ const MyDocuments = () => {
 
   useEffect(() => {
     if (!userData?.id) return;
-    getMyPosts(userData.id)
+    getMyPosts(String(userData.id))
       .then(setPosts)
       .catch((err) => console.error("Error al cargar documentos:", err))
       .finally(() => setLoading(false));
@@ -42,7 +42,7 @@ const MyDocuments = () => {
 
   const handleDelete = async (post: PostPreview) => {
     try {
-      await deleteDocument(post.id, userData!.id as unknown as number);
+      await deleteDocument(post.id, userData!.id);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       if (searchResults) setSearchResults((prev) => prev!.filter((p) => p.id !== post.id));
     } catch (err) {
@@ -66,7 +66,7 @@ const MyDocuments = () => {
           <SearchBar
             placeholder="Buscar en mis documentos..."
             color="bg-slate-800"
-            studentId={userData?.id}
+            studentId={String(userData?.id)}
             onSearch={setSearchResults}
           />
         </div>

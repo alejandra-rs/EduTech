@@ -1,9 +1,9 @@
 import { HandThumbUpIcon, HandThumbDownIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { ReactionButton } from "./ReactionButton";
+import { ReactionButton } from "./interactions/ReactionButton";
 import { useState } from 'react';
 import { PostPreview } from "../models/documents/post.model";
-import { PostPreviewVisual } from "./core-structure/post-preview-components/preview";
-import { PostLabel } from "./core-structure/post-preview-components/labels";
+import { PostPreviewVisual } from "./post-preview/preview";
+import { PostLabel } from "./post-preview/labels";
 
 const formatDate = (date: string | Date) => {
   return new Date(date).toLocaleDateString("es-ES", {

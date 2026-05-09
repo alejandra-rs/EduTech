@@ -3,9 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
 import YearsPage from "./pages/YearsPage";
-import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
-import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
-import VistaPreviaVideo from "./pages/VistaPreviaVideo";
+import LoadVideoPost from "./pages/LoadVideoPost";
+import DocumentPreview from "./pages/DocumentPreview";
+import VideoPreview from "./pages/VideoPreview";
 import CoursesPage from "./pages/CoursesPage";
 import CourseDetail from "./pages/CourseDetail";
 import SignIn from "./pages/SignIn";
@@ -23,7 +23,7 @@ import { useCurrentUser } from "./services/useCurrentUser";
 import { initializeAuth } from "./services/api";
 import { loginRequest } from "./services/authConfig";
 import StudySessions from "./pages/StudySessions";
-import MyCoursesPage from "./pages/MyCoursesPage";
+import MyCourses from "./pages/MyCourses";
 import StudySessionDetail from "./pages/StudySessionDetail";
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, } from "@azure/msal-react";
 import UploadWizard from "./pages/UploadDocument";
@@ -77,9 +77,9 @@ export default function App() {
                 <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
                 <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />
                 <Route path="/:id/:subjectId/upload/PDF" element={<UploadWizard />} />
-                <Route path="/:id/:subjectId/upload/Video" element={<CargarPublicacionVideo />} />
-                <Route path="/:id/:subjectId/documento/:postId" element={<VistaPreviaDocumento />} />
-                <Route path="/:id/:subjectId/video/:postId" element={<VistaPreviaVideo />} />
+                <Route path="/:id/:subjectId/upload/Video" element={<LoadVideoPost />} />
+                <Route path="/:id/:subjectId/documento/:postId" element={<DocumentPreview />} />
+                <Route path="/:id/:subjectId/video/:postId" element={<VideoPreview />} />
                 <Route path="/:id/:subjectId/upload/quiz" element={<CreateQuiz />} />
                 <Route path="/:id/:subjectId/upload/flashcard" element={<CreateFlashCard />} />
                 <Route path="/:id/:subjectId/quiz/:postId" element={<TakeQuiz />} />
@@ -92,7 +92,7 @@ export default function App() {
                 <Route path="/sesiones" element={<StudySessions />} />
                 <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
                 <Route path="/mis-publicaciones/" element={<MyDocuments/>} />
-                <Route path="/suscripciones" element={<MyCoursesPage/>} />
+                <Route path="/suscripciones" element={<MyCourses/>} />
               </Routes>
             </Layout>
           ) : (

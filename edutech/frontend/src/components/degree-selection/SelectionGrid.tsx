@@ -1,12 +1,12 @@
 import { Degree, University } from "../../models/courses/course.model";
 
 export interface SelectionGridProps {
-  data: University[] | Degree[],
-  action: any,
+  data: University[] | Degree[] | null,
+  action: (i: University | Degree) => void;
   selectedIds?: number[]
 }
 
-export default function SelectionGrid({ data, action, selectedIds = [] }: SelectionGridProps) {
+export default function SelectionGrid({ data = [], action, selectedIds = [] }: SelectionGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {data?.map((i: University | Degree) => {

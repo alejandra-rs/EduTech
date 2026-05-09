@@ -5,7 +5,7 @@ import { getYears } from "../services/connections-courses";
 import { useCurrentUser } from "../services/useCurrentUser";
 import SearchBar from "../components/SearchBar";
 import PostGrid from "../components/PostGrid";
-import YearWidget from "../components/core-structure/YearWidget";
+import YearWidget from "../components/YearWidget";
 import {CalendarDaysIcon} from "@heroicons/react/24/outline";
 import { DegreeInfo, Year, GroupedDegrees } from "../models/courses/course.model";
 import { PostPreview, POST_TYPE_LABELS } from "../models/documents/post.model";

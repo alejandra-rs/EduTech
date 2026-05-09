@@ -1,4 +1,6 @@
 import { PDF_STATES } from "./states.model";
+import type { QuizQuestion } from "./postsTypesModels/quiz.models";
+import type { StudyFlashCard } from "./postsTypesModels/flashcard.model";
 
 export type PostType = 'PDF' | 'VID' | 'QUI' | 'FLA';
 
@@ -24,7 +26,8 @@ export const POST_TYPE_LABELS: Record<PostType, ExtendedTypeMap[PostType]> = {
 export interface PostBase <T extends PostType> {
   id: number;
   title: string;
-  created_at: string; 
+  description?: string;
+  created_at: string;
   course: number;
   year: number;
   views: number;
@@ -59,7 +62,7 @@ export interface YoutubeVideo {
 
 export interface PostQuiz extends PostBase<'QUI'> {
   qui: QuizPreview;
-
+  questions?: QuizQuestion[];
 }
 
 export interface QuizPreview {
@@ -74,6 +77,7 @@ export interface PostFlashcard extends PostBase<'FLA'> {
 export interface FlashCardDeckPreview {
   id: number;
   card_count: number;
+  cards?: StudyFlashCard[];
 }
   
 export type PostPreview = PostPDF | PostVideo | PostQuiz | PostFlashcard;

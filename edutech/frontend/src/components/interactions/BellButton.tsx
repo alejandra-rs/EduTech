@@ -13,15 +13,15 @@ export interface BellButtonProps {
 
 const BellButton = ({ courseId }: BellButtonProps) => {
   const [subscriptionId, setSubscriptionId] = useState<number | null>(null);
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState<number | null>(null);
   const isSubscribed = subscriptionId !== null;
   const { userData } = useCurrentUser();
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        setUserId(userData.id);
-        const subId = await checkSubscription(userData.id, courseId);
+        setUserId(userData!.id);
+        const subId = await checkSubscription(userData!.id, courseId);
         setSubscriptionId(subId);
       } catch (error) {
         console.error("Error al comprobar suscripción:", error);

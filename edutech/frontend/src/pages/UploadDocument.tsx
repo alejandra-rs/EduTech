@@ -42,7 +42,7 @@ export default function UploadDocument() {
     setProcessingStatus("uploading");
 
     try {
-      const data = await uploadPDFDraft(subjectId, userData.id, defaultTitle, defaultDesc, file);
+      const data = await uploadPDFDraft({ post_type: 'PDF', courseId: Number(subjectId), studentId: userData.id, title: defaultTitle, description: defaultDesc, file });
       setDraftId(data.post_id);
       setIsConfirmed(true);
 
@@ -63,7 +63,7 @@ export default function UploadDocument() {
     e.preventDefault();
     if (!draftId) return;
     try {
-      await updateDraft(draftId, title, description, "PDF", [], true);
+      await updateDraft({ draftId, post_type: 'PDF', courseId: Number(subjectId), studentId: userData!.id, title, description, file: file! });
       setPublished(true);
     } catch (error) {
       console.error("Fallo al publicar el documento:", error);

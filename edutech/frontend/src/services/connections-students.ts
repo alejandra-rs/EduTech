@@ -1,23 +1,6 @@
-import { IPublicClientApplication } from '@azure/msal-browser';
+import type { IPublicClientApplication, AccountInfo } from '@azure/msal-browser';
 import { Student } from '../models/student/student.model';
 import { apiFetch } from './api';
-
-// Minimal interfaces for MSAL to avoid a hard dependency on @azure/msal-browser
-interface MsalTokenRequest {
-  scopes: string[];
-  account: MsalAccount;
-  authority: string;
-}
-
-interface MsalInstance {
-  acquireTokenSilent(request: MsalTokenRequest): Promise<{ accessToken: string }>;
-}
-
-interface MsalAccount {
-  name?: string;
-  username: string;
-  tenantId?: string;
-}
 
 export const getUserByEmail = async (email: string): Promise<Student | null> => {
   try {
@@ -32,7 +15,7 @@ export const getUserByEmail = async (email: string): Promise<Student | null> => 
   }
 };
 
-export const getUserPhoto = async (instance: IPublicClientApplication, account: MsalAccount): Promise<string | null> => {
+export const getUserPhoto = async (instance: IPublicClientApplication, account: AccountInfo): Promise<string | null> => {
   try {
     const tokenResponse = await instance.acquireTokenSilent({
       scopes: ["User.Read"],
@@ -58,7 +41,7 @@ export const getUserPhoto = async (instance: IPublicClientApplication, account: 
   }
 };
 
-export const postUser = async (instance: IPublicClientApplication, account: MsalAccount): Promise<Student> => {
+export const postUser = async (instance: IPublicClientApplication, account: AccountInfo): Promise<Student> => {
   try {
     const nameParts = account.name ? account.name.split(" ") : ["Sin", "Nombre"];
     const profilePic = await getUserPhoto(instance, account);
@@ -69,7 +52,7 @@ export const postUser = async (instance: IPublicClientApplication, account: Msal
     formData.append("email", account.username);
 
     if (profilePic) {
-      const res = await apiFetch(profilePic);
+      const res = await fetch(profilePic);
       const blob = await res.blob();
       const safeEmail = account.username.replace(/[^a-zA-Z0-9]/g, '_');
       formData.append("picture", blob, `profile_${safeEmail}.jpg`);
@@ -84,7 +67,7 @@ export const postUser = async (instance: IPublicClientApplication, account: Msal
   }
 };
 
-export const syncUser = async (instance: IPublicClientApplication, account: MsalAccount): Promise<void> => {
+export const syncUser = async (instance: IPublicClientApplication, account: AccountInfo): Promise<void> => {
   try {
     const existing = await getUserByEmail(account.username);
     if (!existing) await postUser(instance, account);

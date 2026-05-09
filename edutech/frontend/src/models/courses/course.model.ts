@@ -63,7 +63,7 @@ export interface UserSubscription {
 
 export interface StudySessionComment {
   id: number;
-  student: Student;
+  user: Student;
   message: string;
   created_at: Date;
 }
