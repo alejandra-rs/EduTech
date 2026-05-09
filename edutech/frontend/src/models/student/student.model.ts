@@ -4,6 +4,6 @@ export interface Student {
   last_name: string;
   email: string;
   picture?: string;
-  degree?: number;
+  degree?: number[];
   is_admin: boolean;
 }

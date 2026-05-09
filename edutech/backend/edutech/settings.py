@@ -32,13 +32,12 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 # Accepts a comma-separated list via ALLOWED_HOSTS env var.
-# "web" is the internal Docker service name used by Tailscale Serve → Vite proxy.
 ALLOWED_HOSTS = env.list(
     "ALLOWED_HOSTS",
     default=["localhost", "127.0.0.1", "web", "edutech-app.tail6b7334.ts.net"],
 )
 
-# CORS: static origins + any extras from env (e.g. your Tailscale HTTPS URL).
+# CORS: static origins + any extras from env.
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
@@ -46,8 +45,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "https://edutech-app.tail6b7334.ts.net",
 ] + env.list("CORS_EXTRA_ORIGINS", default=[])
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # Permit all origins in dev so Tailscale URL works.
-X_FRAME_OPTIONS = "ALLOWALL"  # dev only
+CORS_ALLOW_ALL_ORIGINS = DEBUG 
+X_FRAME_OPTIONS = "ALLOWALL"
 CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
@@ -102,8 +101,17 @@ ASGI_APPLICATION = "backend.edutech.asgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    # MicrosoftAuthentication reads the Bearer token sent by MSAL on the frontend,
+    # calls Microsoft Graph to verify it, and sets request.user.
+    # Returns None (anonymous) if no token is present, so unauthenticated endpoints
+    # keep working. Raises 401 if a token IS present but invalid/expired.
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        "users.authentication.MicrosoftAuthentication",
+    ],
+    # AllowAny globally — existing views work without a token.
+    # Add permission_classes = [IsAuthenticated] to individual views that need it.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
     ],
 }
 
@@ -159,18 +167,10 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    { "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
+    { "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
+    { "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
+    { "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
 ]
 
 
@@ -215,6 +215,14 @@ CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://redis:6379/0")
 # Forzamos a que Celery acepte formato JSON al comunicarse
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
+# Django's cache framework backed by Redis.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("REDIS_URL", default="redis://redis:6379/1"),
+    }
+}
 
 CHANNEL_LAYERS = {
     "default": {

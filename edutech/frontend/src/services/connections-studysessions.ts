@@ -1,5 +1,6 @@
 import { StudySession, StudySessionComment } from "../models/courses/course.model";
 import { CreateStudySessionPayload, GetStudySessionsParams } from "../models/studysession/studysession.model";
+import { apiFetch } from "./api";
 
 
 
@@ -26,7 +27,7 @@ export const getStudySessions = async ({
   if (studentId) params.append("student_id", studentId.toString());
   if (starred) params.append("starred", "true");
 
-  const response = await fetch(`/api/courses/study-sessions/?${params}`);
+  const response = await apiFetch(`/api/courses/study-sessions/?${params}`);
   if (!response.ok) throw new Error("Error al obtener las sesiones de estudio");
   
   const rawData = await response.json();
@@ -41,7 +42,7 @@ export const getStudySessions = async ({
 
 export const getStudySession = async (sessionId: number, studentId: number | null = null): Promise<StudySession> => {
   const params = studentId ? `?student_id=${studentId}` : "";
-  const response = await fetch(`/api/courses/study-sessions/${sessionId}/${params}`);
+  const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/${params}`);
   if (!response.ok) throw new Error("Error al obtener la sesión");
   
   const rawData = await response.json();
@@ -55,7 +56,7 @@ export const getStudySession = async (sessionId: number, studentId: number | nul
 
 
 export const createStudySession = async (payload: CreateStudySessionPayload): Promise<StudySession> => {
-  const response = await fetch(`/api/courses/study-sessions/`, {
+  const response = await apiFetch(`/api/courses/study-sessions/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -82,14 +83,14 @@ export const createStudySession = async (payload: CreateStudySessionPayload): Pr
 };
 
 export const deleteStudySession = async (sessionId: number): Promise<void> => {
-  const response = await fetch(`/api/courses/study-sessions/${sessionId}/`, { method: "DELETE" });
+  const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/`, { method: "DELETE" });
   if (!response.ok) throw new Error("Error al eliminar la sesión de estudio");
 };
 
 
 
 export const starStudySession = async (sessionId: number, studentId: number): Promise<void> => {
-  const response = await fetch(`/api/courses/study-sessions/${sessionId}/star/`, {
+  const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/star/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ student_id: studentId }),
@@ -99,7 +100,7 @@ export const starStudySession = async (sessionId: number, studentId: number): Pr
 
 export const unstarStudySession = async (sessionId: number, studentId: number): Promise<void> => {
   const params = new URLSearchParams({ student_id: studentId.toString() });
-  const response = await fetch(`/api/courses/study-sessions/${sessionId}/star/?${params}`, {
+  const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/star/?${params}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Error al abandonar la sesión de estudio");
@@ -108,7 +109,7 @@ export const unstarStudySession = async (sessionId: number, studentId: number): 
 
 
 export const getStudySessionComments = async (sessionId: number): Promise<StudySessionComment[]> => {
-  const response = await fetch(`/api/courses/study-sessions/${sessionId}/comments/`);
+  const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/comments/`);
   if (!response.ok) throw new Error("Error al obtener los comentarios de la sesión");
   
   const rawData = await response.json();
@@ -119,7 +120,7 @@ export const getStudySessionComments = async (sessionId: number): Promise<StudyS
 };
 
 export const addStudySessionComment = async (sessionId: number, studentId: number, message: string): Promise<StudySessionComment> => {
-  const response = await fetch(`/api/courses/study-sessions/${sessionId}/comments/`, {
+  const response = await apiFetch(`/api/courses/study-sessions/${sessionId}/comments/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ student_id: studentId, message }),

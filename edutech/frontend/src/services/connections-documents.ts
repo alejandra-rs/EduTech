@@ -1,4 +1,5 @@
 import { PostPreview, PostType, POST_TYPE_LABELS, PostPDF, PostVideo, PostQuiz, PostFlashcard } from "../models/documents/post.model";
+import { apiFetch } from "./api";
 import { Draft } from '../models/documents/draft.models';
 import { QuizCheckResponse } from '../models/documents/postsTypesModels/quiz.models';
 import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDraft } from '../models/documents/payload.model';
@@ -13,7 +14,7 @@ export const getLinkDescarga = (postId: number): string => `/documents/download/
 
 export async function getMyPosts(userId: string): Promise<PostPreview[]> {
   try {
-    const response = await fetch(`/api/documents/?student=${userId}`);
+    const response = await apiFetch(`/api/documents/?student=${userId}`);
     if (!response.ok) throw new Error("Error al obtener los posts");
     const data = await response.json();
     return data.map(_withExtendedType);
@@ -26,7 +27,7 @@ export async function getMyPosts(userId: string): Promise<PostPreview[]> {
 
 export async function getPosts(courseId: number): Promise<PostPreview[]> {
   try {
-    const response = await fetch(`/api/documents/?course=${courseId}`);
+    const response = await apiFetch(`/api/documents/?course=${courseId}`);
     if (!response.ok) throw new Error("Error al obtener los posts");
     const data = await response.json();
     return data.map(_withExtendedType);
@@ -39,7 +40,7 @@ export async function getPosts(courseId: number): Promise<PostPreview[]> {
 export async function getFilteredPosts(courseId: string | null, title: string, userId: string | null): Promise<PostPreview[]> {
   try {
     const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""} ${userId ? `&student=${userId}` : ""}`;
-    const response = await fetch(url);
+    const response = await apiFetch(url);
     if (!response.ok) throw new Error("Error al obtener los posts filtrados");
     const data = await response.json();
     return data.map(_withExtendedType);
@@ -51,7 +52,7 @@ export async function getFilteredPosts(courseId: string | null, title: string, u
 
 export async function getDocument(postId: number): Promise<PostPreview> {
   try {
-    const response = await fetch(`/api/documents/${postId}`);
+    const response = await apiFetch(`/api/documents/${postId}`);
     if (!response.ok) throw new Error("Error al obtener el documento");
     return _withExtendedType(await response.json());
   } catch (error) {
@@ -70,7 +71,7 @@ export async function postDocument(document: CreateDocumentPayload): Promise<Pos
     formData.append("file", document.file);
     if (document.isDraft) formData.append("is_draft", "true");
 
-    const response = await fetch(`/api/documents/upload/pdf/`, { method: "POST", body: formData });
+    const response = await apiFetch(`/api/documents/upload/pdf/`, { method: "POST", body: formData });
     if (!response.ok) throw new Error("Error al publicar el documento");
     return _withExtendedType(await response.json()) as PostPDF;
   } catch (error) {
@@ -89,7 +90,7 @@ export async function postVideo(video: CreateVideoPayload): Promise<PostVideo> {
     formData.append("url", video.url);
     if (video.isDraft) formData.append("is_draft", "true");
 
-    const response = await fetch(`/api/documents/upload/vid/`, { method: "POST", body: formData });
+    const response = await apiFetch(`/api/documents/upload/vid/`, { method: "POST", body: formData });
     if (!response.ok) throw new Error("Error al publicar el documento");
     return _withExtendedType(await response.json()) as PostVideo;
   } catch (error) {
@@ -100,7 +101,7 @@ export async function postVideo(video: CreateVideoPayload): Promise<PostVideo> {
 
 export async function postQuiz(quiz: CreateQuizPayload): Promise<PostQuiz> {
   try {
-    const response = await fetch(`/api/documents/upload/quiz/`, {
+    const response = await apiFetch(`/api/documents/upload/quiz/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -124,7 +125,7 @@ export async function postQuiz(quiz: CreateQuizPayload): Promise<PostQuiz> {
 
 export async function postFlashCardDeck(flashcardDeck: CreateFlashcardPayload): Promise<PostFlashcard> {
   try {
-    const response = await fetch(`/api/documents/upload/flashcards/`, {
+    const response = await apiFetch(`/api/documents/upload/flashcards/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -145,7 +146,7 @@ export async function postFlashCardDeck(flashcardDeck: CreateFlashcardPayload): 
 
 export async function checkQuizAnswers(postId: number, responses: number[]): Promise<QuizCheckResponse> {
   try {
-    const response = await fetch(`/api/documents/${postId}/quiz/check/`, {
+    const response = await apiFetch(`/api/documents/${postId}/quiz/check/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ responses }),
@@ -162,7 +163,7 @@ export async function checkQuizAnswers(postId: number, responses: number[]): Pro
 
 export async function getDraft(draftId: number): Promise<Draft> {
   try {
-    const response = await fetch(`/api/documents/drafts/${draftId}/`);
+    const response = await apiFetch(`/api/documents/drafts/${draftId}/`);
     if (!response.ok) throw new Error("Error al obtener el borrador");
     return await response.json() as Draft;
   } catch (error) {
@@ -173,7 +174,7 @@ export async function getDraft(draftId: number): Promise<Draft> {
 
 export async function getDrafts(userId: number): Promise<Draft[]> {
   try {
-    const response = await fetch(`/api/documents/drafts/?student=${userId}`);
+    const response = await apiFetch(`/api/documents/drafts/?student=${userId}`);
     if (!response.ok) throw new Error("Error al obtener los borradores");
     return await response.json() as Draft[];
   } catch (error) {
@@ -222,7 +223,7 @@ export async function saveDraft(payload: CreateMediaPayload): Promise<Draft> {
       ...specificData
     };
 
-    const response = await fetch(`/api/documents/drafts/`, {
+    const response = await apiFetch(`/api/documents/drafts/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyContent),
@@ -251,7 +252,7 @@ export async function updateDraft(draft: UploadDraft): Promise<Draft> {
       ...specificData
     };
 
-    const response = await fetch(`/api/documents/drafts/${draft.draftId}/`, {
+    const response = await apiFetch(`/api/documents/drafts/${draft.draftId}/`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyContent),
@@ -275,7 +276,7 @@ export async function uploadPDFDraft(document: CreateDocumentPayload): Promise<{
     formData.append("student", document.studentId.toString());
     formData.append("file", document.file);
 
-    const response = await fetch(`/api/documents/upload-draft/`, {
+    const response = await apiFetch(`/api/documents/upload-draft/`, {
       method: "POST",
       body: formData,
     });
@@ -290,7 +291,7 @@ export async function uploadPDFDraft(document: CreateDocumentPayload): Promise<{
 
 export async function deleteDraft(draftId: number) {
   try {
-    const response = await fetch(`/api/documents/drafts/${draftId}/`, { method: "DELETE" });
+    const response = await apiFetch(`/api/documents/drafts/${draftId}/`, { method: "DELETE" });
     if (!response.ok) throw new Error("Error al eliminar el borrador");
   } catch (error) {
     console.error("Error en deleteDraft:", error);
@@ -298,14 +299,12 @@ export async function deleteDraft(draftId: number) {
   }
 }
 
-const csrfToken = document.cookie.match(/csrftoken=([\w-]+)/)?.[1] ?? '';
 export async function deleteDocument(postId: number, studentId: number): Promise<void> {
   try {
-    const response = await fetch(`/api/documents/delete/${postId}/${studentId}`,
-      {
-        method: "DELETE", headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json', },
-        credentials: 'include',
-      });
+    const response = await apiFetch(`/api/documents/delete/${postId}/${studentId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
     if (!response.ok) throw new Error("Error al eliminar el documento");
   } catch (error) {
     console.error("Error en deleteDocument:", error);

@@ -1,7 +1,14 @@
 import { UseDegreeSelection } from "./useDegreeSelection";
 import SelectionGrid from "./SelectionGrid";
 import { ButtonControl } from "./ButtonControl";
-export default function SelectUniversity({ userId, title, usuarioAceptado }) {
+
+export interface SelectUniversityProps {
+  userId: Number,
+  title: String,
+  usuarioAceptado: Boolean
+}
+
+export default function SelectUniversity({ userId, title, usuarioAceptado }: SelectUniversityProps) {
   const {
     step,
     universities,

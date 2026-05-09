@@ -1,8 +1,9 @@
 import { CommentReport, ReportReason } from "../../models/documents/interactions/report.model";
+import { apiFetch } from "../api";
 
 export const getReportReasons = async (): Promise<ReportReason[]> => {
   try {
-    const response = await fetch(`/api/documents/reports/reasons/`);
+    const response = await apiFetch(`/api/documents/reports/reasons/`);
     if (!response.ok) throw new Error("Error al obtener los motivos");
     return await response.json() as ReportReason[];
   } catch (error) {
@@ -13,7 +14,7 @@ export const getReportReasons = async (): Promise<ReportReason[]> => {
 
 export const createReport = async (postId: number, userId: number, reasonId: number, description: string): Promise<Report> => {
   try {
-    const response = await fetch(`/api/documents/reports/`, {
+    const response = await apiFetch(`/api/documents/reports/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ post_id: postId, user_id: userId, reason_id: reasonId, description }),
@@ -31,7 +32,7 @@ export const createReport = async (postId: number, userId: number, reasonId: num
 export const getReports = async (adminId: number): Promise<Report[]> => {
   try {
     
-    const response = await fetch(`/api/documents/reports/?admin_id=${adminId}`);
+    const response = await apiFetch(`/api/documents/reports/?admin_id=${adminId}`);
     if (!response.ok) throw new Error("Error al obtener los reportes");
     
     const rawData = await response.json();
@@ -50,7 +51,7 @@ export const getReports = async (adminId: number): Promise<Report[]> => {
 
 export const rejectPostReports = async (postId: number, adminId: number): Promise<{ detail: string }> => {
   try {
-    const response = await fetch(`/api/documents/reports/post/${postId}/?admin_id=${adminId}`, { 
+    const response = await apiFetch(`/api/documents/reports/post/${postId}/?admin_id=${adminId}`, { 
       method: "DELETE" 
     });
     if (!response.ok) throw new Error("Error al descartar los reportes");
@@ -64,7 +65,7 @@ export const rejectPostReports = async (postId: number, adminId: number): Promis
 
 export const checkUserReport = async (userId: number, postId: number): Promise<{ reported: boolean }> => {
   try {
-    const response = await fetch(`/api/documents/reports/check/?user_id=${userId}&post_id=${postId}`);
+    const response = await apiFetch(`/api/documents/reports/check/?user_id=${userId}&post_id=${postId}`);
     if (!response.ok) throw new Error("Error al verificar reporte");
     return await response.json();
   } catch (error) {
@@ -75,7 +76,7 @@ export const checkUserReport = async (userId: number, postId: number): Promise<{
 
 export const createCommentReport = async (commentId: number, userId: number, reasonId: number, description: string): Promise<CommentReport> => {
   try {
-    const response = await fetch(`/api/documents/reports/comments/`, {
+    const response = await apiFetch(`/api/documents/reports/comments/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ comment_id: commentId, user_id: userId, reason_id: reasonId, description }),
@@ -98,7 +99,7 @@ export const resolveReport = async (postId: number, message: string, adminId: nu
     body.append("admin_id", adminId.toString());
     if (image) body.append("image", image);
 
-    const response = await fetch(`/api/documents/reports/resolve/${postId}/`, {
+    const response = await apiFetch(`/api/documents/reports/resolve/${postId}/`, {
       method: "POST",
       body,
     });
