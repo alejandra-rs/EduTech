@@ -1,5 +1,4 @@
-import { Course, Subscription, Year } from '../models/course.model';
-import { SubscriptionResponse } from '../models/courses/course.model';
+import { Course, SubscriptionResponse, Year } from '../models/courses/course.model';
 
 export const getYears = async (userId: number): Promise<Year[]> => {
   try {
