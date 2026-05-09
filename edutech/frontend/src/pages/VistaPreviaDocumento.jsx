@@ -1,10 +1,10 @@
-import VisorPDF from '../components/VisorPDF';
-import { TitlePage } from '../components/TitlePage';
+import VisorPDF from '../components/VisorPDF.jsx';
+import { TitlePage } from '../components/TitlePage.js';
 import { getDocument } from '@services/connections-documents';
 import { getCourse } from '@services/connections-courses';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { DocumentInfo } from '../components/DocumentInfo';
+import { DocumentInfo } from '../components/DocumentInfo.jsx';
 import { CommentsSection } from '../components/interactions/CommentsSection.jsx';
 
 export default function VistaPreviaDocumento() {
@@ -25,9 +25,7 @@ export default function VistaPreviaDocumento() {
         console.error("Error al cargar el documento", error);
       }
     };
-    if (postId){
-      cargarDocumento();
-    }
+    if (postId) cargarDocumento();
   }, [postId]);
 
   return (
@@ -45,7 +43,7 @@ export default function VistaPreviaDocumento() {
           <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-transparent pb-2">
             <div className="p-8 md:p-12 lg:pl-2 lg:pr-16 space-y-12 bg-transparent">
               <DocumentInfo document={document} />
-              <CommentsSection documentId={postId} />
+              <CommentsSection id={postId} />
             </div>
           </div>
         </div>

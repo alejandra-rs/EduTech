@@ -10,7 +10,7 @@ export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): Post
 
 // ── Posts / Documents ─────────────────────────────────────────────────────────
 
-export const getLinkDescarga = (postId: number): string => `/documents/download/pdf/${postId}`;
+export const getLinkDescarga = (postId: number): string => `/api/documents/download/pdf/${postId}`;
 
 export async function getMyPosts(userId: string): Promise<PostPreview[]> {
   try {

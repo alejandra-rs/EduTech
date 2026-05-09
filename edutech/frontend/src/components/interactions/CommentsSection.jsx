@@ -29,7 +29,7 @@ export function CommentsSection({ id, isSession = false }) {
       <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <div className="flex items-center gap-4">
           <h2 className="text-3xl font-bold text-gray-800">Comentarios:</h2>
-          <CommentModal entityId={id} onCommentAdded={loadComments} isSession/>
+          <CommentModal entityId={id} onCommentAdded={loadComments} isSession={isSession}/>
         </div>
         <span className="text-lg text-gray-400">({comments.length})</span>
       </div>

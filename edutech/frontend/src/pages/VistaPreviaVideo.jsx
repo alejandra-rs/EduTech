@@ -53,7 +53,7 @@ export default function VistaPreviaVideo() {
         </div>
 
         <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
-          <CommentsSection documentId={postId} />
+          <CommentsSection id={postId} />
         </aside>
 
       </main>

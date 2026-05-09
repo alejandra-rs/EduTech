@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import SearchBar from "../components/SearchBar";
 import BellButton from "../components/interactions/BellButton";
 import Tabs from "../components/Tabs";
@@ -89,7 +89,15 @@ const CourseDetail = () => {
             <div className="mb-8 sticky top-0 bg-white/90 backdrop-blur-sm py-2 z-10">
               <Tabs activeTabs={activeTabs} onTabChange={setActiveTabs} />
             </div>
-            <PostGrid posts={filteredPosts} onPostClick={handlePostClick} />
+            <PostGrid
+              posts={filteredPosts}
+              onPostClick={handlePostClick}
+              emptyMessage={
+                Array.isArray(searchResults)
+                  ? "No hay resultados que coinciden con la búsqueda."
+                  : "Aún no hay material disponible para esta asignatura."
+              }
+            />
           </div>
         </div>
       </div>

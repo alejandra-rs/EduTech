@@ -73,80 +73,26 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<YearsPage />} />
                 <Route path="/:id/asignaturas" element={<CoursesPage />} />
-                <Route
-                    path="/degrees/"
-                    element={<ChangeDegree userData={userData} />}
-                />
-                <Route
-                  path="/:id/:subjectId/post"
-                  element={<CourseDetail />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload"
-                  element={<Navigate to="PDF" replace />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/PDF"
-                  element={<UploadWizard />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/Video"
-                  element={<CargarPublicacionVideo />}
-                />
-                <Route
-                  path="/:id/:subjectId/documento/:postId"
-                  element={<VistaPreviaDocumento />}
-                />
-                <Route
-                  path="/:id/:subjectId/video/:postId"
-                  element={<VistaPreviaVideo />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/quiz"
-                  element={<CreateQuiz />}
-                />
-                <Route
-                  path="/:id/:subjectId/upload/flashcard"
-                  element={<CreateFlashCard />}
-                />
-                <Route
-                  path="/:id/:subjectId/quiz/:postId"
-                  element={<TakeQuiz />}
-                />
-                <Route
-                  path="/:id/:subjectId/flashcard/:postId"
-                  element={<TakeFlashCard />}
-                />
-                <Route
-                    path="/borradores"
-                    element={<Drafts />}
-                />
-                <Route
-                    path="/borradores/flashcard/:draftId"
-                    element={<CreateFlashCard />}
-                />
-                <Route
-                    path="/borradores/quiz/:draftId"
-                    element={<CreateQuiz />}
-                />
-                <Route
-                  path="/reports"
-                  element={<ReportsPage />}
-                />
-                <Route
-                  path="/admin/report-form/:id"
-                  element={<ReportFormPage />}
-                />
-                <Route
-                    path="/sesiones"
-                    element={<StudySessions />}
-                />
-                <Route
-                    path="/sesiones/:sessionId"
-                    element={<StudySessionDetail />}
-                />
-                <Route path="/mis-publicaciones/" element={<MyDocuments/>}/>
-                <Route path="/suscripciones" element={<MyCoursesPage/>}/>
+                <Route path="/degrees/" element={<ChangeDegree userData={userData} />} />
+                <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
+                <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />
+                <Route path="/:id/:subjectId/upload/PDF" element={<UploadWizard />} />
+                <Route path="/:id/:subjectId/upload/Video" element={<CargarPublicacionVideo />} />
+                <Route path="/:id/:subjectId/documento/:postId" element={<VistaPreviaDocumento />} />
+                <Route path="/:id/:subjectId/video/:postId" element={<VistaPreviaVideo />} />
+                <Route path="/:id/:subjectId/upload/quiz" element={<CreateQuiz />} />
+                <Route path="/:id/:subjectId/upload/flashcard" element={<CreateFlashCard />} />
+                <Route path="/:id/:subjectId/quiz/:postId" element={<TakeQuiz />} />
+                <Route path="/:id/:subjectId/flashcard/:postId" element={<TakeFlashCard />} />
+                <Route path="/borradores" element={<Drafts />} />
+                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
+                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/admin/report-form/:id" element={<ReportFormPage />} />
+                <Route path="/sesiones" element={<StudySessions />} />
+                <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
+                <Route path="/mis-publicaciones/" element={<MyDocuments/>} />
+                <Route path="/suscripciones" element={<MyCoursesPage/>} />
               </Routes>
             </Layout>
           ) : (
