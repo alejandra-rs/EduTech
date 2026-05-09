@@ -1,3 +1,4 @@
+import { IPublicClientApplication } from '@azure/msal-browser';
 import { Student } from '../models/student/student.model';
 import { apiFetch } from './api';
 
@@ -31,7 +32,7 @@ export const getUserByEmail = async (email: string): Promise<Student | null> => 
   }
 };
 
-export const getUserPhoto = async (instance: MsalInstance, account: MsalAccount): Promise<string | null> => {
+export const getUserPhoto = async (instance: IPublicClientApplication, account: MsalAccount): Promise<string | null> => {
   try {
     const tokenResponse = await instance.acquireTokenSilent({
       scopes: ["User.Read"],
@@ -57,7 +58,7 @@ export const getUserPhoto = async (instance: MsalInstance, account: MsalAccount)
   }
 };
 
-export const postUser = async (instance: MsalInstance, account: MsalAccount): Promise<Student> => {
+export const postUser = async (instance: IPublicClientApplication, account: MsalAccount): Promise<Student> => {
   try {
     const nameParts = account.name ? account.name.split(" ") : ["Sin", "Nombre"];
     const profilePic = await getUserPhoto(instance, account);
@@ -83,7 +84,7 @@ export const postUser = async (instance: MsalInstance, account: MsalAccount): Pr
   }
 };
 
-export const syncUser = async (instance: MsalInstance, account: MsalAccount): Promise<void> => {
+export const syncUser = async (instance: IPublicClientApplication, account: MsalAccount): Promise<void> => {
   try {
     const existing = await getUserByEmail(account.username);
     if (!existing) await postUser(instance, account);

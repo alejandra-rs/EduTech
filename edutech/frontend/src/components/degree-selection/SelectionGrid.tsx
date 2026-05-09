@@ -1,9 +1,16 @@
-export default function SelectionGrid({ data, action, selectedIds = [] }) {
+import { Degree, University } from "../../models/courses/course.model";
+
+export interface SelectionGridProps {
+  data: University[] | Degree[],
+  action: any,
+  selectedIds?: number[]
+}
+
+export default function SelectionGrid({ data, action, selectedIds = [] }: SelectionGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {data?.map((i) => {
+      {data?.map((i: University | Degree) => {
         const isSelected = selectedIds.includes(i.id);
-
         return (
           <button
             key={i.id}
@@ -18,7 +25,7 @@ export default function SelectionGrid({ data, action, selectedIds = [] }) {
           >
             {i.name}
             {isSelected && <span className="ml-2 text-blue-500">✓</span>}
-            {i.logo && (
+            {"logo" in i && i.logo && (
               <img
                 className="w-10 h-10 object-contain rounded-full"
                 src={i.logo}

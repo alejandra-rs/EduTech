@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
@@ -18,36 +18,43 @@ import ReportFormPage from "./pages/ReportFormPage";
 import SelectDegree from "./pages/SelectDegree";
 import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
-import { syncUser } from "@services/connections-students";
-import { useCurrentUser } from "@services/useCurrentUser";
-import { initializeAuth } from "@services/api";
-import { loginRequest } from "@services/authConfig";
+import { syncUser } from "./services/connections-students";
+import { useCurrentUser } from "./services/useCurrentUser";
+import { initializeAuth } from "./services/api";
+import { loginRequest } from "./services/authConfig";
 import StudySessions from "./pages/StudySessions";
 import MyCoursesPage from "./pages/MyCoursesPage";
-
 import StudySessionDetail from "./pages/StudySessionDetail";
-import {
-  AuthenticatedTemplate,
-  UnauthenticatedTemplate,
-  useMsal,
-} from "@azure/msal-react";
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, } from "@azure/msal-react";
 import UploadWizard from "./pages/UploadDocument";
 import MyDocuments from "./pages/MyDocuments";
 
 export default function App() {
   const { accounts, instance } = useMsal();
-  const { userData, isLoading } = useCurrentUser();
+  const { userData, isLoading, refetch } = useCurrentUser();
   const isDomainValid = accounts.length > 0;
+
+  const refetchRef = useRef(refetch);
+  useEffect(() => { refetchRef.current = refetch; });
 
   useEffect(() => {
     if (!isDomainValid) return;
-    syncUser(instance, accounts[0]);
     initializeAuth(() =>
-      instance
-        .acquireTokenSilent({ ...loginRequest, account: accounts[0] })
-        .then((r) => r.accessToken)
+      instance.acquireTokenSilent({ ...loginRequest, account: accounts[0] })
+        .then(r => r.accessToken)
     );
-  }, [accounts, instance]);
+
+    const init = async () => {
+      try {
+        await syncUser(instance, accounts[0]);
+      } catch (e) {
+        console.error("syncUser failed:", e);
+      }
+      await refetchRef.current();
+    };
+
+    init().catch(console.error);
+  }, [accounts, instance, isDomainValid]);
 
   return (
     <>
