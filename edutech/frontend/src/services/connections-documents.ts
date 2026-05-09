@@ -1,7 +1,7 @@
-import { PostPreview, PostType, POST_TYPE_LABELS, PostPDF, PostVideo, PostQuiz, PostFlashcard } from "../models/post.model";
-import { Draft } from '../models/draft.models';
-import { QuizCheckResponse } from '../models/postsTypesModels/quiz.models';
-import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDdaft } from '../models/payload.model';
+import { PostPreview, PostType, POST_TYPE_LABELS, PostPDF, PostVideo, PostQuiz, PostFlashcard } from "../models/documents/post.model";
+import { Draft } from '../models/documents/draft.models';
+import { QuizCheckResponse } from '../models/documents/postsTypesModels/quiz.models';
+import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDdaft } from '../models/documents/payload.model';
 
 export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): PostPreview {
   return { ...post, extendedType: POST_TYPE_LABELS[post.post_type as PostType] } as PostPreview;

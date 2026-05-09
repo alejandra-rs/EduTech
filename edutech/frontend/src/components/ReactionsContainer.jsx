@@ -3,8 +3,8 @@ import { HandThumbUpIcon, HandThumbDownIcon, FlagIcon } from '@heroicons/react/2
 import { useCurrentUser } from '@services/useCurrentUser';
 import { ReactionButton } from './ReactionButton';
 import ReportPopup from './reports/ReportPopup';
-import { getLikes, addLike, removeLike, getDislikes, addDislike, removeDislike } from '@services/useLikeDislike';
-import { createReport, checkUserReport } from '@services/connections-reports';
+import { getLikes, addLike, removeLike, getDislikes, addDislike, removeDislike } from '@services/interactions/connections-rating';
+import { createReport, checkUserReport } from '@services/interactions/connections-reports';
 
 const ReactionsContainer = ({ postId }) => {
   const { userData } = useCurrentUser();

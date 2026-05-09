@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavigationGuardProvider } from "./context/NavigationGuardContext";
 import Layout from "./components/Layout";
-import AllYears from "./pages/AllYears";
+import YearsPage from "./pages/YearsPage";
 import CargarPublicacionVideo from "./pages/CargarPublicacionVideo";
 import VistaPreviaDocumento from "./pages/VistaPreviaDocumento";
 import VistaPreviaVideo from "./pages/VistaPreviaVideo";
-import SubjectDetail from "./pages/SubjectDetail";
-import Subject from "./pages/AllSubjects";
+import CoursesPage from "./pages/CoursesPage";
+import CourseDetail from "./pages/CourseDetail";
 import SignIn from "./pages/SignIn";
 import CreateQuiz from "./pages/CreateQuiz";
 import TakeQuiz from "./pages/TakeQuiz";
@@ -56,15 +56,15 @@ export default function App() {
             userData?.degree.length !== 0 ? (
             <Layout accounts={accounts} instance={instance}>
               <Routes>
-                <Route path="/" element={<AllYears />} />
-                <Route path="/:id/asignaturas" element={<Subject />} />
+                <Route path="/" element={<YearsPage />} />
+                <Route path="/:id/asignaturas" element={<CoursesPage />} />
                 <Route
                     path="/degrees/"
                     element={<ChangeDegree userData={userData} />}
                 />
                 <Route
                   path="/:id/:subjectId/post"
-                  element={<SubjectDetail />}
+                  element={<CourseDetail />}
                 />
                 <Route
                   path="/:id/:subjectId/upload"

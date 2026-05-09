@@ -7,13 +7,9 @@ import ProgressBar from "../components/forms-components/ProgressBar";
 import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
 import { TitlePage } from "../components/TitlePage";
-import {
-  uploadPDFDraft,
-  updateDraft,
-  connectToDocumentStatus,
-  generateDocumentDescription,
-} from "../services/connections-documents";
-import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/states.model";
+import { uploadPDFDraft, updateDraft } from "../services/connections-documents";
+import { connectToDocumentStatus, generateDocumentDescription } from "../services/connections-ia"
+import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/documents/states.model";
 
 export default function UploadDocument() {
   const navigate = useNavigate();

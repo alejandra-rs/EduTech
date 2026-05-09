@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useCurrentUser } from '../services/useCurrentUser';
-import { resolveReport } from '../services/connections-reports';
+import { resolveReport } from '../services/interactions/connections-reports';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
 import UploadImage from '../components/UploadImage';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CheckIcon, XMarkIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { DocumentReport } from './DocumentReport';
-import { LABELS } from '../PostCard';
+import { LABELS } from '../core-structure/post-preview-components/labels';
 
 const TYPE_TO_PATH = { PDF: 'documento', VID: 'video', QUI: 'quiz', FLA: 'flashcard' };
 

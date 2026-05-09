@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FlagIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import Input from '../Input';
-import { getReportReasons } from '@services/connections-reports';
+import { getReportReasons } from '@services/interactions/connections-reports';
 
 export default function ReportPopup({ isOpen, onClose, entity, onSubmit }) {
   const [reasons, setReasons] = useState([]);

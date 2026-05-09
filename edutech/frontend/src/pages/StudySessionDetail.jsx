@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
 import SessionHeader from '../components/study-sessions/SessionHeader';
 import SessionDescription from '../components/study-sessions/SessionDescription';
-import { getStudySessions } from '@services/connections-study-sessions';
+import { getStudySessions } from '@services/connections-studysessions';
 import { useCurrentUser } from '@services/useCurrentUser';
 import { CommentsSection } from '../components/interactions/CommentsSection';
 

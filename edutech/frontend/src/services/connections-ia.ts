@@ -1,6 +1,5 @@
-
-import { PDF_STATES } from '../models/states.model';
-import { QueryChatbotPayload } from '../models/payload.model';
+import { PDF_STATES } from '../models/documents/states.model';
+import { QueryChatbotPayload } from '../models/documents/payload.model';
 
 export async function askChatbot(query: QueryChatbotPayload): Promise<any> {
   try {

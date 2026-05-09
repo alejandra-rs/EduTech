@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FlagIcon } from '@heroicons/react/24/solid';
 import ReportPopup from './ReportPopup';
 import { useCurrentUser } from '@services/useCurrentUser';
-import { createReport } from '@services/connections-reports';
+import { createReport } from '@services/interactions/connections-reports';
 
 export default function ReportButton({ entity = "Publicación", postId, onSubmit }) {
   const { userData } = useCurrentUser();

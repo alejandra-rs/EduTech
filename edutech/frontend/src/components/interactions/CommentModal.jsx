@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Input from "../Input";
-import { postComment } from "@services/connections-interactions";
+import { postComment } from "@services/interactions/connections-comments";
 import { useCurrentUser } from "@services/useCurrentUser";
-import { addStudySessionComment } from "@services/connections-study-sessions";
+import { addStudySessionComment } from "@services/connections-studysessions";
 
 export default function CommentModal({ entityId, onCommentAdded, isSession = false }) {
   const [isOpen, setIsOpen] = useState(false);

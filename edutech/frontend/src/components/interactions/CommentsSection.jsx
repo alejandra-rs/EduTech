@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Comment from "./Comment";
 import CommentModal from "./CommentModal";
-import { getComments, postComment } from "@services/connections-interactions";
-import { getStudySessionComments, addStudySessionComment } from "@services/connections-study-sessions";
+import { getComments, postComment } from "@services/interactions/connections-comments";
+import { getStudySessionComments, addStudySessionComment } from "@services/connections-studysessions";
 import { useCurrentUser } from "@services/useCurrentUser";
 
 export function CommentsSection({ id, isSession = false }) {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
-import { SubjectWidget } from '../components/SubjectWidget';
+import { CourseWidget } from '../components/CourseWidget';
 import SearchBar from '../components/SearchBar';
 import PostGrid from '../components/PostGrid';
 import { useCurrentUser } from '../services/useCurrentUser';
@@ -61,7 +61,7 @@ const MySubjects = () => {
               <p className="text-gray-400 italic text-center py-12">No estás suscrito a ninguna asignatura.</p>
             ) : (
               subscriptions.map((sub) => (
-                <SubjectWidget
+                <CourseWidget
                   key={sub.course?.id}
                   subjectName={sub.course?.name ?? "Asignatura"}
                   subjectId={sub.course?.id}

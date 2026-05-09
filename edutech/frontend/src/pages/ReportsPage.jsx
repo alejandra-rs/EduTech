@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ReportWidget } from '../components/reports/ReportWidget';
 import { TitlePage } from '../components/TitlePage';
 import { useCurrentUser } from '../services/useCurrentUser';
-import { getReports, rejectPostReports } from '../services/connections-reports';
+import { getReports, rejectPostReports } from '../services/interactions/connections-reports';
 
 export default function ReportsPage() {
   const [reports, setReports] = useState([]);

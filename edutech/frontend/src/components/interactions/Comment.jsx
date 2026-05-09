@@ -1,6 +1,6 @@
 import UserAvatar from "../UserAvatar";
 import ReportButton from "../reports/ReportButton";
-import { createCommentReport } from "@services/connections-reports";
+import { createCommentReport } from "@services/interactions/connections-reports";
 
 export default function Comment({ comment, user, currentUser }) {
   const handleReport = async ({ reasonId, description }) => {

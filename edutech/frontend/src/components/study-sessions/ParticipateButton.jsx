@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
-import { starStudySession, unstarStudySession } from "@services/connections-study-sessions";
+import { starStudySession, unstarStudySession } from "@services/connections-studysessions";
 
 const ParticipateButton = ({ sessionId, currentUserId, isStarred = false, isCreator = false, onStarChange, size = "w-6 h-6" }) => {
   const [loading, setLoading] = useState(false);
