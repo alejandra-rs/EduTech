@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { ChevronLeftIcon, Bars3BottomLeftIcon } from "@heroicons/react/24/solid";
 
-const label = (item, index) => item.title || item.question || 'Sin título';
+export interface EditorSidebarProps<T extends { id: string | number }> {
+  items: T[];
+  canPublish: boolean;
+  showSidebar: boolean;
+  onToggle: () => void;
+  onPublish: () => void;
+  onSaveDraft?: () => void;
+  savingDraft: boolean;
+  draftSaved: boolean;
+  onScrollTo: (id: string | number) => void;
+  itemLabel: (item: T, index: number) => string;
+  requirements?: string[];
+  children?: ReactNode;
+}
 
-const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, onSaveDraft, savingDraft, draftSaved, onScrollTo, itemLabel, requirements, children, defaultLabel }) => {
-  const getLabel = itemLabel ?? defaultLabel ?? label;
+
+export function EditorSidebar<T extends { id: string | number }>({ 
+  items, 
+  canPublish, 
+  showSidebar, 
+  onToggle, 
+  onPublish, 
+  onSaveDraft, 
+  savingDraft, 
+  draftSaved, 
+  onScrollTo, 
+  itemLabel, 
+  requirements, 
+  children 
+}: EditorSidebarProps<T>) {
+  
 
   return (
     <aside className={`fixed right-0 top-0 h-full bg-gray-50 border-l border-gray-200 transition-all duration-300 z-50 shadow-xl ${showSidebar ? 'w-72' : 'w-0'}`}>
@@ -24,13 +51,17 @@ const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, on
         >
           {children}
         </button>
-        <button
-          onClick={onSaveDraft}
-          disabled={savingDraft}
-          className="w-full py-2 mb-4 rounded-xl text-sm font-semibold text-gray-500 border border-gray-200 hover:bg-gray-100 transition-all disabled:opacity-50"
-        >
-          {savingDraft ? "Guardando…" : draftSaved ? "✓ Guardado" : "Guardar en borradores"}
-        </button>
+
+        {onSaveDraft && (
+          <button
+            onClick={onSaveDraft}
+            disabled={savingDraft}
+            className="w-full py-2 mb-4 rounded-xl text-sm font-semibold text-gray-500 border border-gray-200 hover:bg-gray-100 transition-all disabled:opacity-50"
+          >
+            {savingDraft ? "Guardando…" : draftSaved ? "✓ Guardado" : "Guardar en borradores"}
+          </button>
+        )}
+        
         <hr className='border-gray-300 m-3'></hr>
 
         <nav className="flex-1 overflow-y-auto space-y-2">
@@ -42,13 +73,13 @@ const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, on
             >
               <Bars3BottomLeftIcon className="w-4 h-4 text-gray-300 mt-0.5 group-hover:text-blue-500" />
               <span className="text-sm text-gray-600 group-hover:text-blue-600 truncate">
-                {label(item, index)}
+                {itemLabel(item, index)}
               </span>
             </button>
           ))}
         </nav>
 
-        {!canPublish && requirements?.length > 0 && (
+        {!canPublish && requirements && requirements.length > 0 && (
           <div className="p-3 bg-red-50 rounded-lg border border-red-100 mt-4 mb-5">
             <p className="text-[10px] text-red-500 font-bold uppercase mb-1">Requisitos faltantes</p>
             <ul className="text-[10px] text-red-400 list-disc pl-3 space-y-1">
@@ -59,6 +90,4 @@ const EditorSidebar = ({ items, canPublish, showSidebar, onToggle, onPublish, on
       </div>
     </aside>
   );
-};
-
-export default EditorSidebar;
+}

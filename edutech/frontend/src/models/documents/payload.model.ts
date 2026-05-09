@@ -39,4 +39,4 @@ export type extended_item =  QuizQuestion[] | FlashCard[] |string | File;
 export type PostType = 'QUI' | 'FLA' | 'VID' | 'PDF';
 
 export type CreateMediaPayload = CreateDocumentPayload | CreateVideoPayload | CreateQuizPayload | CreateFlashcardPayload;
-export type UploadDdaft = CreateMediaPayload & { draftId: number };
+export type UploadDraft = CreateMediaPayload & { draftId: number };

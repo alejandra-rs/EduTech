@@ -4,3 +4,7 @@ export type FlashCard = {
 }; 
 
 export type Deck = FlashCard[]; 
+
+export interface FlashCardEditorItem extends FlashCard {
+  id: string;
+}

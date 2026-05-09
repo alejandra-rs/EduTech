@@ -1,7 +1,7 @@
 import { PostPreview, PostType, POST_TYPE_LABELS, PostPDF, PostVideo, PostQuiz, PostFlashcard } from "../models/documents/post.model";
 import { Draft } from '../models/documents/draft.models';
 import { QuizCheckResponse } from '../models/documents/postsTypesModels/quiz.models';
-import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDdaft } from '../models/documents/payload.model';
+import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDraft } from '../models/documents/payload.model';
 
 export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): PostPreview {
   return { ...post, extendedType: POST_TYPE_LABELS[post.post_type as PostType] } as PostPreview;
@@ -236,7 +236,7 @@ export async function saveDraft(payload: CreateMediaPayload): Promise<Draft> {
     throw error;
   }
 }
-export async function updateDraft(draft: UploadDdaft): Promise<Draft> {
+export async function updateDraft(draft: UploadDraft): Promise<Draft> {
   try {
     const formatterFunction = PAYLOAD_FORMATTERS[draft.post_type];
     const specificData = formatterFunction ? formatterFunction(draft) : {};
@@ -288,7 +288,7 @@ export async function uploadPDFDraft(document: CreateDocumentPayload): Promise<{
   }
 }
 
-export async function deleteDraft(draftId: string) {
+export async function deleteDraft(draftId: number) {
   try {
     const response = await fetch(`/api/documents/drafts/${draftId}/`, { method: "DELETE" });
     if (!response.ok) throw new Error("Error al eliminar el borrador");

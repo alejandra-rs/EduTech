@@ -19,7 +19,7 @@ const MyCoursesPage = () => {
 
   useEffect(() => {
     if (!userData?.id) return;
-    getSubscriptions(userData.id)
+    getSubscriptions(userData!.id)
       .then(setSubscriptions)
       .catch((err) => console.error("Error cargando suscripciones:", err))
       .finally(() => setLoading(false));
@@ -61,15 +61,15 @@ const MyCoursesPage = () => {
             ) : subscriptions.length === 0 ? (
               <p className="text-gray-400 italic text-center py-12">No estás suscrito a ninguna asignatura.</p>
             ) : (
-              subscriptions.map((sub) => (
+              subscriptions.map((subscription) => (
                 <Link 
-                    key={sub.course.id} 
-                    to={`/${sub.course.year?.id}/${sub.course.id}/post`}
+                    key={subscription.course.id} 
+                    to={`/${subscription.course.year?.id}/${subscription.course.id}/post`}
                     className="block w-full transition hover:opacity-80"
                   >
                 <CourseWidget
-                  courseName={sub.course?.name ?? "Asignatura"}
-                  courseId={sub.course?.id}
+                  courseName={subscription.course?.name ?? "Asignatura"}
+                  courseId={subscription.course?.id}
                   />
                 </Link>
               ))

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { AccountInfo } from "@azure/msal-browser";
 import { getUserByEmail } from "./connections-students";
-import { Student } from "../models/student.model";
+import { Student } from "../models/student/student.model";
 interface CurrentUserHook {
     userData: Student | null;
     isLoading: boolean;
