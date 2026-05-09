@@ -123,7 +123,7 @@ edutech/
 
 ## Integración Continua y Calidad del Código
 
-El proyecto cuenta con un _pipeline_ de **CI/CD** configurado en [GitHub Actions](../../.github/workflows/ci.yml) que se ejecuta automáticamente con cada _push_ a las ramas `main` y `develop`.
+El proyecto cuenta con un _pipeline_ de **CI/CD** configurado en [GitHub Actions](./.github/workflows/ci.yml) que se ejecuta automáticamente con cada _push_ a las ramas `main` y `develop`.
 <br>
 Los tests incluidos en este _pipeline_ han sido ampliados tras añadir nuevas funcionalidades en este nuevo _sprint_.
 
