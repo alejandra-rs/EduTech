@@ -160,8 +160,7 @@ añadiendo funcionalidades como:
 
 ## Ejecución del proyecto
 
-Estos son los comandos a ejecutar para lanzar el proyecto. Nótese que cada serie
-de comandos ha sido ejecutada desde la carpeta `Edutech/`.
+Estos son los comandos a ejecutar para lanzar el proyecto. Nótese que cada serie de comandos ha sido ejecutada desde la carpeta `Edutech/`.
 
 1. Instalar dependencias:
 
@@ -178,35 +177,20 @@ cd ..
 pip install -r ./backend/requirements.txt
 ```
 
-2. Lanzar los distintos componentes de la aplicación
+2. Lanzar la aplicación
 
-- Base de datos
-
-```bash
-cd backend
-docker compose up
-```
-
-- Backend
 
 ```bash
 cd edutech/
 python backend/manage.py migrate
-python backend/manage.py runserver
-```
-
-- Frontend
-
-```bash
-cd edutech/frontend
-npm run dev
+docker compose -f docker-compose.local-yml up
 ```
 
 ---
 
 ## Tech Stack
 
-<div>
+<p align="center">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="15%"  alt=""/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg" width="15%" alt=""/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" width="15%"  alt=""/>
@@ -218,5 +202,11 @@ npm run dev
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cloudflare/cloudflare-original.svg" width="15%" alt=""/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="15%"  alt=""/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" width="15%" alt=""/>
-  <img src="https://skillicons.dev/icons?i=github" width="15%" alt=""/>
-</div>
+  <img src="https://www.readmecodegen.com/api/social-icon?name=celery&size=96" alt="celery" 
+  width="15%"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" 
+  width="15%" alt=""/>
+  <img src="https://www.readmecodegen.com/api/social-icon?name=ollama&reverseBackground=true" alt="ollama" width="15%"/>
+  <img src="https://www.readmecodegen.com/api/social-icon?name=googlegemini&size=96&color=%233b82f6" alt="googlegemini" width="15%"/>
+  <img src="https://skillicons.dev/icons?i=github" width="15%" alt=""/>      
+</p>

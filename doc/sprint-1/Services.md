@@ -1,113 +1,113 @@
 # Servicios
 
-Durante este sprint, los servicios se separaron para evitar el alto acoplamiento y los cuellos de botella en los despliegues. Esto nos permite escalar cada componente de forma independiente y mejorar la estabilidad general del sistema. Los archivos se encuentra en la carpeta ([`service`](../../edutech/frontend/src/services/)).
+Durante este sprint, los servicios se separaron para evitar el alto acoplamiento y los cuellos de botella en los despliegues. Esto nos permite escalar cada componente de forma independiente y mejorar la estabilidad general del sistema. Los archivos se encuentran en la carpeta [`services`](../../edutech/frontend/src/services/).
 
 ## Funciones disponibles
 
 ### Años y cursos
 
-| Función                                                                            | Descripción                                        |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------- |
-| [`getYears`](../../edutech/frontend/src/services/connections-courses.ts#L3-L12)    | Obtiene los cursos académicos disponibles          |
-| [`getCourses`](../../edutech/frontend/src/services/connections-courses.ts#L18-L32) | Obtiene las asignaturas de un curso y cuatrimestre |
-| [`getCourse`](../../edutech/frontend/src/services/connections-courses.ts#L34-L43)  | Obtiene el detalle de una asignatura               |
+| Función | Descripción |
+| --- | --- |
+| [`getYears`](../../edutech/frontend/src/services/connections-courses.ts#L4-L17) | Obtiene los cursos disponibles para un usuario |
+| [`getCourses`](../../edutech/frontend/src/services/connections-courses.ts#L19-L33) | Obtiene las asignaturas de un curso |
+| [`getCourse`](../../edutech/frontend/src/services/connections-courses.ts#L35-L44) | Obtiene el detalle de una asignatura a partir de su identificador |
 
 ### Contenido (publicaciones, documentos)
 
-| Función                                                                                       | Descripción                                               |
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| [`getPosts`](../../edutech/frontend/src/services/connections-documents.ts#L88-L98)            | Obtiene los documentos de una asignatura                  |
-| [`getMyPosts`](../../edutech/frontend/src/services/connections-documents.ts#L82-L86)          | Obtiene los documentos que subió la cuenta                |
-| [`getDocument`](../../edutech/frontend/src/services/connections-documents.ts#L113-L122)       | Obtiene un documento específico                           |
-| [`getLinkDescarga`](../../edutech/frontend/src/services/connections-documents.ts#L79)         | Devuelve el enlace de descarga de un documento PDF        |
-| [`getFilteredPosts`](../../edutech/frontend/src/services/connections-documents.ts#L100-L111)  | Obtiene documentos de una asignatura filtrados por título |
-| [`postDocument`](../../edutech/frontend/src/services/connections-documents.ts#L124-L147)      | Publica un nuevo documento en una asignatura              |
-| [`postQuiz`](../../edutech/frontend/src/services/connections-documents.ts#L149-L177)          | Publica un nuevo cuestionario en una asignatura           |
-| [`postFlashCardDeck`](../../edutech/frontend/src/services/connections-documents.ts#L179-L204) | Publica una nuevo flashcard en una asignatura             |
-| [`checkQuizAnswers`](../../edutech/frontend/src/services/connections-documents.ts#L206-L219)  | Comprueba la respuesta del cuestionario                   |
+| Función | Descripción |
+| --- | --- |
+| [`getPosts`](../../edutech/frontend/src/services/connections-documents.ts#L26-L36) | Obtiene los recursos publicados en una asignatura |
+| [`getMyPosts`](../../edutech/frontend/src/services/connections-documents.ts#L13-L23) | Obtiene los recursos subidos por el usuario |
+| [`getFilteredPosts`](../../edutech/frontend/src/services/connections-documents.ts#L38-L55) | Obtiene los recursos de una asignatura filtrados por título y tipo |
+| [`getLinkDescarga`](../../edutech/frontend/src/services/connections-documents.ts#L11) | Devuelve la URL de descarga de un documento PDF |
+| [`postDocument`](../../edutech/frontend/src/services/connections-documents.ts#L57-L98) | Publica un nuevo documento PDF en una asignatura |
+| [`postQuiz`](../../edutech/frontend/src/services/connections-documents.ts#L100-L122) | Publica un nuevo cuestionario en una asignatura |
+| [`postFlashCardDeck`](../../edutech/frontend/src/services/connections-documents.ts#L124-L143) | Publica un nuevo grupo de _flashcards_ en una asignatura |
+| [`checkQuizAnswers`](../../edutech/frontend/src/services/connections-documents.ts#L145-L158) | Envía las respuestas de un cuestionario y devuelve su corrección |
+| [`deleteDocument`](../../edutech/frontend/src/services/connections-documents.ts#L298-L309) | Elimina un recurso publicado |
 
 ### Borradores
 
-| Función                                                                                  | Descripción                                                          |
-| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| [`getDraft`](../../edutech/frontend/src/services/connections-documents.ts#L252-L261)     | Obtiene un borrado de un usuario                                     |
-| [`getDrafts`](../../edutech/frontend/src/services/connections-documents.ts#L263-L271)    | Obtiene una lista de borradores de un usuario                        |
-| [`saveDraft`](../../edutech/frontend/src/services/connections-documents.ts#L274-L296)    | Crear un borrador, sirviendo para Cuestionarios como Flashcards      |
-| [`updateDraft`](../../edutech/frontend/src/services/connections-documents.ts#L298-L324)  | Actualizar un borrador, sirviendo para Cuestionarios como Flashcards |
-| [`uploadPDFDraft`](../../edutech/frontend/src/services/connections-documents.ts#326-352) | Sube un documento y manda su vectorización                           |
-| [`deleteDraft`](../../edutech/frontend/src/services/connections-documents.ts#L354-L362)  | Elimina el borrado del usuario                                       |
+| Función | Descripción |
+| --- | --- |
+| [`getDraft`](../../edutech/frontend/src/services/connections-documents.ts#L160-L169) | Obtiene un borrador a partir de su identificador |
+| [`getDrafts`](../../edutech/frontend/src/services/connections-documents.ts#L171-L180) | Obtiene la lista de borradores guardados por un usuario |
+| [`saveDraft`](../../edutech/frontend/src/services/connections-documents.ts#L208-L235) | Crea un borrador de cuestionario o _flashcards_ |
+| [`updateDraft`](../../edutech/frontend/src/services/connections-documents.ts#L236-L264) | Actualiza un borrador existente de _cuestionario_ o _flashcards_ |
+| [`uploadPDFDraft`](../../edutech/frontend/src/services/connections-documents.ts#L266-L286) | Sube un documento PDF como borrador e inicia su vectorización |
+| [`deleteDraft`](../../edutech/frontend/src/services/connections-documents.ts#L288-L296) | Elimina un borrador |
 
 ### Inteligencia Artificial
 
-| Función                                                                                            | Descripción                                                                |
-| -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [`askChatbot`](../../edutech/frontend/src/services/onnections-documents.ts#L377-L401)              | Permite a los estudiante consultar al chatbot, soportando disitnos modelos |
-| [`connectToDocumentStatus`](../../edutech/frontend/src/services/onnections-documents.ts#L404-L417) | Comprueba los estados de la vectorizaciónde los archivos.                  |
+| Función | Descripción |
+| --- | --- |
+| [`askChatbot`](../../edutech/frontend/src/services/connections-ia.ts#L6-L29) | Permite al estudiante realizar una consulta al chatbot |
+| [`generateDocumentDescription`](../../edutech/frontend/src/services/connections-ia.ts#L31-L51) | Genera automáticamente una descripción para un borrador de documento |
+| [`connectToDocumentStatus`](../../edutech/frontend/src/services/connections-ia.ts#L53-L63) | Establece una conexión _WebSocket_ para monitorizar el estado de vectorización de un archivo |
 
 ### Reportes y Moderación
 
-| Función                                                                                    | Descripción                                                                                           |
-| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| [`getReportReasons`](../../edutech/frontend/src/services/connections-reports.js#L21-30)    | Obtiene la lista de motivos predefinidos disponibles para realizar un reporte                         |
-| [`checkUserReport`](../../edutech/frontend/src/services/connections-reports.js#L73-82)     | Verifica si un usuario ya ha reportado previamente una publicación específica                         |
-| [`createReport`](../../edutech/frontend/src/services/connections-reports.js#L32-45)        | Envía un nuevo reporte asociado a una publicación (documento, cuestionario, etc.)                     |
-| [`createCommentReport`](../../edutech/frontend/src/services/connections-reports.js#L84-97) | Envía un nuevo reporte asociado específicamente a un comentario                                       |
-| [`getReports`](../../edutech/frontend/src/services/connections-reports.js#L48-57)          | Obtiene la lista general de reportes registrados (requiere permisos de administrador)                 |
-| [`rejectPostReports`](../../edutech/frontend/src/services/connections-reports.js#L59-71)   | Descarta o elimina los reportes asociados a una publicación (requiere permisos de administrador)      |
-| [`resolveReport`](../../edutech/frontend/src/services/connections-reports.js#L99-115)      | Resuelve un reporte activo, permitiendo adjuntar un mensaje de resolución y una imagen como evidencia |
+| Función | Descripción |
+| --- | --- |
+| [`getReportReasons`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L4-L13) | Obtiene la lista de motivos disponibles para realizar un reporte |
+| [`createReport`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L15-L30) | Envía un nuevo reporte asociado a una publicación |
+| [`getReports`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L32-L50) | Obtiene de reportes pendientes de revisión (requiere permisos de administrador) |
+| [`rejectPostReports`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L52-L63) | Descarta todos los reportes asociados a una publicación (requiere permisos de administrador) |
+| [`checkUserReport`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L66-L75) | Verifica si el usuario ya ha reportado previamente una publicación específica |
+| [`createCommentReport`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L77-L92) | Envía un nuevo reporte asociado a un comentario |
+| [`resolveReport`](../../edutech/frontend/src/services/interactions/connections-reports.ts#L95-L113) | Resuelve un reporte activo, eliminando el contenido, permitiendo adjuntar un mensaje e imagen como evidencia |
 
-### Sesiones de estudio
+### Sesiones de Estudio
 
-| Función                                                                                               | Descripción                                                                                               |
-| :---------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
-| [`getStudySessions`](../../edutech/frontend/src/services/connections-study-sessions.js#L21-42)        | Obtiene la lista de sesiones de estudio, permitiendo filtrar por cursos, estudiante o si están destacadas |
-| [`getStudySession`](../../edutech/frontend/src/services/connections-study-sessions.js#L44-49)         | Obtiene los detalles específicos de una sesión de estudio                                                 |
-| [`createStudySession`](../../edutech/frontend/src/services/connections-study-sessions.js#L51-68)      | Crea y programa una nueva sesión de estudio asociada a un curso                                           |
-| [`deleteStudySession`](../../edutech/frontend/src/services/connections-study-sessions.js#L70-73)      | Elimina una sesión de estudio existente del sistema                                                       |
-| [`starStudySession`](../../edutech/frontend/src/services/connections-study-sessions.js#L75-82)        | Permite a un estudiante unirse o marcar como destacada una sesión de estudio                              |
-| [`unstarStudySession`](../../edutech/frontend/src/services/connections-study-sessions.js#L84-90)      | Permite a un estudiante abandonar o quitar de sus destacadas una sesión de estudio                        |
-| [`getStudySessionComments`](../../edutech/frontend/src/services/connections-study-sessions.js#L92-96) | Obtiene el historial de comentarios asociados a una sesión de estudio                                     |
-| [`addStudySessionComment`](../../edutech/frontend/src/services/connections-study-sessions.js#L98-109) | Publica un nuevo comentario dentro de una sesión de estudio                                               |
+| Función | Descripción |
+| :--- | :--- |
+| [`getStudySessions`](../../edutech/frontend/src/services/connections-studysessions.ts#L7-L40) | Obtiene la lista de sesiones de estudio, con filtros por asignatura o fecha|
+| [`getStudySession`](../../edutech/frontend/src/services/connections-studysessions.ts#L42-L53) | Obtiene los detalles de una sesión de estudio específica |
+| [`createStudySession`](../../edutech/frontend/src/services/connections-studysessions.ts#L57-L82) | Crea una nueva sesión de estudio asociada a una asignatura |
+| [`deleteStudySession`](../../edutech/frontend/src/services/connections-studysessions.ts#L84-L87) | Elimina una sesión de estudio existente |
+| [`starStudySession`](../../edutech/frontend/src/services/connections-studysessions.ts#L91-L98) | Permite a un estudiante participar en una sesión de estudio |
+| [`unstarStudySession`](../../edutech/frontend/src/services/connections-studysessions.ts#L100-L106) | Permite a un estudiante dejar de participar en una sesión de estudio |
 
 ### Universidades y Carreras
 
-| Función                                                                                   | Descripción                                                                                             |
-| :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| [`getUniversities`](../../edutech/frontend/src/services/connections-degrees.js#L1-11)     | Obtiene la lista de universidades disponibles en el sistema                                             |
-| [`getYearById`](../../edutech/frontend/src/services/connections-degrees.js#L13-23)        | Obtiene los detalles de un año académico específico mediante su identificador                           |
-| [`getDegrees`](../../edutech/frontend/src/services/connections-degrees.js#L25-35)         | Obtiene las carreras o grados asociados a una universidad específica                                    |
-| [`getDegreesByUserId`](../../edutech/frontend/src/services/connections-degrees.js#L37-47) | Obtiene la carrera o programa académico al que pertenece un estudiante                                  |
-| [`saveUserDegree`](../../edutech/frontend/src/services/connections-degrees.js#L49-65)     | Guarda o actualiza la carrera seleccionada en el perfil de un estudiante                                |
-| [`getDegreeName`](../../edutech/frontend/src/services/connections-degrees.js#L67-78)      | Obtiene únicamente el nombre de una carrera a partir de su identificador                                |
-| [`getDegreeInfo`](../../edutech/frontend/src/services/connections-degrees.js#L80-91)      | Obtiene la información general de una carrera, incluyendo su nombre y la universidad a la que pertenece |
+| Función | Descripción |
+| :--- | :--- |
+| [`getUniversities`](../../edutech/frontend/src/services/connections-degrees.ts#L5-L15) | Obtiene la lista de universidades disponibles en el sistema |
+| [`getYearById`](../../edutech/frontend/src/services/connections-degrees.ts#L17-L27) | Obtiene los detalles de un curso específico |
+| [`getDegrees`](../../edutech/frontend/src/services/connections-degrees.ts#L29-L39) | Obtiene las carreras asociadas a una universidad |
+| [`getDegreesByUserId`](../../edutech/frontend/src/services/connections-degrees.ts#L41-L51) | Obtiene las titulaciones asociadas a un estudiante |
+| [`saveUserDegree`](../../edutech/frontend/src/services/connections-degrees.ts#L53-L69) | Guarda o actualiza las titulaciones asociadas a un estudiante |
+| [`getDegreeName`](../../edutech/frontend/src/services/connections-degrees.ts#L71-L82) | Obtiene nombre de una carrera a partir de su identificador |
+| [`getDegreeInfo`](../../edutech/frontend/src/services/connections-degrees.ts#L84-L95) | Obtiene el detalle de una carrera |
 
 ### Usuarios
 
-| Función                                                                                 | Descripción                                                       |
-| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`syncUser`](../../edutech/frontend/src/services/connections-students.ts#L85-L93)       | Sincroniza el usuario con el backend; lo crea si no existe        |
-| [`postUser`](../../edutech/frontend/src/services/connections-students.ts#L59-L83)       | Registra un nuevo usuario en el sistema                           |
-| [`getUserPhoto`](../../edutech/frontend/src/services/connections-students.ts#L33-L57)   | Obtiene la foto de perfil del usuario desde Microsoft             |
-| [`getUserByEmail`](../../edutech/frontend/src/services/connections-students.ts#L20-L31) | Obtiene un usuario a partir de su dirección de correo electrónico |
+| Función | Descripción |
+| --- | --- |
+| [`getUserByEmail`](../../edutech/frontend/src/services/connections-students.ts#L5-L16) | Obtiene un usuario a partir de su dirección de correo electrónico |
+| [`getUserPhoto`](../../edutech/frontend/src/services/connections-students.ts#L18-L42) | Obtiene la foto de perfil del usuario |
+| [`postUser`](../../edutech/frontend/src/services/connections-students.ts#L44-L68) | Registra un nuevo usuario en el sistema |
+| [`syncUser`](../../edutech/frontend/src/services/connections-students.ts#L70-L78) | Sincroniza el usuario con el backend y lo crea si no existe todavía |
+| [`checkIsAdmin`](../../edutech/frontend/src/services/connections-students.ts#L80-L90) | Comprueba si el usuario autenticado tiene permisos de administrador |
 
 ### Interacción (likes, dislikes, comentarios)
 
-| Función                                                                            | Descripción                                                                                             |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| [`getComments`](../../edutech/frontend/src/services/connections-documents.ts#L223) | Obtiene los comentarios de un documento                                                                 |
-| [`postComment`](../../edutech/frontend/src/services/connections-documents.ts#L234) | Publica un comentario en un documento                                                                   |
-| [`getLikes`](../../edutech/frontend/src/services/useLikeDislike.js#L3-L7)          | Obtiene el estado de _like_ de un usuario en un documento y la cuenta de _likes_ de ese documento       |
-| [`addLike`](../../edutech/frontend/src/services/useLikeDislike.js#L9-L13)          | Añade un _like_ a un documento (elimina el _dislike_ si existe)                                         |
-| [`removeLike`](../../edutech/frontend/src/services/useLikeDislike.js#L15-L18)      | Elimina un _like_ de un documento                                                                       |
-| [`getDislikes`](../../edutech/frontend/src/services/useLikeDislike.js#L20-L24)     | Obtiene el estado de _dislike_ de un usuario en un documento y la cuenta de _dislikes_ de ese documento |
-| [`addDislike`](../../edutech/frontend/src/services/useLikeDislike.js#L26-L30)      | Añade un _dislike_ a un documento (elimina el _like_ si existe)                                         |
-| [`removeDislike`](../../edutech/frontend/src/services/useLikeDislike.js#L32-L35)   | Elimina un _dislike_ de un documento                                                                    |
+| Función | Descripción |
+| --- | --- |
+| [`getComments`](../../edutech/frontend/src/services/interactions/connections-comments.ts#L4-L13) | Obtiene los comentarios de un recurso |
+| [`postComment`](../../edutech/frontend/src/services/interactions/connections-comments.ts#L15-L28) | Publica un comentario en un recurso |
+| [`getLikes`](../../edutech/frontend/src/services/interactions/connections-rating.ts#L5-L9) | Obtiene el estado de _like_ del usuario en un recurso y el recuento total de _likes_ |
+| [`addLike`](../../edutech/frontend/src/services/interactions/connections-rating.ts#L11-L19) | Añade un _like_ a un recurso |
+| [`removeLike`](../../edutech/frontend/src/services/interactions/connections-rating.ts#L21-L24) | Elimina un _like_ de un recurso |
+| [`getDislikes`](../../edutech/frontend/src/services/interactions/connections-rating.ts#L26-L30) | Obtiene el estado de _dislike_ del usuario en un recurso y el recuento total de _dislikes_ |
+| [`addDislike`](../../edutech/frontend/src/services/interactions/connections-rating.ts#L32-L40) | Añade un _dislike_ a un recurso |
+| [`removeDislike`](../../edutech/frontend/src/services/interactions/connections-rating.ts#L42-L45) | Elimina un _dislike_ de un recurso |
 
 ### Suscripciones
 
-| Función                                                                                   | Descripción                                           |
-| ----------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| [`getSubscriptions`](../../edutech/frontend/src/services/connections-courses.ts#L45-L54)  | Obtiene el detalle de una subscripción                |
-| [`checkSubscription`](../../edutech/frontend/src/services/connections-courses.ts#L56-L66) | Verifica si el usuario está suscrito a una asignatura |
-| [`subscribeToCourse`](../../edutech/frontend/src/services/connections-courses.ts#L68-L80) | Suscribe al usuario a una asignatura                  |
-| [`unsubscribe`](../../edutech/frontend/src/services/connections-courses.ts#L34-L43)       | Cancela la suscripción                                |
+| Función | Descripción |
+| --- | --- |
+| [`getSubscriptions`](../../edutech/frontend/src/services/connections-courses.ts#L46-L55) | Obtiene las suscripciones de un usuario |
+| [`checkSubscription`](../../edutech/frontend/src/services/connections-courses.ts#L57-L67) | Verifica si el usuario está suscrito a una asignatura concreta |
+| [`subscribeToCourse`](../../edutech/frontend/src/services/connections-courses.ts#L69-L86) | Suscribe al usuario a una asignatura |
+| [`unsubscribe`](../../edutech/frontend/src/services/connections-courses.ts#L88-L99) | Cancela la suscripción del usuario a una asignatura |
