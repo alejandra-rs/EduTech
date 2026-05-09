@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import UserAvatar from "../UserAvatar";
 import ParticipateButton from "./ParticipateButton";
 import type { StudySession } from '../../models/courses/course.model';
 
@@ -17,7 +16,6 @@ const SessionItem = ({ session, currentUserId }: SessionItemProps) => {
   });
 
   const creatorName = `${session.creator?.first_name} ${session.creator?.last_name}` || session.creator?.email || "Anónimo";
-  const creatorAvatar = session.creator?.picture;
   const isCreator = session.creator?.id === currentUserId;
 
   return (
@@ -45,9 +43,6 @@ const SessionItem = ({ session, currentUserId }: SessionItemProps) => {
         <div className="flex items-center gap-3 text-xs text-gray-500 font-medium justify-between">
           <span>{sessionDate}</span>
           <div className="flex items-center gap-2">
-            {creatorAvatar && (
-              <UserAvatar imageUrl={creatorAvatar} />
-            )}
             <div className={isCreator ? "font-semibold text-gray-700" : ""}>
               {creatorName} {isCreator ? "(tú)" : ""}
             </div>

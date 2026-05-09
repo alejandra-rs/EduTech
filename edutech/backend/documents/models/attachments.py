@@ -26,13 +26,16 @@ class PDFAttachment(models.Model):
         LABELING = "labeling"
         COMPLETED = "completed"
         ERROR = "error"
+
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="pdf")
     file = models.FileField(
         upload_to="documents/", validators=[validate_pdf_extension, validate_pdf_size]
     )
-    
+
     processing_status = models.CharField(
-        max_length=50, choices=ProcessingStages.choices, default=ProcessingStages.PENDING
+        max_length=50,
+        choices=ProcessingStages.choices,
+        default=ProcessingStages.PENDING,
     )
 
 

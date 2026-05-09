@@ -45,7 +45,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "https://edutech-app.tail6b7334.ts.net",
 ] + env.list("CORS_EXTRA_ORIGINS", default=[])
-CORS_ALLOW_ALL_ORIGINS = DEBUG 
+CORS_ALLOW_ALL_ORIGINS = DEBUG
 X_FRAME_OPTIONS = "ALLOWALL"
 CORS_ALLOW_CREDENTIALS = True
 
@@ -167,10 +167,18 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    { "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
-    { "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
-    { "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
-    { "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -190,14 +198,16 @@ STATIC_URL = "static/"
 
 
 AI_SETTINGS = {
-    "EMBEDDING_URL": os.environ.get("EMBEDDING_URL", "http://host.docker.internal:11434"),
+    "EMBEDDING_URL": os.environ.get(
+        "EMBEDDING_URL", "http://host.docker.internal:11434"
+    ),
     "EMBEDDING_MODEL": os.environ.get("EMBEDDING_MODEL", "nomic-embed-text"),
-    
     "VISION_URL": os.environ.get("VISION_URL", "http://host.docker.internal:11434"),
     "VISION_MODEL": os.environ.get("VISION_MODEL", "gemma3:4b"),
-    "CODE_DETECT_URL": os.environ.get("CODE_DETECT_URL", "http://host.docker.internal:11434"),
+    "CODE_DETECT_URL": os.environ.get(
+        "CODE_DETECT_URL", "http://host.docker.internal:11434"
+    ),
     "CODE_DETECT_MODEL": os.environ.get("CODE_DETECT_MODEL", "llama3.2"),
-
     "CHAT_URL": os.environ.get("CHAT_URL", "http://host.docker.internal:11434"),
     "CHAT_MODEL": os.environ.get("CHAT_MODEL", "gemma3:4b"),
     "VECTOR_DB_COLLECTION": "apuntes_universidad",

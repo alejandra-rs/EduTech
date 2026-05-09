@@ -2,17 +2,15 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from rest_framework import views, status
 from rest_framework.response import Response
-from ..models.flashcard import FlashCard, FlashCardDeck
 from ..models.quiz import Answer
 from users.models import Student
-from ..models import Post, FlashCardDeck, Quiz
+from ..models import Post, FlashCard, FlashCardDeck, Quiz
 from ..serializers import (
     DraftPostSerializer,
     DraftCreateSerializer,
     DraftUpdateSerializer,
 )
 from ..notifications import notify_subscribers_of_new_post
-
 
 
 def _write_flashcards(post, data):
@@ -28,18 +26,22 @@ def _write_quiz(post, data):
     quiz = Quiz.objects.create(post=post)
     for quiz_data in data.get("questions", []):
         question = quiz.questions.create(title=quiz_data["title"])
-        
+
         answers_to_create = [
-            Answer(question=question, text=a_data["text"], is_correct=a_data["is_correct"])
+            Answer(
+                question=question, text=a_data["text"], is_correct=a_data["is_correct"]
+            )
             for a_data in quiz_data.get("answers", [])
         ]
         Answer.objects.bulk_create(answers_to_create)
+
 
 def _clear_post_content(post):
     """Busca en el mapa cómo borrar el contenido de este tipo de post y lo ejecuta."""
     clear_function = POST_CLEAR_MAP.get(post.post_type)
     if clear_function:
         clear_function(post)
+
 
 POST_WRITERS_MAP = {
     "FLA": _write_flashcards,
@@ -50,6 +52,7 @@ POST_CLEAR_MAP = {
     "FLA": lambda post: post.fla.delete() if hasattr(post, "fla") else None,
     "QUI": lambda post: post.qui.delete() if hasattr(post, "qui") else None,
 }
+
 
 class DraftListView(views.APIView):
     def get(self, request):
@@ -104,7 +107,7 @@ class DraftDetailView(views.APIView):
         post.save()
 
         _clear_post_content(post)
-        
+
         writer_function = POST_WRITERS_MAP.get(post.post_type)
         if writer_function:
             writer_function(post, data)

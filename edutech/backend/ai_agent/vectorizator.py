@@ -4,7 +4,12 @@ from sqlalchemy import create_engine, text
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from documents.models import PDFAttachment
 
-from ai_agent.agent_setings import CONNECTION_STRING, get_vector_store, getDocument, send_prompt
+from ai_agent.agent_setings import (
+    CONNECTION_STRING,
+    get_vector_store,
+    getDocument,
+    send_prompt,
+)
 from ai_agent.agents_pronts import SYSTEM_PROMPTS
 from .etiquetator import generar_etiquetas
 
@@ -12,7 +17,6 @@ from .etiquetator import generar_etiquetas
 def descript_image(imagen_bytes, titulo, asignatura, descripcion, page_text=""):
     """Describe la imagen usando el contexto del documento para mayor precisión"""
     try:
-
         context_input = (
             f"Contexto Académico:\n"
             f"- Asignatura: {asignatura}\n"
@@ -21,7 +25,7 @@ def descript_image(imagen_bytes, titulo, asignatura, descripcion, page_text=""):
         )
         if page_text:
             context_input += f"- Texto de la página: {page_text}\n"
-        
+
         system_content = f"{SYSTEM_PROMPTS['trascript_image']}\n\nLa imagen se encuentra en:\n{context_input}"
         user_content = "Tarea: Describe o transcribe fielmente lo que hay en esta imagen en ESPAÑOL."
 
@@ -29,12 +33,12 @@ def descript_image(imagen_bytes, titulo, asignatura, descripcion, page_text=""):
             system_content=system_content,
             user_content=user_content,
             model="VISION",
-            images=[imagen_bytes]
+            images=[imagen_bytes],
         )
 
     except Exception as e:
         return f"[Error visión: {e}]"
-    
+
 
 def vectorize_new_document(pdfAttachment, notify_fn=None):
     curse_name = pdfAttachment.post.course.name
@@ -47,11 +51,13 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
     document_to_save = []
 
     try:
+        doc = fitz.open(
+            stream=getDocument(pdfAttachment)["Body"].read(), filetype="pdf"
+        )
 
-
-        doc = fitz.open(stream=getDocument(pdfAttachment)["Body"].read(), filetype="pdf")
-
-        pdfAttachment.processing_status = PDFAttachment.ProcessingStages.EXTRACTING_INFORMATION
+        pdfAttachment.processing_status = (
+            PDFAttachment.ProcessingStages.EXTRACTING_INFORMATION
+        )
         pdfAttachment.save(update_fields=["processing_status"])
         notify_fn(pdfAttachment.processing_status.value)
         for num_pag, pagina in enumerate(doc):
@@ -61,7 +67,7 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
                 raw_fragments.append(
                     LangchainDocument(
                         page_content=f"search_document: {texto}",
-                        metadata={"p": num_pag + 1, "tipo": "chunk"}
+                        metadata={"p": num_pag + 1, "tipo": "chunk"},
                     )
                 )
 
@@ -69,7 +75,10 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
                 pix = pagina.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
                 img_bytes = pix.tobytes("png")
                 description = descript_image(
-                    imagen_bytes=img_bytes, titulo=doc_title, asignatura=curse_name, descripcion=doc_description
+                    imagen_bytes=img_bytes,
+                    titulo=doc_title,
+                    asignatura=curse_name,
+                    descripcion=doc_description,
                 )
                 if description:
                     raw_fragments.append(
@@ -95,7 +104,7 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
                         titulo=doc_title,
                         asignatura=curse_name,
                         descripcion=doc_description,
-                        page_text=texto
+                        page_text=texto,
                     )
 
                     if description:
@@ -103,12 +112,12 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
                             LangchainDocument(
                                 page_content=f"search_document: [Imagen/Captura página {num_pag + 1}]:\n{description}",
                                 metadata={
-                                            "p": num_pag + 1,
-                                            "tipo": "vision_chunk",
-                                        },
+                                    "p": num_pag + 1,
+                                    "tipo": "vision_chunk",
+                                },
                             )
                         )
-        
+
         doc.close()
         doc = None
 
@@ -116,12 +125,8 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
         pdfAttachment.save(update_fields=["processing_status"])
         notify_fn(pdfAttachment.processing_status.value)
 
-        text_fegments = [
-            f for f in raw_fragments if f.metadata["tipo"] == "chunk"
-        ]
-        docs_finales_hijos = [
-            f for f in raw_fragments if f.metadata["tipo"] != "chunk"
-        ]
+        text_fegments = [f for f in raw_fragments if f.metadata["tipo"] == "chunk"]
+        docs_finales_hijos = [f for f in raw_fragments if f.metadata["tipo"] != "chunk"]
 
         if text_fegments:
             splitter = RecursiveCharacterTextSplitter(
@@ -165,7 +170,6 @@ def vectorize_new_document(pdfAttachment, notify_fn=None):
         pdfAttachment.processing_status = pdfAttachment.ProcessingStages.COMPLETED
         pdfAttachment.save(update_fields=["processing_status"])
         notify_fn(pdfAttachment.processing_status.value)
-
 
     finally:
         if doc is not None:

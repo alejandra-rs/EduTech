@@ -74,7 +74,7 @@ class VideoUploadViewTest(APITestCase):
             'description': 'Desc',
             'course': self.course.pk,
             'student': self.student.pk,
-            'file': vid,
+            'url': vid,
         }
         data.update(overrides)
         return self.client.post('/documents/upload/vid/', data, format='multipart')
@@ -91,7 +91,7 @@ class VideoUploadViewTest(APITestCase):
     def test_upload_invalid_youtube_url_returns_400(self, _):
         response = self._post()
         self.assertEqual(response.status_code, 400)
-        self.assertIn('file', response.data)
+        self.assertIn('url', response.data)
 
     @patch('documents.serializers.urllib.request.urlopen')
     def test_upload_malformed_url_returns_400(self, mock_open):

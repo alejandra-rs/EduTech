@@ -35,7 +35,9 @@ class SubscriptionView(views.APIView):
     def post(self, request):
         user = get_object_or_404(Student, pk=request.data.get("user"))
         course = get_object_or_404(Course, pk=request.data.get("course"))
-        subscription, created = Subscription.objects.get_or_create(user=user, course=course)
+        subscription, created = Subscription.objects.get_or_create(
+            user=user, course=course
+        )
         if not created:
             return Response(
                 {"detail": "Ya estás suscrito a este curso."}, status=status.HTTP_200_OK
