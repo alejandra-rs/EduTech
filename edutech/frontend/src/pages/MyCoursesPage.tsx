@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
 import { CourseWidget } from '../components/CourseWidget';
 import SearchBar from '../components/SearchBar';
 import PostGrid from '../components/PostGrid';
 import { useCurrentUser } from '../services/useCurrentUser';
-import { getSubscriptions } from '@services/connections-courses';
+import { getSubscriptions } from '../services/connections-courses';
+import { UserSubscription } from '../models/courses/course.model';
+import { POST_TYPE_LABELS, PostPreview } from '../models/documents/post.model';
 
-const TYPE_TO_ROUTE = { PDF: 'documento', VID: 'video', QUI: 'quiz', FLA: 'flashcard' };
-
-const MySubjects = () => {
+const MyCoursesPage = () => {
   const navigate = useNavigate();
   const { userData } = useCurrentUser();
 
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [searchResults, setSearchResults] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
+  const [searchResults, setSearchResults] = useState<PostPreview[]| null> (null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!userData?.id) return;
@@ -27,14 +27,15 @@ const MySubjects = () => {
 
   const subscribedCourseIds = new Set(subscriptions.map((sub) => sub.course?.id).filter(Boolean));
 
-  const handleSearch = (results) => {
+  const handleSearch = (results: PostPreview[]| null) => {
     if (!results) { setSearchResults(null); return; }
     setSearchResults(results.filter((doc) => subscribedCourseIds.has(doc.course)));
   };
 
-  const handlePostClick = (post) =>
-    navigate(`/${post.year}/${post.course}/${TYPE_TO_ROUTE[post.post_type]}/${post.id}`);
-
+  const handlePostClick = (post: PostPreview) => {
+    navigate(`/${post.year}/${post.course}/${POST_TYPE_LABELS[post.post_type]}/${post.id}`);
+  };
+  
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       <div className="shrink-0 bg-white">
@@ -61,12 +62,16 @@ const MySubjects = () => {
               <p className="text-gray-400 italic text-center py-12">No estás suscrito a ninguna asignatura.</p>
             ) : (
               subscriptions.map((sub) => (
+                <Link 
+                    key={sub.course.id} 
+                    to={`/${sub.course.year?.id}/${sub.course.id}/post`}
+                    className="block w-full transition hover:opacity-80"
+                  >
                 <CourseWidget
-                  key={sub.course?.id}
-                  subjectName={sub.course?.name ?? "Asignatura"}
-                  subjectId={sub.course?.id}
-                  onNavigate={() => navigate(`/${sub.course?.year?.id}/${sub.course?.id}/post`)}
-                />
+                  courseName={sub.course?.name ?? "Asignatura"}
+                  courseId={sub.course?.id}
+                  />
+                </Link>
               ))
             )}
           </div>
@@ -76,4 +81,4 @@ const MySubjects = () => {
   );
 };
 
-export default MySubjects;
+export default MyCoursesPage;

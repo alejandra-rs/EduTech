@@ -1,4 +1,4 @@
-import { Course, SubscriptionResponse, Year } from '../models/courses/course.model';
+import { Course, SubscriptionResponse, UserSubscription, Year } from '../models/courses/course.model';
 
 export const getYears = async (userId: number): Promise<Year[]> => {
   try {
@@ -42,7 +42,7 @@ export const getCourse = async (courseId: string | number): Promise<Course | nul
   }
 };
 
-export const getSubscriptions = async (userId: string) => {
+export async function getSubscriptions(userId: string): Promise<UserSubscription[]> {
   try {
     const response = await fetch(`/api/courses/sub/?user=${userId}`);
     if (!response.ok) throw new Error("Error al obtener las suscripciones");
@@ -51,7 +51,7 @@ export const getSubscriptions = async (userId: string) => {
     console.error("Error en getSubscriptions:", error);
     throw error;
   }
-};
+}
 
 export const checkSubscription = async (userId: number, courseId: number): Promise<number | null> => {
   try {

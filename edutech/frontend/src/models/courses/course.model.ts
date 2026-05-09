@@ -50,6 +50,17 @@ export interface SubscriptionResponse {
   id: number;
 }
 
+export interface UserSubscription {
+  id: number;
+  course: {
+    id: number;
+    name: string;
+    year?: {
+      id: number;
+    };
+  }
+}
+
 export interface StudySessionComment {
   id: number;
   student: Student;

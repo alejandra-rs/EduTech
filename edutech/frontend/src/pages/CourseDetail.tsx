@@ -28,14 +28,13 @@ const CourseDetail = () => {
   const [activeTabs, setActiveTabs] = useState<string[]>([]);
   const [subjectName, setSubjectName] = useState<string>("Cargando...");
   const [degreeName, setDegreeName] = useState<string>("");
-  const uploadMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
         const [dataPosts, dataCourse] = await Promise.all([getPosts(Number(subjectId)), getCourse(Number(subjectId))]);
         setPosts(dataPosts);
-        setSubjectName(dataCourse.name);
+        setSubjectName( dataCourse ? dataCourse.name: "Cargando");
       } catch (error) {
         console.error("Error al cargar datos:", error);
         setSubjectName("Asignatura");

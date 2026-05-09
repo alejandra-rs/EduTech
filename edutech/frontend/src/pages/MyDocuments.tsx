@@ -6,7 +6,15 @@ import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
 import { getMyPosts, deleteDocument } from "../services/connections-documents.ts";
-import { PostPreview } from "../models/post.model";
+import { PostPreview, PostType } from "../models/documents/post.model.ts";
+
+const TYPE_TO_TAB: Record<PostType, string> = { 
+  PDF: "pdf", 
+  VID: "video", 
+  QUI: "cuestionario", 
+  FLA: "flashcard" 
+};
+
 
 const MyDocuments = () => {
   const navigate = useNavigate();
@@ -43,7 +51,7 @@ const MyDocuments = () => {
   };
 
   
-  const TYPE_TO_TAB = { PDF: "pdf", VID: "video", QUI: "cuestionario", FLA: "flashcard" };
+
   const filteredPosts = (searchResults ?? posts).filter((post) => {
     if (activeTabs.length === 0) return true;
     return activeTabs.includes(TYPE_TO_TAB[post.post_type]);
