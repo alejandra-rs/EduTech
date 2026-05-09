@@ -76,4 +76,9 @@ export interface FlashCardDeckPreview {
   card_count: number;
 }
   
-  export type PostPreview = PostPDF | PostVideo | PostQuiz | PostFlashcard;
+export type PostPreview = PostPDF | PostVideo | PostQuiz | PostFlashcard;
+
+export interface EditorHeaderData {
+  title: string;
+  description: string;
+}

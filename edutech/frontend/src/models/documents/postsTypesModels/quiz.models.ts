@@ -19,3 +19,15 @@ export interface Quiz {
     description: string
     questions: QuizQuestion[]
 }
+
+export interface QuizEditorAnswer {
+  id: string;
+  text: string;
+  is_correct: boolean;
+}
+
+export interface QuizEditorQuestion {
+  id: string;
+  title: string;
+  answers: QuizEditorAnswer[];
+}

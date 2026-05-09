@@ -16,8 +16,6 @@ export const useCurrentUser = (): CurrentUserHook => {
     const [userData, setUserData] = useState<Student | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Store accounts in a ref so fetchData always reads the latest value
-    // without becoming a new function reference on every render.
     const accountsRef = useRef(accounts);
     useEffect(() => { accountsRef.current = accounts; }, [accounts]);
 

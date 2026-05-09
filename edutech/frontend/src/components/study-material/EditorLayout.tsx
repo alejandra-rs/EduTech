@@ -1,30 +1,53 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { useNavigationGuard } from '../../context/NavigationGuardContext';
 import EditorHeader from './EditorHeader';
-import EditorSidebar from './EditorSidebar';
+import { EditorSidebar, EditorSidebarProps } from './EditorSidebar';
 import ConfirmModal from './ConfirmModal';
 import SuccessToast from '../SuccessToast';
 import { AddItemButton } from './AddItemButton';
 import { TitlePage } from '../TitlePage';
+import { EditorHeaderData } from '../../models/documents/post.model';
 
-export function EditorLayout({
+export interface EditorLayoutProps<T extends { id: string | number }> {
+  items: T[];
+  renderItem: (item: T) => ReactNode;
+  onAdd: () => void;
+  canPublish: boolean;
+  requirements: string[];
+  onPublish: (header: EditorHeaderData) => Promise<void>;
+  onSaveDraft?: (header: EditorHeaderData) => Promise<void>;
+  publishIcon: ReactNode;
+  publishText: string;
+  successMessage: string;
+  itemLabel: (item: T) => string;
+  titleLabel?: string;
+  isDirty?: boolean;
+  pageTitle: string;
+  backPath?: string;
+  publishSuccessPath?: string;
+  initialHeader?: EditorHeaderData | null;
+}
+
+
+export function EditorLayout<T extends { id: string | number }>({
   items, renderItem, onAdd, canPublish, requirements,
   onPublish, onSaveDraft, publishIcon, publishText, successMessage,
   itemLabel, titleLabel = "Título requerido", isDirty: itemsDirty = false,
   pageTitle, backPath, publishSuccessPath, initialHeader,
-}) {
-  const { id, subjectId } = useParams();
+}: EditorLayoutProps<T>){
+  const { id, subjectId } = useParams<{ id: string; subjectId: string }>();
   const navigate = useNavigate();
 
-  const [header, setHeader] = useState(initialHeader ?? { title: '', description: '' });
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [published, setPublished] = useState(false);
-  const [publishing, setPublishing] = useState(false);
-  const [savingDraft, setSavingDraft] = useState(false);
-  const [draftSaved, setDraftSaved] = useState(false);
-  const [pendingNav, setPendingNav] = useState(null);
+  const [header, setHeader] = useState<EditorHeaderData>(initialHeader ?? { title: '', description: '' });
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
+  const [published, setPublished] = useState<boolean>(false);
+  const [publishing, setPublishing] = useState<boolean>(false);
+  const [savingDraft, setSavingDraft] = useState<boolean>(false);
+  const [draftSaved, setDraftSaved] = useState<boolean>(false);
+  
+  const [pendingNav, setPendingNav] = useState<(() => void) | null>(null);
 
   const { registerGuard, unregisterGuard } = useNavigationGuard();
 
@@ -34,20 +57,21 @@ export function EditorLayout({
     itemsDirty
   );
 
-  // Register/unregister the navigation guard based on dirty state
   useEffect(() => {
     if (isDirty) {
-      registerGuard((proceed) => setPendingNav(() => proceed));
+      registerGuard((proceed: () => void) => setPendingNav(() => proceed));
     } else {
       unregisterGuard();
     }
     return () => unregisterGuard();
-  }, [isDirty]);
+  }, [isDirty, registerGuard, unregisterGuard]);
 
-  // Block browser refresh / tab close when dirty
   useEffect(() => {
     if (!isDirty) return;
-    const handler = (e) => { e.preventDefault(); e.returnValue = ''; };
+    const handler = (e: BeforeUnloadEvent) => { 
+      e.preventDefault(); 
+      e.returnValue = ''; 
+    };
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
   }, [isDirty]);
@@ -94,7 +118,22 @@ export function EditorLayout({
     navigate(resolvedSuccessPath);
   };
 
-  const scrollTo = (itemId) => document.getElementById(itemId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const scrollTo = (itemId: string| number) => document.getElementById(String(itemId))?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+
+  const sidebarProps: EditorSidebarProps<T> = {
+    items,
+    canPublish: allCanPublish && !publishing,
+    showSidebar,
+    onToggle: () => setShowSidebar(v => !v),
+    onPublish: handlePublish,
+    onSaveDraft: onSaveDraft ? handleSaveDraft : undefined,
+    savingDraft,
+    draftSaved,
+    onScrollTo: scrollTo,
+    itemLabel,
+    requirements: allRequirements
+  };
 
   return (
     <>
@@ -106,23 +145,14 @@ export function EditorLayout({
         message="Se perderá todo el progreso no guardado."
         confirmLabel="Salir"
         Icon={TrashIcon}
-        onConfirm={() => { const go = pendingNav; setPendingNav(null); go(); }}
+        onConfirm={() => { 
+          if (pendingNav) pendingNav(); 
+          setPendingNav(null); 
+        }}
         onCancel={() => setPendingNav(null)}
       />
 
-      <EditorSidebar
-        items={items}
-        canPublish={allCanPublish && !publishing}
-        showSidebar={showSidebar}
-        onToggle={() => setShowSidebar(v => !v)}
-        onPublish={handlePublish}
-        onSaveDraft={onSaveDraft ? handleSaveDraft : undefined}
-        savingDraft={savingDraft}
-        draftSaved={draftSaved}
-        onScrollTo={scrollTo}
-        itemLabel={itemLabel}
-        requirements={allRequirements}
-      >
+      <EditorSidebar {...sidebarProps}>
         {publishIcon}
         {publishing ? "Publicando…" : publishText}
       </EditorSidebar>
@@ -139,12 +169,12 @@ export function EditorLayout({
         <EditorHeader
           title={header.title}
           description={header.description}
-          onTitleChange={(v) => setHeader(h => ({ ...h, title: v }))}
-          onDescChange={(v) => setHeader(h => ({ ...h, description: v }))}
+          onTitleChange={(v: string) => setHeader(h => ({ ...h, title: v }))}
+          onDescChange={(v: string) => setHeader(h => ({ ...h, description: v }))}
         />
         <div className="space-y-6 mt-10">
           {items.map((item) => (
-            <div id={item.id} key={item.id} className="scroll-mt-24">
+            <div id={String(item.id)} key={item.id} className="scroll-mt-24">
               {renderItem(item)}
             </div>
           ))}
