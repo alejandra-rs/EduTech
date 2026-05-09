@@ -46,6 +46,10 @@ export interface Subscription {
   course: Course;
 }
 
+export interface SubscriptionResponse {
+  id: number;
+}
+
 export interface StudySessionComment {
   id: number;
   student: Student;

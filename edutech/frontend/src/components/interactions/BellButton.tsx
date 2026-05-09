@@ -1,14 +1,18 @@
 import { BellIcon } from "@heroicons/react/24/outline";
-import { useCurrentUser } from "@services/useCurrentUser";
+import { useCurrentUser } from "../../services/useCurrentUser";
 import React, { useState, useEffect } from "react";
 import {
   checkSubscription,
   unsubscribe,
   subscribeToCourse,
-} from "@services/connections-courses";
+} from "../../services/connections-courses";
 
-const BellButton = ({ subjectId }) => {
-  const [subscriptionId, setSubscriptionId] = useState(null);
+export interface BellButtonProps {
+  courseId: number;
+}
+
+const BellButton = ({ courseId }: BellButtonProps) => {
+  const [subscriptionId, setSubscriptionId] = useState<number | null>(null);
   const [userId, setUserId] = useState(null);
   const isSubscribed = subscriptionId !== null;
   const { userData } = useCurrentUser();
@@ -17,32 +21,35 @@ const BellButton = ({ subjectId }) => {
     const cargarDatos = async () => {
       try {
         setUserId(userData.id);
-        const subId = await checkSubscription(userData.id, subjectId);
+        const subId = await checkSubscription(userData.id, courseId);
         setSubscriptionId(subId);
       } catch (error) {
         console.error("Error al comprobar suscripción:", error);
       }
     };
 
-    if (subjectId && userData) {
+    if (courseId && userData) {
       cargarDatos();
     }
-  }, [subjectId, userData]);
+  }, [courseId, userData]);
 
-  const handleToggle = async (e) => {
+  const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!userId) return;
     const previousSubscriptionId = subscriptionId;
 
     try {
-      if (isSubscribed) {
+      if (isSubscribed ) {
         setSubscriptionId(null);
-        await unsubscribe(previousSubscriptionId);
+        await unsubscribe(previousSubscriptionId!);
       } else {
-        setSubscriptionId("temp");
-        const newSubscription = await subscribeToCourse({ user: userId, course: subjectId });
-        setSubscriptionId(newSubscription.id);
+        const newSubscription = await subscribeToCourse({ user: userId, course: courseId });
+        if (newSubscription) {
+          setSubscriptionId(newSubscription.id);
+        } else {
+          setSubscriptionId(null);
+        }
       }
     } catch (error) {
       console.error("Error al hacer toggle:", error);

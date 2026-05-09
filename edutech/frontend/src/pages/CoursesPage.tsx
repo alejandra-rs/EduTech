@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Quarter } from "../components/Quarter.jsx";
-import { TitlePage } from "../components/TitlePage.jsx";
-import { getYearById, getDegreeInfo } from "@services/connections-degrees";
+import { Quarter } from "../components/Quarter.js";
+import { TitlePage } from "../components/TitlePage.js";
+import { getYearById, getDegreeInfo } from "../services/connections-degrees.js";
+import { DegreeInfo, Year } from "../models/courses/course.model.js";
 
 
-const Subject = () => {
-  const [yearData, setYearData] = useState(null);
-  const [degreeInfo, setDegreeInfo] = useState(null);
+const CoursesPage = () => {
+  const [yearData, setYearData] = useState<Year>();
+  const [degreeInfo, setDegreeInfo] = useState<DegreeInfo>();
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    getYearById(id)
+    getYearById(Number(id))
       .then(async (year) => {
         if (!year) { navigate("/"); return; }
         setYearData(year);
@@ -42,18 +43,16 @@ const Subject = () => {
           <Quarter
             quarter={1}
             title="1º Cuatrimestre"
-            navigate={navigate}
-            yearId={id}
+            yearId={id!}
           />
           <Quarter
             quarter={2}
             title="2º Cuatrimestre"
-            navigate={navigate}
-            yearId={id}
+            yearId={id!}
           />
         </div>
       </div>
     </div>
   );
 };
-export default Subject;
+export default CoursesPage;

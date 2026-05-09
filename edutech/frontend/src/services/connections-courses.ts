@@ -1,4 +1,5 @@
 import { Course, Subscription, Year } from '../models/course.model';
+import { SubscriptionResponse } from '../models/courses/course.model';
 
 export const getYears = async (userId: number): Promise<Year[]> => {
   try {
@@ -65,17 +66,22 @@ export const checkSubscription = async (userId: number, courseId: number): Promi
   }
 };
 
-export const subscribeToCourse = async (subscriptionData: Subscription): Promise<boolean> => {
+export const subscribeToCourse = async (subscriptionData: { user: number; course: number }): Promise<SubscriptionResponse | null> => {
   try {
     const response = await fetch(`/api/courses/sub/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(subscriptionData),
     });
-    return response.ok;
+
+    if (!response.ok) {
+      throw new Error(`Error en la petición: ${response.status}`);
+    }
+
+    return await response.json() as SubscriptionResponse;
   } catch (error) {
     console.error("Error al suscribirse:", error);
-    return false;
+    return null; 
   }
 };
 

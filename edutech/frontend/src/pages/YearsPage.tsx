@@ -11,7 +11,7 @@ import { DegreeInfo, Year, GroupedDegrees } from "../models/courses/course.model
 import { PostPreview, POST_TYPE_LABELS } from "../models/documents/post.model";
 
 
-const AllYears = () => {
+const YearsPage = () => {
   const [groupedDegrees, setGroupedDegrees] = useState<GroupedDegrees[]>([]);
   const [searchResults, setSearchResults] = useState<PostPreview[] | null>(null);
   const navigate = useNavigate();
@@ -80,4 +80,4 @@ const AllYears = () => {
 };
 
 
-export default AllYears;
+export default YearsPage;

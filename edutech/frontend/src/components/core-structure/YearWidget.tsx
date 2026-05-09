@@ -7,12 +7,10 @@ export interface YearWidgetProps {
 
 export const YearWidget = ({
   courseName,
-  onNavigate,
   className,
 }: YearWidgetProps) => {
   return (
     <div
-      onClick={onNavigate}
       className={`
         group relative flex items-center w-full max-w-none p-5 h-full
         bg-gray-200 border-2 border-black/5 rounded-[18px] 

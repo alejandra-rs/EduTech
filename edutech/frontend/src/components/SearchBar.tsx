@@ -1,14 +1,13 @@
-import { PostPreview } from '../models/post.model';
+import { PostPreview } from '../models/documents/post.model';
 import { getFilteredPosts } from '../services/connections-documents';
 import Input from './Input';
-import { use, useState } from 'react';
-import { ReactNode } from 'react';
+import { useState } from 'react';
 interface SearchBarProps {
   placeholder?: string;
   color?: string;
   courseId?: string | null;
   studentId?: string | null;
-  onSearch: (results: any[] | null) => void;
+  onSearch: (results: PostPreview[] | null) => void;
 }
 
 
