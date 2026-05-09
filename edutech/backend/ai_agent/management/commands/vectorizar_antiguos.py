@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from documents.models import PDFAttachment
-from ai_agent.vectorizator import ingerir_nuevo_documento
+from ai_agent.vectorizator import vectorize_new_document
 
 
 class Command(BaseCommand):
@@ -33,7 +33,7 @@ class Command(BaseCommand):
             )
 
             try:
-                ingerir_nuevo_documento(pdf)
+                vectorize_new_document(pdf)
                 self.stdout.write(self.style.SUCCESS("  -> ¡Vectorizado con éxito!"))
             except Exception as e:
                 self.stdout.write(

@@ -1,221 +1,182 @@
-import fitz  # PyMuPDF
-from ollama import Client
-import boto3
-from django.conf import settings
+import fitz
 from langchain_core.documents import Document as LangchainDocument
-from langchain_ollama import OllamaEmbeddings
-from langchain_postgres.vectorstores import PGVector
 from sqlalchemy import create_engine, text
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-import os
+from documents.models import PDFAttachment
+
+from ai_agent.agent_setings import (
+    CONNECTION_STRING,
+    get_vector_store,
+    getDocument,
+    send_prompt,
+)
+from ai_agent.agents_pronts import SYSTEM_PROMPTS
 from .etiquetator import generar_etiquetas
 
 
-url_original = os.environ.get("DATABASE_URL")
-if url_original:
-    CONNECTION_STRING = url_original.replace("postgres://", "postgresql+psycopg://")
-
-embeddings = OllamaEmbeddings(
-    base_url=settings.AI_SETTINGS["EMBEDDING_URL"], model="nomic-embed-text"
-)
-
-
-def get_vector_store():
-    """Deferred initialization of the database connection."""
-    return PGVector(
-        embeddings=embeddings,
-        collection_name=settings.AI_SETTINGS["VECTOR_DB_COLLECTION"],
-        connection=CONNECTION_STRING,
-        use_jsonb=True,
-    )
-
-
-def analizar_imagen_con_gemma(imagen_bytes, titulo, asignatura, descripcion):
+def descript_image(imagen_bytes, titulo, asignatura, descripcion, page_text=""):
     """Describe la imagen usando el contexto del documento para mayor precisión"""
     try:
-        contexto_input = (
+        context_input = (
             f"Contexto Académico:\n"
             f"- Asignatura: {asignatura}\n"
             f"- Título del documento: {titulo}\n"
             f"- Descripción del material: {descripcion}\n"
         )
-        cliente_ollama = Client(host=settings.AI_SETTINGS["VISION_URL"])
+        if page_text:
+            context_input += f"- Texto de la página: {page_text}\n"
 
-        res = cliente_ollama.chat(
-            model=settings.AI_SETTINGS["VISION_MODEL"],
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "Eres un transcriptor visual experto. Tu ÚNICA misión es extraer texto, si es un diagrama describir el diagramas de la imagen que recibes. "
-                        "REGLAS INQUEBRANTABLES:\n"
-                        "1. Responde SIEMPRE y ÚNICAMENTE en ESPAÑOL.\n"
-                        "2. Describe solo lo que ves físicamente en la imagen. No inventes información.\n"
-                        "3. PROHIBIDO saludar, dar introducciones o hacer comentarios. Empieza directamente con el contenido.\n"
-                        "4. Si la imagen contiene código terminal o comandos, transcribe el código con la mayor precisión posible, incluyendo formato y símbolos especiales.\n"
-                        "5. tu output se va a vectorizar directamente, así que no añadas nada en tu respuesta que no sea util para la vectorización. Evita palabras como 'imagen', 'foto', 'diagrama' o similares, céntrate en describir el contenido de forma clara y estructurada.\n"
-                        f"la imagen está en: {contexto_input}"
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": "Tarea: Describe o transcribe fielmente lo que hay en esta imagen en ESPAÑOL.",
-                    "images": [imagen_bytes],
-                },
-            ],
+        system_content = f"{SYSTEM_PROMPTS['trascript_image']}\n\nLa imagen se encuentra en:\n{context_input}"
+        user_content = "Tarea: Describe o transcribe fielmente lo que hay en esta imagen en ESPAÑOL."
+
+        return send_prompt(
+            system_content=system_content,
+            user_content=user_content,
+            model="VISION",
+            images=[imagen_bytes],
         )
-        return res["message"]["content"].strip()
+
     except Exception as e:
         return f"[Error visión: {e}]"
 
 
-def ingerir_nuevo_documento(pdfAttachment):
-    nombre_asignatura = pdfAttachment.post.course.name
-    titulo_doc = pdfAttachment.post.title
-    descripcion_doc = pdfAttachment.post.description
+def vectorize_new_document(pdfAttachment, notify_fn=None):
+    curse_name = pdfAttachment.post.course.name
+    doc_title = pdfAttachment.post.title
+    doc_description = pdfAttachment.post.description
     doc_id = pdfAttachment.post.id
-    fragmentos_crudos = []
+    raw_fragments = []
     vector_store = get_vector_store()
     doc = None
-    pdf_bytes = None
-    documentos_a_guardar = []
+    document_to_save = []
 
     try:
-        print(f"☁️ Descargando '{titulo_doc}' desde Cloudflare a la RAM...")
-
-        s3 = boto3.client(
-            "s3",
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            region_name=settings.AWS_S3_REGION_NAME,
+        doc = fitz.open(
+            stream=getDocument(pdfAttachment)["Body"].read(), filetype="pdf"
         )
 
-        key = pdfAttachment.file.name
-        respuesta_s3 = s3.get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
-
-        pdf_bytes = respuesta_s3["Body"].read()
-
-        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-        texto_total_extraido = 0
-
+        pdfAttachment.processing_status = (
+            PDFAttachment.ProcessingStages.EXTRACTING_INFORMATION
+        )
+        pdfAttachment.save(update_fields=["processing_status"])
+        notify_fn(pdfAttachment.processing_status.value)
         for num_pag, pagina in enumerate(doc):
-            pdfAttachment.processing_status = "extrayendo_txt"
-            pdfAttachment.save(update_fields=["processing_status"])
             texto = pagina.get_text("text").replace("\x00", " ").strip()
 
             if texto:
-                texto_total_extraido += len(texto)
-                fragmentos_crudos.append(
+                raw_fragments.append(
                     LangchainDocument(
-                        page_content=texto, metadata={"p": num_pag + 1, "tipo": "chunk"}
+                        page_content=f"search_document: {texto}",
+                        metadata={"p": num_pag + 1, "tipo": "chunk"},
                     )
                 )
 
-            pdfAttachment.processing_status = "reconociendo_img"
-            pdfAttachment.save(update_fields=["processing_status"])
-            for img in pagina.get_images():
-                xref = img[0]
-                pix = fitz.Pixmap(doc, xref)
+            if len(texto) < 50:
+                pix = pagina.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
                 img_bytes = pix.tobytes("png")
-
-                descripcion_visual = analizar_imagen_con_gemma(
+                description = descript_image(
                     imagen_bytes=img_bytes,
-                    titulo=titulo_doc,
-                    asignatura=nombre_asignatura,
-                    descripcion=descripcion_doc,
+                    titulo=doc_title,
+                    asignatura=curse_name,
+                    descripcion=doc_description,
                 )
-                print(f"-> Descripción IA: {descripcion_visual}")
-
-                metadata_vision = {
-                    "p": num_pag + 1,
-                    "tipo": "vision_chunk",
-                }
-
-                fragmentos_crudos.append(
-                    LangchainDocument(
-                        page_content=f"[Imagen/Captura]:\n{descripcion_visual}",
-                        metadata=metadata_vision,
+                if description:
+                    raw_fragments.append(
+                        LangchainDocument(
+                            page_content=f"search_document: [Descripción visual página {num_pag + 1}]:\n{description}",
+                            metadata={"p": num_pag + 1, "tipo": "vision_chunk_forced"},
+                        )
                     )
-                )
+                continue
 
-        if texto_total_extraido < 50 and len(fragmentos_crudos) == 0:
-            print(
-                "⚠️ PDF escaneado sin texto seleccionable ni imágenes detectadas. Forzando visión global..."
-            )
-            for num_pag, pagina in enumerate(doc):
-                pix = pagina.get_pixmap()
-                img_bytes = pix.tobytes("png")
-                descripcion_visual = analizar_imagen_con_gemma(
-                    img_bytes, titulo_doc, nombre_asignatura, descripcion_doc
-                )
-                fragmentos_crudos.append(
-                    LangchainDocument(
-                        page_content=f"[Página escaneada completa {num_pag + 1}]:\n{descripcion_visual}",
-                        metadata={"p": num_pag + 1, "tipo": "vision_chunk_forced"},
+            else:
+                for img in pagina.get_images():
+                    pix = fitz.Pixmap(doc, img[0])
+                    if pix.width < 100 and pix.height < 100:
+                        continue
+                    if pix.n - pix.alpha > 3:
+                        pix = fitz.Pixmap(fitz.csRGB, pix)
+                    img_bytes = pix.tobytes("png")
+                    pix = None
+
+                    description = descript_image(
+                        imagen_bytes=img_bytes,
+                        titulo=doc_title,
+                        asignatura=curse_name,
+                        descripcion=doc_description,
+                        page_text=texto,
                     )
-                )
-        pdfAttachment.processing_status = "vectorizando"
+
+                    if description:
+                        raw_fragments.append(
+                            LangchainDocument(
+                                page_content=f"search_document: [Imagen/Captura página {num_pag + 1}]:\n{description}",
+                                metadata={
+                                    "p": num_pag + 1,
+                                    "tipo": "vision_chunk",
+                                },
+                            )
+                        )
+
+        doc.close()
+        doc = None
+
+        pdfAttachment.processing_status = pdfAttachment.ProcessingStages.VECTORIZING
         pdfAttachment.save(update_fields=["processing_status"])
+        notify_fn(pdfAttachment.processing_status.value)
 
-        fragmentos_texto = [
-            f for f in fragmentos_crudos if f.metadata["tipo"] == "chunk"
-        ]
-        docs_finales_hijos = [
-            f for f in fragmentos_crudos if f.metadata["tipo"] != "chunk"
-        ]
+        text_fegments = [f for f in raw_fragments if f.metadata["tipo"] == "chunk"]
+        docs_finales_hijos = [f for f in raw_fragments if f.metadata["tipo"] != "chunk"]
 
-        # A. Splitter solo para los fragmentos de texto
-        if fragmentos_texto:
+        if text_fegments:
             splitter = RecursiveCharacterTextSplitter(
                 chunk_size=1000, chunk_overlap=200
             )
-            docs_texto_split = splitter.split_documents(fragmentos_texto)
-            docs_finales_hijos.extend(docs_texto_split)
+            docs_finales_hijos.extend(splitter.split_documents(text_fegments))
 
-        # C. Asignación de metadatos comunes a todos los hijos
+        pdfAttachment.processing_status = pdfAttachment.ProcessingStages.LABELING
+        pdfAttachment.save(update_fields=["processing_status"])
+        notify_fn(pdfAttachment.processing_status.value)
         for d in docs_finales_hijos:
-            d.page_content = f"Documento: {titulo_doc}\n{d.page_content}"
+            d.page_content = f"Documento: {doc_title}\n{d.page_content}"
 
             d.metadata.update(
                 {
                     "doc_id": doc_id,
                     "course_id": str(pdfAttachment.post.course.id),
-                    "titulo": titulo_doc,
+                    "titulo": doc_title,
                     "cita_previa": d.page_content[:80].strip(),
                 }
             )
 
-            pdfAttachment.processing_status = "etiquetando"
-            pdfAttachment.save(update_fields=["processing_status"])
             try:
                 d.metadata["tags"] = generar_etiquetas(d.page_content)
             except Exception:
                 d.metadata["tags"] = []
 
-        # D. Crear el documento padre
         doc_padre = LangchainDocument(
-            page_content=f"Título: {titulo_doc}\nDescripción: {descripcion_doc}",
+            page_content=f"Título: {doc_title}\nDescripción: {doc_description}",
             metadata={
                 "tipo": "resumen_documento",
                 "doc_id": doc_id,
                 "course_id": str(pdfAttachment.post.course.id),
-                "titulo": titulo_doc,
+                "titulo": doc_title,
             },
         )
 
-        documentos_a_guardar = [doc_padre] + docs_finales_hijos
-        vector_store.add_documents(documentos_a_guardar)
+        document_to_save = [doc_padre] + docs_finales_hijos
+        vector_store.add_documents(document_to_save)
 
-        pdfAttachment.processing_status = "completado"
+        pdfAttachment.processing_status = pdfAttachment.ProcessingStages.COMPLETED
         pdfAttachment.save(update_fields=["processing_status"])
+        notify_fn(pdfAttachment.processing_status.value)
+
     finally:
         if doc is not None:
             doc.close()
         try:
-            del pdf_bytes
-            del fragmentos_crudos
-            del documentos_a_guardar
+            del raw_fragments
+            del document_to_save
         except NameError:
             pass
 
@@ -226,34 +187,10 @@ def borrar_vectores_documento(post_id):
     """
     engine = create_engine(CONNECTION_STRING)
     with engine.connect() as conn:
-        # 1. Contar cuántos vectores hay antes de borrar
-        query_count = text("""
-            SELECT COUNT(*) FROM langchain_pg_embedding 
+        query_delete = text("""
+            DELETE FROM langchain_pg_embedding 
             WHERE cmetadata->>'doc_id' = :doc_id
         """)
-        vectores_antes = conn.execute(query_count, {"doc_id": str(post_id)}).scalar()
-
-        print(
-            f"🗑️ [VECTORES] doc_id {post_id}: Se encontraron {vectores_antes} vectores para borrar."
-        )
-
-        if vectores_antes > 0:
-            # 2. Borrar los vectores
-            query_delete = text("""
-                DELETE FROM langchain_pg_embedding 
-                WHERE cmetadata->>'doc_id' = :doc_id
-            """)
-            conn.execute(query_delete, {"doc_id": str(post_id)})
-            conn.commit()
-
-            # 3. Comprobar que realmente se han borrado
-            vectores_despues = conn.execute(
-                query_count, {"doc_id": str(post_id)}
-            ).scalar()
-            print(
-                f"✅ [VECTORES] doc_id {post_id}: Borrado completado. Vectores restantes: {vectores_despues}\n"
-            )
-        else:
-            print(
-                f"⚠️ [VECTORES] doc_id {post_id}: No había vectores en la base de datos.\n"
-            )
+        conn.execute(query_delete, {"doc_id": str(post_id)})
+        conn.commit()
+    engine.dispose()

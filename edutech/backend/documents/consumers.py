@@ -15,6 +15,4 @@ class DocumentStatusConsumer(AsyncWebsocketConsumer):
 
     async def document_status(self, event):
         status = event["status"]
-        message = event["message"]
-
-        await self.send(text_data=json.dumps({"status": status, "message": message}))
+        await self.send(text_data=json.dumps({"status": status}))

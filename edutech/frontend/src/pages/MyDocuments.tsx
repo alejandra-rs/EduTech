@@ -6,7 +6,15 @@ import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
 import { getMyPosts, deleteDocument } from "../services/connections-documents.ts";
-import { PostPreview } from "../models/post.model";
+import { PostPreview, PostType } from "../models/documents/post.model.ts";
+
+const TYPE_TO_TAB: Record<PostType, string> = { 
+  PDF: "pdf", 
+  VID: "video", 
+  QUI: "cuestionario", 
+  FLA: "flashcard" 
+};
+
 
 const MyDocuments = () => {
   const navigate = useNavigate();
@@ -19,7 +27,7 @@ const MyDocuments = () => {
 
   useEffect(() => {
     if (!userData?.id) return;
-    getMyPosts(userData.id)
+    getMyPosts(String(userData.id))
       .then(setPosts)
       .catch((err) => console.error("Error al cargar documentos:", err))
       .finally(() => setLoading(false));
@@ -34,7 +42,7 @@ const MyDocuments = () => {
 
   const handleDelete = async (post: PostPreview) => {
     try {
-      await deleteDocument(post.id, userData!.id as unknown as number);
+      await deleteDocument(post.id, userData!.id);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       if (searchResults) setSearchResults((prev) => prev!.filter((p) => p.id !== post.id));
     } catch (err) {
@@ -42,9 +50,13 @@ const MyDocuments = () => {
     }
   };
 
-  const filteredPosts = (searchResults ?? posts).filter((post) =>
-    activeTabs.length === 0 || activeTabs.includes(post.extendedType)
-  );
+  
+
+  const filteredPosts = (searchResults ?? posts).filter((post) => {
+    if (activeTabs.length === 0) return true;
+    return activeTabs.includes(TYPE_TO_TAB[post.post_type]);
+  });
+
 
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
@@ -54,7 +66,7 @@ const MyDocuments = () => {
           <SearchBar
             placeholder="Buscar en mis documentos..."
             color="bg-slate-800"
-            studentId={userData?.id}
+            studentId={String(userData?.id)}
             onSearch={setSearchResults}
           />
         </div>

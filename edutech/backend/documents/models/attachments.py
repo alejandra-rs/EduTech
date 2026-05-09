@@ -18,22 +18,24 @@ def validate_pdf_size(pdf):
 
 
 class PDFAttachment(models.Model):
+    class ProcessingStages(models.TextChoices):
+        UPLOADING = "uploading"
+        PENDING = "pending"
+        EXTRACTING_INFORMATION = "extracting_information"
+        VECTORIZING = "vectorizing"
+        LABELING = "labeling"
+        COMPLETED = "completed"
+        ERROR = "error"
+
     post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="pdf")
     file = models.FileField(
         upload_to="documents/", validators=[validate_pdf_extension, validate_pdf_size]
     )
-    PROCESSING_STATES = [
-        ("pendiente", "En cola para procesar..."),
-        ("subiendo", "Subiendo fichero..."),
-        ("extrayendo_txt", "Extrayendo texto del PDF..."),
-        ("reconociendo_img", "Gemma 3: Analizando imágenes..."),
-        ("vectorizando", "Vectorizando..."),
-        ("etiquetando", "Etiquetando..."),
-        ("completado", "¡Listo para IA!"),
-        ("error", "Error en el procesamiento"),
-    ]
+
     processing_status = models.CharField(
-        max_length=20, choices=PROCESSING_STATES, default="subiendo"
+        max_length=50,
+        choices=ProcessingStages.choices,
+        default=ProcessingStages.PENDING,
     )
 
 

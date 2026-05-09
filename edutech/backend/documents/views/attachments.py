@@ -6,7 +6,7 @@ from rest_framework import generics, views, status
 from rest_framework.response import Response
 from ..models import Post, PDFAttachment, YoutubeVideo
 from ..serializers import PDFUploadSerializer, VideoUploadSerializer, PostSerializer
-from ai_agent.tasks import procesar_pdf_y_vectorizar
+from ai_agent.tasks import vectorize_pdf
 
 
 class PDFUploadView(generics.GenericAPIView):
@@ -52,13 +52,12 @@ class UploadPDFDraftView(generics.GenericAPIView):
             post=post, file=data["file"], processing_status="pending"
         )
 
-        procesar_pdf_y_vectorizar.delay(pdf_attachment.id)
+        vectorize_pdf.delay(pdf_attachment.id)
 
         return Response(
             {
                 "post_id": post.id,
                 "attachment_id": pdf_attachment.id,
-                "message": "Archivo subiendo y vectorización iniciada.",
             },
             status=status.HTTP_201_CREATED,
         )
@@ -79,7 +78,7 @@ class VideoUploadView(generics.GenericAPIView):
             student=serializer.validated_data["student"],
             post_type="VID",
         )
-        YoutubeVideo.objects.create(post=post, vid=serializer.validated_data["file"])
+        YoutubeVideo.objects.create(post=post, vid=serializer.validated_data["url"])
         return Response(
             PostSerializer(post, context={"request": request}).data,
             status=status.HTTP_201_CREATED,

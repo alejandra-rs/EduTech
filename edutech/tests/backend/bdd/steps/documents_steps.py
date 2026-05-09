@@ -141,7 +141,7 @@ def step_upload_valid_video(context, url):
     context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Vídeo de prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'file': url,
+        'url': url,
     }, format='multipart')
 
 @when('el estudiante intenta subir el vídeo de YouTube "{url}"')
@@ -149,7 +149,7 @@ def step_upload_video(context, url):
     context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Vídeo de prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'file': url,
+        'url': url,
     }, format='multipart')
 
 @when('el estudiante intenta subir un link no válido "{url}"')
@@ -157,7 +157,7 @@ def step_upload_invalid_link(context, url):
     context.response = context.client.post('/documents/upload/vid/', {
         'title': 'Prueba', 'description': 'D',
         'course': context.course.pk, 'student': context.student.pk,
-        'file': url,
+        'url': url,
     }, format='json')
 
 @when('el estudiante intenta subir un vídeo sin proporcionar URL')
@@ -215,7 +215,7 @@ def step_video_post_exists(context):
 
 @then('el error hace referencia al campo "vid"')
 def step_error_in_video(context):
-    assert 'file' in context.response.data, f'Se esperaba error en "file", se obtuvo: {context.response.data}'
+    assert 'url' in context.response.data, f'Se esperaba error en "url", se obtuvo: {context.response.data}'
 
 @then('la respuesta contiene {count:d} documentos')
 def step_document_count(context, count):

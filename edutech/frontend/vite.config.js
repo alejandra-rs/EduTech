@@ -19,7 +19,9 @@ export default defineConfig({
   },
   server: {
     host: true,
-    allowedHosts: ['edutech-app.tail6b7334.ts.net'],
+    allowedHosts: process.env.VITE_ALLOWED_HOSTS === 'all'
+      ? 'all'
+      : (process.env.VITE_ALLOWED_HOSTS?.split(',') ?? ['edutech-app.tail6b7334.ts.net', 'localhost', '127.0.0.1']),
     proxy: {
       '/api': {
         target: process.env.VITE_API_TARGET || 'http://host.docker.internal:8000',
@@ -27,7 +29,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
       '/ws': {
-        target: 'http://host.docker.internal:8000',
+        target: process.env.VITE_API_TARGET || 'http://host.docker.internal:8000',
         ws: true,
       },
     },
