@@ -1,9 +1,10 @@
 import { PDF_STATES } from '../models/documents/states.model';
 import { QueryChatbotPayload } from '../models/documents/payload.model';
+import { apiFetch } from './api';
 
 export async function askChatbot(query: QueryChatbotPayload): Promise<any> {
   try {
-    const response = await fetch(`/api/ai/chat/`, {
+    const response = await apiFetch(`/api/ai/chat/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +29,7 @@ export async function askChatbot(query: QueryChatbotPayload): Promise<any> {
 
 export const generateDocumentDescription = async (draftId: number): Promise<string> => {
     try {
-        const response = await fetch(`/api/ai/documents/${draftId}/generate-description/`, {
+        const response = await apiFetch(`/api/ai/documents/${draftId}/generate-description/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

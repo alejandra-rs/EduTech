@@ -1,8 +1,9 @@
 import { Comment } from "../../models/documents/interactions/comment.model";
+import { apiFetch } from "../api";
 
 export const getComments = async (documentId: number): Promise<Comment[]> => {
   try {
-    const response = await fetch(`/api/documents/comments/?post=${documentId}`);
+    const response = await apiFetch(`/api/documents/comments/?post=${documentId}`);
     if (!response.ok) throw new Error("Error al obtener los comentarios");
     return await response.json() as Comment[];
   } catch (error) {
@@ -13,7 +14,7 @@ export const getComments = async (documentId: number): Promise<Comment[]> => {
 
 export const postComment = async (userId: number, postId: number, message: string): Promise<Comment> => {
   try {
-    const response = await fetch(`/api/documents/comments/?user=${userId}&post=${postId}`, {
+    const response = await apiFetch(`/api/documents/comments/?user=${userId}&post=${postId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user: userId, post: postId, message }),

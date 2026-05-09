@@ -1,8 +1,9 @@
 import { Course, SubscriptionResponse, UserSubscription, Year } from '../models/courses/course.model';
+import { apiFetch } from './api';
 
 export const getYears = async (userId: number): Promise<Year[]> => {
   try {
-    const response = await fetch(`/api/courses/years/?user=${userId}`, {
+    const response = await apiFetch(`/api/courses/years/?user=${userId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -22,7 +23,7 @@ export const getCourses = async (yearId?: number, semester?: number): Promise<Co
     if (semester) params.append("semester", semester.toString());
     const query = params.toString() ? `?${params.toString()}` : "";
 
-    const response = await fetch(`/api/courses/${query}`);
+    const response = await apiFetch(`/api/courses/${query}`);
     if (!response.ok) throw new Error("Error obteniendo asignaturas");
     return await response.json() as Course[];
   } catch (error) {
@@ -33,7 +34,7 @@ export const getCourses = async (yearId?: number, semester?: number): Promise<Co
 
 export const getCourse = async (courseId: string | number): Promise<Course | null> => {
   try {
-    const response = await fetch(`/api/courses/${courseId}/`);
+    const response = await apiFetch(`/api/courses/${courseId}/`);
     if (!response.ok) throw new Error("Error obteniendo la asignatura");
     return await response.json() as Course;
   } catch (error) {
@@ -44,7 +45,7 @@ export const getCourse = async (courseId: string | number): Promise<Course | nul
 
 export async function getSubscriptions(userId: string): Promise<UserSubscription[]> {
   try {
-    const response = await fetch(`/api/courses/sub/?user=${userId}`);
+    const response = await apiFetch(`/api/courses/sub/?user=${userId}`);
     if (!response.ok) throw new Error("Error al obtener las suscripciones");
     return await response.json();
   } catch (error) {
@@ -55,7 +56,7 @@ export async function getSubscriptions(userId: string): Promise<UserSubscription
 
 export const checkSubscription = async (userId: number, courseId: number): Promise<number | null> => {
   try {
-    const response = await fetch(`/api/courses/sub/?user=${userId}&course=${courseId}`);
+    const response = await apiFetch(`/api/courses/sub/?user=${userId}&course=${courseId}`);
     if (!response.ok) throw new Error("Error al verificar la suscripción");
     const data = await response.json();
     return data.id ?? null;
@@ -67,7 +68,7 @@ export const checkSubscription = async (userId: number, courseId: number): Promi
 
 export const subscribeToCourse = async (subscriptionData: { user: number; course: number }): Promise<SubscriptionResponse | null> => {
   try {
-    const response = await fetch(`/api/courses/sub/`, {
+    const response = await apiFetch(`/api/courses/sub/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(subscriptionData),
@@ -86,7 +87,7 @@ export const subscribeToCourse = async (subscriptionData: { user: number; course
 
 export const unsubscribe = async (subscriptionId: number): Promise<boolean> => {
   try {
-    const response = await fetch(`/api/courses/sub/${subscriptionId}`, {
+    const response = await apiFetch(`/api/courses/sub/${subscriptionId}`, {
       method: "DELETE",
     });
     if (!response.ok) throw new Error("Error al darse de baja del curso");

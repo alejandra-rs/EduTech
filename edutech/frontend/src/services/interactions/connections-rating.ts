@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { InteractionResponse } from "../../models/documents/interactions/rating.model";
+import { apiFetch } from "../api";
 
 export const getLikes = async (userId: number, postId: number): Promise<InteractionResponse> => {
-  const res = await fetch(`/api/documents/likes/?user=${userId}&post=${postId}`);
+  const res = await apiFetch(`/api/documents/likes/?user=${userId}&post=${postId}`);
   if (!res.ok) throw new Error("Error al obtener likes");
   return res.json() as Promise<InteractionResponse>;
 };
 
 export const addLike = async (userId: number, postId: number): Promise<InteractionResponse> => {
-  const res = await fetch(`/api/documents/likes/`, { 
+  const res = await apiFetch(`/api/documents/likes/`, { 
     method: 'POST', 
     headers: { 'Content-Type': 'application/json' }, 
     body: JSON.stringify({ user: userId, post: postId }) 
@@ -18,18 +19,18 @@ export const addLike = async (userId: number, postId: number): Promise<Interacti
 };
 
 export const removeLike = async (likeId: number): Promise<void> => {
-  const res = await fetch(`/api/documents/likes/${likeId}`, { method: 'DELETE' });
+  const res = await apiFetch(`/api/documents/likes/${likeId}`, { method: 'DELETE' });
   if (!res.ok) throw new Error("Error al eliminar like");
 };
 
 export const getDislikes = async (userId: number, postId: number): Promise<InteractionResponse> => {
-  const res = await fetch(`/api/documents/dislikes/?user=${userId}&post=${postId}`);
+  const res = await apiFetch(`/api/documents/dislikes/?user=${userId}&post=${postId}`);
   if (!res.ok) throw new Error("Error al obtener dislikes");
   return res.json() as Promise<InteractionResponse>;
 };
 
 export const addDislike = async (userId: number, postId: number): Promise<InteractionResponse> => {
-  const res = await fetch(`/api/documents/dislikes/`, { 
+  const res = await apiFetch(`/api/documents/dislikes/`, { 
     method: 'POST', 
     headers: { 'Content-Type': 'application/json' }, 
     body: JSON.stringify({ user: userId, post: postId }) 
@@ -39,7 +40,7 @@ export const addDislike = async (userId: number, postId: number): Promise<Intera
 };
 
 export const removeDislike = async (dislikeId: number): Promise<void> => {
-  const res = await fetch(`/api/documents/dislikes/${dislikeId}`, { method: 'DELETE' });
+  const res = await apiFetch(`/api/documents/dislikes/${dislikeId}`, { method: 'DELETE' });
   if (!res.ok) throw new Error("Error al eliminar dislike");
 };
 

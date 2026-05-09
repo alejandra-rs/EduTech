@@ -20,8 +20,10 @@ import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "@services/connections-students";
 import { useCurrentUser } from "@services/useCurrentUser";
+import { initializeAuth } from "@services/api";
+import { loginRequest } from "@services/authConfig";
 import StudySessions from "./pages/StudySessions";
-import MySubjects from "./pages/MySubjects";
+import MyCoursesPage from "./pages/MyCoursesPage";
 
 import StudySessionDetail from "./pages/StudySessionDetail";
 import {
@@ -38,7 +40,13 @@ export default function App() {
   const isDomainValid = accounts.length > 0;
 
   useEffect(() => {
-    if (isDomainValid) syncUser(instance, accounts[0]);
+    if (!isDomainValid) return;
+    syncUser(instance, accounts[0]);
+    initializeAuth(() =>
+      instance
+        .acquireTokenSilent({ ...loginRequest, account: accounts[0] })
+        .then((r) => r.accessToken)
+    );
   }, [accounts, instance]);
 
   return (
@@ -131,7 +139,7 @@ export default function App() {
                     element={<StudySessionDetail />}
                 />
                 <Route path="/mis-publicaciones/" element={<MyDocuments/>}/>
-                <Route path="/suscripciones" element={<MySubjects/>}/>
+                <Route path="/suscripciones" element={<MyCoursesPage/>}/>
               </Routes>
             </Layout>
           ) : (

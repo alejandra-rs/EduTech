@@ -1,4 +1,5 @@
-import { Student } from '../models/student.model';
+import { Student } from '../models/student/student.model';
+import { apiFetch } from './api';
 
 // Minimal interfaces for MSAL to avoid a hard dependency on @azure/msal-browser
 interface MsalTokenRequest {
@@ -19,7 +20,7 @@ interface MsalAccount {
 
 export const getUserByEmail = async (email: string): Promise<Student | null> => {
   try {
-    const response = await fetch(`/api/students/?email=${email}`);
+    const response = await apiFetch(`/api/students/?email=${email}`);
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
     const data = await response.json();
     if (data.length > 1) console.error(`Se encontraron múltiples usuarios con el email ${email}`);
@@ -67,13 +68,13 @@ export const postUser = async (instance: MsalInstance, account: MsalAccount): Pr
     formData.append("email", account.username);
 
     if (profilePic) {
-      const res = await fetch(profilePic);
+      const res = await apiFetch(profilePic);
       const blob = await res.blob();
       const safeEmail = account.username.replace(/[^a-zA-Z0-9]/g, '_');
       formData.append("picture", blob, `profile_${safeEmail}.jpg`);
     }
 
-    const response = await fetch(`/api/students/post/`, { method: "POST", body: formData });
+    const response = await apiFetch(`/api/students/post/`, { method: "POST", body: formData });
     if (!response.ok) throw new Error("Error al crear el usuario");
     return await response.json() as Student;
   } catch (error) {
@@ -94,7 +95,7 @@ export const syncUser = async (instance: MsalInstance, account: MsalAccount): Pr
 
 export const checkIsAdmin = async (userId: string) => {
   try {
-    const response = await fetch(`/api/students/${userId}/is-admin/`);
+    const response = await apiFetch(`/api/students/${userId}/is-admin/`);
     if (!response.ok) return false;
     const data = await response.json();
     return data.is_admin === true;
