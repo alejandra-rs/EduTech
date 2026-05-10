@@ -13,12 +13,12 @@ class SavedPost(models.Model):
         related_name="saved_in",
     )
     saved_at = models.DateTimeField(auto_now_add=True)
+    is_pinned = models.BooleanField(default=False, db_index=True)
+    pinned_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=["folder", "post"], name="unique_post_per_folder"
-            )
+            models.UniqueConstraint(fields=["folder", "post"], name="unique_post_per_folder")
         ]
         indexes = [models.Index(fields=["folder", "-saved_at"])]
 

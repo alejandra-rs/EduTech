@@ -3,7 +3,7 @@ from ..models import Folder
 from .saved_post import SavedPostSerializer
 
 
-class FolderBreadcrumbSerializer(serializers.ModelSerializer):
+class FolderPathSerializer(serializers.ModelSerializer):
     class Meta:
         model = Folder
         fields = ["id", "name"]
@@ -16,19 +16,19 @@ class FolderSerializer(serializers.ModelSerializer):
 
 
 class FolderDetailSerializer(serializers.ModelSerializer):
-    breadcrumbs = serializers.SerializerMethodField()
+    path = serializers.SerializerMethodField()
     children = serializers.SerializerMethodField()
     saved_posts = SavedPostSerializer(many=True, read_only=True)
 
-    def get_breadcrumbs(self, obj):
-        return FolderBreadcrumbSerializer(obj.get_ancestors(), many=True).data
+    def get_path(self, obj):
+        return FolderPathSerializer(obj.get_ancestors(), many=True).data
 
     def get_children(self, obj):
         return FolderSerializer(obj.get_children(), many=True).data
 
     class Meta:
         model = Folder
-        fields = ["id", "name", "depth", "breadcrumbs", "children", "saved_posts", "created_at"]
+        fields = ["id", "name", "depth", "path", "children", "saved_posts", "created_at"]
 
 
 class FolderCreateSerializer(serializers.Serializer):

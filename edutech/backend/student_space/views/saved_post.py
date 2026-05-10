@@ -1,10 +1,11 @@
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
 from users.models import Student
 from documents.models import Post
 from ..models import Folder, SavedPost
-from ..serializers import SavedPostSerializer, SavedPostCreateSerializer
+from ..serializers import SavedPostSerializer, SavedPostCreateSerializer, SavedPostUpdateSerializer
 
 
 class SavedPostView(views.APIView):
@@ -32,6 +33,20 @@ class SavedPostView(views.APIView):
             )
 
         return Response(SavedPostSerializer(saved).data, status=status.HTTP_201_CREATED)
+
+    def patch(self, request, pk):
+        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        saved = get_object_or_404(SavedPost, pk=pk, folder__student=student)
+
+        serializer = SavedPostUpdateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        is_pinned = serializer.validated_data["is_pinned"]
+        saved.is_pinned = is_pinned
+        saved.pinned_at = timezone.now() if is_pinned else None
+        saved.save()
+        return Response(SavedPostSerializer(saved).data)
 
     def delete(self, request, pk):
         student = get_object_or_404(Student, pk=request.query_params.get("student"))

@@ -21,9 +21,9 @@ def _get_student(query_params):
 class FolderRootView(views.APIView):
     def get(self, request):
         student = _get_student(request.query_params)
-        qs = Folder.objects.filter(student=student, depth=1)
-        if qs.exists():
-            root = qs.first()
+        root_folder = Folder.objects.filter(student=student, depth=1)
+        if root_folder.exists():
+            root = root_folder.first()
         else:
             root = Folder.add_root(name="root", student=student)
         root = (

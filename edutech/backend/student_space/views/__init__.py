@@ -5,3 +5,4 @@ from .folder import (
     FolderMoveView as FolderMoveView,
 )
 from .saved_post import SavedPostView as SavedPostView
+from .pinned_post import PinnedPostView as PinnedPostView

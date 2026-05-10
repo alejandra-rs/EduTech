@@ -7,5 +7,6 @@ urlpatterns = [
     path("folders/<int:pk>/", views.FolderDetailView.as_view(), name="folder_detail"),
     path("folders/<int:pk>/move/", views.FolderMoveView.as_view(), name="folder_move"),
     path("posts/", views.SavedPostView.as_view(), name="saved_post_create"),
-    path("posts/<int:pk>/", views.SavedPostView.as_view(), name="saved_post_delete"),
+    path("posts/<int:pk>/", views.SavedPostView.as_view(), name="saved_post_detail"),
+    path("pinned/", views.PinnedPostView.as_view(), name="pinned_post_list"),
 ]

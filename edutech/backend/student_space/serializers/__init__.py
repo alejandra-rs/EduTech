@@ -1,5 +1,5 @@
 from .folder import (
-    FolderBreadcrumbSerializer as FolderBreadcrumbSerializer,
+    FolderPathSerializer as FolderPathSerializer,
     FolderSerializer as FolderSerializer,
     FolderDetailSerializer as FolderDetailSerializer,
     FolderCreateSerializer as FolderCreateSerializer,
@@ -9,4 +9,5 @@ from .folder import (
 from .saved_post import (
     SavedPostSerializer as SavedPostSerializer,
     SavedPostCreateSerializer as SavedPostCreateSerializer,
+    SavedPostUpdateSerializer as SavedPostUpdateSerializer,
 )
