@@ -1,0 +1,44 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import views, status
+from rest_framework.response import Response
+from users.models import Student
+from documents.models import Post
+from ..models import Folder, SavedPost
+from ..serializers import SavedPostSerializer, SavedPostCreateSerializer
+
+
+class SavedPostView(views.APIView):
+    def post(self, request):
+        serializer = SavedPostCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        student = get_object_or_404(Student, pk=data["student_id"])
+        folder = get_object_or_404(Folder, pk=data["folder_id"], student=student)
+        post = get_object_or_404(Post, pk=data["post_id"])
+
+        if post.is_draft:
+            return Response(
+                {"detail": "No se pueden guardar borradores."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        saved, created = SavedPost.objects.get_or_create(folder=folder, post=post)
+        if not created:
+            return Response(
+                {"detail": "Esta publicación ya está guardada en esta carpeta."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        return Response(SavedPostSerializer(saved).data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, pk):
+        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        saved = get_object_or_404(SavedPost, pk=pk)
+
+        if saved.folder.student_id != student.id:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        saved.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

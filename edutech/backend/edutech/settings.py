@@ -63,10 +63,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "storages",
+    "treebeard",
     "users",
     "courses",
     "ai_agent",
     "documents.apps.DocumentsConfig",
+    "student_space",
 ]
 
 MIDDLEWARE = [
