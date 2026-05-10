@@ -61,6 +61,7 @@ export default function StudySessionDetail() {
               onStarChange={setIsStarred}
             />
             <SessionDescription session={session} />
+            <section className="pt-6 pb-20"> <CommentsSection id={sessionId} isSession /> </section>
           </div>
         </main>
       </div>
