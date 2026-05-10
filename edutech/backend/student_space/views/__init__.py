@@ -4,5 +4,8 @@ from .folder import (
     FolderDetailView as FolderDetailView,
     FolderMoveView as FolderMoveView,
 )
-from .saved_post import SavedPostView as SavedPostView
+from .saved_post import (
+    SavedPostView as SavedPostView,
+    SavedPostMoveView as SavedPostMoveView,
+)
 from .pinned_post import PinnedPostView as PinnedPostView

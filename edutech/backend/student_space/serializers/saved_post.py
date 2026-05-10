@@ -19,3 +19,7 @@ class SavedPostCreateSerializer(serializers.Serializer):
 
 class SavedPostUpdateSerializer(serializers.Serializer):
     is_pinned = serializers.BooleanField()
+
+
+class SavedPostMoveSerializer(serializers.Serializer):
+    folder_id = serializers.IntegerField()

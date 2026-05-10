@@ -5,7 +5,12 @@ from rest_framework.response import Response
 from users.models import Student
 from documents.models import Post
 from ..models import Folder, SavedPost
-from ..serializers import SavedPostSerializer, SavedPostCreateSerializer, SavedPostUpdateSerializer
+from ..serializers import (
+    SavedPostSerializer,
+    SavedPostCreateSerializer,
+    SavedPostUpdateSerializer,
+    SavedPostMoveSerializer,
+)
 
 
 class SavedPostView(views.APIView):
@@ -57,3 +62,34 @@ class SavedPostView(views.APIView):
 
         saved.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SavedPostMoveView(views.APIView):
+    def patch(self, request, pk):
+        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        saved = get_object_or_404(SavedPost, pk=pk, folder__student=student)
+
+        serializer = SavedPostMoveSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        folder_id = serializer.validated_data["folder_id"]
+        new_folder = get_object_or_404(Folder, pk=folder_id, student=student)
+
+        if new_folder.pk == saved.folder.pk:
+            return Response(
+                {"detail": "La publicación ya está en esta carpeta."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if SavedPost.objects.filter(folder=new_folder, post=saved.post).exists():
+            return Response(
+                {
+                    "detail": "Esta publicación ya está guardada en la carpeta de destino."
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        saved.folder = new_folder
+        saved.save()
+        return Response(SavedPostSerializer(saved).data)

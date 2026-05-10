@@ -10,4 +10,5 @@ from .saved_post import (
     SavedPostSerializer as SavedPostSerializer,
     SavedPostCreateSerializer as SavedPostCreateSerializer,
     SavedPostUpdateSerializer as SavedPostUpdateSerializer,
+    SavedPostMoveSerializer as SavedPostMoveSerializer,
 )

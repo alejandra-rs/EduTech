@@ -18,7 +18,9 @@ class SavedPost(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["folder", "post"], name="unique_post_per_folder")
+            models.UniqueConstraint(
+                fields=["folder", "post"], name="unique_post_per_folder"
+            )
         ]
         indexes = [models.Index(fields=["folder", "-saved_at"])]
 

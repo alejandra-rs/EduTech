@@ -44,7 +44,10 @@ class FolderCreateView(views.APIView):
         student = get_object_or_404(Student, pk=data["student_id"])
         parent = get_object_or_404(Folder, pk=data["parent_id"], student=student)
 
-        if Folder.objects.filter(student=student, depth__gt=1).count() >= MAX_SUBFOLDERS:
+        if (
+            Folder.objects.filter(student=student, depth__gt=1).count()
+            >= MAX_SUBFOLDERS
+        ):
             return Response(
                 {"detail": f"No puedes tener más de {MAX_SUBFOLDERS} subcarpetas."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -138,7 +141,7 @@ class FolderMoveView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if folder.is_ancestor_of(target):
+        if target.is_descendant_of(folder):
             return Response(
                 {"detail": "No puedes mover una carpeta a uno de sus descendientes."},
                 status=status.HTTP_400_BAD_REQUEST,

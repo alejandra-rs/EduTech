@@ -28,7 +28,15 @@ class FolderDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Folder
-        fields = ["id", "name", "depth", "path", "children", "saved_posts", "created_at"]
+        fields = [
+            "id",
+            "name",
+            "depth",
+            "path",
+            "children",
+            "saved_posts",
+            "created_at",
+        ]
 
 
 class FolderCreateSerializer(serializers.Serializer):

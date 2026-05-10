@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('student_space', '0001_initial'),
+        ("student_space", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='savedpost',
-            name='is_pinned',
+            model_name="savedpost",
+            name="is_pinned",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AddField(
-            model_name='savedpost',
-            name='pinned_at',
+            model_name="savedpost",
+            name="pinned_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]
