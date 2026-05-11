@@ -150,3 +150,27 @@ export const getPinnedPosts = async (studentId: number): Promise<SavedPost[]> =>
     return [];
   }
 };
+
+
+export const getPinned = async (savedPostId: number, studentId: number): Promise<number | null> => {
+  try {
+    const response = await apiFetch(`/api/student-space/posts/${savedPostId}/?student=${studentId}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.is_pinned ? data.id : null; 
+  } catch (error) {
+    console.error('Error en getPinned:', error);
+    return null;
+  }
+};
+
+export const getSavedPostId = async (postId: number, studentId: number): Promise<number | null> => {
+  try{
+    const response = await apiFetch(`/api/student-space/saved-post/?post=${postId}&student=${studentId}`);
+    if (!response.ok) throw new Error(`Error al obtener las publicaciones fijadas: ${response.status}`);
+    return response.json()
+  }catch (error) {
+    console.error('Error en getSavedPostId:', error);
+    return null;
+  }
+};

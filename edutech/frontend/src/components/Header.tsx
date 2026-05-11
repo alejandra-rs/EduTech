@@ -9,6 +9,7 @@ import {
   DocumentIcon,
   AcademicCapIcon,
   ShieldExclamationIcon,
+  FolderIcon,
 } from "@heroicons/react/24/outline";
 import type { IPublicClientApplication, AccountInfo } from "@azure/msal-browser";
 
@@ -28,6 +29,7 @@ export default function Header({ isOpen, setIsOpen, userProfilePic, userName, in
   };
 
   const navLinks = [
+    { to: "/mi-espacio", label: "Mi espacio", icon: FolderIcon },
     { to: "/suscripciones/", label: "Mis asignaturas", icon: BellIcon },
     { to: "/borradores/", label: "Mis borradores", icon: PencilSquareIcon },
     { to: "/mis-publicaciones/", label: "Mi material", icon: DocumentIcon },
