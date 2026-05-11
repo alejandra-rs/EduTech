@@ -1,4 +1,3 @@
-// src/components/SaveButton.tsx
 import { useState, useEffect } from 'react';
 import { BookmarkIcon as BookmarkOutline } from '@heroicons/react/24/outline';
 import { BookmarkIcon as BookmarkSolid } from '@heroicons/react/24/solid';
@@ -7,13 +6,13 @@ import { useCurrentUser } from '../../services/useCurrentUser';
 
 interface SaveButtonProps {
   postId: number;
+  onSavedStatusChange: (id: number | null) => void;
 }
 
-export const SaveButton = ({ postId }: SaveButtonProps) => {
+export const SaveButton = ({ postId, onSavedStatusChange}: SaveButtonProps) => {
   const [savedId, setSavedId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { userData } = useCurrentUser();
-  console.log(userData)
 
   useEffect(() => {
     if (!userData) return;
@@ -22,6 +21,7 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
       setIsLoading(true);
       const id = await getSavedPostId(postId, userData.id);
       setSavedId(id);
+      onSavedStatusChange(id);
       setIsLoading(false);
     };
     
@@ -36,33 +36,30 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
       if (savedId !== null) {
         await deleteSavedPost(postId, userData!.id);
         setSavedId(null);
+        onSavedStatusChange(null);
       } else {
-        await getRootFolder(userData!.id).then(
-          async (folder) =>{
-            if (folder && folder.id) {
-              const newSavedPost = await savePost(folder.id, postId, userData!.id);
-              if (newSavedPost) {
-                setSavedId(newSavedPost.id);
-              } else {
-                setSavedId(null);
-              }
-            } else {
-              setSavedId(null);
-            }
-        }) ;
+        const folder = await getRootFolder(userData!.id);
+        if (folder && folder.id) {
+          const newSavedPost = await savePost(folder.id, postId, userData!.id);
+          if (newSavedPost) {
+            setSavedId(newSavedPost.id);
+            onSavedStatusChange(newSavedPost.id);
+          }
+        }
       }
     } catch (error) {
-      console.error("Fallo en la operación de guardado/borrado", error);
+      console.error("Error al guardar/borrar", error);
     } finally {
       setIsLoading(false);
     }
-  };
+      }
 
   return (
     <button
       onClick={handleToggleSave}
-      disabled={isLoading}
-      className={`p-2 rounded-full transition-all flex items-center justify-center ${isLoading ? 'opacity-50' : 'hover:bg-gray-100'}`}
+      disabled={isLoading || !userData}
+      className={`p-2 rounded-full transition-all flex items-center justify-center ${isLoading || !userData ? 'opacity-50' : 'hover:bg-gray-100'}`}
+      title={savedId !== null ? "Quitar de Mi Espacio" : "Guardar en Mi Espacio"}
     >
       {savedId !== null ? (
         <BookmarkSolid className="w-7 h-7 text-black" /> 

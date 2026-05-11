@@ -1,4 +1,3 @@
-import { MapPinIcon } from '@heroicons/react/24/outline';
 import PostGrid from '../PostGrid';
 import type { PostPreview } from '../../models/documents/post.model';
 
