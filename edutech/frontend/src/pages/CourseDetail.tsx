@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import BellButton from "../components/interactions/BellButton";
 import Tabs from "../components/Tabs";
@@ -9,22 +9,26 @@ import { getPosts } from "../services/connections-documents";
 import { getCourse } from "../services/connections-courses";
 import { getYearById, getDegreeInfo } from "../services/connections-degrees";
 import { ChatbotWidget } from "../components/chatbot/ChatbotWidget";
-import { POST_TYPE_LABELS, PostPreview, PostType } from "../models/documents/post.model";
+import {
+  POST_TYPE_LABELS,
+  PostPreview,
+  PostType,
+} from "../models/documents/post.model";
 import { UploadMenuButton } from "../components/UploadMenuButton";
 
-const TYPE_TO_TAB: Record<PostType, string> = { 
-  PDF: "pdf", 
-  VID: "video", 
-  QUI: "cuestionario", 
-  FLA: "flashcard" 
+const TYPE_TO_TAB: Record<PostType, string> = {
+  PDF: "pdf",
+  VID: "video",
+  QUI: "cuestionario",
+  FLA: "flashcard",
 };
 
 const CourseDetail = () => {
-  const { id, subjectId } = useParams<{ id: string, subjectId: string }>();
+  const { id, subjectId } = useParams<{ id: string; subjectId: string }>();
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState<PostPreview[]>([]);
-  const [searchResults, setSearchResults] = useState<PostPreview[]| null>();
+  const [searchResults, setSearchResults] = useState<PostPreview[] | null>();
   const [activeTabs, setActiveTabs] = useState<string[]>([]);
   const [subjectName, setSubjectName] = useState<string>("Cargando...");
   const [degreeName, setDegreeName] = useState<string>("");
@@ -32,9 +36,12 @@ const CourseDetail = () => {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const [dataPosts, dataCourse] = await Promise.all([getPosts(Number(subjectId)), getCourse(Number(subjectId))]);
+        const [dataPosts, dataCourse] = await Promise.all([
+          getPosts(Number(subjectId)),
+          getCourse(Number(subjectId)),
+        ]);
         setPosts(dataPosts);
-        setSubjectName( dataCourse ? dataCourse.name: "Cargando");
+        setSubjectName(dataCourse ? dataCourse.name : "Cargando");
       } catch (error) {
         console.error("Error al cargar datos:", error);
         setSubjectName("Asignatura");
@@ -51,9 +58,10 @@ const CourseDetail = () => {
       .catch(() => {});
   }, [id]);
 
-
   const handlePostClick = (post: PostPreview) => {
-    navigate(`/${id}/${subjectId}/${POST_TYPE_LABELS[post.post_type]}/${post.id}`);
+    navigate(
+      `/${id}/${subjectId}/${POST_TYPE_LABELS[post.post_type]}/${post.id}`,
+    );
   };
 
   const filteredPosts = (searchResults ?? posts).filter((post) => {
@@ -61,8 +69,12 @@ const CourseDetail = () => {
     return activeTabs.includes(TYPE_TO_TAB[post.post_type]);
   });
 
-
-
+  const pdfDocuments = posts
+    .filter((post) => post.post_type === "PDF")
+    .map((post) => ({
+      id: post.id,
+      title: post.title,
+    }));
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       <div className="shrink-0 bg-white">
@@ -101,8 +113,8 @@ const CourseDetail = () => {
           </div>
         </div>
       </div>
-      <ChatbotWidget courseId={String(subjectId)} />
+      <ChatbotWidget courseId={String(subjectId)} documents={pdfDocuments} />
     </div>
   );
-}
+};
 export default CourseDetail;
