@@ -10,12 +10,6 @@ from ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
 
 
 import fitz 
-
-
-
-
-
-
 class ChatAcademicoView(APIView):
     def post(self, request):
         user_query = request.data.get("student_question", "")
@@ -43,22 +37,21 @@ class ChatAcademicoView(APIView):
 
 
     def sources_map(self, docs):
-            """Asigna un ID [Ref: X] a cada documento y extrae su info clave."""
-            mapa_vectores = {}
-            contexto_estructurado = []
-            
-            for i, d in enumerate(docs):
-                ref = str(i + 1)
-                mapa_vectores[ref] = d
-                contexto_estructurado.append({
-                    "id_referencia": ref,
-                    "texto": d.page_content,
-                    "doc_id": d.metadata.get("doc_id"),
-                    "pagina": d.metadata.get("p"),
-                    "titulo": d.metadata.get("titulo", "Documento"),
-                }
-            )
-
+        """Asigna un ID [Ref: X] a cada documento y extrae su info clave."""
+        mapa_vectores = {}
+        contexto_estructurado = []
+        
+        for i, d in enumerate(docs):
+            ref = str(i + 1)
+            mapa_vectores[ref] = d
+            contexto_estructurado.append({
+                "id_referencia": ref,
+                "texto": d.page_content,
+                "doc_id": d.metadata.get("doc_id"),
+                "pagina": d.metadata.get("p"),
+                "titulo": d.metadata.get("titulo", "Documento"),
+            }
+        )
         return mapa_vectores, contexto_estructurado
 
     def extract_sources(self, texto_respuesta, mapa_vectores):
