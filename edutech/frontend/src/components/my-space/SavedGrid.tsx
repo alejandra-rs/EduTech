@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { PlusIcon, FolderIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { FolderIcon } from '@heroicons/react/24/outline';
 import { FolderCard } from './FolderCard';
 import { SavedPreview } from './SavedPreview';
 import { FolderInlineEditor } from './FolderInlineEditor';
+import { SectionTitle } from './SectionTitle';
+import { SelectionButtonsGroup } from './SelectionButtonsGroup';
 import { createFolder } from '../../services/connections-studentspace';
 import { Folder, SavedPost } from '../../models/student_space/student_space.model';
 
@@ -85,50 +87,17 @@ export const SavedGrid = ({
 
   return (
     <section className="mb-10">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          Mi Espacio
-        </h2>
-        <div className="flex items-center gap-2">
-          {isSelecting ? (
-            <>
-              <button
-                onClick={cancelSelection}
-                className="p-1.5 text-gray-500 hover:text-gray-700 rounded-lg transition-colors flex items-center gap-1 text-sm"
-              >
-                <XMarkIcon className="w-4 h-4" />
-                Cancelar
-              </button>
-              {selectedCount > 0 && (
-                <button
-                  onClick={handleDelete}
-                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
-                >
-                  <TrashIcon className="w-4 h-4" />
-                  Eliminar ({selectedCount})
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setIsSelecting(true)}
-                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors text-sm"
-              >
-                Seleccionar
-              </button>
-              <button
-                onClick={() => setIsAddingNew(true)}
-                disabled={isAddingNew}
-                className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
-              >
-                <PlusIcon className="w-4 h-4" />
-                <span>Nueva Carpeta</span>
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+      <SectionTitle title="Mi Espacio">
+        <SelectionButtonsGroup
+          isSelecting={isSelecting}
+          selectedCount={selectedCount}
+          isAddingNew={isAddingNew}
+          onCancelSelection={cancelSelection}
+          onDelete={handleDelete}
+          onSelectMode={() => setIsSelecting(true)}
+          onAddNewFolder={() => setIsAddingNew(true)}
+        />
+      </SectionTitle>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {isAddingNew && (

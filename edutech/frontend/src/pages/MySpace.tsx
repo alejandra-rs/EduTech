@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ChevronRightIcon, HomeIcon } from '@heroicons/react/24/solid';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   DndContext, DragEndEvent, pointerWithin,
   useSensor, useSensors, PointerSensor,
@@ -16,7 +15,7 @@ import { Folder, FolderDetail, SavedPost } from '../models/student_space/student
 import { PostPreview, POST_TYPE_LABELS } from '../models/documents/post.model';
 import { PinnedSection } from '../components/my-space/PinnedSection';
 import { SavedGrid } from '../components/my-space/SavedGrid';
-import { DroppablePath } from '../components/my-space/DroppablePath';
+import { FolderPath } from '../components/my-space/FolderPath';
 import { DeleteUndoToast } from '../components/my-space/DeleteUndoToast';
 
 interface SpaceStats { folder_count: number; saved_post_count: number }
@@ -149,55 +148,22 @@ const MySpace = () => {
     return <div className="flex h-screen items-center justify-center text-gray-500">Cargando tu espacio...</div>;
   }
 
-  const rootFolder = folderId ? currentFolder?.path?.[0] : currentFolder;
-  const ancestorFolders = currentFolder?.path?.slice(1) ?? [];
-
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={pointerWithin}>
       <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden">
         <div className="shrink-0 bg-white shadow-sm">
           <TitlePage
             PageName={folderId ? currentFolder?.name || "Cargando..." : "Mi Espacio"}
-            backLabel="Inicio"
-            onBack={() => navigate('/')}
+            backLabel={folderId ? "Volver" : "Inicio"}
+            onBack={folderId ? () => navigate(-1) : () => navigate('/')}
           >
             {stats && (
-              <div className={`flex items-center gap-2 text-xs shrink-0 ml-4 ${stats.folder_count > 5 ? "text-red-500" : "text-gray-500"}`}>
+              <div className={`flex items-center gap-2 text-xs shrink-0 ml-4 ${stats.folder_count > 90 ? "text-red-500" : "text-gray-500"}`}>
                 {stats.folder_count} / 100 carpetas
               </div>
             )}
           </TitlePage>
-          <div className="flex items-center px-8 py-3 text-sm text-gray-500 bg-gray-50/50 border-b border-gray-100">
-            <div className="flex items-center flex-1 min-w-0">
-              {folderId && rootFolder ? (
-                <DroppablePath folderId={rootFolder.id} folderName={rootFolder.name} to="/mi-espacio">
-                  <HomeIcon className="w-4 h-4" /> Mi Espacio
-                </DroppablePath>
-              ) : (
-                <Link to="/mi-espacio" className="hover:text-blue-600 flex items-center gap-1 transition-colors px-1 py-0.5">
-                  <HomeIcon className="w-4 h-4" /> Mi Espacio
-                </Link>
-              )}
-              {ancestorFolders.map((folder) => (
-                <div key={folder.id} className="flex items-center">
-                  <ChevronRightIcon className="w-4 h-4 mx-1 text-gray-400" />
-                  <DroppablePath
-                    folderId={folder.id}
-                    folderName={folder.name}
-                    to={`/mi-espacio/directorio/${folder.id}`}
-                  >
-                    {folder.name}
-                  </DroppablePath>
-                </div>
-              ))}
-              {folderId && (
-                <div className="flex items-center">
-                  <ChevronRightIcon className="w-4 h-4 mx-1 text-gray-400" />
-                  <span className="font-semibold text-gray-800">{currentFolder?.name}</span>
-                </div>
-              )}
-            </div>
-          </div>
+          <FolderPath folderId={folderId} currentFolder={currentFolder} />
         </div>
 
         <div className="flex-grow overflow-y-auto custom-scrollbar px-8 py-8">
@@ -225,7 +191,6 @@ const MySpace = () => {
 
       {pendingDelete && (
         <DeleteUndoToast
-          count={pendingDelete.folders.length + pendingDelete.savedPosts.length}
           onUndo={handleUndo}
           onConfirm={handleConfirmDelete}
         />
