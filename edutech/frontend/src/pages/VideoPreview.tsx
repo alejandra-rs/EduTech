@@ -8,6 +8,7 @@ import { CommentsSection } from '../components/interactions/CommentsSection';
 import VideoViewer from '../components/VideoViewer';
 import PDFViewer from '../components/PDFViewer';
 import type { PostPreview } from '../models/documents/post.model';
+import { SaveButton } from '../components/my-space/SaveButton';
 
 export default function VideoPreview() {
   const navigate = useNavigate();
@@ -33,7 +34,9 @@ export default function VideoPreview() {
     <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden font-sans">
 
       <header className="w-full shrink-0 bg-white shadow-sm z-10">
-        <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)} />
+        <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)}>
+          <SaveButton postId={Number(postId)}/>
+        </TitlePage>
       </header>
 
       <main className="flex-1 w-full max-w-[95%] xl:max-w-[85%] mx-auto p-4 md:p-6 flex flex-col lg:flex-row gap-8 overflow-hidden">

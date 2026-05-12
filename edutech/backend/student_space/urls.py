@@ -15,4 +15,6 @@ urlpatterns = [
     ),
     path("posts/check/<int:post_id>/", views.CheckSavedPostView.as_view(), name="saved_post_check"),
     path("pinned/", views.PinnedPostView.as_view(), name="pinned_post_list"),
+    path("stats/", views.SpaceStatsView.as_view(), name="space_stats"),
+    path("items/", views.BatchDeleteView.as_view(), name="batch_delete"),
 ]

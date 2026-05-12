@@ -164,9 +164,39 @@ export const getPinned = async (savedPostId: number, studentId: number): Promise
   }
 };
 
+export const getSpaceStats = async (studentId: number): Promise<{ folder_count: number; saved_post_count: number } | null> => {
+  try {
+    const response = await apiFetch(`/api/student-space/stats/?student=${studentId}`);
+    if (!response.ok) throw new Error(`Error al obtener estadísticas: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error('Error en getSpaceStats:', error);
+    return null;
+  }
+};
+
+export const batchDeleteItems = async (
+  folderIds: number[],
+  savedPostIds: number[],
+  studentId: number,
+): Promise<boolean> => {
+  try {
+    const response = await apiFetch(`/api/student-space/items/?student=${studentId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folder_ids: folderIds, saved_post_ids: savedPostIds }),
+    });
+    if (!response.ok) throw new Error(`Error al eliminar elementos: ${response.status}`);
+    return true;
+  } catch (error) {
+    console.error('Error en batchDeleteItems:', error);
+    return false;
+  }
+};
+
 export const getSavedPostId = async (postId: number): Promise<number | null> => {
   try {
-    const response = await apiFetch(`/api/student_space/posts/check/${postId}/`);
+    const response = await apiFetch(`/api/student-space/posts/check/${postId}/`);
     const data = await response.json();
     return data.saved_post_id;
   } catch (error) {

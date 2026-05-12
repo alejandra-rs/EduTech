@@ -8,7 +8,7 @@ interface SaveButtonProps {
   postId: number;
 }
 
-export const SaveButton = ({ postId}: SaveButtonProps) => {
+export const SaveButton = ({postId}: SaveButtonProps) => {
   const [savedId, setSavedId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { userData } = useCurrentUser();
@@ -18,7 +18,6 @@ export const SaveButton = ({ postId}: SaveButtonProps) => {
     const fetchInitialStatus = async () => {
       setIsLoading(true);
       const id = await getSavedPostId(postId);
-      console.log("el savedPostId es", id)
       setSavedId(id);
       setIsLoading(false);
     };
@@ -38,9 +37,7 @@ export const SaveButton = ({ postId}: SaveButtonProps) => {
         const folder = await getRootFolder(userData!.id);
         if (folder && folder.id) {
           const newSavedPost = await savePost(folder.id, postId, userData!.id);
-          if (newSavedPost) {
-            setSavedId(newSavedPost.id);
-          }
+          if (newSavedPost) setSavedId(newSavedPost.id);
         }
       }
     } catch (error) {
