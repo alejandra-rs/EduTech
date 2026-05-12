@@ -1,12 +1,10 @@
-import re
-import json
 import fitz 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from ai_agent.agent_setings import get_vector_store, getDocument, send_prompt
-from ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
+from ai_agent.agent_setings import getDocument, send_prompt
+from ai_agent.agents_pronts import SYSTEM_PROMPTS
 
 
 import fitz 

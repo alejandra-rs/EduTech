@@ -1,5 +1,6 @@
 from django.test import override_settings
 from rest_framework.test import APITestCase
+
 from documents.models import Post, PDFAttachment, YoutubeVideo
 from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file
 

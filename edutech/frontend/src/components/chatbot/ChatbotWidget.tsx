@@ -55,7 +55,7 @@ export function ChatbotWidget({
     console.log(mentionedDocs);
 
     try {
-      if (isToolsMode){
+      if (!isToolsMode){
         const data = await askChatbot({
           question: userQuestion,
           course_id: String(courseId),
@@ -76,14 +76,8 @@ export function ChatbotWidget({
           course_id: String(courseId),
           material: toolType.key
         });
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "ai",
-            content: data.material ?? data.material,
-          },
-        ]);
-      }
+        console.log(data)
+       }
     } catch {
       setMessages((prev) => [
         ...prev,

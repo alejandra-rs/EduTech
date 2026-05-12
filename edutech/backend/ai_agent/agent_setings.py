@@ -1,5 +1,7 @@
 import os
 import boto3
+import re
+import json
 from django.conf import settings
 from ollama import Client as OllamaClient
 
