@@ -4,15 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('documents', '0003_alter_pdfattachment_processing_status'),
+        ("documents", "0003_alter_pdfattachment_processing_status"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pdfattachment',
-            name='processing_status',
-            field=models.CharField(choices=[('uploading', 'Uploading'), ('pending', 'Pending'), ('extracting_information', 'Extracting Information'), ('vectorizing', 'Vectorizing'), ('labeling', 'Labeling'), ('completed', 'Completed'), ('error', 'Error')], default='pending', max_length=50),
+            model_name="pdfattachment",
+            name="processing_status",
+            field=models.CharField(
+                choices=[
+                    ("uploading", "Uploading"),
+                    ("pending", "Pending"),
+                    ("extracting_information", "Extracting Information"),
+                    ("vectorizing", "Vectorizing"),
+                    ("labeling", "Labeling"),
+                    ("completed", "Completed"),
+                    ("error", "Error"),
+                ],
+                default="pending",
+                max_length=50,
+            ),
         ),
     ]

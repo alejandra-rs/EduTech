@@ -8,8 +8,7 @@ def notify_frontend(attachment_id, status):
     """Función de ayuda para mandar mensajes por WebSocket usando Redis"""
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
-        f"document_{attachment_id}",
-        {"type": "document_status", "status": status}
+        f"document_{attachment_id}", {"type": "document_status", "status": status}
     )
 
 
@@ -24,5 +23,5 @@ def vectorize_pdf(attachment_id):
             notify_fn=lambda status: notify_frontend(attachment_id, status),
         )
         return f"Éxito: PDF {attachment_id} vectorizado."
-    except Exception as e:
+    except Exception:
         notify_frontend(attachment_id, "error")

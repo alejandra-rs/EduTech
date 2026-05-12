@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 from rest_framework import views, status
 from rest_framework.response import Response
+from ..models.quiz import Answer
 from users.models import Student
-from ..models import Post, FlashCardDeck, Quiz
+from ..models import Post, FlashCard, FlashCardDeck, Quiz
 from ..serializers import (
     DraftPostSerializer,
     DraftCreateSerializer,
@@ -11,19 +13,45 @@ from ..serializers import (
 from ..notifications import notify_subscribers_of_new_post
 
 
-def _write_post_content(post, data):
-    if post.post_type == "FLA":
-        deck = FlashCardDeck.objects.create(post=post)
-        for card in data.get("cards", []):
-            deck.cards.create(question=card["question"], answer=card["answer"])
-    elif post.post_type == "QUI":
-        quiz = Quiz.objects.create(post=post)
-        for q_data in data.get("questions", []):
-            question = quiz.questions.create(title=q_data["title"])
-            for a_data in q_data.get("answers", []):
-                question.answers.create(
-                    text=a_data["text"], is_correct=a_data["is_correct"]
-                )
+def _write_flashcards(post, data):
+    deck = FlashCardDeck.objects.create(post=post)
+    cards_to_create = [
+        FlashCard(deck=deck, question=card["question"], answer=card["answer"])
+        for card in data.get("cards", [])
+    ]
+    FlashCard.objects.bulk_create(cards_to_create)
+
+
+def _write_quiz(post, data):
+    quiz = Quiz.objects.create(post=post)
+    for quiz_data in data.get("questions", []):
+        question = quiz.questions.create(title=quiz_data["title"])
+
+        answers_to_create = [
+            Answer(
+                question=question, text=a_data["text"], is_correct=a_data["is_correct"]
+            )
+            for a_data in quiz_data.get("answers", [])
+        ]
+        Answer.objects.bulk_create(answers_to_create)
+
+
+def _clear_post_content(post):
+    """Busca en el mapa cómo borrar el contenido de este tipo de post y lo ejecuta."""
+    clear_function = POST_CLEAR_MAP.get(post.post_type)
+    if clear_function:
+        clear_function(post)
+
+
+POST_WRITERS_MAP = {
+    "FLA": _write_flashcards,
+    "QUI": _write_quiz,
+}
+
+POST_CLEAR_MAP = {
+    "FLA": lambda post: post.fla.delete() if hasattr(post, "fla") else None,
+    "QUI": lambda post: post.qui.delete() if hasattr(post, "qui") else None,
+}
 
 
 class DraftListView(views.APIView):
@@ -34,6 +62,7 @@ class DraftListView(views.APIView):
         )
         return Response(DraftPostSerializer(drafts, many=True).data)
 
+    @transaction.atomic
     def post(self, request):
         serializer = DraftCreateSerializer(data=request.data)
         if not serializer.is_valid():
@@ -48,7 +77,10 @@ class DraftListView(views.APIView):
             description=data["description"],
             is_draft=True,
         )
-        _write_post_content(post, data)
+
+        writer_function = POST_WRITERS_MAP.get(post.post_type)
+        if writer_function:
+            writer_function(post, data)
         return Response(DraftPostSerializer(post).data, status=status.HTTP_201_CREATED)
 
 
@@ -57,6 +89,7 @@ class DraftDetailView(views.APIView):
         post = get_object_or_404(Post, pk=pk, is_draft=True)
         return Response(DraftPostSerializer(post).data)
 
+    @transaction.atomic
     def patch(self, request, pk):
         post = get_object_or_404(Post, pk=pk, is_draft=True)
         serializer = DraftUpdateSerializer(data=request.data)
@@ -73,12 +106,12 @@ class DraftDetailView(views.APIView):
 
         post.save()
 
-        if hasattr(post, "fla"):
-            post.fla.delete()
-        if hasattr(post, "qui"):
-            post.qui.delete()
+        _clear_post_content(post)
 
-        _write_post_content(post, data)
+        writer_function = POST_WRITERS_MAP.get(post.post_type)
+        if writer_function:
+            writer_function(post, data)
+
         post.refresh_from_db()
         if publishing:
             notify_subscribers_of_new_post(post)

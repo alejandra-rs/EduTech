@@ -78,7 +78,7 @@ class VideoUploadView(generics.GenericAPIView):
             student=serializer.validated_data["student"],
             post_type="VID",
         )
-        YoutubeVideo.objects.create(post=post, vid=serializer.validated_data["file"])
+        YoutubeVideo.objects.create(post=post, vid=serializer.validated_data["url"])
         return Response(
             PostSerializer(post, context={"request": request}).data,
             status=status.HTTP_201_CREATED,

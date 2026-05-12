@@ -1,4 +1,4 @@
-import { Stage, StageSequence, ProcessingStatus } from "../../models/states.model";
+import { Stage, StageSequence, ProcessingStatus } from "../../models/documents/states.model";
 
 interface StageListProps<K extends ProcessingStatus> {
   stages: StageSequence<K>;

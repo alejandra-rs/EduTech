@@ -1,6 +1,6 @@
 import re
 import json
-import fitz 
+import fitz
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -10,6 +10,7 @@ from ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
 
 
 import fitz 
+
 
 
 
@@ -27,7 +28,9 @@ class ChatAcademicoView(APIView):
 
         user_query, filtros = get_filters(user_query, course_id)
 
-        docs = find_documents(get_vector_store(), user_query, filtros, response_needs_code(user_query))
+        docs = find_documents(
+            get_vector_store(), user_query, filtros, response_needs_code(user_query)
+        )
 
         if deep_thinking:
             respuesta_vlm = self.ejecutar_analisis_vlm_guiado(
@@ -52,27 +55,30 @@ class ChatAcademicoView(APIView):
                     "texto": d.page_content,
                     "doc_id": d.metadata.get("doc_id"),
                     "pagina": d.metadata.get("p"),
-                    "titulo": d.metadata.get("titulo", "Documento")
-                })
-                
-            return mapa_vectores, contexto_estructurado
+                    "titulo": d.metadata.get("titulo", "Documento"),
+                }
+            )
+
+        return mapa_vectores, contexto_estructurado
 
     def extract_sources(self, texto_respuesta, mapa_vectores):
         """Busca etiquetas [Ref: X] en el texto y devuelve la lista de fuentes usadas."""
         ids_encontrados = set(re.findall(r"\[Ref:\s*(\d+)\]", texto_respuesta))
         fuentes = []
-        
+
         for ref_id in ids_encontrados:
             if ref_id in mapa_vectores:
                 v = mapa_vectores[ref_id]
-                fuentes.append({
-                    "ref": ref_id,
-                    "doc_id": v.metadata.get("doc_id"),
-                    "p": v.metadata.get("p"),
-                    "titulo": v.metadata.get("titulo"),
-                    "texto": v.page_content[:200],
-                })
-                
+                fuentes.append(
+                    {
+                        "ref": ref_id,
+                        "doc_id": v.metadata.get("doc_id"),
+                        "p": v.metadata.get("p"),
+                        "titulo": v.metadata.get("titulo"),
+                        "texto": v.page_content[:200],
+                    }
+                )
+
         return fuentes
   
     def ejecutar_analisis_vlm_guiado(self, docs, user_query, modo):
@@ -96,7 +102,10 @@ class ChatAcademicoView(APIView):
             page_num = c.get("p")
             if doc_id and page_num:
                 if doc_id not in docs_a_descargar:
-                    docs_a_descargar[doc_id] = {"paginas": {}, "titulo": c.get("titulo", "Documento")}
+                    docs_a_descargar[doc_id] = {
+                        "paginas": {},
+                        "titulo": c.get("titulo", "Documento"),
+                    }
                 docs_a_descargar[doc_id]["paginas"][int(page_num)] = c["id_referencia"]
 
         image_batch = []
@@ -106,10 +115,14 @@ class ChatAcademicoView(APIView):
         try:
             for doc_id, info in docs_a_descargar.items():
                 pdf_instancia = PDFAttachment.objects.get(post_id=doc_id)
-                doc = fitz.open(stream=getDocument(pdf_instancia)["Body"].read(), filetype="pdf")
+                doc = fitz.open(
+                    stream=getDocument(pdf_instancia)["Body"].read(), filetype="pdf"
+                )
 
                 for page_num, ref_id in info["paginas"].items():
-                    pix = doc.load_page(page_num - 1).get_pixmap(matrix=fitz.Matrix(2, 2))
+                    pix = doc.load_page(page_num - 1).get_pixmap(
+                        matrix=fitz.Matrix(2, 2)
+                    )
                     image_batch.append(pix.tobytes("png"))
                     image_source.append(
                         f"Imagen {image_index}: [Ref: {ref_id}] del documento '{info['titulo']}', página {page_num}."
@@ -121,20 +134,22 @@ class ChatAcademicoView(APIView):
             instrucciones_vision = (
                 "\n\nMATERIAL ADJUNTO:\n"
                 "A continuación se adjuntan imágenes. Este es el índice que relaciona su orden con su referencia:\n"
-                + "\n".join(image_source) +
-                "\n\nREGLA ESTRICTA: Siempre que extraigas o expliques información de una de estas imágenes, "
+                + "\n".join(image_source)
+                + "\n\nREGLA ESTRICTA: Siempre que extraigas o expliques información de una de estas imágenes, "
                 "DEBES citarla obligatoriamente usando su referencia exacta (ejemplo: 'Como se ve en el gráfico [Ref: 1]...')."
-                )
+            )
             prompt_sistema_final = texto_prompt_base + instrucciones_vision
-            
+
             respuesta_texto = send_prompt(
-            system_content=prompt_sistema_final,
-            user_content=user_query,
-            model="VISION",
-            images=image_batch
+                system_content=prompt_sistema_final,
+                user_content=user_query,
+                model="VISION",
+                images=image_batch,
             )
 
-            fuentes_finales = self._extraer_fuentes_citadas(respuesta_texto, mapa_vectores)
+            fuentes_finales = self._extraer_fuentes_citadas(
+                respuesta_texto, mapa_vectores
+            )
 
             return {
                 "respuesta": respuesta_texto,
@@ -151,13 +166,15 @@ class ChatAcademicoView(APIView):
         mapa_vectores, contexto_estructurado = self.sources_map(docs)
 
         lista_json = [
-        {"id_referencia": c["id_referencia"], "texto": c["texto"]} 
-        for c in contexto_estructurado
+            {"id_referencia": c["id_referencia"], "texto": c["texto"]}
+            for c in contexto_estructurado
         ]
-        
+
         contexto_json_str = json.dumps(lista_json, ensure_ascii=False, indent=2)
         texto_prompt_base = AGENTS_PROMPTS.get(modo, AGENTS_PROMPTS["estricto"])
-        prompt_sistema_final = f"{texto_prompt_base}\n\nCONTEXTO (JSON):\n{contexto_json_str}\n"
+        prompt_sistema_final = (
+            f"{texto_prompt_base}\n\nCONTEXTO (JSON):\n{contexto_json_str}\n"
+        )
 
         ia_response = send_prompt(
                                     system_content=prompt_sistema_final,
@@ -166,5 +183,5 @@ class ChatAcademicoView(APIView):
                                 )
         sources = self.extract_sources(ia_response, mapa_vectores)
 
-        return Response({"respuesta": ia_response.content, "fuentes": sources})
+        return Response({"respuesta": ia_response, "fuentes": sources})
 

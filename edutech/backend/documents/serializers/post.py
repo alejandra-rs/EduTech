@@ -2,7 +2,7 @@ from rest_framework import serializers
 from users.serializers import StudentSerializer
 from ..models import Post
 from .attachments import PDFAttachmentSerializer, YoutubeVideoSerializer
-from .quiz import QuizSerializer, QuizPreviewSerializer
+from .quiz import QuizSerializer, QuizPreviewSerializer, QuestionSerializer
 from .flashcard import FlashCardDeckSerializer, FlashCardDeckPreviewSerializer
 
 
@@ -46,6 +46,13 @@ class PostSerializer(serializers.ModelSerializer):
     qui = QuizSerializer(read_only=True)
     fla = FlashCardDeckSerializer(read_only=True)
     student = StudentSerializer(read_only=True)
+    questions = serializers.SerializerMethodField()
+
+    def get_questions(self, obj):
+        """Flatten questions from qui for frontend compatibility"""
+        if hasattr(obj, "qui") and obj.qui:
+            return QuestionSerializer(obj.qui.questions.all(), many=True).data
+        return []
 
     class Meta:
         model = Post
@@ -61,5 +68,6 @@ class PostSerializer(serializers.ModelSerializer):
             "vid",
             "qui",
             "fla",
+            "questions",
             "views",
         ]

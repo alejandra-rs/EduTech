@@ -12,7 +12,6 @@ type InputProps = (
   row?: number;
 };
 
-// Evita errores de hidratación si estás usando SSR (Next.js, Remix, etc.)
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
@@ -28,7 +27,7 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
     id,
     autoResize = false,
     noBorder = false,
-    row = 1, // <--- Empieza en 1 fila por defecto
+    row = 1,
     ...props
   }, forwardedRef) => {
 
@@ -50,16 +49,10 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
       if (!el) return;
 
       const adjustHeight = () => {
-        // 1. Reseteamos la altura a "auto" para que pueda encogerse si el usuario borra texto
         el.style.height = "auto";
-        // 2. Le asignamos la altura exacta de su contenido (scrollHeight)
         el.style.height = `${el.scrollHeight}px`;
       };
-
-      // Ajuste inicial al cargar
       adjustHeight();
-
-      // Escuchar cada vez que el usuario escribe, sin importar si controlas el 'value' o no
       el.addEventListener("input", adjustHeight);
       
       return () => {
@@ -73,8 +66,6 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
     
     const fileStyle =
       "w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-100 file:text-zinc-700 hover:file:bg-zinc-200 cursor-pointer";
-
-    // Unimos las clases correctamente. Añadimos overflow-hidden y resize-none solo si tiene autoResize.
     const textAreaClassName = `${baseStyle} ${autoResize ? 'resize-none overflow-hidden' : ''} ${className}`.trim();
     
     const inputClassName = `${type === "file" ? fileStyle : baseStyle} ${className}`.trim();
@@ -116,6 +107,6 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
     );
 });
 
-Input.displayName = "Input"; // Buena práctica en React cuando se usa forwardRef
+Input.displayName = "Input";
 
 export default Input;

@@ -3,7 +3,6 @@ interface UrlPreviewProps {
 }
 
 export default function UrlPreview({ url }: UrlPreviewProps) {
-  // Función para adaptar URLs a iframes (Ej: YouTube)
   const getEmbedUrl = (rawUrl: string) => {
     if (rawUrl.includes("youtube.com/watch?v=")) {
       return rawUrl.replace("watch?v=", "embed/");
