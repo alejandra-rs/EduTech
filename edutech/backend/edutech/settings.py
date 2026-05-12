@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "storages",
     "users",
     "courses",
+    "study_sessions",
     "ai_agent",
     "documents.apps.DocumentsConfig",
 ]
@@ -244,3 +245,16 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# ==========================================
+# TWITCH EVENTSUB + OAUTH
+# ==========================================
+# Register your app at https://dev.twitch.tv/console to get these values.
+# TWITCH_CLIENT_SECRET must NEVER be sent to the frontend or committed to git.
+# Per-user access tokens are stored encrypted in the TwitchCredential model.
+TWITCH_CLIENT_ID     = env("TWITCH_CLIENT_ID", default="")
+TWITCH_CLIENT_SECRET = env("TWITCH_CLIENT_SECRET", default="")
+TWITCH_REDIRECT_URI  = env(
+    "TWITCH_REDIRECT_URI",
+    default="http://localhost:8000/api/study-sessions/twitch/callback/",
+)

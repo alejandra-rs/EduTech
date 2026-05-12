@@ -1,8 +1,11 @@
 from rest_framework import serializers
+
+from courses.models import Course
 from courses.serializers import CourseSerializer
 from users.models import Student
 from users.serializers import StudentSerializer
-from ..models import StudySession, StudySessionComment, Course
+
+from .models import StudySession, StudySessionComment
 
 
 class StudySessionCommentSerializer(serializers.ModelSerializer):
@@ -47,13 +50,14 @@ class StudySessionSerializer(serializers.ModelSerializer):
             "course_id",
             "participants",
             "is_starred",
+            "twitch_link",
+            "stream_task_id",
         ]
-        read_only_fields = ["id", "created_at"]
+        read_only_fields = ["id", "created_at", "stream_task_id"]
 
     def get_is_starred(self, obj):
         try:
             student_id = int(self.context.get("student_id"))
         except (TypeError, ValueError):
             return False
-        # Only starred if explicitly in participants list (not just creator)
         return obj.participants.filter(pk=student_id).exists()

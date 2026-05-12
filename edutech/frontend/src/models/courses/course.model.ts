@@ -1,5 +1,3 @@
-import { Student } from "../student/student.model";
-
 export interface University {
   id: number;
   name: string;
@@ -59,23 +57,4 @@ export interface UserSubscription {
       id: number;
     };
   }
-}
-
-export interface StudySessionComment {
-  id: number;
-  user: Student;
-  message: string;
-  created_at: Date;
-}
-
-export interface StudySession {
-  id: number;
-  title: string;
-  description: string;
-  scheduled_at: Date;
-  created_at: Date;
-  creator: Student;
-  course?: Course;
-  participants: number[];
-  is_starred: boolean;
 }

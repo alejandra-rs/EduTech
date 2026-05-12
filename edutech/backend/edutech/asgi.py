@@ -12,6 +12,7 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import documents.routing
+import study_sessions.routing
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.edutech.settings")
 
@@ -22,7 +23,10 @@ application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
         "websocket": AuthMiddlewareStack(
-            URLRouter(documents.routing.websocket_urlpatterns)
+            URLRouter(
+                documents.routing.websocket_urlpatterns
+                + study_sessions.routing.websocket_urlpatterns
+            )
         ),
     }
 )

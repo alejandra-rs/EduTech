@@ -1,8 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { PlusCircleIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
-import { TitlePage } from "../components/TitlePage";
-import BellButton from "../components/interactions/BellButton";
 import CalendarWidget from "../components/study-sessions/CalendarWidget";
 import CreateSessionModal from "../components/study-sessions/CreateSessionModal";
 import SessionItem from "../components/study-sessions/SessionItem";
@@ -10,7 +8,8 @@ import { useCurrentUser } from "../services/useCurrentUser";
 import { getStudySessions, createStudySession } from "../services/connections-studysessions";
 import { getYears, getCourses, getCourse } from "../services/connections-courses";
 import { SubjectDropdown } from "../components/study-sessions/SubjectDropdown";
-import type { StudySession, Course } from "../models/courses/course.model";
+import type { Course } from "../models/courses/course.model";
+import type { StudySession } from "../models/studysessions/studysession.model";
 import type { NewSessionData } from "../components/study-sessions/CreateSessionModal";
 
 const StudySessions = () => {
@@ -34,7 +33,7 @@ const StudySessions = () => {
       try {
         if (id) {
           const courseData = await getCourse(id);
-          setCourseName(courseData?.name || courseData?.title || "Asignatura");
+          setCourseName(courseData?.name || "Asignatura");
         }
         const years = await getYears(currentUser.id);
         const nested = await Promise.all(years.map((y: { id: number }) => getCourses(y.id)));
@@ -73,6 +72,7 @@ const StudySessions = () => {
         title,
         description,
         scheduledAt,
+        twitchLink: "ejemplo" //TODO: twitchlink para crear sesiones de estudio
       });
       setIsModalOpen(false);
       setNewSession({ title: "", courseId: id || "", description: "", scheduledAt: "" });

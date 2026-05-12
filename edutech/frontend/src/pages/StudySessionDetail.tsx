@@ -6,7 +6,7 @@ import SessionDescription from '../components/study-sessions/SessionDescription'
 import { getStudySessions } from '../services/connections-studysessions';
 import { useCurrentUser } from '../services/useCurrentUser';
 import { CommentsSection } from '../components/interactions/CommentsSection';
-import type { StudySession } from '../models/courses/course.model';
+import type { StudySession } from '../models/studysessions/studysession.model';
 
 export default function StudySessionDetail() {
   const navigate = useNavigate();

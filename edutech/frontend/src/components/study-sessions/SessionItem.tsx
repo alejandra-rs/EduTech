@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ParticipateButton from "./ParticipateButton";
-import type { StudySession } from '../../models/courses/course.model';
+import type { StudySession } from '../../models/studysessions/studysession.model';
 
 export interface SessionItemProps {
   session: StudySession;
