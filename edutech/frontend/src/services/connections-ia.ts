@@ -1,6 +1,6 @@
 import { PDF_STATES } from '../models/documents/states.model';
-import { QueryChatbotPayload } from '../models/documents/payload.model';
-import type { ChatbotResponse } from '../models/ia/chat.models';
+import { GenerateMaterialPayload, QueryChatbotPayload } from '../models/documents/payload.model';
+import type { ChatbotResponse, MaterialResponse } from '../models/ia/chat.models';
 import { apiFetch } from './api';
 
 export async function askChatbot(query: QueryChatbotPayload): Promise<ChatbotResponse> {
@@ -61,3 +61,27 @@ export const connectToDocumentStatus = (attachmentId: number, onMessage: (status
   
   return socket;
 };
+
+export async function generate_matererial(query: GenerateMaterialPayload): Promise<MaterialResponse> {
+  try {
+    const response = await apiFetch(`/api/ai/generate-material/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        student_question: query.question,
+        course: query.course_id,
+        material: query.material,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error("Error en la comunicación con el asistente");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Chatbot Connection Error:", error);
+    throw error;
+  }
+}

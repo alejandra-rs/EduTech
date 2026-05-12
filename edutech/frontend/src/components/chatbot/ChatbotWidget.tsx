@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/solid";
-import { askChatbot } from "../../services/connections-ia";
+import { askChatbot, generate_matererial } from "../../services/connections-ia";
 import { ChatbotHeader } from "./ChatbotHeader";
 import { ChatbotMessageBox } from "./ChatbotMessageBox";
 import { ChatBotFooterInput } from "./ChatbotFooterIntput";
 import type { ChatMessage } from "../../models/ia/chat.models";
-import { CHAT_MODES } from "../../models/ia/agent.models";
-import type { ChatModeOption, ChatMode } from "../../models/ia/agent.models";
+import { CHAT_MODES, MATERIAL_MODES } from "../../models/ia/agent.models";
+import type { ChatModeOption, ChatMode, Material } from "../../models/ia/agent.models";
 import type { DocumentsChat } from "./DocumentMentionList";
 
 export interface ChatbotWidgetProps {
@@ -19,13 +19,11 @@ export function ChatbotWidget({
   documents = [],
 }: ChatbotWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [agenteActivo, setAgenteActivo] = useState<ChatModeOption<ChatMode>>(
-    CHAT_MODES[0],
-  );
+  const [agenteActivo, setAgenteActivo] = useState<ChatModeOption<ChatMode>>(CHAT_MODES[0]);
   const [isDeepThinking, setIsDeepThinking] = useState(false);
 
   const [isToolsMode, setIsToolsMode] = useState(false);
-  const [toolType, setToolType] = useState<'quiz' | 'flashcard'>('quiz');
+  const [toolType, setToolType] = useState<ChatModeOption<Material>>(MATERIAL_MODES[0]);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -57,20 +55,35 @@ export function ChatbotWidget({
     console.log(mentionedDocs);
 
     try {
-      const data = await askChatbot({
-        question: userQuestion,
-        course_id: String(courseId),
-        mode: isToolsMode ? toolType : agenteActivo.key,
-        deep_thinking: isDeepThinking
-      });
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "ai",
-          content: data.respuesta_markdown ?? data.respuesta,
-          fuentes: data.fuentes,
-        },
-      ]);
+      if (isToolsMode){
+        const data = await askChatbot({
+          question: userQuestion,
+          course_id: String(courseId),
+          mode: agenteActivo.key,
+          deep_thinking: isDeepThinking
+        });
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "ai",
+            content: data.respuesta_markdown ?? data.respuesta,
+            fuentes: data.fuentes,
+          },
+        ]);
+        }else{
+        const data = await generate_matererial({
+          question: userQuestion,
+          course_id: String(courseId),
+          material: toolType.key
+        });
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "ai",
+            content: data.material ?? data.material,
+          },
+        ]);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,

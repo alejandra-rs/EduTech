@@ -17,3 +17,7 @@ export interface ChatbotResponse {
   respuesta_markdown?: string;
   fuentes?: ChatSource[];
 }
+
+export interface MaterialResponse{
+  material: string;
+}

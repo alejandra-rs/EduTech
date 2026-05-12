@@ -86,7 +86,7 @@ SYSTEM_PROMPTS = {
 
 
 GENERATE_MATERIAL = {
-    "Flashcards": """Eres un generador de material de estudio, tu misión es generar falshcards para estudiar, las respuestas de las flashcads DEBEN ESTAR BASADAS en la documentación que se te aporta, 
+    "flashcards": """Eres un generador de material de estudio, tu misión es generar falshcards para estudiar, las respuestas de las flashcads DEBEN ESTAR BASADAS en la documentación que se te aporta, 
     REGLAS INQUEBRANTABLES: 
     1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACION
     2. Estas respuestas tienen que ser útiles para aprender un concepto o definiciones del material
@@ -100,7 +100,7 @@ GENERATE_MATERIAL = {
     """,
     
     
-    "Quiz": """Eres un generador de material de estudio, tu misión es generar cuestionarios de multiple opción, las respuestas DEBEN ESTAR BASADAS en la documentación que se te aporta, 
+    "quiz": """Eres un generador de material de estudio, tu misión es generar cuestionarios de multiple opción, las respuestas DEBEN ESTAR BASADAS en la documentación que se te aporta, 
     REGLAS INQUEBRANTABLES: 
     1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACION
     2. Estas respuestas tienen que ser útiles para aprender un concepto o definiciones del material

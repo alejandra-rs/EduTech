@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDownIcon, PuzzlePieceIcon } from '@heroicons/react/24/solid';
-import type { ChatModeOption, ChatMode } from '../../models/ia/agent.models';
+import { type ChatModeOption, type ChatMode, type Material, MATERIAL_MAP } from '../../models/ia/agent.models';
 
 export interface ChatbotHeaderProps {
   lista: ChatModeOption<ChatMode>[];
@@ -11,8 +11,8 @@ export interface ChatbotHeaderProps {
   setIsDeepThinking: (value: boolean) => void;
   isToolsMode: boolean;
   setIsToolsMode: (value: boolean) => void;
-  toolType: 'quiz' | 'flashcard';
-  setToolType: (value: 'quiz' | 'flashcard') => void;
+  toolType: ChatModeOption<Material>;
+  setToolType: (value: ChatModeOption<Material>) => void;
 }
 
 export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepThinking, setIsDeepThinking, isToolsMode, setIsToolsMode, toolType, setToolType}: ChatbotHeaderProps) {
@@ -63,17 +63,17 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
 
           <div className="flex bg-white/10 rounded-lg p-1 text-xs font-semibold shadow-inner">
             <button
-              onClick={() => setToolType('quiz')}
+              onClick={() => setToolType(MATERIAL_MAP.quiz)}
               className={`px-3 py-1.5 rounded-md transition-colors ${
-                toolType === 'quiz' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-300 hover:text-white'
+                toolType === MATERIAL_MAP.quiz ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-300 hover:text-white'
               }`}
             >
               Quiz
             </button>
             <button
-              onClick={() => setToolType('flashcard')}
+              onClick={() => setToolType(MATERIAL_MAP.flashcard)}
               className={`px-3 py-1.5 rounded-md transition-colors ${
-                toolType === 'flashcard' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-300 hover:text-white'
+                toolType === MATERIAL_MAP.flashcard ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-300 hover:text-white'
               }`}
             >
               Flashcard

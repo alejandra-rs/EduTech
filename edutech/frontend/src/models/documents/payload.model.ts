@@ -1,4 +1,4 @@
-import { ChatMode } from "../ia/agent.models";
+import { ChatMode, Material } from "../ia/agent.models";
 import { FlashCard } from "./postsTypesModels/flashcard.model";
 import { QuizQuestion } from "./postsTypesModels/quiz.models";
 
@@ -32,6 +32,11 @@ export interface QueryChatbotPayload{
   course_id: string,
   mode: ChatMode,
   deep_thinking: boolean,
+}
+export interface GenerateMaterialPayload{
+  question: string
+  course_id: string,
+  material: Material,
 }
 
 export type extended_item =  QuizQuestion[] | FlashCard[] |string | File;
