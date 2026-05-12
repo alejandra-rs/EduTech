@@ -24,4 +24,5 @@ urlpatterns = [
     path("documents/", include("documents.urls")),
     path("students/", include("users.urls")),
     path("ai/", include("ai_agent.urls")),
+    path("student-space/", include("student_space.urls")),
 ]

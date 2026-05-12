@@ -39,3 +39,24 @@ def mock_urlopen():
     mock.__enter__ = MagicMock(return_value=mock)
     mock.__exit__  = MagicMock(return_value=False)
     return mock
+
+def make_post(student=None, course=None, title='Test Post', is_draft=False):
+    from documents.models import Post
+    return Post.objects.create(
+        student=student or make_student(),
+        course=course or make_course(),
+        title=title, description='D', post_type='PDF', is_draft=is_draft,
+    )
+
+def make_root_folder(student=None):
+    from student_space.models import Folder
+    s = student or make_student()
+    root = Folder.objects.filter(student=s, depth=1).first()
+    return root if root else Folder.add_root(name='root', student=s)
+
+def make_saved_post(folder=None, post=None):
+    from student_space.models import SavedPost
+    return SavedPost.objects.create(
+        folder=folder or make_root_folder(),
+        post=post or make_post(),
+    )
