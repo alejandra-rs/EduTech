@@ -1,27 +1,37 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
+import { useState, useEffect, useRef } from "react";
+import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/solid";
 import { askChatbot } from "../../services/connections-ia";
-import { ChatbotHeader } from './ChatbotHeader';
-import { ChatbotMessageBox } from './ChatbotMessageBox';
-import { ChatBotFooterInput } from './ChatbotFooterIntput';
-import type { ChatMessage } from '../../models/ia/chat.models';
-import { CHAT_MODES } from '../../models/ia/agent.models';
-import type { ChatModeOption, ChatMode } from '../../models/ia/agent.models';
+import { ChatbotHeader } from "./ChatbotHeader";
+import { ChatbotMessageBox } from "./ChatbotMessageBox";
+import { ChatBotFooterInput } from "./ChatbotFooterIntput";
+import type { ChatMessage } from "../../models/ia/chat.models";
+import { CHAT_MODES } from "../../models/ia/agent.models";
+import type { ChatModeOption, ChatMode } from "../../models/ia/agent.models";
+import type { DocumentsChat } from "./DocumentMentionList";
 
 export interface ChatbotWidgetProps {
   courseId: number | string;
+  documents?: DocumentsChat[];
 }
 
-export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
+export function ChatbotWidget({
+  courseId,
+  documents = [],
+}: ChatbotWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [agenteActivo, setAgenteActivo] = useState<ChatModeOption<ChatMode>>(CHAT_MODES[0]);
+  const [agenteActivo, setAgenteActivo] = useState<ChatModeOption<ChatMode>>(
+    CHAT_MODES[0],
+  );
   const [isDeepThinking, setIsDeepThinking] = useState(false);
 
   const [isToolsMode, setIsToolsMode] = useState(false);
   const [toolType, setToolType] = useState<'quiz' | 'flashcard'>('quiz');
 
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'ai', content: '¡Hola! 👋 Soy tu asistente. ¿En qué puedo ayudarte hoy?' }
+    {
+      role: "ai",
+      content: "¡Hola! 👋 Soy tu asistente. ¿En qué puedo ayudarte hoy?",
+    },
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -32,17 +42,19 @@ export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
     }
   }, [messages, isLoading]);
 
-  const handleSendMessage = async (userQuestion: string) => {
-    setMessages(prev => [...prev, { role: 'user', content: userQuestion }]);
-    
-    if (isToolsMode) {
+  const handleSendMessage = async (
+    userQuestion: string,
+    mentionedDocs: { postId: number; title: string }[],
+  ) => {
+    setMessages((prev) => [...prev, { role: "user", content: userQuestion }]);
+     if (isToolsMode) {
       setMessages(prev => [...prev, { 
         role: 'ai', 
         content: '⏳ *Esta operación puede tardar un tiempo en completarse.*' 
       }]);
     }
-
     setIsLoading(true);
+    console.log(mentionedDocs);
 
     try {
       const data = await askChatbot({
@@ -51,13 +63,23 @@ export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
         mode: isToolsMode ? toolType : agenteActivo.key,
         deep_thinking: isDeepThinking
       });
-      setMessages(prev => [...prev, {
-        role: 'ai',
-        content: data.respuesta_markdown ?? data.respuesta,
-        fuentes: data.fuentes
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          content: data.respuesta_markdown ?? data.respuesta,
+          fuentes: data.fuentes,
+        },
+      ]);
     } catch {
-      setMessages(prev => [...prev, { role: 'ai', content: "Lo siento, ha ocurrido un error al conectar con el servidor." }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          content:
+            "Lo siento, ha ocurrido un error al conectar con el servidor.",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -89,6 +111,7 @@ export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
           <ChatBotFooterInput
             onSendMessage={handleSendMessage}
             isLoading={isLoading}
+            documents={documents}
           />
         </div>
       )}

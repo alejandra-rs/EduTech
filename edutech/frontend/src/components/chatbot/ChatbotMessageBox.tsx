@@ -1,6 +1,6 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { ChatBotMessage } from "./ChatbotMessage";
-import type { ChatMessage } from '../../models/ia/chat.models';
+import type { ChatMessage } from "../../models/ia/chat.models";
 
 export interface ChatbotMessageBoxProps {
   scrollRef: React.RefObject<HTMLDivElement | null>;
@@ -8,9 +8,16 @@ export interface ChatbotMessageBoxProps {
   isLoading: boolean;
 }
 
-export function ChatbotMessageBox({ scrollRef, messages, isLoading }: ChatbotMessageBoxProps) {
+export function ChatbotMessageBox({
+  scrollRef,
+  messages,
+  isLoading,
+}: ChatbotMessageBoxProps) {
   return (
-    <div ref={scrollRef} className="flex-1 p-5 overflow-y-auto bg-gray-50 space-y-4 text-sm">
+    <div
+      ref={scrollRef}
+      className="flex-1 p-5 overflow-y-auto bg-gray-50 space-y-4 text-sm  break-all overflow-hidden"
+    >
       {messages.map((msg, idx) => (
         <ChatBotMessage key={idx} msg={msg} />
       ))}
