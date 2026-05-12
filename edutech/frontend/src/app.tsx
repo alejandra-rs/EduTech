@@ -28,6 +28,7 @@ import StudySessionDetail from "./pages/StudySessionDetail";
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, } from "@azure/msal-react";
 import UploadWizard from "./pages/UploadDocument";
 import MyDocuments from "./pages/MyDocuments";
+import RevisionPage from "./pages/RevisionPage";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -93,6 +94,7 @@ export default function App() {
                 <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
                 <Route path="/mis-publicaciones/" element={<MyDocuments/>} />
                 <Route path="/suscripciones" element={<MyCourses/>} />
+                <Route path="/revisiones" element={<RevisionPage />} />
               </Routes>
             </Layout>
           ) : (
