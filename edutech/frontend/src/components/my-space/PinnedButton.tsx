@@ -6,9 +6,10 @@ import { useCurrentUser } from '../../services/useCurrentUser';
 
 interface PinnedButtonProps {
   savedPostId: number;
+  onPinToggle?: (isPinned: boolean) => void;
 }
 
-export const PinnedButton = ({ savedPostId }: PinnedButtonProps) => {
+export const PinnedButton = ({ savedPostId, onPinToggle}: PinnedButtonProps) => {
   const [isPinned, setIsPinned] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const { userData } = useCurrentUser();
@@ -26,13 +27,18 @@ export const PinnedButton = ({ savedPostId }: PinnedButtonProps) => {
     fetchPinStatus();
   }, [savedPostId, userData]);
 
-  const handleTogglePin = async () => {
+  const handleTogglePin = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (isLoading || !userData) return;
     setIsLoading(true);
     try {
       const newStatus = !isPinned;
       await setPinned(savedPostId, newStatus, userData.id);
       setIsPinned(newStatus);
+      if (onPinToggle) {
+        onPinToggle(newStatus);
+      }
     } catch (error) {
       console.error("Error al fijar/desfijar", error);
     } finally {

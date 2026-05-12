@@ -11,6 +11,8 @@ from ..serializers import (
     SavedPostUpdateSerializer,
     SavedPostMoveSerializer,
 )
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
 class SavedPostView(views.APIView):
@@ -93,3 +95,25 @@ class SavedPostMoveView(views.APIView):
         saved.folder = new_folder
         saved.save()
         return Response(SavedPostSerializer(saved).data)
+    
+
+
+class CheckSavedPostView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, post_id):
+        saved_post = SavedPost.objects.filter(
+            post_id=post_id,
+            folder__student=request.user.student
+        ).first()
+
+        if saved_post:
+            return Response({
+                "is_saved": True, 
+                "saved_post_id": saved_post.id
+            })
+        
+        return Response({
+            "is_saved": False, 
+            "saved_post_id": None
+        })

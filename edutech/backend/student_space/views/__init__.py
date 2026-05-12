@@ -7,5 +7,6 @@ from .folder import (
 from .saved_post import (
     SavedPostView as SavedPostView,
     SavedPostMoveView as SavedPostMoveView,
+    CheckSavedPostView as CheckSavedPostView,
 )
 from .pinned_post import PinnedPostView as PinnedPostView

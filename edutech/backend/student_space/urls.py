@@ -13,5 +13,6 @@ urlpatterns = [
         views.SavedPostMoveView.as_view(),
         name="saved_post_move",
     ),
+    path("posts/check/<int:post_id>/", views.CheckSavedPostView.as_view(), name="saved_post_check"),
     path("pinned/", views.PinnedPostView.as_view(), name="pinned_post_list"),
 ]

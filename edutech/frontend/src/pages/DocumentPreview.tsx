@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { DocumentInfo } from '../components/DocumentInfo';
 import { CommentsSection } from '../components/interactions/CommentsSection';
 import type { PostPreview } from '../models/documents/post.model';
-import { PostActionButtons } from '../components/my-space/PostActionButtons';
+import { SaveButton } from '../components/my-space/SaveButton';
 
 export default function DocumentPreview() {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function DocumentPreview() {
       <div className="flex-1 flex flex-col h-full bg-transparent">
         <div className="w-full shrink-0">
           <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)}>
-            <PostActionButtons postId={Number(postId)}/>
+          <SaveButton postId={Number(postId)}/>
           </TitlePage>
         </div>
         <div className="flex-1 flex flex-col lg:flex-row w-full h-[calc(100vh-100px)]">

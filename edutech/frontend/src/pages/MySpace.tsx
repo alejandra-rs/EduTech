@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/24/solid';
 import { TitlePage } from '../components/TitlePage';
-import PostGrid from '../components/PostGrid';
 import { useCurrentUser } from '../services/useCurrentUser';
 import { getRootFolder, getFolder, getPinnedPosts } from '../services/connections-studentspace';
 import { Folder, FolderDetail, SavedPost } from '../models/student_space/student_space.model';
 import { PostPreview, POST_TYPE_LABELS } from '../models/documents/post.model';
 import { PinnedSection } from '../components/my-space/PinnedSection';
-import { FolderSection } from '../components/my-space/FolderSection';
+import { SavedGrid } from '../components/my-space/SavedGrid';
 
 const MySpace = () => {
   const { folderId } = useParams<{ folderId: string }>();
@@ -59,8 +58,17 @@ const MySpace = () => {
     }
   };
 
-  const pinnedPostPreviews = pinnedPosts.map(sp => sp.post);
-  const folderPostPreviews = currentFolder?.saved_posts?.map(sp => sp.post) || [];
+  const handlePinToggle = (savedPost: SavedPost, isPinned: boolean) => {
+    setPinnedPosts((prevPinned) => {
+      if (isPinned) {
+        const exists = prevPinned.some(p => p.id === savedPost.id);
+        return exists ? prevPinned : [savedPost, ...prevPinned];
+      } else {
+        return prevPinned.filter(p => p.id !== savedPost.id);
+      }
+    });
+  };
+
 
   if (loading) {
     return <div className="flex h-screen items-center justify-center text-gray-500">Cargando tu espacio...</div>;
@@ -97,33 +105,22 @@ const MySpace = () => {
 
     <div className="flex-grow overflow-y-auto custom-scrollbar px-8 py-8">
       <div className="max-w-7xl mx-auto space-y-10">
-        
-        <PinnedSection posts={pinnedPostPreviews} onPostClick={handlePostClick} />
+        {currentFolder?.depth == 1 &&
+        <PinnedSection posts={pinnedPosts} onPostClick={handlePostClick} />
+        }
         
         {currentFolder && (
-          <FolderSection 
-            folders={currentFolder.children || []} 
-            currentFolderId={currentFolder.id} 
-            studentId={userData!.id}
-            onFolderAdded={handleFolderAdded}
-          />
-        )}
-
-        <section>
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
-            Archivos
-          </h2>
-          {folderPostPreviews.length > 0 ? (
-            <PostGrid posts={folderPostPreviews} onPostClick={handlePostClick} />
-          ) : (
-            !currentFolder?.children?.length && (
-              <div className="py-20 text-center">
-                <p className="text-gray-400 italic">Esta carpeta está vacía</p>
-              </div>
-            )
+            <SavedGrid 
+              folders={currentFolder.children || []} 
+              savedPosts={currentFolder.saved_posts} 
+              currentFolderId={currentFolder.id} 
+              studentId={userData!.id}
+              onFolderAdded={handleFolderAdded}
+              onFolderClick={(folder) => navigate(`/mi-espacio/directorio/${folder.id}`)}
+              onPostClick={(savedPost) => handlePostClick(savedPost.post)}
+              onPinToggle={handlePinToggle}
+            />
           )}
-        </section>
-
       </div>
     </div>
   </div>

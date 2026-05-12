@@ -6,27 +6,25 @@ import { useCurrentUser } from '../../services/useCurrentUser';
 
 interface SaveButtonProps {
   postId: number;
-  onSavedStatusChange: (id: number | null) => void;
 }
 
-export const SaveButton = ({ postId, onSavedStatusChange}: SaveButtonProps) => {
+export const SaveButton = ({ postId}: SaveButtonProps) => {
   const [savedId, setSavedId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { userData } = useCurrentUser();
 
   useEffect(() => {
-    if (!userData) return;
 
     const fetchInitialStatus = async () => {
       setIsLoading(true);
-      const id = await getSavedPostId(postId, userData.id);
+      const id = await getSavedPostId(postId);
+      console.log("el savedPostId es", id)
       setSavedId(id);
-      onSavedStatusChange(id);
       setIsLoading(false);
     };
     
     fetchInitialStatus();
-  }, [postId, userData]);
+  }, [postId]);
 
   const handleToggleSave = async () => {
     if (isLoading) return;
@@ -36,14 +34,12 @@ export const SaveButton = ({ postId, onSavedStatusChange}: SaveButtonProps) => {
       if (savedId !== null) {
         await deleteSavedPost(postId, userData!.id);
         setSavedId(null);
-        onSavedStatusChange(null);
       } else {
         const folder = await getRootFolder(userData!.id);
         if (folder && folder.id) {
           const newSavedPost = await savePost(folder.id, postId, userData!.id);
           if (newSavedPost) {
             setSavedId(newSavedPost.id);
-            onSavedStatusChange(newSavedPost.id);
           }
         }
       }

@@ -1,8 +1,9 @@
 import PostGrid from '../PostGrid';
 import type { PostPreview } from '../../models/documents/post.model';
+import { SavedPost } from '../../models/student_space/student_space.model';
 
 interface PinnedSectionProps {
-  posts: PostPreview[];
+  posts: SavedPost[];
   onPostClick: (post: PostPreview) => void;
 }
 
@@ -17,7 +18,7 @@ export const PinnedSection = ({ posts, onPostClick }: PinnedSectionProps) => {
         </h2>
       </div>
       
-      <PostGrid posts={posts} onPostClick={onPostClick} />
+      <PostGrid posts={posts.map(post => (post.post))} onPostClick={onPostClick} />
     </section>
   );
 };
