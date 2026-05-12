@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
-import { RevisionWidget } from '../components/revision/RevisionWidget';
+import { AdminWidget } from '../components/reports/AdminWidget';
 import { useCurrentUser } from '../services/useCurrentUser';
+import { CheckIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 /* 
 import { getPendientesDeRevision, publicarDocumento, eliminarBorrador } from '../services/connections-revision'; 
@@ -20,14 +21,12 @@ export default function RevisionPage() {
   const [items, setItems] = useState<RevisionItem[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // Mantenemos esto para luego, pero ahora usaremos mocks
   const { userData, isLoading: userLoading } = useCurrentUser();
   const navigate = useNavigate();
 
   const fetchRevisions = async () => {
     try {
       setLoading(true);
-      
       /* LÓGICA REAL:
       const data = await getPendientesDeRevision(userData!.id);
       setItems(data);
@@ -51,20 +50,12 @@ export default function RevisionPage() {
         }
       ];
       setItems(mockData);
-
     } catch (err) {
       console.error("Error al cargar revisiones:", err);
     } finally {
       setLoading(false);
     }
   };
-
-  // COMENTADA PARA DESARROLLO
-  /*
-  useEffect(() => {
-    if (!userLoading && (!userData || !userData.is_admin)) navigate('/');
-  }, [userData, userLoading, navigate]);
-  */
 
   useEffect(() => {
     fetchRevisions();
@@ -90,7 +81,6 @@ export default function RevisionPage() {
     }
   };
 
-  // Quitamos la pausa de loading de usuario para que no se quede bloqueado
   if (loading) {
     return (
       <main className="flex items-center justify-center h-screen">
@@ -109,12 +99,35 @@ export default function RevisionPage() {
       <section className="flex flex-col gap-4 px-2 md:px-10 mb-10">
         {items.length > 0 ? (
           items.map((item) => (
-            <RevisionWidget
+            <AdminWidget
               key={item.id}
-              draft={item}
-              onPublish={() => handlePublish(item.id)}
-              onDelete={() => handleDelete(item.id)}
-            />
+              title={item.title}
+              subtitle={item.subject}
+              type="PDF"
+              url={item.url}
+              collapsible={true}
+              actions={[
+                {
+                  label: 'Publicado',
+                  confirmLabel: '¿Publicar?',
+                  icon: CheckIcon,
+                  variant: 'success',
+                  onClick: () => handlePublish(item.id)
+                },
+                {
+                  label: 'Eliminar',
+                  confirmLabel: '¿Borrar?',
+                  icon: TrashIcon,
+                  variant: 'danger',
+                  onClick: () => handleDelete(item.id)
+                }
+              ]}
+            >
+              <div className="text-sm text-gray-600 leading-relaxed">
+                <h4 className="text-[10px] uppercase font-bold text-gray-400 mb-1">Descripción del borrador</h4>
+                <p>{item.description || "Sin descripción proporcionada."}</p>
+              </div>
+            </AdminWidget>
           ))
         ) : (
           <div className="mt-20 text-center">
