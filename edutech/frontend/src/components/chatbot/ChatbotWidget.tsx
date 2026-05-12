@@ -16,6 +16,10 @@ export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [agenteActivo, setAgenteActivo] = useState<ChatModeOption<ChatMode>>(CHAT_MODES[0]);
   const [isDeepThinking, setIsDeepThinking] = useState(false);
+
+  const [isToolsMode, setIsToolsMode] = useState(false);
+  const [toolType, setToolType] = useState<'quiz' | 'flashcard'>('quiz');
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'ai', content: '¡Hola! 👋 Soy tu asistente. ¿En qué puedo ayudarte hoy?' }
   ]);
@@ -30,13 +34,21 @@ export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
 
   const handleSendMessage = async (userQuestion: string) => {
     setMessages(prev => [...prev, { role: 'user', content: userQuestion }]);
+    
+    if (isToolsMode) {
+      setMessages(prev => [...prev, { 
+        role: 'ai', 
+        content: '⏳ *Esta operación puede tardar un tiempo en completarse.*' 
+      }]);
+    }
+
     setIsLoading(true);
 
     try {
       const data = await askChatbot({
         question: userQuestion,
         course_id: String(courseId),
-        mode: agenteActivo.key,
+        mode: isToolsMode ? toolType : agenteActivo.key,
         deep_thinking: isDeepThinking
       });
       setMessages(prev => [...prev, {
@@ -61,6 +73,12 @@ export function ChatbotWidget({ courseId }: ChatbotWidgetProps) {
             onCambiar={setAgenteActivo}
             isDeepThinking={isDeepThinking}
             setIsDeepThinking={setIsDeepThinking}
+
+            isToolsMode={isToolsMode}
+            setIsToolsMode={setIsToolsMode}
+            toolType={toolType}
+            setToolType={setToolType}
+            
             onClose={() => setIsOpen(false)}
           />
           <ChatbotMessageBox
