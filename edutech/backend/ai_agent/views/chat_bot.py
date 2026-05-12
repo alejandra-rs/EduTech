@@ -5,38 +5,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from ai_agent.agent_setings import get_vector_store, getDocument, send_prompt
+from ai_agent.agent_setings import find_documents, get_filters, get_vector_store, getDocument, response_needs_code, send_prompt
 from ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
 
 
 import fitz 
-from documents.models import PDFAttachment 
-
-def response_needs_code(user_query):
-    """Pregunta al modelo si la consulta requiere código"""
-    try:
-        return json.loads(send_prompt(
-                    system_content='Responde estrictamente JSON: {"code_required": bool}, el booleano será true o false en función de si el usuario pregunta o no por código',
-                    user_content = user_query,
-                    model="CODE_DETECT",
-                    format="json"
-                   )).get("code_required", False)
-    except Exception as e:
-        print(f"Error detectando código: {e}")
-        return False
 
 
-def find_documents(vector_store, query, filtros, code_required):
-    """Busca y filtra documentos combinando texto y código si es necesario"""
 
-    nomic_query = f"search_query: {query}"
-    if code_required:
-        brutos = vector_store.similarity_search(nomic_query, k=15, filter=filtros)
-        res_code = [d for d in brutos if "CODE" in d.metadata.get("tags", [])][:4]
-        res_texto = [d for d in brutos if "CODE" not in d.metadata.get("tags", [])][:6]
-        return res_texto + res_code
 
-    return vector_store.similarity_search(nomic_query, k=10, filter=filtros)
 
 class ChatAcademicoView(APIView):
     def post(self, request):
@@ -48,7 +25,7 @@ class ChatAcademicoView(APIView):
         if not user_query:
             return Response({"error": "La pregunta está vacía"}, status=400)
 
-        user_query, filtros = self.get_filters(user_query, course_id)
+        user_query, filtros = get_filters(user_query, course_id)
 
         docs = find_documents(get_vector_store(), user_query, filtros, response_needs_code(user_query))
 
@@ -62,7 +39,7 @@ class ChatAcademicoView(APIView):
         return self.generar_respuesta_llm(docs, user_query, modo_chat)
 
 
-    def _sources_map(self, docs):
+    def sources_map(self, docs):
             """Asigna un ID [Ref: X] a cada documento y extrae su info clave."""
             mapa_vectores = {}
             contexto_estructurado = []
@@ -80,7 +57,7 @@ class ChatAcademicoView(APIView):
                 
             return mapa_vectores, contexto_estructurado
 
-    def _extract_sources(self, texto_respuesta, mapa_vectores):
+    def extract_sources(self, texto_respuesta, mapa_vectores):
         """Busca etiquetas [Ref: X] en el texto y devuelve la lista de fuentes usadas."""
         ids_encontrados = set(re.findall(r"\[Ref:\s*(\d+)\]", texto_respuesta))
         fuentes = []
@@ -97,15 +74,7 @@ class ChatAcademicoView(APIView):
                 })
                 
         return fuentes
-
-    def get_filters(self, user_query, course_id):
-        filtros = {"course_id": str(course_id)} if course_id else {}
-        mencion = re.search(r'@"(.*?)"', user_query)
-        if mencion:
-            filtros["titulo"] = mencion.group(1).strip()
-            user_query = user_query.replace(mencion.group(0), "").strip()
-        return user_query, filtros
-
+  
     def ejecutar_analisis_vlm_guiado(self, docs, user_query, modo):
         """
         Toma las 4 páginas más relevantes, las renderiza completas,
@@ -116,7 +85,7 @@ class ChatAcademicoView(APIView):
         if not docs:
             return None
 
-        mapa_vectores, contexto_estructurado = self._sources_map(docs[:4])
+        mapa_vectores, contexto_estructurado = self.sources_map(docs[:4])
 
         if not contexto_estructurado:
             return None
@@ -179,7 +148,7 @@ class ChatAcademicoView(APIView):
     def generar_respuesta_llm(self, docs, user_query, modo):
         """Flujo normal de ChatOllama"""
 
-        mapa_vectores, contexto_estructurado = self._sources_map(docs)
+        mapa_vectores, contexto_estructurado = self.sources_map(docs)
 
         lista_json = [
         {"id_referencia": c["id_referencia"], "texto": c["texto"]} 
@@ -195,40 +164,7 @@ class ChatAcademicoView(APIView):
                                     user_content=user_query,
                                     model="CHAT"
                                 )
-        sources = self._extract_sources(ia_response, mapa_vectores)
+        sources = self.extract_sources(ia_response, mapa_vectores)
 
         return Response({"respuesta": ia_response.content, "fuentes": sources})
 
-
-class GenerateDescriptionView(APIView):
-    def post(self, request, draft_id):
-        try:
-            try:
-                pdf_attachment = PDFAttachment.objects.get(post_id=draft_id)
-            except PDFAttachment.DoesNotExist:
-                return Response({"error": "No se encontró el documento"}, status=404)
-            
-            pdf_document = fitz.open(stream=getDocument(pdf_attachment)["Body"].read(), filetype="pdf")
-            
-            image_batch = []
-            
-            for page_num in range(min(3, len(pdf_document))):
-                pixmap = pdf_document.load_page(page_num).get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
-                image_batch.append(pixmap.tobytes("png"))
-                
-            pdf_document.close()
-
-            generated_description = send_prompt(
-                system_content=SYSTEM_PROMPTS["generate_description"],
-                user_content="Genera descripción para este documento.",
-                model="VISION",
-                images=image_batch
-            )
-            
-            return Response({
-                "description": generated_description
-            }, status=200)
-
-        except Exception as e:
-            print(f"❌ Error generating description: {e}")
-            return Response({"error": "Fallo interno al generar la descripción"}, status=500)

@@ -89,5 +89,40 @@ SYSTEM_PROMPTS = {
                         "3. PROHIBIDO saludar, dar introducciones o hacer comentarios. Empieza directamente con el contenido.\n"
                         "4. Si la imagen contiene código terminal o comandos, transcribe el código con la mayor precisión posible, incluyendo formato y símbolos especiales.\n"
                         "5. tu output se va a vectorizar directamente, así que no añadas nada en tu respuesta que no sea util para la vectorización. Evita palabras como 'imagen', 'foto', 'diagrama' o similares, céntrate en describir el contenido de forma clara y estructurada.\n"
-                        
+}
+
+
+GENERATE_MATERIAL = {
+    "Flashcards": """Eres un generador de material de estudio, tu misión es generar falshcards para estudiar, las respuestas de las flashcads DEBEN ESTAR BASADAS en la documentación que se te aporta, 
+    REGLAS INQUEBRANTABLES: 
+    1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACION
+    2. Estas respuestas tienen que ser útiles para aprender un concepto o definiciones del material
+    FORMATO DE SALIDA:
+    la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
+    EJEMPLO DE SALIDA:
+    [
+        {"pregunta": "¿cual es la capital de Francia?", "respuesta": "París"}
+        {"pregunta": "¿cual es la capital de Italia?", "respuesta": "Roma"}
+    ]
+    """,
+    
+    
+    "Quiz": """Eres un generador de material de estudio, tu misión es generar cuestionarios de multiple opción, las respuestas DEBEN ESTAR BASADAS en la documentación que se te aporta, 
+    REGLAS INQUEBRANTABLES: 
+    1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACION
+    2. Estas respuestas tienen que ser útiles para aprender un concepto o definiciones del material
+    FORMATO DE SALIDA:
+    la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
+    EJEMPLO DE SALIDA:
+    [
+        {
+            "title": "¿Cuál es la capital de Francia?",
+            "answers": [
+                {"text": "Madrid", "is_correct": false},
+                {"text": "París", "is_correct": true},
+                {"text": "Roma", "is_correct": false}
+            ]
+        }
+    ]
+    """,
 }
