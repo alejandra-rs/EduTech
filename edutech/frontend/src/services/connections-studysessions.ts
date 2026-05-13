@@ -1,12 +1,17 @@
-import { StudySession, StudySessionComment, CreateStudySessionPayload, GetStudySessionsParams } from "../models/studysessions/studysession.model";
+import {
+  StudySession,
+  StudySessionComment,
+  CreateStudySessionPayload,
+  GetStudySessionsParams,
+} from "../models/studysessions/studysession.model";
 import { apiFetch } from "./api";
 
 const BASE = "/api/study-sessions";
 
-export const getStudySessions = async ({ 
-  courseIds = [], 
-  studentId = null, 
-  starred = false 
+export const getStudySessions = async ({
+  courseIds = [],
+  studentId = null,
+  starred = false,
 }: GetStudySessionsParams = {}): Promise<StudySession[]> => {
   const params = new URLSearchParams();
 
@@ -27,17 +32,23 @@ export const getStudySessions = async ({
 
   const response = await apiFetch(`${BASE}/?${params}`);
   if (!response.ok) throw new Error("Error al obtener las sesiones de estudio");
-  
-  type RawSession = Omit<StudySession, 'scheduled_at' | 'created_at'> & { scheduled_at: string; created_at: string };
+
+  type RawSession = Omit<StudySession, "scheduled_at" | "created_at"> & {
+    scheduled_at: string;
+    created_at: string;
+  };
   const rawData: RawSession[] = await response.json();
   return rawData.map((session) => ({
     ...session,
     scheduled_at: new Date(session.scheduled_at),
-    created_at: new Date(session.created_at)
+    created_at: new Date(session.created_at),
   }));
 };
 
-export const getStudySession = async (sessionId: number, studentId: number | null = null): Promise<StudySession> => {
+export const getStudySession = async (
+  sessionId: number,
+  studentId: number | null = null,
+): Promise<StudySession> => {
   const params = studentId ? `?student_id=${studentId}` : "";
   const response = await apiFetch(`${BASE}/${sessionId}/${params}`);
   if (!response.ok) throw new Error("Error al obtener la sesión");
@@ -46,11 +57,14 @@ export const getStudySession = async (sessionId: number, studentId: number | nul
   return {
     ...rawData,
     scheduled_at: new Date(rawData.scheduled_at),
-    created_at: new Date(rawData.created_at)
+    created_at: new Date(rawData.created_at),
   } as StudySession;
 };
 
-export const createStudySession = async (payload: CreateStudySessionPayload): Promise<StudySession> => {
+export const createStudySession = async (
+  payload: CreateStudySessionPayload,
+): Promise<StudySession> => {
+  console.log("Creando sesión con payload:", payload);
   const response = await apiFetch(`${BASE}/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -66,25 +80,31 @@ export const createStudySession = async (payload: CreateStudySessionPayload): Pr
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    throw Object.assign(new Error("Error al crear la sesión"), { status: response.status, data });
+    throw Object.assign(new Error("Error al crear la sesión"), {
+      status: response.status,
+      data,
+    });
   }
 
   const rawData = await response.json();
   return {
     ...rawData,
     scheduled_at: new Date(rawData.scheduled_at),
-    created_at: new Date(rawData.created_at)
+    created_at: new Date(rawData.created_at),
   } as StudySession;
 };
 
 export const deleteStudySession = async (sessionId: number): Promise<void> => {
-  const response = await apiFetch(`${BASE}/${sessionId}/`, { method: "DELETE" });
+  const response = await apiFetch(`${BASE}/${sessionId}/`, {
+    method: "DELETE",
+  });
   if (!response.ok) throw new Error("Error al eliminar la sesión de estudio");
 };
 
-
-
-export const starStudySession = async (sessionId: number, studentId: number): Promise<void> => {
+export const starStudySession = async (
+  sessionId: number,
+  studentId: number,
+): Promise<void> => {
   const response = await apiFetch(`${BASE}/${sessionId}/star/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -93,7 +113,10 @@ export const starStudySession = async (sessionId: number, studentId: number): Pr
   if (!response.ok) throw new Error("Error al unirse a la sesión de estudio");
 };
 
-export const unstarStudySession = async (sessionId: number, studentId: number): Promise<void> => {
+export const unstarStudySession = async (
+  sessionId: number,
+  studentId: number,
+): Promise<void> => {
   const params = new URLSearchParams({ student_id: studentId.toString() });
   const response = await apiFetch(`${BASE}/${sessionId}/star/?${params}`, {
     method: "DELETE",
@@ -101,20 +124,30 @@ export const unstarStudySession = async (sessionId: number, studentId: number): 
   if (!response.ok) throw new Error("Error al abandonar la sesión de estudio");
 };
 
-export const getStudySessionComments = async (sessionId: number): Promise<StudySessionComment[]> => {
+export const getStudySessionComments = async (
+  sessionId: number,
+): Promise<StudySessionComment[]> => {
   const response = await apiFetch(`${BASE}/${sessionId}/comments/`);
-  if (!response.ok) throw new Error("Error al obtener los comentarios de la sesión");
-  
-  type RawComment = Omit<StudySessionComment, 'user' | 'created_at'> & { student: StudySessionComment['user']; created_at: string };
+  if (!response.ok)
+    throw new Error("Error al obtener los comentarios de la sesión");
+
+  type RawComment = Omit<StudySessionComment, "user" | "created_at"> & {
+    student: StudySessionComment["user"];
+    created_at: string;
+  };
   const rawData: RawComment[] = await response.json();
   return rawData.map(({ student, ...rest }) => ({
     ...rest,
     user: student,
-    created_at: new Date(rest.created_at)
+    created_at: new Date(rest.created_at),
   }));
 };
 
-export const addStudySessionComment = async (sessionId: number, studentId: number, message: string): Promise<StudySessionComment> => {
+export const addStudySessionComment = async (
+  sessionId: number,
+  studentId: number,
+  message: string,
+): Promise<StudySessionComment> => {
   const response = await apiFetch(`${BASE}/${sessionId}/comments/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -123,9 +156,15 @@ export const addStudySessionComment = async (sessionId: number, studentId: numbe
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    throw Object.assign(new Error("Error al añadir comentario"), { status: response.status, data });
+    throw Object.assign(new Error("Error al añadir comentario"), {
+      status: response.status,
+      data,
+    });
   }
 
   const rawData = await response.json();
-  return { ...rawData, created_at: new Date(rawData.created_at) } as StudySessionComment;
+  return {
+    ...rawData,
+    created_at: new Date(rawData.created_at),
+  } as StudySessionComment;
 };
