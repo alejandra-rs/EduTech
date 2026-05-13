@@ -20,7 +20,7 @@ import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "./services/connections-students";
 import { useCurrentUser } from "./services/useCurrentUser";
-import { initializeAuth } from "./services/api";
+import { initializeAuth, initializeCurrentUser } from "./services/api";
 import { loginRequest } from "./services/authConfig";
 import StudySessions from "./pages/StudySessions";
 import MyCourses from "./pages/MyCourses";
@@ -56,6 +56,10 @@ export default function App() {
 
     init().catch(console.error);
   }, [accounts, instance, isDomainValid]);
+
+  useEffect(() => {
+    if (userData?.id) initializeCurrentUser(userData.id);
+  }, [userData?.id]);
 
   return (
     <>

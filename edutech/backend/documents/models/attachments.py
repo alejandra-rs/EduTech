@@ -24,6 +24,7 @@ class PDFAttachment(models.Model):
         EXTRACTING_INFORMATION = "extracting_information"
         VECTORIZING = "vectorizing"
         LABELING = "labeling"
+        REVISION = "revision"
         COMPLETED = "completed"
         ERROR = "error"
 
@@ -37,6 +38,14 @@ class PDFAttachment(models.Model):
         choices=ProcessingStages.choices,
         default=ProcessingStages.PENDING,
     )
+
+
+class PDFRevisionNote(models.Model):
+    attachment = models.OneToOneField(
+        PDFAttachment, on_delete=models.CASCADE, related_name="revision_note"
+    )
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class YoutubeVideo(models.Model):

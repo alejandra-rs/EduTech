@@ -1,6 +1,7 @@
 from .post import Post as Post
 from .attachments import (
     PDFAttachment as PDFAttachment,
+    PDFRevisionNote as PDFRevisionNote,
     YoutubeVideo as YoutubeVideo,
     MAX_PDF_KB as MAX_PDF_KB,
     validate_pdf_extension as validate_pdf_extension,

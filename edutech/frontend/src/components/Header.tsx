@@ -37,7 +37,7 @@ export default function Header({ isOpen, setIsOpen, userProfilePic, userName, in
 
   const adminLinks = [
     { to: "/reports", label: "Reportes", icon: ShieldExclamationIcon, color: "text-red-400" },
-    { to: "/revision", label: "Revisiones", icon: DocumentCheckIcon, color: "text-red-400" },
+    { to: "/revisiones", label: "Revisiones", icon: DocumentCheckIcon, color: "text-red-400" },
   ];
 
   const baseItemClass = `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${

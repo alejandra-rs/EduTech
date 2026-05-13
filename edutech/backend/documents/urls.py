@@ -30,6 +30,9 @@ urlpatterns = [
     path("dislikes/<int:pk>", views.DislikeView.as_view(), name="dislike_delete"),
     path("drafts/", views.DraftListView.as_view(), name="draft_list"),
     path("drafts/<int:pk>/", views.DraftDetailView.as_view(), name="draft_detail"),
+    path("revision/", views.RevisionListView.as_view(), name="revision_list"),
+    path("revision/publish/<int:pk>/", views.RevisionPublishView.as_view(), name="revision_publish"),
+    path("revision/<int:pk>/", views.RevisionDeleteView.as_view(), name="revision_delete"),
     path("", views.PostListView.as_view(), name="list_posts"),
     path(
         "reports/reasons/", views.ReportReasonListView.as_view(), name="report_reasons"
