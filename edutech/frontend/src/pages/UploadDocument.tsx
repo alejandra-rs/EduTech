@@ -8,7 +8,7 @@ import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
 import { TitlePage } from "../components/TitlePage";
 import { uploadPDFDraft, updateDraft } from "../services/connections-documents";
-import { connectToDocumentStatus, generateDocumentDescription } from "../services/connections-ia"
+import { connectToDocumentStatus, generateDocumentDescription, validatePDF } from "../services/connections-ia"
 import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/documents/states.model";
 
 export default function UploadDocument() {
@@ -42,9 +42,12 @@ export default function UploadDocument() {
     setProcessingStatus("uploading");
 
     try {
+      
       const data = await uploadPDFDraft({ post_type: 'PDF', courseId: Number(subjectId), studentId: userData.id, title: defaultTitle, description: defaultDesc, file });
       setDraftId(data.post_id);
-      setIsConfirmed(true);
+      const status = await validatePDF(data.post_id)
+      console.log("enviando a validar")
+      setIsConfirmed(status.status);
 
       if (data.attachment_id) {
         socketRef.current = connectToDocumentStatus(data.attachment_id, (status) => {

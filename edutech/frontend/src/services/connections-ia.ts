@@ -2,6 +2,7 @@ import { PDF_STATES } from '../models/documents/states.model';
 import { GenerateMaterialPayload, QueryChatbotPayload } from '../models/documents/payload.model';
 import type { ChatbotResponse, MaterialResponse } from '../models/ia/chat.models';
 import { apiFetch } from './api';
+import { Ia_status_response } from '../models/ia/revision.model';
 
 export async function askChatbot(query: QueryChatbotPayload): Promise<ChatbotResponse> {
   try {
@@ -42,6 +43,29 @@ export const generateDocumentDescription = async (draftId: number): Promise<stri
         }
 
         const data = await response.json();
+        return data.description;
+        
+    } catch (error) {
+        console.error("Generate Description Error:", error);
+        throw error;
+    }
+};
+
+export const validatePDF = async (draftId: number): Promise<Ia_status_response> => {
+    try {
+        const response = await apiFetch(`/api/ai/documents/${draftId}/validate-documet/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Error en la comunicación al generar la descripción");
+        }
+
+        const data = await response.json();
+        console.log(data)
         return data.description;
         
     } catch (error) {

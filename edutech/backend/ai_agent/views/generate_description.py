@@ -1,12 +1,11 @@
-import re
-import json
 import fitz 
+import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from ai_agent.agent_setings import get_vector_store, getDocument, send_prompt
-from ai_agent.agents_pronts import AGENTS_PROMPTS, SYSTEM_PROMPTS
+from ai_agent.agent_setings import getDocument, send_prompt
+from ai_agent.agents_pronts import SYSTEM_PROMPTS
 
 
 import fitz 
@@ -45,3 +44,36 @@ class GenerateDescriptionView(APIView):
         except Exception as e:
             print(f"Error generating description: {e}")
             return Response({"error": "Fallo interno al generar la descripción"}, status=500)
+    
+class ValidateDocument(APIView):
+    def post(self, request, draft_id):
+        try:
+            try:
+                pdf_attachment = PDFAttachment.objects.get(post_id=draft_id)
+            except PDFAttachment.DoesNotExist:
+                return Response({"error": "No se encontró el documento"}, status=404)
+            
+            pdf_document = fitz.open(stream=getDocument(pdf_attachment)["Body"].read(), filetype="pdf")
+            
+            image_batch = []
+            
+            for page_num in range(len(pdf_document)):
+                pixmap = pdf_document.load_page(page_num).get_pixmap(matrix=fitz.Matrix(1.8, 1.8))
+                image_batch.append(pixmap.tobytes("png"))
+                
+            pdf_document.close()
+
+            
+            return Response({
+                json.loads(send_prompt(
+                system_content=SYSTEM_PROMPTS["validate_document"],
+                user_content="Genera descripción para este documento.",
+                model="VISION",
+                images=image_batch,
+                format="json"
+            ))
+            }, status=200)
+
+        except Exception as e:
+            print(f"Error generating description: {e}")
+            return Response({"error": "Fallo interno al validar el documento"}, status=500)
