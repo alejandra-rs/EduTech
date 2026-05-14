@@ -65,8 +65,7 @@ export const validatePDF = async (draftId: number): Promise<Ia_status_response> 
         }
 
         const data = await response.json();
-        console.log(data)
-        return data.description;
+        return data;
         
     } catch (error) {
         console.error("Generate Description Error:", error);

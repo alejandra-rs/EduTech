@@ -17,7 +17,7 @@ export default function UploadDocument() {
   const { userData } = useCurrentUser();
 
   const [file, setFile] = useState<File | null>(null);
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
   const [draftId, setDraftId] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -47,6 +47,8 @@ export default function UploadDocument() {
       setDraftId(data.post_id);
       const status = await validatePDF(data.post_id)
       console.log("enviando a validar")
+      console.log(status)
+      console.log(status.status)
       setIsConfirmed(status.status);
 
       if (data.attachment_id) {
