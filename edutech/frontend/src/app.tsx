@@ -29,6 +29,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, } from "@azure
 import UploadWizard from "./pages/UploadDocument";
 import MyDocuments from "./pages/MyDocuments";
 import SessionLive from "./pages/SessionLive";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -73,6 +74,7 @@ export default function App() {
             <Layout accounts={accounts} instance={instance}>
               <Routes>
                 <Route path="/" element={<YearsPage />} />
+                <Route path="Profile" element={<ProfilePage  />} />
                 <Route path="/:id/asignaturas" element={<CoursesPage />} />
                 <Route path="/degrees/" element={<ChangeDegree userData={userData} />} />
                 <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
