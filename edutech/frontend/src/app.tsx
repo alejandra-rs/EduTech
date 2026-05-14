@@ -16,7 +16,6 @@ import TakeFlashCard from "./pages/TakeFlashCard";
 import ReportsPage from "./pages/ReportsPage";
 import ReportFormPage from "./pages/ReportFormPage";
 import SelectDegree from "./pages/SelectDegree";
-import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "./services/connections-students";
 import { useCurrentUser } from "./services/useCurrentUser";
@@ -76,7 +75,6 @@ export default function App() {
                 <Route path="/" element={<YearsPage />} />
                 <Route path="Profile" element={<ProfilePage  />} />
                 <Route path="/:id/asignaturas" element={<CoursesPage />} />
-                <Route path="/degrees/" element={<ChangeDegree userData={userData} />} />
                 <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
                 <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />
                 <Route path="/:id/:subjectId/upload/PDF" element={<UploadWizard />} />
