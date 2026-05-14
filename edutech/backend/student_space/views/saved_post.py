@@ -102,18 +102,38 @@ class CheckSavedPostView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, post_id):
+        student = get_object_or_404(Student, email=request.user.email)
         saved_post = SavedPost.objects.filter(
             post_id=post_id,
-            folder__student=request.user.student
+            folder__student=student,
         ).first()
 
         if saved_post:
             return Response({
-                "is_saved": True, 
+                "is_saved": True,
                 "saved_post_id": saved_post.id
             })
-        
+
         return Response({
-            "is_saved": False, 
+            "is_saved": False,
             "saved_post_id": None
         })
+
+
+class SpaceStatsView(views.APIView):
+    def get(self, request):
+        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        return Response({
+            "folder_count": Folder.objects.filter(student=student, depth__gt=1).count(),
+            "saved_post_count": SavedPost.objects.filter(folder__student=student).count(),
+        })
+
+
+class BatchDeleteView(views.APIView):
+    def delete(self, request):
+        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        folder_ids = request.data.get("folder_ids", [])
+        saved_post_ids = request.data.get("saved_post_ids", [])
+        Folder.objects.filter(pk__in=folder_ids, student=student, depth__gt=1).delete()
+        SavedPost.objects.filter(pk__in=saved_post_ids, folder__student=student).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

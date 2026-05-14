@@ -34,7 +34,7 @@ export default function DocumentPreview() {
       <div className="flex-1 flex flex-col h-full bg-transparent">
         <div className="w-full shrink-0">
           <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)}>
-          <SaveButton postId={Number(postId)}/>
+            <SaveButton postId={Number(postId)}/>
           </TitlePage>
         </div>
         <div className="flex-1 flex flex-col lg:flex-row w-full h-[calc(100vh-100px)]">

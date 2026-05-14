@@ -22,7 +22,7 @@ class MicrosoftAuthentication(BaseAuthentication):
         if not cached_email:
             self._cache_email_for_token(token, email)
 
-        user = User.objects.get_or_create(email=email, defaults={"username": email})
+        user, _ = User.objects.get_or_create(email=email, defaults={"username": email})
         return (user, token)
 
     def authenticate_header(self, request):
