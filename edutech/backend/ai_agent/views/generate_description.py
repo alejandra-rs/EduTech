@@ -1,5 +1,6 @@
 import fitz 
 import json
+import pymupdf4llm
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -44,6 +45,7 @@ class GenerateDescriptionView(APIView):
         except Exception as e:
             print(f"Error generating description: {e}")
             return Response({"error": "Fallo interno al generar la descripción"}, status=500)
+        
     
 class ValidateDocument(APIView):
     def post(self, request, draft_id):
@@ -53,27 +55,48 @@ class ValidateDocument(APIView):
             except PDFAttachment.DoesNotExist:
                 return Response({"error": "No se encontró el documento"}, status=404)
             
-            pdf_document = fitz.open(stream=getDocument(pdf_attachment)["Body"].read(), filetype="pdf")
+            pdf_stream = getDocument(pdf_attachment)["Body"].read()
+            pdf_document = fitz.open(stream=pdf_stream, filetype="pdf")
             
+            texto_pdf_markdown = pymupdf4llm.to_markdown(pdf_document)
+            text_status =  json.loads(send_prompt(
+                system_content=SYSTEM_PROMPTS["validate_document"] + "TEXTO A ANALIZAR:\n" + texto_pdf_markdown,
+                user_content=f"Valida el siguiente texto estrictamente buscando insultos o lenguaje de odio:\n\n{texto_pdf_markdown}",
+                format="json"
+            ))
+               
+            if not text_status.get("status", True):
+                pdf_document.close()
+                return Response(text_status, status=200)
+
             image_batch = []
             
             for page_num in range(len(pdf_document)):
-                pixmap = pdf_document.load_page(page_num).get_pixmap(matrix=fitz.Matrix(1.8, 1.8))
-                image_batch.append(pixmap.tobytes("png"))
+                page = pdf_document.load_page(page_num)
+                
+                imagenes_en_pagina = page.get_images(full=True)
+                
+                for img_info in imagenes_en_pagina:
+                    xref = img_info[0]
+                    imagen_extraida = pdf_document.extract_image(xref)
+                    image_bytes = imagen_extraida["image"]
+                    
+                    image_batch.append(image_bytes)
                 
             pdf_document.close()
 
-            
-            return Response({
-                json.loads(send_prompt(
+            if not image_batch:
+                return Response({"status": True, "reason": None}, status=200)
+
+            status_imagenes = json.loads(send_prompt(
                 system_content=SYSTEM_PROMPTS["validate_document"],
-                user_content="Genera descripción para este documento.",
+                user_content="Valida estrictamente estas imágenes extraídas del documento buscando desnudez o contenido visual inapropiado.",
                 model="VISION",
                 images=image_batch,
                 format="json"
             ))
-            }, status=200)
 
+            return Response(status_imagenes, status=200)
         except Exception as e:
             print(f"Error generating description: {e}")
             return Response({"error": "Fallo interno al validar el documento"}, status=500)
