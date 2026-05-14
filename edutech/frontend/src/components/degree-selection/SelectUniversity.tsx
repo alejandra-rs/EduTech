@@ -1,4 +1,4 @@
-import { UseDegreeSelection } from "./useDegreeSelection";
+import { UseDegreeSelection } from "./UseDegreeSelection";
 import SelectionGrid from "./SelectionGrid";
 import { ButtonControl } from "./ButtonControl";
 import type { University, Degree } from "../../models/courses/course.model";

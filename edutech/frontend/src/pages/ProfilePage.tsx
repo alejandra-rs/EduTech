@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SelectUniversity from "../components/degree-selection/SelectUniversity";
 import { TwitchConnectButton } from "../components/TwitchConnectButton";
-import SuccessToast from "../components/SuccessToast";
 import {
   connectTwitch,
   getTwitchStatus,
@@ -10,6 +9,10 @@ import {
 } from "../services/connections-streaming";
 import { useCurrentUser } from "../services/useCurrentUser";
 import { deleteUserAccount } from "../services/connections-students";
+import { TitlePage } from "../components/TitlePage";
+import ConfirmModal from "../components/study-material/ConfirmModal";
+import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
+import {LoadInformation} from "../components/LoadInformation";
 
 export default function ProfilePage() {
   const { userData: currentUser } = useCurrentUser();
@@ -22,7 +25,7 @@ export default function ProfilePage() {
     login: null,
   });
   const [isEditingCareer, setIsEditingCareer] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [showPop, setShowPop] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
@@ -48,37 +51,23 @@ export default function ProfilePage() {
     setIsDeleting(true);
     try {
       await deleteUserAccount(currentUser!.id);
-      console.log("Cuenta eliminada correctamente");
-      setShowToast(true);
-      setTimeout(() => {
-        logout();
-      }, 1500);
+      logout();
     } catch (err) {
       console.error("Error al eliminar la cuenta:", err);
       setIsDeleting(false);
     }
   };
 
-  if (!currentUser) {
+  if (!currentUser || twitchData.login === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 font-medium animate-pulse">
-          Cargando perfil...
-        </p>
-      </div>
+        <LoadInformation data="Cargando información del perfil..." />
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Mi Perfil</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Gestiona tus estudios, conexiones y los ajustes de tu cuenta.
-          </p>
-        </div>
-
+        <TitlePage PageName="Mi perfil" subtitle="Gestiona tus estudios, conexiones y los ajustes de tu cuenta" onBack={()=> navigate(-1)} />
+      <div className="max-w-3xl mx-auto space-y-8 mt-6">
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
             <div>
@@ -148,20 +137,25 @@ export default function ProfilePage() {
           </p>
 
           <button
-            onClick={handleDeleteAccount}
+            onClick={()=>setShowPop(true)}
             disabled={isDeleting}
             className="px-5 py-2.5 text-sm font-bold text-red-600 border-2 border-red-200 hover:border-red-600 hover:bg-red-50 rounded-xl transition-all"
           >
-            {isDeleting ? "Eliminando..." : "Eliminar mi cuenta"}{" "}
+            "Eliminar mi cuenta"
           </button>
         </section>
       </div>
-      {showToast && (
-        <SuccessToast
-          message="Cuenta eliminada correctamente. Redirigiendo..."
-          onClose={() => setShowToast(false)}
+        <ConfirmModal
+          open={showPop !== false}
+          title="¿Estas seguro de eliminar tu cuenta?"
+          message="Se perderá toda tu información."
+          confirmLabel="Eliminar"
+          Icon={TrashIcon}
+          onConfirm={() => { 
+            handleDeleteAccount();
+          }}
+          onCancel={() => setShowPop(false)}
         />
-      )}
     </div>
   );
 }
