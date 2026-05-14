@@ -8,6 +8,7 @@ import type { ChatMessage } from "../../models/ia/chat.models";
 import { CHAT_MODES, MATERIAL_MODES } from "../../models/ia/agent.models";
 import type { ChatModeOption, ChatMode, Material } from "../../models/ia/agent.models";
 import type { DocumentsChat } from "./DocumentMentionList";
+import { useCurrentUser } from "../../services/useCurrentUser";
 
 export interface ChatbotWidgetProps {
   courseId: number | string;
@@ -74,11 +75,24 @@ export function ChatbotWidget({
         const data = await generate_matererial({
           question: userQuestion,
           course_id: String(courseId),
-          material: toolType.key
+          material: toolType.key,
         });
-        console.log(data)
+
+        if (data.draft_id) {
+          const draftLink = `/${courseId}/upload`;
+          
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "ai",
+              content: `El material ha sido creado como borrador. [**Haz clic aquí para revisarlo y publicarlo**](${draftLink})`
+            },
+          ]);
+        } else {
+           throw new Error("No se devolvió un ID de borrador");
+        }
        }
-    } catch {
+      } catch {
       setMessages((prev) => [
         ...prev,
         {

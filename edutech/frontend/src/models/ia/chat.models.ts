@@ -18,6 +18,8 @@ export interface ChatbotResponse {
   fuentes?: ChatSource[];
 }
 
-export interface MaterialResponse{
-  material: string;
+export interface MaterialResponse {
+  message: string;
+  draft_id: number;
+  type: string;
 }
