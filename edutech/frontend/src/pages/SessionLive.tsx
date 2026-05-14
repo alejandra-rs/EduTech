@@ -2,11 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeftIcon, PhoneXMarkIcon } from "@heroicons/react/24/outline";
 import { useCurrentUser } from "../services/useCurrentUser";
-import { 
-  connectToSessionChat, 
-  sendTwitchMessage, 
-  stopStream 
-} from "../services/connections-streaming"; 
+import { connectToSessionChat, sendTwitchMessage, stopStream } from "../services/connections-streaming"; 
 import { getStudySession } from "../services/connections-studysessions"; 
 import type { TwitchChatMessage } from "../models/studysessions/twitch.model";
 import type { StudySession } from "../models/studysessions/studysession.model";
@@ -21,20 +17,15 @@ const SessionLive = () => {
   const [chatInput, setChatInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll al final del chat cuando llegan mensajes
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   useEffect(() => {
     if (!sessionId || !currentUser?.id) return;
 
-    // Cargar datos de la sesión
     getStudySession(Number(sessionId), currentUser.id)
       .then(setSession)
       .catch(console.error);
 
-    // Conexión WebSocket para el chat en tiempo real
     const socket = connectToSessionChat(Number(sessionId), (newMessage) => {
       setMessages((prev) => [...prev, newMessage]);
     });
@@ -45,9 +36,7 @@ const SessionLive = () => {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim() || !currentUser?.id || !sessionId) return;
-    
     try {
-      // Enviar mensaje a través del servicio de streaming
       await sendTwitchMessage(Number(sessionId), currentUser.id, chatInput);
       setChatInput("");
     } catch (error) {
@@ -58,7 +47,6 @@ const SessionLive = () => {
   const handleStopStream = async () => {
     if (!sessionId) return;
     try {
-      // Detener el stream en el backend
       await stopStream(Number(sessionId));
       navigate(-1);
     } catch (error) {
@@ -66,14 +54,16 @@ const SessionLive = () => {
     }
   };
 
-  // Twitch requiere el dominio padre para el iframe por seguridad
   const parentDomain = window.location.hostname;
-  const twitchStreamUrl = `https://player.twitch.tv/?channel=${session?.twitch_link || "elBokeron"}&parent=${parentDomain}`;
+  const channelLogin = session?.twitch_link
+    ? session.twitch_link.replace(/\/$/, '').split('/').pop()
+    : null;
+  const twitchStreamUrl = channelLogin
+    ? `https://player.twitch.tv/?channel=${channelLogin}&parent=${parentDomain}&autoplay=true&muted=true`
+    : null;
 
   return (
     <div className="min-h-screen w-full bg-gray-900 p-6 flex flex-col font-sans">
-      
-      {/* Barra superior de navegación */}
       <div className="mb-4">
         <button 
           onClick={() => navigate(-1)} 
@@ -89,12 +79,13 @@ const SessionLive = () => {
         
         {/* Lado Izquierdo: Reproductor de Video */}
         <div className="relative rounded-[32px] overflow-hidden bg-black shadow-2xl border border-gray-800">
-          {session ? (
+          {twitchStreamUrl ? (
             <iframe
               src={twitchStreamUrl}
               height="100%"
               width="100%"
               frameBorder="0"
+              allow="autoplay"
               allowFullScreen
               title="Streaming en directo"
               className="w-full h-full"

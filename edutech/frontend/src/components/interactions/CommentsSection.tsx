@@ -5,7 +5,7 @@ import { getComments } from "../../services/interactions/connections-comments";
 import { getStudySessionComments } from "../../services/connections-studysessions";
 import { useCurrentUser } from "../../services/useCurrentUser";
 import type { Comment as CommentModel } from "../../models/documents/interactions/comment.model";
-import type { StudySessionComment } from "../../models/courses/course.model";
+import type { StudySessionComment } from "../../models/studysessions/studysession.model";
 
 export interface CommentsSectionProps {
   id?: string | number;

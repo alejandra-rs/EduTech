@@ -3,8 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
 import SessionHeader from '../components/study-sessions/SessionHeader';
 import SessionDescription from '../components/study-sessions/SessionDescription';
-import { getStudySessions } from '../services/connections-studysessions';
+import { getStudySessions, starStudySession, unstarStudySession } from '../services/connections-studysessions';
+import { getTwitchStatus } from '../services/connections-streaming';
 import { useCurrentUser } from '../services/useCurrentUser';
+import { StreamButton } from '../components/study-sessions/StreamButton';
 import { CommentsSection } from '../components/interactions/CommentsSection';
 import type { StudySession } from '../models/studysessions/studysession.model';
 
@@ -15,10 +17,11 @@ export default function StudySessionDetail() {
 
   const [session, setSession] = useState<StudySession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [twitchData, setTwitchData] = useState({ connected: false, login: null as string | null });
   const [isStarred, setIsStarred] = useState(false);
 
   useEffect(() => {
-    const cargarDatosSesion = async () => {
+    const loadSessionData = async () => {
       try {
         setIsLoading(true);
         const sessionsData: StudySession[] = await getStudySessions({ studentId: currentUser?.id });
@@ -27,6 +30,11 @@ export default function StudySessionDetail() {
         if (foundSession) {
           setSession(foundSession);
           setIsStarred(foundSession.is_starred);
+
+          if (currentUser?.id) {
+            const status = await getTwitchStatus(currentUser.id);
+            setTwitchData({ connected: status.connected, login: status.login });
+          }
         }
       } catch (error) {
         console.error("Error al cargar la sesión", error);
@@ -35,8 +43,25 @@ export default function StudySessionDetail() {
       }
     };
 
-    if (sessionId && currentUser?.id) cargarDatosSesion();
+    if (sessionId && currentUser?.id) loadSessionData();
   }, [sessionId, currentUser?.id]);
+
+  const handleToggleStar = async () => {
+    if (!currentUser?.id || !session) return;
+    try {
+      if (isStarred) {
+        setIsStarred(false);
+        await unstarStudySession(session.id, currentUser.id);
+      } else {
+        setIsStarred(true);
+        await starStudySession(session.id, currentUser.id);
+      }
+    } catch (error) {
+      console.error("Error al actualizar favoritos:", error);
+    }
+  };
+
+  const isCreator = currentUser?.id === session?.creator.id;
 
   if (isLoading) return <div className="p-20 text-center font-bold animate-pulse">Cargando sesión...</div>;
   if (!session) return <div className="p-20 text-center font-bold">Sesión no encontrada</div>;
@@ -58,10 +83,19 @@ export default function StudySessionDetail() {
               session={session}
               currentUserId={currentUser?.id}
               isStarred={isStarred}
-              onStarChange={setIsStarred}
+              onStarChange={handleToggleStar}
             />
             <SessionDescription session={session} />
-            <section className="pt-6 pb-20"> <CommentsSection id={sessionId} isSession /> </section>
+            <div className="flex align-items-center justify-center">
+              <StreamButton
+                session={session}
+                isCreator={isCreator}
+                currentUserId={currentUser!.id}
+                twitchData={twitchData}
+                setTwitchData={setTwitchData}
+              />
+            </div>
+            <CommentsSection id={sessionId} isSession />
           </div>
         </main>
       </div>

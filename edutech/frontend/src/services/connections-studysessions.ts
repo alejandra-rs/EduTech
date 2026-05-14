@@ -64,13 +64,12 @@ export const getStudySession = async (
 export const createStudySession = async (
   payload: CreateStudySessionPayload,
 ): Promise<StudySession> => {
-  console.log("Creando sesión con payload:", payload);
   const response = await apiFetch(`${BASE}/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      course_id: payload.courseId ?? null,
-      creator_id: payload.creatorId,
+      course: payload.courseId ?? null,
+      creator: payload.creatorId,
       title: payload.title,
       description: payload.description,
       scheduled_at: payload.scheduledAt,
