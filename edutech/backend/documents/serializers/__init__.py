@@ -40,6 +40,7 @@ from .post import (
     PostPreviewSerializer as PostPreviewSerializer,
     PostSerializer as PostSerializer,
 )
+from .revision import RevisionNoteSerializer as RevisionNoteSerializer
 from .draft import (
     DraftPostSerializer as DraftPostSerializer,
     DraftCardInputSerializer as DraftCardInputSerializer,

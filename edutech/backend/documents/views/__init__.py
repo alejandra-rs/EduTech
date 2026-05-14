@@ -17,6 +17,11 @@ from .interactions import (
 from .quiz import QuizUploadView as QuizUploadView, QuizCheckView as QuizCheckView
 from .flashcard import FlashCardDeckUploadView as FlashCardDeckUploadView
 from .draft import DraftListView as DraftListView, DraftDetailView as DraftDetailView
+from .revision import (
+    RevisionListView as RevisionListView,
+    RevisionPublishView as RevisionPublishView,
+    RevisionDeleteView as RevisionDeleteView,
+)
 from .reports import (
     ReportReasonListView as ReportReasonListView,
     ReportListView as ReportListView,

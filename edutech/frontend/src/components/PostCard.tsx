@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PostPreview } from "../models/documents/post.model";
 import { PostPreviewVisual } from "./post-preview/preview";
 import { PostLabel } from "./post-preview/labels";
+import { IALabel } from "./IALabel";
 
 const formatDate = (date: string | Date) => {
   return new Date(date).toLocaleDateString("es-ES", {
@@ -17,9 +18,10 @@ export interface PostCardProps {
   post: PostPreview;
   onClick: () => void;
   onDelete?: () => void;
+  IA:boolean;
 }
 
-export function PostCard({ post, onClick, onDelete }: PostCardProps) {
+export function PostCard({ post, onClick, onDelete, IA }: PostCardProps) {
   const [isConfirming, setIsConfirming] = useState(false);
 
   const onClickDelete = (e: React.MouseEvent) => {
@@ -59,11 +61,15 @@ export function PostCard({ post, onClick, onDelete }: PostCardProps) {
         <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2 mb-1">
           {post.title}
         </h5>
-        <span className="text-xs text-gray-400 mb-4">
-          {formatDate(post.created_at)}
-        </span>
-
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-xs text-gray-400">
+            {formatDate(post.created_at)}
+          </span>
+          {IA && <IALabel />}
+        </div>
+        
         <div className="flex items-center justify-between mt-auto">
+          
           <ReactionButton type="views" count={post.views}>
             <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
           </ReactionButton>

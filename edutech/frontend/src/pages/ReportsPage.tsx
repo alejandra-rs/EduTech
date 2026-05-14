@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ReportWidget } from '../components/reports/ReportWidget';
+import { AdminWidget } from '../components/reports/AdminWidget';
 import { TitlePage } from '../components/TitlePage';
+import { DocumentReport } from '../components/reports/DocumentReport';
 import { useCurrentUser } from '../services/useCurrentUser';
 import { getReports, rejectPostReports } from '../services/interactions/connections-reports';
-import type { Report } from '../models/documents/interactions/report.model';
-import type { GroupedReport } from '../models/documents/interactions/report.model';
+import { TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import type { PostType } from '../models/documents/post.model';
+import type { Report, GroupedReport } from '../models/documents/interactions/report.model';
+
+const TYPE_TO_PATH: Record<string, string> = { PDF: 'documento', VID: 'video', QUI: 'quiz', FLA: 'flashcard' };
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<GroupedReport[]>([]);
@@ -45,6 +49,7 @@ export default function ReportsPage() {
         };
       }
       reportsByPost[r.post.id].reasons.push({
+        id: r.id,
         type: r.reason.reason,
         comment: r.description,
         date: new Date(r.created_at).toLocaleDateString('es-ES'),
@@ -75,25 +80,55 @@ export default function ReportsPage() {
   }
 
   return (
-    <>
-      <div className="flex flex-col mx-auto px-4 gap-7">
-        <TitlePage
-          PageName="Panel de Reportes"
-          onBack={() => navigate(-1)}
-        />
-        <section className="space-y-4 px-10">
-          {reports.length > 0 ? (
-            reports.map((report) => (
-              <ReportWidget
+    <div className="flex flex-col mx-auto px-4 gap-7">
+      <TitlePage
+        PageName="Panel de Reportes"
+        onBack={() => navigate(-1)}
+      />
+      <section className="space-y-4 px-10">
+        {reports.length > 0 ? (
+          reports.map((report) => {
+            const documentPath = TYPE_TO_PATH[report.type] || 'documento';
+            const documentUrl = report.yearId && report.courseId 
+              ? `/${report.yearId}/${report.courseId}/${documentPath}/${report.postId}` 
+              : null;
+
+            return (
+              <AdminWidget
                 key={report.postId}
-                report={report}
-                onAccept={() => handleAccept(report)}
-                onReject={() => handleReject(report)}
-              />
-            ))
-          ) : (<p className="text-gray-400 mt-10 text-center italic">No hay reportes pendientes de revisión.</p>)}
-        </section>
-      </div>
-    </>
+                title={report.title}
+                subtitle={report.subject}
+                type={report.type as PostType}
+                url={documentUrl}
+                collapsible={true}
+                actions={[
+                  {
+                    label: 'Borrar Contenido',
+                    icon: TrashIcon,
+                    variant: 'danger',
+                    onClick: () => handleAccept(report)
+                  },
+                  {
+                    label: 'Descartar reportes',
+                    confirmLabel: '¿Seguro?',
+                    icon: XMarkIcon,
+                    variant: 'secondary',
+                    onClick: () => handleReject(report)
+                  }
+                ]}
+              >
+                <div className="max-h-80 overflow-y-auto space-y-2">
+                  {report.reasons.map((r, idx) => (
+                    <DocumentReport key={r.id ?? idx} {...r} />
+                  ))}
+                </div>
+              </AdminWidget>
+            );
+          })
+        ) : (
+          <p className="text-gray-400 mt-10 text-center italic">No hay reportes pendientes de revisión.</p>
+        )}
+      </section>
+    </div>
   );
 }

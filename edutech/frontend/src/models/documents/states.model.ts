@@ -11,13 +11,14 @@ export type StageMap<T extends ProcessingStatus> = Record<T, Stage<T>>;
 export type StageSequence<T extends ProcessingStatus> = Stage<T>[];
 
 
-export type PDF_STATES = 
-  | "pending" 
-  | "uploading" 
-  | "extracting_information" 
-  | "vectorizing" 
-  | "labeling" 
-  | "completed" 
+export type PDF_STATES =
+  | "pending"
+  | "uploading"
+  | "extracting_information"
+  | "vectorizing"
+  | "labeling"
+  | "revision"
+  | "completed"
   | "error";
 
 
@@ -27,6 +28,7 @@ export const PDF_STAGES_MAP: StageMap<PDF_STATES> = {
   extracting_information: { key: "extracting_information", label: "Extrayendo información del PDF..." },
   vectorizing: { key: "vectorizing", label: "Vectorizando..." },
   labeling: { key: "labeling", label: "Etiquetando..." },
+  revision: { key: "revision", label: "Pendiente de revisión" },
   completed: { key: "completed", label: "¡Listo para IA!" },
   error: { key: "error", label: "Error en el procesamiento" }
 };

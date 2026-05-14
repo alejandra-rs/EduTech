@@ -26,6 +26,7 @@ export default function PostGrid({ posts, onPostClick, onDelete, emptyMessage = 
             post={post}
             onClick={() => onPostClick(post)}
             onDelete={onDelete ? () => onDelete(post) : undefined}
+            IA={ true }
           />
         ))}
       </div>

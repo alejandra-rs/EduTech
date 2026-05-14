@@ -21,6 +21,7 @@ class Post(models.Model):
     post_type = models.CharField(max_length=3, choices=CONTENT_TYPES)
     views = models.PositiveIntegerField(default=0)
     is_draft = models.BooleanField(default=False)
+    ai_gen = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

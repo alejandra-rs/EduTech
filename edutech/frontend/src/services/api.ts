@@ -1,9 +1,18 @@
 type TokenGetter = () => Promise<string>;
 
 let _getToken: TokenGetter | null = null;
+let _currentUserId: number | null = null;
 
 export function initializeAuth(getToken: TokenGetter): void {
   _getToken = getToken;
+}
+
+export function initializeCurrentUser(id: number): void {
+  _currentUserId = id;
+}
+
+export function getCurrentUserId(): number | null {
+  return _currentUserId;
 }
 
 export async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {

@@ -20,7 +20,7 @@ import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "./services/connections-students";
 import { useCurrentUser } from "./services/useCurrentUser";
-import { initializeAuth } from "./services/api";
+import { initializeAuth, initializeCurrentUser } from "./services/api";
 import { loginRequest } from "./services/authConfig";
 import StudySessions from "./pages/StudySessions";
 import MyCourses from "./pages/MyCourses";
@@ -29,6 +29,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, } from "@azure
 import UploadWizard from "./pages/UploadDocument";
 import MyDocuments from "./pages/MyDocuments";
 import MySpace from "./pages/MySpace";
+import RevisionPage from "./pages/RevisionPage";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -56,6 +57,10 @@ export default function App() {
 
     init().catch(console.error);
   }, [accounts, instance, isDomainValid]);
+
+  useEffect(() => {
+    if (userData?.id) initializeCurrentUser(userData.id);
+  }, [userData?.id]);
 
   return (
     <>
@@ -94,7 +99,7 @@ export default function App() {
                 <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
                 <Route path="/mis-publicaciones/" element={<MyDocuments/>} />
                 <Route path="/suscripciones" element={<MyCourses/>} />
-
+                <Route path="/revisiones" element={<RevisionPage />} />
                 <Route path="/mi-espacio" element={<MySpace />} />
                 <Route path="/mi-espacio/directorio/:folderId" element={<MySpace />} />
               </Routes>
