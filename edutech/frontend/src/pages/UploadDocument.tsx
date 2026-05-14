@@ -7,7 +7,7 @@ import ProgressBar from "../components/forms-components/ProgressBar";
 import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
 import { TitlePage } from "../components/TitlePage";
-import { uploadPDFDraft, updateDraft } from "../services/connections-documents";
+import { uploadPDFDraft, updateDraft, publishPDFDraft } from "../services/connections-documents";
 import { connectToDocumentStatus, generateDocumentDescription, validatePDF } from "../services/connections-ia"
 import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/documents/states.model";
 
@@ -21,9 +21,13 @@ export default function UploadDocument() {
   const [draftId, setDraftId] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [published, setPublished] = useState(false);
+  const [published, setPublished] = useState<boolean>(false);
 
-  const [isGeneratingDesc, setIsGeneratingDesc] = useState(false);
+  const [isGeneratingDesc, setIsGeneratingDesc] = useState<boolean>(false);
+  
+  const [isConfirming, setIsConfirming] = useState<boolean>(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [revisionMessage, setRevisionMessage] = useState<string | null>(null);
 
   const [processingStatus, setProcessingStatus] = useState<PDF_STATES>("pending");
   const socketRef = useRef<WebSocket | null>(null);
@@ -34,6 +38,7 @@ export default function UploadDocument() {
 
   const handleConfirm = async () => {
     if (!file || !subjectId || !userData?.id) return;
+    setIsConfirming(true);
 
     const defaultTitle = file.name.replace(/\.[^/.]+$/, "");
     const defaultDesc = `Descripción del documento ${file.name}`;
@@ -46,11 +51,13 @@ export default function UploadDocument() {
       const data = await uploadPDFDraft({ post_type: 'PDF', courseId: Number(subjectId), studentId: userData.id, title: defaultTitle, description: defaultDesc, file });
       setDraftId(data.post_id);
       const status = await validatePDF(data.post_id)
-      console.log("enviando a validar")
       console.log(status)
-      console.log(status.status)
-      setIsConfirmed(status.status);
-
+      if (status.status) {
+        setIsConfirmed(true);
+      } else {
+        setIsConfirmed(false);
+        setRevisionMessage(status.reason);
+      }
       if (data.attachment_id) {
         socketRef.current = connectToDocumentStatus(data.attachment_id, (status) => {
           setProcessingStatus(status);
@@ -61,17 +68,23 @@ export default function UploadDocument() {
       }
     } catch (error) {
       setProcessingStatus("error");
+      setRevisionMessage("Hubo un error de conexión al analizar el documento.");
+    }finally {
+      setIsConfirming(false);
     }
   };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsPublishing(true);
     if (!draftId) return;
     try {
-      await updateDraft({ draftId, post_type: 'PDF', courseId: Number(subjectId), studentId: userData!.id, title, description, file: file! });
+      await publishPDFDraft(draftId, title, description);
       setPublished(true);
     } catch (error) {
       console.error("Fallo al publicar el documento:", error);
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -116,23 +129,50 @@ export default function UploadDocument() {
               selectedFile={file}
               onFileSelect={(selected) => {
                 setFile(selected);
-                if (!selected) setIsConfirmed(false);
+                if (!selected) {
+                  setIsConfirmed(false);
+                  setRevisionMessage(null);
+                }
               }}
               isConfirmed={isConfirmed}
             />
           </div>
+          {revisionMessage && !isConfirmed && (
+            <div className="p-4 bg-yellow-50 border border-yellow-300 rounded-lg text-yellow-800 text-sm font-medium shadow-sm flex items-start gap-2">
+              <span className="text-xl">⏳</span>
+              <p>{revisionMessage}</p>
+            </div>
+          )}
+          
           {file && !isConfirmed && (
-          <div className="transition-all duration-300 opacity-100">
-            <button
-              onClick={handleConfirm}
-              disabled={!file}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold disabled:bg-gray-400 hover:bg-blue-700 transition-colors"
-              >
-              Confirmar documento
-            </button>
-          </div>
-          )
-        }
+            <div className="transition-all duration-300 opacity-100 mt-4">
+              {revisionMessage ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFile(null);
+                    setRevisionMessage(null);
+                  }}
+                  className="w-full py-3 rounded-lg font-bold transition-colors bg-gray-800 text-white hover:bg-black shadow-md"
+                >
+                  Elegir otro archivo
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleConfirm}
+                  disabled={!file || isConfirming}
+                  className={`w-full py-3 rounded-lg font-bold transition-colors ${
+                    isConfirming 
+                      ? "bg-gray-400 text-gray-200 cursor-wait" 
+                      : "bg-blue-600 text-white hover:bg-blue-700 shadow-md"
+                  }`}
+                >
+                  {isConfirming ? "Analizando contenido..." : "Confirmar documento"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <form
@@ -191,10 +231,14 @@ export default function UploadDocument() {
 
           <button
             type="submit"
-            disabled={!title.trim() || !description.trim()}
-            className="w-full bg-[#2d2d2d] hover:bg-black text-white py-4 rounded-xl font-bold uppercase tracking-widest shadow-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
+            disabled={!title.trim() || !description.trim() || isPublishing}
+            className={`w-full py-4 rounded-xl font-bold uppercase tracking-widest shadow-lg transition-colors text-sm ${
+              isPublishing 
+                ? "bg-gray-400 text-gray-200 cursor-wait" 
+                : "bg-[#2d2d2d] hover:bg-black text-white disabled:opacity-40 disabled:cursor-not-allowed"
+            }`}
           >
-            Publicar
+            {isPublishing ? "Publicando..." : "Publicar"}
           </button>
         </form>
       </div>

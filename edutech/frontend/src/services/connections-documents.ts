@@ -308,3 +308,21 @@ export async function deleteDocument(postId: number, studentId: number): Promise
   }
 }
 
+export async function publishPDFDraft(draftId: number, title: string, description: string): Promise<void> {
+  try {
+    const response = await apiFetch(`/api/documents/drafts/${draftId}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: title,
+        description: description,
+        publish: true
+      }),
+    });
+
+    if (!response.ok) throw new Error("Error al publicar el borrador del documento");
+  } catch (error) {
+    console.error("Error en publishPDFDraft:", error);
+    throw error;
+  }
+}

@@ -1,4 +1,3 @@
-import fitz 
 import json
 import pymupdf4llm
 from rest_framework.views import APIView
@@ -10,7 +9,7 @@ from ai_agent.agents_pronts import SYSTEM_PROMPTS
 
 
 import fitz 
-from documents.models import PDFAttachment 
+from documents.models import PDFAttachment, PDFRevisionNote
 
 
 class GenerateDescriptionView(APIView):
@@ -67,7 +66,7 @@ class ValidateDocument(APIView):
                
             if not text_status.get("status", True):
                 pdf_document.close()
-                return Response(text_status, status=200)
+                return self.enviar_a_revision(pdf_attachment, text_status.get("reason", "Contenido de texto inapropiado"))
 
             image_batch = []
             
@@ -96,7 +95,23 @@ class ValidateDocument(APIView):
                 format="json"
             ))
 
-            return Response(status_imagenes, status=200)
+            if not status_imagenes.get("status", True):
+                return self.enviar_a_revision(pdf_attachment, status_imagenes.get("reason", "Contenido visual inapropiado"))
+
+            return Response({"status": True, "reason": None}, status=200)
         except Exception as e:
             print(f"Error generating description: {e}")
             return Response({"error": "Fallo interno al validar el documento"}, status=500)
+        
+
+
+    def enviar_a_revision(self, attachment, reason):
+        """Crea la nota de revisión y avisa al frontend"""
+        PDFRevisionNote.objects.create(
+            attachment=attachment,
+            reason=reason 
+        )
+        return Response({
+            "status": False,
+            "reason": f"El documento ha sido enviado a revisión manual por un administrador. por el siguiente motivo: {reason}"
+        }, status=200)
