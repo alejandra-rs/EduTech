@@ -17,7 +17,7 @@ class GenerateMaterial(APIView):
     def post(self, request):
         user_query = request.data.get("student_question", "")
         course_id = request.data.get("course", "").strip()
-        material = request.data.get("material", "Flashcard")
+        material = request.data.get("material", "flashcard")
         
         if not user_query:
             return Response({"error": "La pregunta está vacía"}, status=400)
@@ -36,11 +36,13 @@ class GenerateMaterial(APIView):
             user_content=user_query,
             format="json"
         ))
+        
+        print(json_data)
 
         try:
             student = get_object_or_404(Student, email=request.user.email)
             course = Course.objects.get(id=course_id)
-            post_type = "QUI" if material == "Quiz" else "FLA"
+            post_type = "QUI" if material == "quiz" else "FLA"
 
             nuevo_draft = Post.objects.create(
                 title=user_query[:200],
@@ -53,7 +55,7 @@ class GenerateMaterial(APIView):
 
             if post_type == "QUI":
                 quiz = Quiz.objects.create(post=nuevo_draft)
-                for q_data in json_data.get("questions", []):
+                for q_data in json_data.get("quiz", []):
                     question = Question.objects.create(quiz=quiz, title=q_data.get("title", ""))
                     for a_data in q_data.get("answers", []):
                         Answer.objects.create(
@@ -64,7 +66,7 @@ class GenerateMaterial(APIView):
             
             elif post_type == "FLA":
                 deck = FlashCardDeck.objects.create(post=nuevo_draft)
-                for c_data in json_data.get("cards", []):
+                for c_data in json_data.get("flashcards", []):
                     FlashCard.objects.create(
                         deck=deck,
                         question=c_data.get("question", ""),
