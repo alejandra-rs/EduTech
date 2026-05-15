@@ -8,6 +8,7 @@ import { DocumentInfo } from '../components/DocumentInfo';
 import { CommentsSection } from '../components/interactions/CommentsSection';
 import type { PostPreview } from '../models/documents/post.model';
 import { SaveButton } from '../components/my-space/SaveButton';
+import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
 
 export default function DocumentPreview() {
   const navigate = useNavigate();
@@ -51,6 +52,13 @@ export default function DocumentPreview() {
           </div>
         </div>
       </div>
+      {document && (
+        <ChatbotWidget
+          courseId={Number(subjectId)}
+          documents={[{ id: Number(postId), title: document.title }]}
+          disableMentions
+        />
+      )}
     </div>
   );
 }

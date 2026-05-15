@@ -7,26 +7,23 @@ const SHARED_TEXT_STYLES =
   "w-full pl-4 pr-12 py-3 text-sm font-sans leading-5 whitespace-pre-wrap break-all overflow-hidden";
 
 export interface ChatBotFooterInputProps {
-  onSendMessage: (
-    userQuestion: string,
-    mentionedDocs: { postId: number; title: string }[],
-  ) => void;
+  onSendMessage: (userQuestion: string, mentionedDocs: number[]) => void;
   isLoading: boolean;
   documents?: DocumentsChat[];
+  disableMentions?: boolean;
 }
 
 export function ChatBotFooterInput({
   onSendMessage,
   isLoading,
   documents = [],
+  disableMentions = false,
 }: ChatBotFooterInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [showMentions, setShowMentions] = useState(false);
   const [mentionFilter, setMentionFilter] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedMentions, setSelectedMentions] = useState<
-    { postId: number; title: string }[]
-  >([]);
+  const [selectedMentions, setSelectedMentions] = useState<number[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -55,7 +52,7 @@ export function ChatBotFooterInput({
     const textBeforeCursor = value.slice(0, cursorPosition);
     const match = textBeforeCursor.match(MENTION_REGEX);
 
-    if (match) {
+    if (match && !disableMentions) {
       setShowMentions(true);
       setMentionFilter(match[1]);
       setSelectedIndex(0);
@@ -78,9 +75,8 @@ export function ChatBotFooterInput({
     setShowMentions(false);
     setSelectedMentions((prev) => {
       const docId = Number(doc.id);
-      const alreadySelected = prev.some((d) => d.postId === docId);
-      if (alreadySelected) return prev;
-      return [...prev, { postId: docId, title: doc.title }];
+      if (prev.includes(docId)) return prev;
+      return [...prev, docId];
     });
     textareaRef.current.focus();
   };
@@ -120,7 +116,7 @@ export function ChatBotFooterInput({
     if (!inputValue) {
       return (
         <span className="text-gray-400">
-          Escribe aquí (usa @ para mencionar un PDF)...
+          {disableMentions ? "Pregunta sobre este documento..." : "Escribe aquí (usa @ para mencionar un PDF)..."}
         </span>
       );
     }

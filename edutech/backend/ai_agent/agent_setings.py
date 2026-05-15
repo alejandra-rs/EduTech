@@ -84,8 +84,11 @@ def find_documents(vector_store, query, filtros, code_required):
     return vector_store.similarity_search(nomic_query, k=10, filter=filtros)
 
 
-def get_filters(user_query, course_id):
-    filtros = {"course_id": str(course_id)} if course_id else {}
+def get_filters(user_query, course_id, mentions=None):
+    if mentions:
+        filtros = {"doc_id": {"$in": mentions}}
+    else:
+        filtros = {"course_id": str(course_id)} if course_id else {}
     mencion = re.search(r'@"(.*?)"', user_query)
     if mencion:
         filtros["titulo"] = mencion.group(1).strip()

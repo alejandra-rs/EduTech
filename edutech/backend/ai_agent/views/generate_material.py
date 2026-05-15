@@ -55,8 +55,19 @@ class GenerateMaterial(APIView):
 
             if post_type == "QUI":
                 quiz = Quiz.objects.create(post=nuevo_draft)
-                for q_data in json_data.get("quiz", []):
-                    question = Question.objects.create(quiz=quiz, title=q_data.get("title", ""))
+                
+                lista_preguntas = []
+                if isinstance(json_data, list):
+                    lista_preguntas = json_data
+                elif isinstance(json_data, dict):
+                    if "title" in json_data and "answers" in json_data:
+                        lista_preguntas = [json_data]
+                    else:
+                        lista_preguntas = json_data.get("quiz", json_data.get("questions", []))
+                
+                for q_data in lista_preguntas:
+                    titulo_pregunta = q_data.get("title", "Pregunta sin título")
+                    question = Question.objects.create(quiz=quiz, title=titulo_pregunta)
                     for a_data in q_data.get("answers", []):
                         Answer.objects.create(
                             question=question,
@@ -66,11 +77,22 @@ class GenerateMaterial(APIView):
             
             elif post_type == "FLA":
                 deck = FlashCardDeck.objects.create(post=nuevo_draft)
-                for c_data in json_data.get("flashcards", []):
+                lista_flashcards = []
+                if isinstance(json_data, list):
+                    lista_flashcards = json_data
+                elif isinstance(json_data, dict):
+                    if ("question" in json_data and "answer" in json_data) or ("front" in json_data and "back" in json_data):
+                        lista_flashcards = [json_data]
+                    else:
+                        lista_flashcards = json_data.get("flashcards", json_data.get("cards", []))
+                
+                for c_data in lista_flashcards:
+                    texto_pregunta = c_data.get("question", c_data.get("front", "Tarjeta sin título"))
+                    texto_respuesta = c_data.get("answer", c_data.get("back", ""))
                     FlashCard.objects.create(
                         deck=deck,
-                        question=c_data.get("question", ""),
-                        answer=c_data.get("answer", "")
+                        question=texto_pregunta,
+                        answer=texto_respuesta
                     )
 
             return Response({

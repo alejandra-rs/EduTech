@@ -16,11 +16,12 @@ class ChatAcademicoView(APIView):
         course_id = request.data.get("course", "").strip()
         modo_chat = request.data.get("mode", "estricto")
         deep_thinking = request.data.get("deep_thinking", False)
+        mentions = request.data.get("mentions", [])
 
         if not user_query:
             return Response({"error": "La pregunta está vacía"}, status=400)
 
-        user_query, filtros = get_filters(user_query, course_id)
+        user_query, filtros = get_filters(user_query, course_id, mentions or None)
 
         docs = find_documents(
             get_vector_store(), user_query, filtros, response_needs_code(user_query)

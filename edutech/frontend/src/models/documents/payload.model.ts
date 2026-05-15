@@ -32,6 +32,7 @@ export interface QueryChatbotPayload{
   course_id: string,
   mode: ChatMode,
   deep_thinking: boolean,
+  mentions?: number[],
 }
 export interface GenerateMaterialPayload{
   question: string

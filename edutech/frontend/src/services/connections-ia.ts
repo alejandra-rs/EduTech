@@ -15,7 +15,8 @@ export async function askChatbot(query: QueryChatbotPayload): Promise<ChatbotRes
         student_question: query.question,
         course: query.course_id,
         mode: query.mode,
-        deep_thinking: query.deep_thinking
+        deep_thinking: query.deep_thinking,
+        mentions: query.mentions ?? [],
       }),
     });
     if (!response.ok) {

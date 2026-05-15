@@ -13,11 +13,13 @@ import { useCurrentUser } from "../../services/useCurrentUser";
 export interface ChatbotWidgetProps {
   courseId: number | string;
   documents?: DocumentsChat[];
+  disableMentions?: boolean;
 }
 
 export function ChatbotWidget({
   courseId,
   documents = [],
+  disableMentions = false,
 }: ChatbotWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [agenteActivo, setAgenteActivo] = useState<ChatModeOption<ChatMode>>(CHAT_MODES[0]);
@@ -43,17 +45,20 @@ export function ChatbotWidget({
 
   const handleSendMessage = async (
     userQuestion: string,
-    mentionedDocs: { postId: number; title: string }[],
+    mentionedDocs: number[],
   ) => {
     setMessages((prev) => [...prev, { role: "user", content: userQuestion }]);
-     if (isToolsMode) {
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        content: '⏳ *Esta operación puede tardar un tiempo en completarse.*' 
+    if (isToolsMode) {
+      setMessages(prev => [...prev, {
+        role: 'ai',
+        content: '⏳ *Esta operación puede tardar un tiempo en completarse.*'
       }]);
     }
     setIsLoading(true);
-    console.log(mentionedDocs);
+
+    const mentionIds = disableMentions
+      ? documents.map(d => Number(d.id))
+      : mentionedDocs;
 
     try {
       if (!isToolsMode){
@@ -61,7 +66,8 @@ export function ChatbotWidget({
           question: userQuestion,
           course_id: String(courseId),
           mode: agenteActivo.key,
-          deep_thinking: isDeepThinking
+          deep_thinking: isDeepThinking,
+          mentions: mentionIds,
         });
         setMessages((prev) => [
           ...prev,
@@ -133,6 +139,7 @@ export function ChatbotWidget({
             onSendMessage={handleSendMessage}
             isLoading={isLoading}
             documents={documents}
+            disableMentions={disableMentions}
           />
         </div>
       )}
