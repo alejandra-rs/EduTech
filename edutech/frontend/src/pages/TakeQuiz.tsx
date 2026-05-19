@@ -9,6 +9,7 @@ import CompletionBanner from '../components/study-material/CompletionBanner';
 import ReactionsContainer from '../components/interactions/ReactionsContainer';
 import { getDocument } from '../services/connections-documents';
 import { PostQuiz } from '../models/documents/post.model';
+import { SaveButton } from '../components/my-space/SaveButton';
 
 
 const TakeQuiz = () => {
@@ -118,7 +119,8 @@ const TakeQuiz = () => {
           {stats.answered === stats.total && stats.total > 0 && <CompletionBanner variant="quiz" stats={stats} onRestart={() => setConfirmReset(true)} />}
 
           <hr className="mt-10 mb-5 border-gray-200"></hr>
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <SaveButton postId={Number(postId)}/>
             <ReactionsContainer postId={Number(postId)} />
           </div>
         </div>

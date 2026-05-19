@@ -1,7 +1,7 @@
-import { FolderIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { FolderIcon, CheckIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Folder } from '../../models/student_space/student_space.model';
+import type { Folder } from '../../models/student_space/student_space.model';
 
 export interface FolderCardProps {
   folder: Folder;
@@ -9,9 +9,11 @@ export interface FolderCardProps {
   isSelecting?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
+  onRename?: () => void;
+  onDelete?: () => void;
 }
 
-export function FolderCard({ folder, onClick, isSelecting, isSelected, onSelect }: FolderCardProps) {
+export function FolderCard({ folder, onClick, isSelecting, isSelected, onSelect, onRename, onDelete }: FolderCardProps) {
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } =
     useDraggable({
       id: `folder-${folder.id}`,
@@ -31,6 +33,11 @@ export function FolderCard({ folder, onClick, isSelecting, isSelected, onSelect 
   };
 
   const handleClick = () => isSelecting ? onSelect?.() : onClick(folder);
+
+  const stopAndCall = (e: React.MouseEvent, cb?: () => void) => {
+    e.stopPropagation();
+    cb?.();
+  };
 
   return (
     <div
@@ -53,6 +60,32 @@ export function FolderCard({ folder, onClick, isSelecting, isSelected, onSelect 
           {isSelected && <CheckIcon className="w-3 h-3 text-white" />}
         </div>
       )}
+
+      {!isSelecting && (onRename || onDelete) && (
+        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onRename && (
+            <button
+              onPointerDown={e => e.stopPropagation()}
+              onClick={e => stopAndCall(e, onRename)}
+              className="p-1 rounded-md bg-white/80 hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors shadow-sm"
+              title="Renombrar"
+            >
+              <PencilIcon className="w-3.5 h-3.5" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onPointerDown={e => e.stopPropagation()}
+              onClick={e => stopAndCall(e, onDelete)}
+              className="p-1 rounded-md bg-white/80 hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors shadow-sm"
+              title="Eliminar"
+            >
+              <TrashIcon className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
       <FolderIcon className={`w-10 h-10 transition-colors ${isSelected ? 'text-blue-500' : isOver ? 'text-blue-500' : 'text-blue-400 group-hover:text-blue-500'}`} />
       <div className="flex flex-col overflow-hidden">
         <span className="font-semibold text-gray-800 truncate">{folder.name}</span>
