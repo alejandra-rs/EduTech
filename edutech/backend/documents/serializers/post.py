@@ -38,6 +38,7 @@ class PostPreviewSerializer(serializers.ModelSerializer):
             "likes",
             "dislikes",
             "ai_gen",
+            "is_draft",
         ]
 
 
@@ -71,4 +72,5 @@ class PostSerializer(serializers.ModelSerializer):
             "fla",
             "questions",
             "views",
+            "is_draft",
         ]

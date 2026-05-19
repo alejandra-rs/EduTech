@@ -121,7 +121,16 @@ export function ChatBotFooterInput({
       );
     }
 
-    return inputValue.split(/(@\S+)/g).map((part, index) => {
+    if (documents.length === 0) {
+      return <span className="text-gray-900">{inputValue}</span>;
+    }
+
+    const escapedTitles = documents
+      .map(d => d.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .sort((a, b) => b.length - a.length);
+    const mentionRegex = new RegExp(`(@(?:${escapedTitles.join('|')}))`, 'g');
+
+    return inputValue.split(mentionRegex).map((part, index) => {
       if (!part.startsWith("@")) {
         return (
           <span key={index} className="text-gray-900">
@@ -130,7 +139,7 @@ export function ChatBotFooterInput({
         );
       }
 
-      const isDocumentValid = documents.some((d) => d.title === part);
+      const isDocumentValid = documents.some((d) => `@${d.title}` === part);
 
       return (
         <span

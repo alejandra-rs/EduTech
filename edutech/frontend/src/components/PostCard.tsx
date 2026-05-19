@@ -60,7 +60,7 @@ export function PostCard({ post, onClick, onDelete }: PostCardProps) {
         <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2 mb-1">
           {post.title}
         </h5>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-4 justify-between">
           <span className="text-xs text-gray-400">
             {formatDate(post.created_at)}
           </span>

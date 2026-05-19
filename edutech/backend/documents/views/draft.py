@@ -100,7 +100,8 @@ class DraftDetailView(views.APIView):
         post.title = data["title"]
         post.description = data["description"]
 
-        publishing = request.data.get("publish") is True
+        is_draft_payload = request.data.get("is_draft")
+        publishing = is_draft_payload is False or is_draft_payload == "false"
         if publishing:
             post.is_draft = False
 

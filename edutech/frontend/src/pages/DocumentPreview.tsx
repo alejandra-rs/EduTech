@@ -9,10 +9,12 @@ import { CommentsSection } from '../components/interactions/CommentsSection';
 import type { PostPreview } from '../models/documents/post.model';
 import { SaveButton } from '../components/my-space/SaveButton';
 import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
+import { useCurrentUser } from '../services/useCurrentUser';
 
 export default function DocumentPreview() {
   const navigate = useNavigate();
   const { id, subjectId, postId } = useParams<{ id: string; subjectId: string; postId: string }>();
+  const { userData } = useCurrentUser();
   const [document, setDocument] = useState<PostPreview | null>(null);
   const [courseName, setCourseName] = useState("Asignatura");
 
@@ -29,6 +31,15 @@ export default function DocumentPreview() {
     };
     if (postId) cargarDocumento();
   }, [postId]);
+
+  useEffect(() => {
+    if (document && userData !== null) {
+      console.log(document, userData)
+      if (document.is_draft && !userData.is_admin) {
+        navigate(`/${id}/${subjectId}/post`);
+      }
+    }
+  }, [document, userData]);
 
   return (
     <div className="flex h-screen w-full bg-white font-sans">

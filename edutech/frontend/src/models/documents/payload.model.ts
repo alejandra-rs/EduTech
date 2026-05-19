@@ -8,22 +8,22 @@ export interface CreatePayloadBase<T extends PostType> {
   description: string;
   courseId: number;
   studentId: number;
-  isDraft?: boolean;
-  publish?: boolean;
 }
 
 export interface CreateDocumentPayload extends CreatePayloadBase<'PDF'> {
   file: File;
+  isDraft?: boolean;
 }
 export interface CreateVideoPayload extends CreatePayloadBase<'VID'> {
-  url: string; 
+  url: string;
+  isDraft?: boolean;
 }
 
-export interface CreateQuizPayload extends CreatePayloadBase<'QUI'> {  
+export interface CreateQuizPayload extends CreatePayloadBase<'QUI'> {
   questions: QuizQuestion[];
 }
 
-export interface CreateFlashcardPayload extends CreatePayloadBase<'FLA'> {  
+export interface CreateFlashcardPayload extends CreatePayloadBase<'FLA'> {
   flashcards: FlashCard[];
 }
 
@@ -45,4 +45,4 @@ export type extended_item =  QuizQuestion[] | FlashCard[] |string | File;
 export type PostType = 'QUI' | 'FLA' | 'VID' | 'PDF';
 
 export type CreateMediaPayload = CreateDocumentPayload | CreateVideoPayload | CreateQuizPayload | CreateFlashcardPayload;
-export type UploadDraft = CreateMediaPayload & { draftId: number };
+export type UploadDraft = CreateMediaPayload & { draftId: number; isDraft?: boolean };

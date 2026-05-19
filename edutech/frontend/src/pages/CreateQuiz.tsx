@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import QuizQuestion from '../components/study-material/quiz/QuizQuestion';
 import { DocumentCheckIcon } from "@heroicons/react/24/solid";
 import { EditorLayout } from '../components/study-material/EditorLayout';
-import { postQuiz, saveDraft, updateDraft, deleteDraft, getDraft } from '../services/connections-documents';
+import { postQuiz, saveDraft, updateDraft, getDraft } from '../services/connections-documents';
 import { useCurrentUser } from '../services/useCurrentUser';
 import { QuizEditorQuestion } from '../models/documents/postsTypesModels/quiz.models';
 import { EditorHeaderData } from '../models/documents/post.model';
@@ -52,8 +52,11 @@ const CreateQuiz = () => {
   ];
 
   const handlePublish = async (header: EditorHeaderData) => {
-    await postQuiz({post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, questions: castQuestions()});
-    if (draftPostId) await deleteDraft(draftPostId);
+    if (draftPostId) {
+      await updateDraft({ draftId: draftPostId, post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, questions: castQuestions(), isDraft: false });
+    } else {
+      await postQuiz({ post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, questions: castQuestions() });
+    }
   };
 
 

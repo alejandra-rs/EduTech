@@ -245,6 +245,7 @@ export async function updateDraft(draft: UploadDraft): Promise<Draft> {
       description: draft.description,
       course: draft.courseId,
       student: draft.studentId,
+      ...(draft.isDraft !== undefined && { is_draft: draft.isDraft }),
       ...specificData
     };
 
@@ -316,7 +317,7 @@ export async function publishPDFDraft(draftId: number, title: string, descriptio
       body: JSON.stringify({
         title: title,
         description: description,
-        publish: true
+        is_draft: false,
       }),
     });
 

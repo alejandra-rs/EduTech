@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import FlashCardItem from '../components/study-material/flashcards/FlashCardItem';
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import { EditorLayout } from '../components/study-material/EditorLayout';
-import { postFlashCardDeck, saveDraft, updateDraft, deleteDraft, getDraft } from '../services/connections-documents';
+import { postFlashCardDeck, saveDraft, updateDraft, getDraft } from '../services/connections-documents';
 import { useCurrentUser } from '../services/useCurrentUser';
 import { Deck, FlashCardEditorItem } from '../models/documents/postsTypesModels/flashcard.model';
 import { EditorHeaderData } from '../models/documents/post.model';
-import { CreateFlashcardPayload } from '../models/documents/payload.model';
 
 const CreateFlashCard = () => {
   const { subjectId, draftId } = useParams<{ subjectId: string; draftId: string }>();
@@ -47,8 +46,11 @@ const CreateFlashCard = () => {
   };
 
   const handlePublish = async (header: EditorHeaderData) => {
-    await postFlashCardDeck({post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend(), isDraft:false, publish: true} as CreateFlashcardPayload);
-    if (draftPostId) await deleteDraft(draftPostId);
+    if (draftPostId) {
+      await updateDraft({ draftId: draftPostId, post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend(), isDraft: false });
+    } else {
+      await postFlashCardDeck({ post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend() });
+    }
   };
 
   const handleSaveDraft = async (header: EditorHeaderData) => {

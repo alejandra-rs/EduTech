@@ -7,7 +7,7 @@ import ProgressBar from "../components/forms-components/ProgressBar";
 import Input from "../components/Input";
 import SuccessToast from "../components/SuccessToast";
 import { TitlePage } from "../components/TitlePage";
-import { uploadPDFDraft, updateDraft, publishPDFDraft } from "../services/connections-documents";
+import { uploadPDFDraft, publishPDFDraft } from "../services/connections-documents";
 import { connectToDocumentStatus, generateDocumentDescription, validatePDF } from "../services/connections-ia"
 import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/documents/states.model";
 
