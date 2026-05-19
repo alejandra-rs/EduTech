@@ -1,13 +1,19 @@
-import type { IPublicClientApplication, AccountInfo } from '@azure/msal-browser';
-import { Student } from '../models/student/student.model';
-import { apiFetch } from './api';
+import type {
+  IPublicClientApplication,
+  AccountInfo,
+} from "@azure/msal-browser";
+import { Student } from "../models/student/student.model";
+import { apiFetch } from "./api";
 
-export const getUserByEmail = async (email: string): Promise<Student | null> => {
+export const getUserByEmail = async (
+  email: string,
+): Promise<Student | null> => {
   try {
     const response = await apiFetch(`/api/students/?email=${email}`);
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
     const data = await response.json();
-    if (data.length > 1) console.error(`Se encontraron múltiples usuarios con el email ${email}`);
+    if (data.length > 1)
+      console.error(`Se encontraron múltiples usuarios con el email ${email}`);
     return data[0] || null;
   } catch (error) {
     console.error("Error al obtener el usuario por email:", error);
@@ -15,17 +21,23 @@ export const getUserByEmail = async (email: string): Promise<Student | null> => 
   }
 };
 
-export const getUserPhoto = async (instance: IPublicClientApplication, account: AccountInfo): Promise<string | null> => {
+export const getUserPhoto = async (
+  instance: IPublicClientApplication,
+  account: AccountInfo,
+): Promise<string | null> => {
   try {
     const tokenResponse = await instance.acquireTokenSilent({
       scopes: ["User.Read"],
       account,
-      authority: `https://login.microsoftonline.com/${account.tenantId ?? 'common'}`,
+      authority: `https://login.microsoftonline.com/${account.tenantId ?? "common"}`,
     });
 
-    const photoResponse = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", {
-      headers: { Authorization: `Bearer ${tokenResponse.accessToken}` },
-    });
+    const photoResponse = await fetch(
+      "https://graph.microsoft.com/v1.0/me/photo/$value",
+      {
+        headers: { Authorization: `Bearer ${tokenResponse.accessToken}` },
+      },
+    );
 
     if (!photoResponse.ok) return null;
 
@@ -41,9 +53,14 @@ export const getUserPhoto = async (instance: IPublicClientApplication, account: 
   }
 };
 
-export const postUser = async (instance: IPublicClientApplication, account: AccountInfo): Promise<Student> => {
+export const postUser = async (
+  instance: IPublicClientApplication,
+  account: AccountInfo,
+): Promise<Student> => {
   try {
-    const nameParts = account.name ? account.name.split(" ") : ["Sin", "Nombre"];
+    const nameParts = account.name
+      ? account.name.split(" ")
+      : ["Sin", "Nombre"];
     const profilePic = await getUserPhoto(instance, account);
 
     const formData = new FormData();
@@ -54,20 +71,26 @@ export const postUser = async (instance: IPublicClientApplication, account: Acco
     if (profilePic) {
       const res = await fetch(profilePic);
       const blob = await res.blob();
-      const safeEmail = account.username.replace(/[^a-zA-Z0-9]/g, '_');
+      const safeEmail = account.username.replace(/[^a-zA-Z0-9]/g, "_");
       formData.append("picture", blob, `profile_${safeEmail}.jpg`);
     }
 
-    const response = await apiFetch(`/api/students/post/`, { method: "POST", body: formData });
+    const response = await apiFetch(`/api/students/post/`, {
+      method: "POST",
+      body: formData,
+    });
     if (!response.ok) throw new Error("Error al crear el usuario");
-    return await response.json() as Student;
+    return (await response.json()) as Student;
   } catch (error) {
     console.error("Error en postUser:", error);
     throw error;
   }
 };
 
-export const syncUser = async (instance: IPublicClientApplication, account: AccountInfo): Promise<void> => {
+export const syncUser = async (
+  instance: IPublicClientApplication,
+  account: AccountInfo,
+): Promise<void> => {
   try {
     const existing = await getUserByEmail(account.username);
     if (!existing) await postUser(instance, account);
@@ -85,6 +108,19 @@ export const checkIsAdmin = async (userId: string) => {
     return data.is_admin === true;
   } catch (error) {
     console.error("Error en checkIsAdmin:", error);
+    return false;
+  }
+};
+
+export const deleteUserAccount = async (userId: number) => {
+  try {
+    const response = await apiFetch(`/api/students/${userId}/`, {
+      method: "DELETE",
+    });
+    if (!response.ok) throw new Error("Error al eliminar la cuenta");
+    return true;
+  } catch (error) {
+    console.error("Error en deleteUserAccount:", error);
     return false;
   }
 };

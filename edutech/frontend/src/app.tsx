@@ -16,7 +16,6 @@ import TakeFlashCard from "./pages/TakeFlashCard";
 import ReportsPage from "./pages/ReportsPage";
 import ReportFormPage from "./pages/ReportFormPage";
 import SelectDegree from "./pages/SelectDegree";
-import ChangeDegree from "./pages/ChangeDegree";
 import Drafts from "./pages/Drafts";
 import { syncUser } from "./services/connections-students";
 import { useCurrentUser } from "./services/useCurrentUser";
@@ -30,6 +29,8 @@ import UploadWizard from "./pages/UploadDocument";
 import MyDocuments from "./pages/MyDocuments";
 import MySpace from "./pages/MySpace";
 import RevisionPage from "./pages/RevisionPage";
+import SessionLive from "./pages/SessionLive";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   const { accounts, instance } = useMsal();
@@ -78,8 +79,8 @@ export default function App() {
             <Layout accounts={accounts} instance={instance}>
               <Routes>
                 <Route path="/" element={<YearsPage />} />
+                <Route path="Profile" element={<ProfilePage  />} />
                 <Route path="/:id/asignaturas" element={<CoursesPage />} />
-                <Route path="/degrees/" element={<ChangeDegree userData={userData} />} />
                 <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
                 <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />
                 <Route path="/:id/:subjectId/upload/PDF" element={<UploadWizard />} />
@@ -99,6 +100,7 @@ export default function App() {
                 <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
                 <Route path="/mis-publicaciones/" element={<MyDocuments/>} />
                 <Route path="/suscripciones" element={<MyCourses/>} />
+                <Route path="/stream/live/:sessionId" element={<SessionLive />} />
                 <Route path="/revisiones" element={<RevisionPage />} />
                 <Route path="/mi-espacio" element={<MySpace />} />
                 <Route path="/mi-espacio/directorio/:folderId" element={<MySpace />} />

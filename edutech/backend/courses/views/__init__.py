@@ -12,7 +12,3 @@ from .subscription import (
     SubscriptionView as SubscriptionView,
     SubscriptionByStudentView as SubscriptionByStudentView,
 )
-from .study_session import StudySessionListCreateView as StudySessionListCreateView
-from .study_session import StudySessionDetailView as StudySessionDetailView
-from .study_session import StudySessionStarView as StudySessionStarView
-from .study_session import StudySessionCommentView as StudySessionCommentView

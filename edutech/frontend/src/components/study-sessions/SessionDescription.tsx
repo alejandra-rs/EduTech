@@ -1,4 +1,4 @@
-import type { StudySession } from '../../models/courses/course.model';
+import type { StudySession } from '../../models/studysessions/studysession.model';
 
 export interface SessionDescriptionProps {
   session: StudySession;

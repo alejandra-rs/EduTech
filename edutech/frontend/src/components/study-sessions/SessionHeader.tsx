@@ -1,5 +1,5 @@
 import ParticipateButton from "./ParticipateButton";
-import type { StudySession } from '../../models/courses/course.model';
+import type { StudySession } from '../../models/studysessions/studysession.model';
 
 export interface SessionHeaderProps {
   session: StudySession;

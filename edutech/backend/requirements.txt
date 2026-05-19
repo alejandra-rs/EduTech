@@ -13,6 +13,8 @@ redis
 channels
 channels-redis
 daphne
+websockets
+cryptography
 charset-normalizer==3.4.7
 colorama==0.4.6
 cucumber-expressions==19.0.0

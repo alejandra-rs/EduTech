@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
-import environ
 from pathlib import Path
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     "treebeard",
     "users",
     "courses",
+    "study_sessions",
     "ai_agent",
     "documents.apps.DocumentsConfig",
     "student_space",
@@ -246,3 +248,16 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# ==========================================
+# TWITCH EVENTSUB + OAUTH
+# ==========================================
+# Register your app at https://dev.twitch.tv/console to get these values.
+# TWITCH_CLIENT_SECRET must NEVER be sent to the frontend or committed to git.
+# Per-user access tokens are stored encrypted in the TwitchCredential model.
+TWITCH_CLIENT_ID = env("TWITCH_CLIENT_ID", default="")
+TWITCH_CLIENT_SECRET = env("TWITCH_CLIENT_SECRET", default="")
+TWITCH_REDIRECT_URI = env(
+    "TWITCH_REDIRECT_URI",
+    default="http://localhost:8000/study-sessions/twitch/callback/",
+)

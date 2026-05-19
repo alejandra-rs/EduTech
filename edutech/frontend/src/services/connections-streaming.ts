@@ -1,0 +1,138 @@
+import {
+  TwitchChatMessage,
+  TwitchLinkStatus,
+} from "../models/studysessions/twitch.model";
+import { apiFetch } from "./api";
+
+const BASE = "/api/study-sessions";
+
+export const getTwitchStatus = async (
+  studentId: number,
+): Promise<TwitchLinkStatus> => {
+  const response = await apiFetch(
+    `${BASE}/twitch/status/?student_id=${studentId}`,
+  );
+  if (!response.ok) throw new Error("Error al verificar el estado de Twitch");
+  return response.json();
+};
+
+export const disconnectTwitch = async (studentId: number): Promise<void> => {
+  const response = await apiFetch(
+    `${BASE}/twitch/status/?student_id=${studentId}`,
+    { method: "DELETE" },
+  );
+  if (!response.ok) throw new Error("Error al desconectar Twitch");
+};
+
+export const connectTwitch = (studentId: number): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const popup = window.open(
+      `${BASE}/twitch/auth/?student_id=${studentId}`,
+      "TwitchOAuth",
+      "width=520,height=700,scrollbars=yes,resizable=yes",
+    );
+
+    let attempted = 0;
+    const maxAttempts = 10;
+
+    const pollBackend = setInterval(async () => {
+      attempted++;
+      try {
+        const status = await getTwitchStatus(studentId);
+        if (status.connected) {
+          clearInterval(pollBackend);
+          if (popup && !popup.closed) {
+            popup.close();
+          }
+          resolve(status.login ?? "Desconocido");
+        }
+      } catch (err) {
+        console.error("Error verificando estado de Twitch:", err);
+      }
+      if (attempted >= maxAttempts) {
+        clearInterval(pollBackend);
+        reject(new Error("timeout"));
+      }
+    }, 3000);
+  });
+};
+
+export const startStream = async (
+  sessionId: number,
+  studentId: number,
+): Promise<{ task_id: string }> => {
+  const response = await apiFetch(`${BASE}/${sessionId}/stream/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ student_id: studentId }),
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw Object.assign(
+      new Error(data.detail ?? "Error al iniciar el stream"),
+      {
+        status: response.status,
+        code: data.code,
+      },
+    );
+  }
+  return response.json();
+};
+
+export const stopStream = async (sessionId: number): Promise<void> => {
+  const response = await apiFetch(`${BASE}/${sessionId}/stream/`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Error al detener el stream");
+};
+
+export const sendTwitchMessage = async (
+  sessionId: number,
+  studentId: number,
+  message: string,
+): Promise<void> => {
+  const response = await apiFetch(`${BASE}/${sessionId}/chat/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ student_id: studentId, message }),
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw Object.assign(
+      new Error(data.detail ?? "Error al enviar el mensaje"),
+      {
+        status: response.status,
+        code: data.code,
+      },
+    );
+  }
+};
+
+interface SessionSocketCallbacks {
+  onMessage?: (msg: TwitchChatMessage) => void;
+  onStreamStarted?: () => void;
+  onStreamEnded?: () => void;
+}
+
+export const connectToSessionChat = (
+  sessionId: number,
+  onMessage: (msg: TwitchChatMessage) => void,
+  onStreamEnded?: () => void,
+): WebSocket => connectToSession(sessionId, { onMessage, onStreamEnded });
+
+export const connectToSession = (
+  sessionId: number,
+  { onMessage, onStreamStarted, onStreamEnded }: SessionSocketCallbacks,
+): WebSocket => {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const socket = new WebSocket(
+    `${protocol}//${window.location.host}/ws/study-sessions/${sessionId}/`,
+  );
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "stream_started") onStreamStarted?.();
+    else if (data.type === "stream_ended") onStreamEnded?.();
+    else onMessage?.(data as TwitchChatMessage);
+  };
+  return socket;
+};
