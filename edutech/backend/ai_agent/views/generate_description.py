@@ -113,5 +113,5 @@ class ValidateDocument(APIView):
         )
         return Response({
             "status": False,
-            "reason": f"El documento ha sido enviado a revisión manual por un administrador. por el siguiente motivo: {reason}"
+            "reason": f"El documento ha sido enviado a revisión manual por un administrador. Motivo: {reason}"
         }, status=200)

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PostPreview } from "../models/documents/post.model";
 import { PostPreviewVisual } from "./post-preview/preview";
 import { PostLabel } from "./post-preview/labels";
-import { IALabel } from "./IALabel";
+import { IAtag } from "./IAtag";
 
 const formatDate = (date: string | Date) => {
   return new Date(date).toLocaleDateString("es-ES", {
@@ -18,10 +18,9 @@ export interface PostCardProps {
   post: PostPreview;
   onClick: () => void;
   onDelete?: () => void;
-  IA:boolean;
 }
 
-export function PostCard({ post, onClick, onDelete, IA }: PostCardProps) {
+export function PostCard({ post, onClick, onDelete }: PostCardProps) {
   const [isConfirming, setIsConfirming] = useState(false);
 
   const onClickDelete = (e: React.MouseEvent) => {
@@ -65,7 +64,7 @@ export function PostCard({ post, onClick, onDelete, IA }: PostCardProps) {
           <span className="text-xs text-gray-400">
             {formatDate(post.created_at)}
           </span>
-          {IA && <IALabel />}
+          {post.ai_gen && <IAtag />}
         </div>
         
         <div className="flex items-center justify-between mt-auto">

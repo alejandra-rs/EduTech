@@ -39,6 +39,12 @@ export const AdminWidget = ({
 
   const SelectedLabel = LABELS[type] || LABELS.PDF;
 
+  const variantClasses = {
+    danger: "bg-red-50 text-red-600 hover:bg-red-100",
+    success: "bg-green-50 text-green-700 hover:bg-green-100",
+    secondary: "text-gray-500 hover:bg-gray-100"
+  };
+  
   return (
     <div className="mb-4 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden w-full transition-all hover:border-blue-100">
       <div 
@@ -60,7 +66,7 @@ export const AdminWidget = ({
             <h3 className="font-bold text-gray-900 text-base md:text-lg leading-tight truncate">
               {title}
             </h3>
-            <p className="text-[10px] md:text-xs text-blue-600 font-semibold uppercase tracking-wider">
+            <p className="text-[10px] md:text-xs text-blue-600 font-semibold tracking-wider">
               {subtitle}
             </p>
           </div>
@@ -99,12 +105,6 @@ export const AdminWidget = ({
                 </div>
               );
             }
-
-            const variantClasses = {
-              danger: "bg-red-50 text-red-600 hover:bg-red-100",
-              success: "bg-green-50 text-green-700 hover:bg-green-100",
-              secondary: "text-gray-500 hover:bg-gray-100"
-            };
 
             return (
               <button

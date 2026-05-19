@@ -30,7 +30,7 @@ class GenerateMaterial(APIView):
         
         contexto_text = "\n\n".join([f"Fragmento {i+1}:\n{d.page_content}" for i, d in enumerate(docs)])
         prompt_sistema_final = f"{GENERATE_MATERIAL.get(material)}\n\nDOCUMENTACIÓN (CONTEXTO):\n{contexto_text}\n"
-
+        print("Prompt final para generación de material:\n", prompt_sistema_final)
         json_data = json.loads(send_prompt(
             system_content= prompt_sistema_final,
             user_content=user_query,
@@ -46,11 +46,12 @@ class GenerateMaterial(APIView):
 
             nuevo_draft = Post.objects.create(
                 title=user_query[:200],
-                description="",
+                description=user_query,
                 post_type=post_type,
                 course=course,
                 student=student,
-                is_draft=True
+                is_draft=True,
+                ai_gen=True
             )
 
             if post_type == "QUI":

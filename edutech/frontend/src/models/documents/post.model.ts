@@ -34,6 +34,7 @@ export interface PostBase <T extends PostType> {
   likes: number;
   dislikes: number;
   post_type: T;
+  ai_gen: boolean;
   extendedType?: ExtendedTypeMap[T];
 };
 

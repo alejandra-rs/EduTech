@@ -126,7 +126,7 @@ GENERATE_MATERIAL = {
     la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
     EJEMPLO DE SALIDA:
     [
-        {"pregunta": "¿Cuál es la capital de Francia?", "respuesta": "París"}
+        {"pregunta": "¿Cuál es la capital de Francia?", "respuesta": "París"},
         {"pregunta": "¿Cuál es la capital de Italia?", "respuesta": "Roma"}
     ]
     """,
