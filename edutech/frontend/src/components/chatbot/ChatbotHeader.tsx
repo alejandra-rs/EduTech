@@ -24,7 +24,7 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
       <div className="flex items-center space-x-3">
         
         {!isToolsMode ? (
-          <div className="relative">
+          <div className="relative flex flex-row gap-4">
             <button
               onClick={() => setMenuAbierto(!menuAbierto)}
               className="font-semibold flex items-center hover:text-blue-300 transition-colors focus:outline-none"

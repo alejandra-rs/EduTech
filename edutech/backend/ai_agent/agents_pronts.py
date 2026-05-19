@@ -123,7 +123,7 @@ GENERATE_MATERIAL = {
     1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACION
     2. Estas respuestas tienen que ser útiles para aprender un concepto o definiciones del material
     FORMATO DE SALIDA:
-    la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
+    la salida debe ser un JsonObject conformado por JsonArray que tengan un campo pregunta y un campo respuesta:
     EJEMPLO DE SALIDA:
     {"flashcards":[
         {"pregunta": "¿Cuál es la capital de Francia?", "respuesta": "París"},
@@ -136,11 +136,12 @@ GENERATE_MATERIAL = {
     1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACIÓN
     2. Estas respuestas tienen que ser útiles para aprender un concepto o definiciones del material
     FORMATO DE SALIDA:
-    la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
+    la salida debe ser un JsonObject conformado por JsonArray donde cada elemento del array sea un objeto que tengan un campo "question" y un campo "answers":
+    LA RESPUESTA, SIEMPRE TIENE QUE SEGUIR EL FORMATO DE SALIDA Y SOLO EL FORMATO DE SALIDA.
     EJEMPLO DE SALIDA:
     {"quiz": [
         {
-            "title": "¿Cuál es la capital de Francia?",
+            "question": "¿Cuál es la capital de Francia?",
             "answers": [
                 {"text": "Madrid", "is_correct": false},
                 {"text": "París", "is_correct": true},

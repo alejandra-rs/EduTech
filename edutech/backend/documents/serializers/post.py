@@ -37,6 +37,7 @@ class PostPreviewSerializer(serializers.ModelSerializer):
             "views",
             "likes",
             "dislikes",
+            "ai_gen",
         ]
 
 

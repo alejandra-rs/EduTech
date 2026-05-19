@@ -8,7 +8,6 @@ import type { ChatMessage } from "../../models/ia/chat.models";
 import { CHAT_MODES, MATERIAL_MODES } from "../../models/ia/agent.models";
 import type { ChatModeOption, ChatMode, Material } from "../../models/ia/agent.models";
 import type { DocumentsChat } from "./DocumentMentionList";
-import { useCurrentUser } from "../../services/useCurrentUser";
 
 export interface ChatbotWidgetProps {
   courseId: number | string;
@@ -85,7 +84,7 @@ export function ChatbotWidget({
         });
 
         if (data.draft_id) {
-          const draftLink = `/${courseId}/upload`;
+          const draftLink = `/borradores/quiz/${data.draft_id}`;
           
           setMessages((prev) => [
             ...prev,

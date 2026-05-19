@@ -22,7 +22,7 @@ export interface PostCardProps {
 
 export function PostCard({ post, onClick, onDelete }: PostCardProps) {
   const [isConfirming, setIsConfirming] = useState(false);
-
+  console.log("Renderizando PostCard con post:", post);
   const onClickDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isConfirming && onDelete) {

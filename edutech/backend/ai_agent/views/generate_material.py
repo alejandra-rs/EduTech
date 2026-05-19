@@ -59,11 +59,11 @@ class GenerateMaterial(APIView):
                 
                 lista_preguntas = json_data.get("quiz", json_data.get("questions", []))
                 
-                if not lista_preguntas and ("title" in json_data or "titulo" in json_data):
+                if not lista_preguntas and ("question" in json_data or "titulo" in json_data):
                     lista_preguntas = [json_data]
                 
                 for q_data in lista_preguntas:
-                    titulo_pregunta = q_data.get("title", q_data.get("titulo", "Pregunta sin título"))
+                    titulo_pregunta = q_data.get("question", q_data.get("titulo", "Pregunta sin título"))
                     question = Question.objects.create(quiz=quiz, title=titulo_pregunta)
                     
                     respuestas = q_data.get("answers", q_data.get("respuestas", q_data.get("opciones", [])))

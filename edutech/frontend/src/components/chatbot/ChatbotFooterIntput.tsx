@@ -130,17 +130,12 @@ export function ChatBotFooterInput({
         );
       }
 
-      const docName = part.slice(1);
-      const isDocumentValid = documents.some((d) => d.title === docName);
+      const isDocumentValid = documents.some((d) => d.title === part);
 
       return (
         <span
           key={index}
-          className={
-            isDocumentValid
-              ? "bg-blue-100 text-blue-700 rounded-sm"
-              : "text-red-400"
-          }
+          className={isDocumentValid ? "bg-blue-100 text-blue-700 rounded-sm" : ""}
         >
           {part}
         </span>
