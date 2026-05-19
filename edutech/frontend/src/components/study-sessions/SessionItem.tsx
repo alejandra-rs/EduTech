@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ParticipateButton from "./ParticipateButton";
+import SessionStatusBadge from "./SessionStatusBadge";
 import type { StudySession } from '../../models/studysessions/studysession.model';
 
 export interface SessionItemProps {
@@ -43,6 +44,7 @@ const SessionItem = ({ session, currentUserId }: SessionItemProps) => {
         <div className="flex items-center gap-3 text-xs text-gray-500 font-medium justify-between">
           <span>{sessionDate}</span>
           <div className="flex items-center gap-2">
+            {session.status && <SessionStatusBadge status={session.status} />}
             <div className={isCreator ? "font-semibold text-gray-700" : ""}>
               {creatorName} {isCreator ? "(tú)" : ""}
             </div>

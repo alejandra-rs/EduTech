@@ -20,13 +20,43 @@ function extractLogin(twitchLink: string): string | null {
 export function StreamButton({ session, isCreator, currentUserId, twitchData, setTwitchData }: StreamButtonProps) {
   const navigate = useNavigate();
 
+  if (session.status === 'finalizada') {
+    return (
+      <button
+        disabled
+        className="py-3 px-10 bg-gray-200 text-gray-400 font-bold rounded-lg shadow cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        Sesión finalizada
+      </button>
+    );
+  }
+
   const channelLogin = extractLogin(session.twitch_link);
-  const isStreamRunning = Boolean(session.stream_task_id);
+  const isStreamRunning = session.status === 'en_directo';
   const isCorrectUser = twitchData.connected && twitchData.login?.toLowerCase() === channelLogin;
 
   const goToStream = () => navigate(`/stream/live/${session.id}`);
 
-  if (!isCreator || isStreamRunning) {
+  if (!isCreator) {
+    return isStreamRunning ? (
+      <button
+        onClick={goToStream}
+        className="py-3 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow transition-all active:scale-95 flex items-center justify-center gap-2"
+      >
+        <PlayCircleIcon className="w-5 h-5" />
+        Ir al directo
+      </button>
+    ) : (
+      <button
+        disabled
+        className="py-3 px-10 bg-gray-200 text-gray-400 font-bold rounded-lg shadow cursor-not-allowed flex items-center justify-center gap-2"
+      >
+        El directo no ha comenzado
+      </button>
+    );
+  }
+
+  if (isStreamRunning) {
     return (
       <button
         onClick={goToStream}

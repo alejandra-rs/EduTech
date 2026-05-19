@@ -26,8 +26,19 @@ class StudySession(models.Model):
         blank=True,
     )
 
+    STATUS_UPCOMING = 'proxima'
+    STATUS_LIVE     = 'en_directo'
+    STATUS_ENDED    = 'finalizada'
+    STATUS_CHOICES  = [
+        (STATUS_UPCOMING, 'Próxima'),
+        (STATUS_LIVE,     'En directo'),
+        (STATUS_ENDED,    'Finalizada'),
+    ]
+
     twitch_link = models.URLField(blank=True, validators=[validate_twitch_url])
-    
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_UPCOMING)
+
     stream_task_id = models.CharField(max_length=255, blank=True)
     
     broadcaster_twitch_id = models.CharField(max_length=50, blank=True)

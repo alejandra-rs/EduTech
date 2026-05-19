@@ -23,6 +23,8 @@ export interface StudySessionComment {
   created_at: Date;
 }
 
+export type SessionStatus = 'proxima' | 'en_directo' | 'finalizada';
+
 export interface StudySession {
   id: number;
   title: string;
@@ -34,5 +36,6 @@ export interface StudySession {
   participants: number[];
   is_starred: boolean;
   twitch_link: string;
+  status: SessionStatus;
   stream_task_id: string;
 }

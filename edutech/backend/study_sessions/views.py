@@ -10,6 +10,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from rest_framework import views, status
 from rest_framework.response import Response
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 from courses.models import Course
 from users.models import Student
@@ -231,7 +233,14 @@ class StreamView(views.APIView):
             credential.twitch_user_id,
         )
         session.stream_task_id = task.id
-        session.save(update_fields=["stream_task_id"])
+        session.status = StudySession.STATUS_LIVE
+        session.save(update_fields=["stream_task_id", "status"])
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"study_session_{pk}",
+            {"type": "stream_started"},
+        )
         return Response({"task_id": task.id}, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
@@ -239,7 +248,14 @@ class StreamView(views.APIView):
         if session.stream_task_id:
             AsyncResult(session.stream_task_id).revoke(terminate=True)
             session.stream_task_id = ""
-            session.save(update_fields=["stream_task_id"])
+        session.status = StudySession.STATUS_ENDED
+        session.save(update_fields=["stream_task_id", "status"])
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"study_session_{pk}",
+            {"type": "stream_ended"},
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

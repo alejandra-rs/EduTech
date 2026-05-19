@@ -108,15 +108,31 @@ export const sendTwitchMessage = async (
   }
 };
 
+interface SessionSocketCallbacks {
+  onMessage?: (msg: TwitchChatMessage) => void;
+  onStreamStarted?: () => void;
+  onStreamEnded?: () => void;
+}
+
 export const connectToSessionChat = (
   sessionId: number,
   onMessage: (msg: TwitchChatMessage) => void,
+  onStreamEnded?: () => void,
+): WebSocket => connectToSession(sessionId, { onMessage, onStreamEnded });
+
+export const connectToSession = (
+  sessionId: number,
+  { onMessage, onStreamStarted, onStreamEnded }: SessionSocketCallbacks,
 ): WebSocket => {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const socket = new WebSocket(
     `${protocol}//${window.location.host}/ws/study-sessions/${sessionId}/`,
   );
-  socket.onmessage = (event) =>
-    onMessage(JSON.parse(event.data) as TwitchChatMessage);
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "stream_started") onStreamStarted?.();
+    else if (data.type === "stream_ended") onStreamEnded?.();
+    else onMessage?.(data as TwitchChatMessage);
+  };
   return socket;
 };

@@ -16,3 +16,9 @@ class StudySessionConsumer(AsyncWebsocketConsumer):
 
     async def twitch_message(self, event):
         await self.send(text_data=json.dumps(event["data"]))
+
+    async def stream_started(self, event):
+        await self.send(text_data=json.dumps({"type": "stream_started"}))
+
+    async def stream_ended(self, event):
+        await self.send(text_data=json.dumps({"type": "stream_ended"}))

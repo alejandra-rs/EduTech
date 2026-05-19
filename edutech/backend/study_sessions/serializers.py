@@ -51,9 +51,10 @@ class StudySessionSerializer(serializers.ModelSerializer):
             "participants",
             "is_starred",
             "twitch_link",
+            "status",
             "stream_task_id",
         ]
-        read_only_fields = ["id", "created_at", "stream_task_id"]
+        read_only_fields = ["id", "created_at", "status", "stream_task_id"]
 
     def get_is_starred(self, obj):
         try:
