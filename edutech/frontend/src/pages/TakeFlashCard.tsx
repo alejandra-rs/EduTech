@@ -12,6 +12,7 @@ import ReactionsContainer from '../components/interactions/ReactionsContainer';
 import { getDocument } from '../services/connections-documents';
 import type { PostFlashcard } from '../models/documents/post.model';
 import type { StudyFlashCard } from '../models/documents/postsTypesModels/flashcard.model';
+import { SaveButton } from '../components/my-space/SaveButton';
 
 interface FlashData {
   title: string;
@@ -100,7 +101,8 @@ const TakeFlashCard = () => {
           {stats.answered === stats.total && stats.total > 0 && <CompletionBanner variant="flashcard" stats={stats} onRestart={() => setConfirmReset(true)} />}
 
           <hr className="mt-10 mb-5 border-gray-200"></hr>
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <SaveButton postId={Number(postId)}/>
             <ReactionsContainer postId={Number(postId)} />
           </div>
         </div>

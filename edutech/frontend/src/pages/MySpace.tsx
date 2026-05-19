@@ -90,6 +90,14 @@ const MySpace = () => {
     );
   };
 
+  const handleFolderRenamed = (updatedFolder: Folder) => {
+    if (!currentFolder) return;
+    setCurrentFolder({
+      ...currentFolder,
+      children: currentFolder.children.map(f => f.id === updatedFolder.id ? updatedFolder : f),
+    });
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
@@ -169,7 +177,11 @@ const MySpace = () => {
         <div className="flex-grow overflow-y-auto custom-scrollbar px-8 py-8">
           <div className="max-w-7xl mx-auto space-y-10">
             {currentFolder?.depth == 1 &&
-              <PinnedSection posts={pinnedPosts} onPostClick={handlePostClick} />
+              <PinnedSection
+                posts={pinnedPosts}
+                onPostClick={handlePostClick}
+                onUnpin={(savedPost) => handlePinToggle(savedPost, false)}
+              />
             }
 
             {currentFolder && (
@@ -178,7 +190,9 @@ const MySpace = () => {
                 savedPosts={currentFolder.saved_posts}
                 currentFolderId={currentFolder.id}
                 studentId={userData!.id}
+                totalFolderCount={stats?.folder_count ?? 0}
                 onFolderAdded={handleFolderAdded}
+                onFolderRenamed={handleFolderRenamed}
                 onFolderClick={(folder) => navigate(`/mi-espacio/directorio/${folder.id}`)}
                 onPostClick={(savedPost) => handlePostClick(savedPost.post)}
                 onPinToggle={handlePinToggle}
