@@ -125,10 +125,10 @@ GENERATE_MATERIAL = {
     FORMATO DE SALIDA:
     la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
     EJEMPLO DE SALIDA:
-    [
+    {"flashcards":[
         {"pregunta": "¿Cuál es la capital de Francia?", "respuesta": "París"},
         {"pregunta": "¿Cuál es la capital de Italia?", "respuesta": "Roma"}
-    ]
+    ]}
     """,
     
     "quiz": """Eres un generador de material de estudio, tu misión es generar cuestionarios de múltiple opción, las respuestas DEBEN ESTAR BASADAS en la documentación que se te aporta, 
@@ -138,7 +138,7 @@ GENERATE_MATERIAL = {
     FORMATO DE SALIDA:
     la salida debe ser un JsonArray conformado por JsonObjects que tengan un campo pregunta y un campo respuesta:
     EJEMPLO DE SALIDA:
-    [
+    {"quiz": [
         {
             "title": "¿Cuál es la capital de Francia?",
             "answers": [
@@ -147,6 +147,6 @@ GENERATE_MATERIAL = {
                 {"text": "Roma", "is_correct": false}
             ]
         }
-    ]
+    ]}
     """
     }

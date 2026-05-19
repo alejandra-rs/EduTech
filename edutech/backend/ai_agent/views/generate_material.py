@@ -1,5 +1,6 @@
 import re
 import json
+from urllib import request
 import fitz 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -38,7 +39,6 @@ class GenerateMaterial(APIView):
         ))
         
         print(json_data)
-
         try:
             student = get_object_or_404(Student, email=request.user.email)
             course = Course.objects.get(id=course_id)
@@ -57,39 +57,36 @@ class GenerateMaterial(APIView):
             if post_type == "QUI":
                 quiz = Quiz.objects.create(post=nuevo_draft)
                 
-                lista_preguntas = []
-                if isinstance(json_data, list):
-                    lista_preguntas = json_data
-                elif isinstance(json_data, dict):
-                    if "title" in json_data and "answers" in json_data:
-                        lista_preguntas = [json_data]
-                    else:
-                        lista_preguntas = json_data.get("quiz", json_data.get("questions", []))
+                lista_preguntas = json_data.get("quiz", json_data.get("questions", []))
+                
+                if not lista_preguntas and ("title" in json_data or "titulo" in json_data):
+                    lista_preguntas = [json_data]
                 
                 for q_data in lista_preguntas:
-                    titulo_pregunta = q_data.get("title", "Pregunta sin título")
+                    titulo_pregunta = q_data.get("title", q_data.get("titulo", "Pregunta sin título"))
                     question = Question.objects.create(quiz=quiz, title=titulo_pregunta)
-                    for a_data in q_data.get("answers", []):
+                    
+                    respuestas = q_data.get("answers", q_data.get("respuestas", q_data.get("opciones", [])))
+                    
+                    for a_data in respuestas:
                         Answer.objects.create(
                             question=question,
-                            text=a_data.get("text", ""),
-                            is_correct=a_data.get("is_correct", False)
+                            text=a_data.get("text", a_data.get("texto", "")),
+                            is_correct=a_data.get("is_correct", a_data.get("es_correcta", False))
                         )
             
             elif post_type == "FLA":
                 deck = FlashCardDeck.objects.create(post=nuevo_draft)
-                lista_flashcards = []
-                if isinstance(json_data, list):
-                    lista_flashcards = json_data
-                elif isinstance(json_data, dict):
-                    if ("question" in json_data and "answer" in json_data) or ("front" in json_data and "back" in json_data):
-                        lista_flashcards = [json_data]
-                    else:
-                        lista_flashcards = json_data.get("flashcards", json_data.get("cards", []))
+                
+                lista_flashcards = json_data.get("flashcards", json_data.get("cards", []))
+                
+                if not lista_flashcards and ("question" in json_data or "pregunta" in json_data):
+                    lista_flashcards = [json_data]
                 
                 for c_data in lista_flashcards:
-                    texto_pregunta = c_data.get("question", c_data.get("front", "Tarjeta sin título"))
-                    texto_respuesta = c_data.get("answer", c_data.get("back", ""))
+                    texto_pregunta = c_data.get("question", c_data.get("pregunta", c_data.get("front", "Tarjeta sin título")))
+                    texto_respuesta = c_data.get("answer", c_data.get("respuesta", c_data.get("back", "Sin respuesta")))
+                    
                     FlashCard.objects.create(
                         deck=deck,
                         question=texto_pregunta,
@@ -101,7 +98,7 @@ class GenerateMaterial(APIView):
                 "draft_id": nuevo_draft.id,
                 "type": material
             }, status=200)
-
+            
         except Exception as e:
             print(f"Error guardando el borrador: {e}")
             return Response({"error": "Fallo al guardar el borrador en la base de datos."}, status=500)
