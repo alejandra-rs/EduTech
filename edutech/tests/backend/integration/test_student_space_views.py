@@ -113,6 +113,14 @@ class FolderCreateViewTest(APITestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(Folder.objects.filter(student=self.student, depth__gt=1).count(), 100)
 
+    def test_exceeding_100_folders_returns_limit_error_detail(self):
+        for i in range(100):
+            self.root.add_child(name=f'Folder{i}', student=self.student)
+        response = self.client.post(FOLDERS_URL, {
+            'name': 'Inválido', 'parent_id': self.root.pk, 'student_id': self.student.pk,
+        }, format='json')
+        self.assertIn('100', response.data['detail'])
+
 
 class FolderDetailViewTest(APITestCase):
 
@@ -183,6 +191,19 @@ class FolderDetailViewTest(APITestCase):
         response = self.client.delete(_folder_url(self.root.pk) + f'?student={self.student.pk}')
         self.assertEqual(response.status_code, 400)
         self.assertTrue(Folder.objects.filter(pk=self.root.pk).exists())
+
+    def test_delete_cascades_to_nested_subfolders(self):
+        grandchild = self.child.add_child(name='Scrum', student=self.student)
+        self.client.delete(_folder_url(self.child.pk) + f'?student={self.student.pk}')
+        self.assertFalse(Folder.objects.filter(pk=grandchild.pk).exists())
+
+    def test_deleted_folder_name_can_be_reused_after_undo(self):
+        self.client.delete(_folder_url(self.child.pk) + f'?student={self.student.pk}')
+        response = self.client.post(FOLDERS_URL, {
+            'name': 'PS', 'parent_id': self.root.pk, 'student_id': self.student.pk,
+        }, format='json')
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Folder.objects.filter(student=self.student, name='PS').exists())
 
 
 class FolderMoveViewTest(APITestCase):

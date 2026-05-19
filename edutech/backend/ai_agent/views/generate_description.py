@@ -42,7 +42,6 @@ class GenerateDescriptionView(APIView):
             }, status=200)
 
         except Exception as e:
-            print(f"Error generating description: {e}")
             return Response({"error": "Fallo interno al generar la descripción"}, status=500)
         
     
@@ -100,7 +99,6 @@ class ValidateDocument(APIView):
 
             return Response({"status": True, "reason": None}, status=200)
         except Exception as e:
-            print(f"Error generating description: {e}")
             return Response({"error": "Fallo interno al validar el documento"}, status=500)
         
 

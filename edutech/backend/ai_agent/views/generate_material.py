@@ -31,14 +31,12 @@ class GenerateMaterial(APIView):
         
         contexto_text = "\n\n".join([f"Fragmento {i+1}:\n{d.page_content}" for i, d in enumerate(docs)])
         prompt_sistema_final = f"{GENERATE_MATERIAL.get(material)}\n\nDOCUMENTACIÓN (CONTEXTO):\n{contexto_text}\n"
-        print("Prompt final para generación de material:\n", prompt_sistema_final)
         json_data = json.loads(send_prompt(
             system_content= prompt_sistema_final,
             user_content=user_query,
             format="json"
         ))
         
-        print(json_data)
         try:
             student = get_object_or_404(Student, email=request.user.email)
             course = Course.objects.get(id=course_id)
@@ -100,5 +98,4 @@ class GenerateMaterial(APIView):
             }, status=200)
             
         except Exception as e:
-            print(f"Error guardando el borrador: {e}")
             return Response({"error": "Fallo al guardar el borrador en la base de datos."}, status=500)

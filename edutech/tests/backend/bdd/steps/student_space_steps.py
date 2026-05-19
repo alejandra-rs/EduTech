@@ -168,6 +168,16 @@ def step_delete_folder(context, name):
         f'/student-space/folders/{folder.pk}/?student={context.student.pk}'
     )
 
+@when('el estudiante deshace la eliminación recreando la carpeta "{name}" en la raíz')
+def step_undo_delete_folder(context, name):
+    context.response = context.client.post('/student-space/folders/', {
+        'name': name,
+        'parent_id': context.root.pk,
+        'student_id': context.student.pk,
+    }, format='json')
+    if context.response.status_code == 201:
+        context.created_folder_id = context.response.data['id']
+
 @when('el estudiante intenta eliminar la carpeta raíz')
 def step_delete_root(context):
     context.response = context.client.delete(

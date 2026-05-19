@@ -45,7 +45,6 @@ export default function Header({
     { to: "/suscripciones/", label: "Mis asignaturas", icon: BellIcon },
     { to: "/borradores/", label: "Mis borradores", icon: PencilSquareIcon },
     { to: "/mis-publicaciones/", label: "Mi material", icon: DocumentIcon },
-    { to: "/degrees/", label: "Cambiar carrera", icon: AcademicCapIcon },
 
   ];
 
@@ -115,20 +114,6 @@ export default function Header({
             )}
           </NavLink>
         ))}
-
-        {isAdmin && (
-          <>
-            <hr className="m-2"></hr>
-            <NavLink to="/reports" className={getLinkClass}>
-              <ShieldExclamationIcon className="w-6 h-6 shrink-0 text-red-400" />
-              {isOpen && (
-                <span className="text-sm font-medium text-red-400">
-                  Reportes
-                </span>
-              )}
-            </NavLink>
-          </>
-        )}
 
         {isOpen && (
           <div className="mt-auto pt-4">

@@ -79,7 +79,7 @@ export default function App() {
             <Layout accounts={accounts} instance={instance}>
               <Routes>
                 <Route path="/" element={<YearsPage />} />
-                <Route path="Profile" element={<ProfilePage  />} />
+                <Route path="/Profile" element={<ProfilePage  />} />
                 <Route path="/:id/asignaturas" element={<CoursesPage />} />
                 <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
                 <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />

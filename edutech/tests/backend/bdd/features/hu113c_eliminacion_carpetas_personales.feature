@@ -34,3 +34,10 @@ Feature: Eliminación de carpetas personales
     When el estudiante intenta eliminar la carpeta raíz
     Then la respuesta tiene el estado 400
     And la carpeta raíz sigue existiendo
+
+  Scenario: Deshacer la eliminación de una carpeta
+    Given que el estudiante tiene una carpeta llamada "PS" en la raíz
+    When el estudiante elimina la carpeta "PS"
+    And el estudiante deshace la eliminación recreando la carpeta "PS" en la raíz
+    Then la respuesta tiene el estado 201
+    And la carpeta "PS" aparece como hija de la raíz

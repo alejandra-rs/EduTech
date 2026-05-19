@@ -73,6 +73,14 @@ class FolderModelTest(TestCase):
         child.delete()
         self.assertFalse(Folder.objects.filter(pk=grandchild.pk).exists())
 
+    def test_deleted_folder_name_can_be_reused(self):
+        root = Folder.add_root(name='root', student=self.student)
+        child = root.add_child(name='PS', student=self.student)
+        child.delete()
+        recreated = root.add_child(name='PS', student=self.student)
+        self.assertEqual(recreated.depth, 2)
+        self.assertEqual(recreated.name, 'PS')
+
     def test_str_contains_name(self):
         root = Folder.add_root(name='root', student=self.student)
         self.assertIn('root', str(root))

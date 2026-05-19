@@ -27,6 +27,7 @@ export default function ProfilePage() {
   const [isEditingCareer, setIsEditingCareer] = useState(false);
   const [showPop, setShowPop] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [twitchLoaded, setTwitchLoaded] = useState(false);
 
   useEffect(() => {
     if (!currentUser?.id) return;
@@ -38,7 +39,8 @@ export default function ProfilePage() {
           login: status.connected ? status.login : null,
         });
       })
-      .catch((err) => console.error("Error fetching Twitch status:", err));
+      .catch((err) => console.error("Error fetching Twitch status:", err))
+      .finally(() => setTwitchLoaded(true));
   }, [currentUser?.id]);
 
   const logout = () => {
@@ -58,7 +60,7 @@ export default function ProfilePage() {
     }
   };
 
-  if (!currentUser || twitchData.login === null) {
+  if (!currentUser || !twitchLoaded) {
     return (
         <LoadInformation data="Cargando información del perfil..." />
     );
