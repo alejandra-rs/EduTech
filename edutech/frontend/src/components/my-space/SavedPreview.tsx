@@ -8,13 +8,14 @@ import { PinnedButton } from './PinnedButton';
 export interface SavedPreviewProps {
   savedPost: SavedPost;
   onClick: () => void;
+  isPinned?: boolean;
   onPinToggle?: (savedPost: SavedPost, isPinned: boolean) => void;
   isSelecting?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
 }
 
-export function SavedPreview({ savedPost, onClick, onPinToggle, isSelecting, isSelected, onSelect }: SavedPreviewProps) {
+export function SavedPreview({ savedPost, onClick, isPinned = false, onPinToggle, isSelecting, isSelected, onSelect }: SavedPreviewProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `savedPost-${savedPost.id}`,
     data: { type: 'savedPost', savedPost },
@@ -59,7 +60,8 @@ export function SavedPreview({ savedPost, onClick, onPinToggle, isSelecting, isS
       {!isSelecting && (
         <PinnedButton
           savedPostId={savedPost.id}
-          onPinToggle={(isPinned) => onPinToggle && onPinToggle(savedPost, isPinned)}
+          initialIsPinned={isPinned}
+          onPinToggle={(pinned) => onPinToggle && onPinToggle(savedPost, pinned)}
         />
       )}
     </div>

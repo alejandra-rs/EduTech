@@ -14,6 +14,7 @@ interface SavedGridProps {
   currentFolderId: number;
   studentId: number;
   totalFolderCount: number;
+  pinnedPostIds?: Set<number>;
   onFolderAdded: (newFolder: Folder) => void;
   onFolderRenamed: (updatedFolder: Folder) => void;
   onFolderClick: (folder: Folder) => void;
@@ -28,6 +29,7 @@ export const SavedGrid = ({
   currentFolderId,
   studentId,
   totalFolderCount,
+  pinnedPostIds = new Set(),
   onFolderAdded,
   onFolderRenamed,
   onFolderClick,
@@ -115,10 +117,6 @@ export const SavedGrid = ({
     setIsRenaming(true);
   };
 
-  const handleInlineDelete = (folder: Folder) => {
-    onDeleteItems?.([folder], []);
-  };
-
   const selectedCount = selectedFolderIds.size + selectedSavedPostIds.size;
   const canRename = selectedFolderIds.size === 1 && selectedSavedPostIds.size === 0;
   const existingFolderNames = folders.map(f => f.name);
@@ -144,36 +142,39 @@ export const SavedGrid = ({
       </SectionTitle>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {(isAddingNew || isRenaming) && (
+        {isAddingNew && (
           <div className="flex items-center gap-3 p-4 bg-white border-2 border-dashed border-blue-400 rounded-xl shadow-sm">
             <FolderIcon className="w-8 h-8 text-blue-400 shrink-0" />
             <FolderInlineEditor
-              existingNames={isRenaming ? renameExistingNames : existingFolderNames}
-              initialValue={isRenaming ? (renamingFolder?.name ?? '') : ''}
-              onSave={isRenaming ? handleRenameFolder : handleSaveNewFolder}
-              onCancel={() => {
-                if (isRenaming) {
-                  setIsRenaming(false);
-                  setRenamingFolder(null);
-                } else {
-                  setIsAddingNew(false);
-                }
-              }}
+              existingNames={existingFolderNames}
+              initialValue=""
+              onSave={handleSaveNewFolder}
+              onCancel={() => setIsAddingNew(false)}
             />
           </div>
         )}
 
         {folders.map((subfolder) => (
-          <FolderCard
-            key={`folder-${subfolder.id}`}
-            folder={subfolder}
-            onClick={() => onFolderClick(subfolder)}
-            isSelecting={isSelecting}
-            isSelected={selectedFolderIds.has(subfolder.id)}
-            onSelect={() => toggleFolderSelect(subfolder.id)}
-            onRename={() => startRename(subfolder)}
-            onDelete={() => handleInlineDelete(subfolder)}
-          />
+          isRenaming && renamingFolder?.id === subfolder.id ? (
+            <div key={`folder-${subfolder.id}`} className="flex items-center gap-3 p-4 bg-white border-2 border-dashed border-blue-400 rounded-xl shadow-sm">
+              <FolderIcon className="w-8 h-8 text-blue-400 shrink-0" />
+              <FolderInlineEditor
+                existingNames={renameExistingNames}
+                initialValue={renamingFolder.name}
+                onSave={handleRenameFolder}
+                onCancel={() => { setIsRenaming(false); setRenamingFolder(null); }}
+              />
+            </div>
+          ) : (
+            <FolderCard
+              key={`folder-${subfolder.id}`}
+              folder={subfolder}
+              onClick={() => onFolderClick(subfolder)}
+              isSelecting={isSelecting}
+              isSelected={selectedFolderIds.has(subfolder.id)}
+              onSelect={() => toggleFolderSelect(subfolder.id)}
+            />
+          )
         ))}
 
         {savedPosts.map((savedPost) => (
@@ -181,6 +182,7 @@ export const SavedGrid = ({
             key={`post-${savedPost.id}`}
             savedPost={savedPost}
             onClick={() => onPostClick(savedPost)}
+            isPinned={pinnedPostIds.has(savedPost.id)}
             onPinToggle={onPinToggle}
             isSelecting={isSelecting}
             isSelected={selectedSavedPostIds.has(savedPost.id)}

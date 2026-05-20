@@ -1,31 +1,21 @@
 import { useState, useEffect } from 'react';
 import { MapPinIcon as PinOutline } from '@heroicons/react/24/outline';
 import { MapPinIcon as PinSolid } from '@heroicons/react/24/solid';
-import { setPinned, getPinnedPosts } from '../../services/connections-studentspace';
+import { setPinned } from '../../services/connections-studentspace';
 import { useCurrentUser } from '../../services/useCurrentUser';
 
 interface PinnedButtonProps {
   savedPostId: number;
+  initialIsPinned: boolean;
   onPinToggle?: (isPinned: boolean) => void;
 }
 
-export const PinnedButton = ({ savedPostId, onPinToggle}: PinnedButtonProps) => {
-  const [isPinned, setIsPinned] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState(true);
+export const PinnedButton = ({ savedPostId, initialIsPinned, onPinToggle }: PinnedButtonProps) => {
+  const [isPinned, setIsPinned] = useState<boolean>(initialIsPinned);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => { setIsPinned(initialIsPinned); }, [initialIsPinned]);
   const { userData } = useCurrentUser();
-
-  useEffect(() => {
-    if (!userData) return;
-
-    const fetchPinStatus = async () => {
-      setIsLoading(true);
-      const pinnedList = await getPinnedPosts(userData.id);
-      const found = pinnedList.some(post => post.id === savedPostId);
-      setIsPinned(found);
-      setIsLoading(false);
-    };
-    fetchPinStatus();
-  }, [savedPostId, userData]);
 
   const handleTogglePin = async (e: React.MouseEvent) => {
     e.stopPropagation();
