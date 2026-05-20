@@ -56,12 +56,11 @@ class ValidateDocument(APIView):
             pdf_stream = getDocument(pdf_attachment)["Body"].read()
             pdf_document = fitz.open(stream=pdf_stream, filetype="pdf")
             
-            texto_pdf_markdown = pymupdf4llm.to_markdown(pdf_document)
+            texto_pdf_markdown = pymupdf4llm.to_markdown(pdf_document, ocr_language="spa")
             text_status =  json.loads(send_prompt(
-                system_content=SYSTEM_PROMPTS["validate_document"] + "TEXTO A ANALIZAR:\n" + texto_pdf_markdown,
+                system_content=SYSTEM_PROMPTS["validate_text"] + "\nTEXTO A ANALIZAR:\n" + texto_pdf_markdown,
                 user_content=f"Valida el siguiente texto estrictamente buscando insultos o lenguaje de odio:\n\n{texto_pdf_markdown}",
-                format="json"
-            ))
+                format="json"))
                
             if not text_status.get("status", True):
                 pdf_document.close()

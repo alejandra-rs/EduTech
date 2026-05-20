@@ -93,25 +93,33 @@ SYSTEM_PROMPTS = {
                         "FORMATO DE SALIDA:"
                         "La salida debe ser un JsonObjects que tengan un campo status: [un booleano que indica si el documento es apto (true) o si es inapropiado (false)] y un campo reason: que pondrá el motivo por el que es inaporpiado el documento, referenciando el párrafo o imágen inapropiado"
                         "EJEMPLO DE SALIDA:"
-                        "{\"status\": true, \"reason\": \"el documento pone \"trabajo de mierda\" en la página 3 | la imagen de la página 4 contiene un desnudo.\"}"
+                        "{\"status\": true, \"reason\": \"el documento pone \"trabajo de mierda\" en la página 3 | la imagen de la página 4 contiene un desnudo.\"}",
     
-    "validate_text" """Eres un evaluador de contenido sumamente estricto.
+    "validate_text" :"""Eres un evaluador de contenido MUY ESTRICTO. el texto no puede tener NI UN SOLO insulto, grosería, palabra vulgar o lenguaje de odio. 
+                        si detectas palabras como idiota, estúpido, puta, mierda, imbécil, gilipollas, jodido o similares, el texto se considerará inapropiado.
+                                AUNQUE SEA SOLO UNA PALABRA, SI DETECTAS ALGUNA DE ESAS PALABRAS O SIMILARES, EL TEXTO SE CONSIDERARÁ INAPROPIADO.
                                 Tu ÚNICA tarea es detectar si el documento contiene:
                                 1. Material obsceno, sexual explícito, desnudos o violencia visual.
                                 2. Lenguaje de odio o discriminatorio.
                                 3. Lenguaje vulgar, groserías o insultos en el texto visible del documento.
-
+                                4. Cualquier contenido que pueda considerarse ofensivo o inapropiado para un entorno educativo será no apto, por pequeño que sea el insulto.
+                                
                                 REGLAS INQUEBRANTABLES:
-                                1. El contenido académico, código de programación y textos educativos SON SIEMPRE APTOS.
-                                2. DEBES describir brevemente lo que ves antes de dar tu veredicto.
-                                3. Si el documento ES APTO, el "status" debe ser true y el "reason" null.
-                                4. Si contiene desnudos o groserías, el "status" debe ser false y el "reason" debe detallar el motivo.
-                                4. Si contiene NO ES APTO, el "status" debe ser false y el "reason" debe detallar el motivo.
-
-                                FORMATO DE SALIDA (JSON estrictamente):
+                                1. Si el documento ES APTO, el campo "status" debe ser estrictamente true y el "reason" debe ser estructamente null.
+                                2. Si NO ES APTO, el campo "status" debe ser estrictamente false y DEBES detallar el motivo exacto dentro del campo "reason".
+                                3. PROHIBIDO crear claves nuevas. SOLO puedes usar "status" y "reason"
+                                4. CUALQUIER INSULTO O PALABRA VULGAR DETECTADA, POR PEQUEÑA QUE SEA, ES MOTIVO SUFICIENTE PARA CONSIDERAR EL DOCUMENTO INAPROPIADO.
+                                5. NO PUEDE FALTAR EL CAMPO "status" NI EL CAMPO "reason" EN TU RESPUESTA, SI FALTA ALGUNO DE LOS DOS CAMPOS O SI CREAS CAMPOS ADICIONALES, SE CONSIDERARÁ QUE HAS FALLADO EN TU TAREA.
+                                6. SIEMPRE TIENES QUE DEVOLVER UN JSON con el siguiente formato:
+                                FORMATO DE SALIDA SI NO ES APTO (RESPONDE ÚNICA Y EXCLUSIVAMENTE CON ESTE JSON):
                                 {
-                                "status": [booleano],
-                                "reason": "[string con el motivo o null]"
+                                    "status": false,
+                                    "reason": "El texto contiene la palabra 'idiota' en el párrafo tal..."
+                                }
+                                FORMATO DE SALIDA SI ES APTO (RESPONDE ÚNICA Y EXCLUSIVAMENTE CON ESTE JSON):
+                                {
+                                    "status": true,
+                                    "reason": null
                                 }
     """
 }
