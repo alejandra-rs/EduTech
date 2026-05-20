@@ -84,7 +84,7 @@ export function ChatbotWidget({
         });
 
         if (data.draft_id) {
-          const draftLink = `/borradores/quiz/${data.draft_id}`;
+          const draftLink = `/borradores/${toolType.key}/${data.draft_id}`;
           
           setMessages((prev) => [
             ...prev,

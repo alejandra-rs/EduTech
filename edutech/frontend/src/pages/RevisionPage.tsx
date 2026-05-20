@@ -54,13 +54,13 @@ export default function RevisionPage() {
   }
 
   return (
-    <div className="flex flex-col mx-auto px-4 gap-7 max-w-5xl">
+    <div className="flex flex-col mx-auto px-4 gap-7">
       <TitlePage
         PageName="Panel de Revisión"
         onBack={() => navigate(-1)}
       />
 
-      <section className="flex flex-col gap-4 px-2 md:px-10 mb-10">
+      <section className="space-y-4 px-10">
         {items.length > 0 ? (
           items.map((item) => {
             const viewerUrl = `/${item.year_id}/${item.course_id}/documento/${item.post_id}`;

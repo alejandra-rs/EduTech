@@ -191,6 +191,7 @@ const MySpace = () => {
                 currentFolderId={currentFolder.id}
                 studentId={userData!.id}
                 totalFolderCount={stats?.folder_count ?? 0}
+                pinnedPostIds={new Set(pinnedPosts.map(p => p.id))}
                 onFolderAdded={handleFolderAdded}
                 onFolderRenamed={handleFolderRenamed}
                 onFolderClick={(folder) => navigate(`/mi-espacio/directorio/${folder.id}`)}
