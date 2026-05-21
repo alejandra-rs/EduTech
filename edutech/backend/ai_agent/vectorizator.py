@@ -10,7 +10,7 @@ from ai_agent.agent_setings import (
     getDocument,
     send_prompt,
 )
-from ai_agent.agents_pronts import SYSTEM_PROMPTS
+from edutech.backend.ai_agent.agents_prompts import SYSTEM_PROMPTS
 from .etiquetator import generar_etiquetas
 
 

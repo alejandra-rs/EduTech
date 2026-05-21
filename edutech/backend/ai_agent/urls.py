@@ -1,7 +1,9 @@
 from django.urls import path
 from .views.chat_bot import ChatAcademicoView
-from .views.generate_description import GenerateDescriptionView, ValidateDocument
+from .views.generate_description import GenerateDescriptionView
 from .views.generate_material import GenerateMaterial
+from .views.validate_material import ValidateDocument
+
 urlpatterns = [
     path("chat/", ChatAcademicoView.as_view(), name="chat-academico"),
     path("documents/<int:draft_id>/generate-description/", GenerateDescriptionView.as_view(), name="generar-descripcion"),

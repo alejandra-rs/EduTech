@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 
 from ai_agent.agent_setings import find_documents, get_filters, get_vector_store, getDocument, response_needs_code, send_prompt
-from ai_agent.agents_pronts import AGENTS_PROMPTS
+from edutech.backend.ai_agent.agents_prompts import AGENTS_PROMPTS
 
 
 import fitz 
