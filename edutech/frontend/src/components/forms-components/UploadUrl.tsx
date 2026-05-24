@@ -34,11 +34,8 @@ export default function UploadUrl() {
               : "w-full h-[250px] bg-white border border-gray-200 p-8 rounded-xl shadow-sm justify-center"
           }`}
         >
-          {!isConfirmed ? (
-             <UrlValidatorInput onConfirm={handleConfirmUrl} />
-          ) : (
-             <UrlPreview url={url!} />
-          )}
+          {!isConfirmed ? (<UrlValidatorInput onConfirm={handleConfirmUrl} />) 
+                        : (<UrlPreview url={url!} />)}
         </div>
 
         <div 
@@ -67,7 +64,7 @@ export default function UploadUrl() {
             />
           )}
 
-          <button 
+          <button type="button" 
             onClick={handleUpload}
             disabled={!title.trim() || !description.trim()}
             className="mt-4 w-full bg-[#2d2d2d] hover:bg-black text-white py-4 rounded-lg font-bold uppercase tracking-[0.2em] shadow-lg disabled:bg-gray-400 transition-colors"

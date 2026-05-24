@@ -10,8 +10,8 @@ interface TypeIconProps {
 
 const TypeIcon = ({ type }: TypeIconProps) =>
   type === "FLA"
-    ? <Square3Stack3DIcon className="w-5 h-5 text-indigo-500" />
-    : <DocumentCheckIcon className="w-5 h-5 text-orange-500" />;
+    ? <Square3Stack3DIcon className="size-5 text-indigo-500" />
+    : <DocumentCheckIcon className="size-5 text-orange-500" />;
 
 const itemLabel = (draft: Draft): string => {
   if (draft.post_type === "FLA") {
@@ -54,13 +54,13 @@ export default function DraftCard({ draft, deleting, onDelete }: DraftCardProps)
           Actualizado {new Date(draft.updated_at ?? "").toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" })}
         </p>
       </div>
-      <button
+      <button type="button"
         onClick={(e) => { e.stopPropagation(); onDelete(); }}
         disabled={deleting}
         className="flex-shrink-0 p-2 rounded-xl hover:bg-red-50 text-gray-300 hover:text-red-400 transition-colors disabled:opacity-40"
         title="Eliminar borrador"
       >
-        <TrashIcon className="w-4 h-4" />
+        <TrashIcon className="size-4" />
       </button>
     </div>
   );

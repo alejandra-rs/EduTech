@@ -6,10 +6,11 @@ from celery.result import AsyncResult
 from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -53,6 +54,8 @@ def _get_broadcaster_id_sync(twitch_link: str, access_token: str) -> str:
 
 
 class StudySessionListCreateView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         qs = StudySession.objects.select_related("creator", "course").filter(
             scheduled_at__gte=timezone.now()
@@ -72,19 +75,15 @@ class StudySessionListCreateView(views.APIView):
         elif course_ids:
             qs = qs.filter(course_id__in=course_ids)
 
-        raw_student_id = request.query_params.get("student_id")
-        try:
-            student_id = int(raw_student_id)
-        except (TypeError, ValueError):
-            student_id = None
+        student = get_object_or_404(Student, email=request.user.email)
 
-        if request.query_params.get("starred") == "true" and student_id:
+        if request.query_params.get("starred") == "true":
             qs = qs.filter(
-                Q(creator_id=student_id) | Q(participants__id=student_id)
+                Q(creator_id=student.pk) | Q(participants__id=student.pk)
             ).distinct()
 
         serializer = StudySessionSerializer(
-            qs, many=True, context={"student_id": student_id}
+            qs, many=True, context={"student_id": student.pk}
         )
         return Response(serializer.data)
 
@@ -93,7 +92,6 @@ class StudySessionListCreateView(views.APIView):
         description = request.data.get("description", "").strip()
         scheduled_at = request.data.get("scheduled_at")
         course_id = request.data.get("course")
-        creator_id = request.data.get("creator")
         twitch_link = request.data.get("twitch_link", "").strip()
 
         if not title:
@@ -106,14 +104,14 @@ class StudySessionListCreateView(views.APIView):
                 {"detail": "No se ha indicado una fecha para la sesión"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        if not creator_id or not twitch_link:
+        if not twitch_link:
             return Response(
-                {"detail": "Faltan campos requeridos."},
+                {"detail": "Falta el enlace de Twitch."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         course  = get_object_or_404(Course, pk=course_id) if course_id else None
-        creator = get_object_or_404(Student, pk=creator_id)
+        creator = get_object_or_404(Student, email=request.user.email)
 
         session = StudySession(
             title=title,
@@ -135,17 +133,15 @@ class StudySessionListCreateView(views.APIView):
 
 
 class StudySessionDetailView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         session = get_object_or_404(
             StudySession.objects.select_related("creator", "course"), pk=pk
         )
-        raw_student_id = request.query_params.get("student_id")
-        try:
-            student_id = int(raw_student_id)
-        except (TypeError, ValueError):
-            student_id = None
+        student = get_object_or_404(Student, email=request.user.email)
         return Response(
-            StudySessionSerializer(session, context={"student_id": student_id}).data
+            StudySessionSerializer(session, context={"student_id": student.pk}).data
         )
 
     def delete(self, request, pk):
@@ -157,48 +153,44 @@ class StudySessionDetailView(views.APIView):
 
 
 class StudySessionStarView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
-        session    = get_object_or_404(StudySession, pk=pk)
-        student_id = request.data.get("student_id")
-        if not student_id:
-            return Response({"detail": "Falta student_id."}, status=status.HTTP_400_BAD_REQUEST)
-        student = get_object_or_404(Student, pk=student_id)
+        session = get_object_or_404(StudySession, pk=pk)
+        student = get_object_or_404(Student, email=request.user.email)
         session.participants.add(student)
         return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
-        session    = get_object_or_404(StudySession, pk=pk)
-        student_id = request.query_params.get("student_id")
-        if not student_id:
-            return Response({"detail": "Falta student_id."}, status=status.HTTP_400_BAD_REQUEST)
-        student = get_object_or_404(Student, pk=student_id)
+        session = get_object_or_404(StudySession, pk=pk)
+        student = get_object_or_404(Student, email=request.user.email)
         session.participants.remove(student)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class StudySessionCommentView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         session  = get_object_or_404(StudySession, pk=pk)
         comments = session.session_comments.select_related("student")
         return Response(StudySessionCommentSerializer(comments, many=True).data)
 
     def post(self, request, pk):
-        session    = get_object_or_404(StudySession, pk=pk)
-        student_id = request.data.get("student_id")
-        message    = request.data.get("message", "").strip()
-        if not student_id:
-            return Response({"detail": "Falta student_id."}, status=status.HTTP_400_BAD_REQUEST)
+        session = get_object_or_404(StudySession, pk=pk)
+        message = request.data.get("message", "").strip()
         if not message:
             return Response({"detail": "El mensaje no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
-        student = get_object_or_404(Student, pk=student_id)
+        student = get_object_or_404(Student, email=request.user.email)
         comment = StudySessionComment.objects.create(session=session, student=student, message=message)
         return Response(StudySessionCommentSerializer(comment).data, status=status.HTTP_201_CREATED)
 
 
 class StreamView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
-        session    = get_object_or_404(StudySession, pk=pk)
-        student_id = request.data.get("student_id")
+        session = get_object_or_404(StudySession, pk=pk)
 
         if not session.twitch_link:
             return Response(
@@ -211,8 +203,9 @@ class StreamView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        student = get_object_or_404(Student, email=request.user.email)
         try:
-            credential = TwitchCredential.objects.get(student_id=student_id)
+            credential = TwitchCredential.objects.get(student=student)
         except TwitchCredential.DoesNotExist:
             return Response(
                 {"detail": "Debes conectar tu cuenta de Twitch para iniciar el stream.", "code": "NOT_LINKED"},
@@ -260,12 +253,12 @@ class StreamView(views.APIView):
 
 
 class TwitchAuthView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        student_id = request.query_params.get("student_id")
-        if not student_id:
-            return Response({"detail": "Falta student_id."}, status=status.HTTP_400_BAD_REQUEST)
+        student = get_object_or_404(Student, email=request.user.email)
         from .oauth import build_auth_url
-        return redirect(build_auth_url(int(student_id)))
+        return Response({"url": build_auth_url(student.pk)})
 
 
 class TwitchCallbackView(views.APIView):
@@ -304,33 +297,37 @@ class TwitchCallbackView(views.APIView):
 
 
 class TwitchStatusView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        student_id = request.query_params.get("student_id")
+        student = get_object_or_404(Student, email=request.user.email)
         try:
-            cred = TwitchCredential.objects.get(student_id=student_id)
+            cred = TwitchCredential.objects.get(student=student)
             return Response({"connected": True, "login": cred.twitch_login})
         except TwitchCredential.DoesNotExist:
             return Response({"connected": False, "login": None})
 
     def delete(self, request):
-        student_id = request.query_params.get("student_id")
-        TwitchCredential.objects.filter(student_id=student_id).delete()
+        student = get_object_or_404(Student, email=request.user.email)
+        TwitchCredential.objects.filter(student=student).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TwitchSendMessageView(views.APIView):
-    def post(self, request, pk):
-        session    = get_object_or_404(StudySession, pk=pk)
-        student_id = request.data.get("student_id")
-        message    = request.data.get("message", "").strip()
+    permission_classes = [IsAuthenticated]
 
-        if not student_id or not message:
-            return Response({"detail": "Faltan student_id o message."}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, pk):
+        session = get_object_or_404(StudySession, pk=pk)
+        message = request.data.get("message", "").strip()
+
+        if not message:
+            return Response({"detail": "Falta el mensaje."}, status=status.HTTP_400_BAD_REQUEST)
         if not session.twitch_link:
             return Response({"detail": "Esta sesión no tiene canal de Twitch."}, status=status.HTTP_400_BAD_REQUEST)
 
+        student = get_object_or_404(Student, email=request.user.email)
         try:
-            credential = TwitchCredential.objects.get(student_id=student_id)
+            credential = TwitchCredential.objects.get(student=student)
         except TwitchCredential.DoesNotExist:
             return Response(
                 {"detail": "Debes conectar tu cuenta de Twitch para chatear.", "code": "NOT_LINKED"},
@@ -340,7 +337,6 @@ class TwitchSendMessageView(views.APIView):
         from .token_utils import get_valid_access_token
         access_token = get_valid_access_token(credential)
 
-        # Use the cached broadcaster ID; resolve and cache it on first use
         broadcaster_id = session.broadcaster_twitch_id
         if not broadcaster_id:
             broadcaster_id = _get_broadcaster_id_sync(session.twitch_link, access_token)

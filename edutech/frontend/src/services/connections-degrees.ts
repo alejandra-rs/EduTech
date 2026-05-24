@@ -38,22 +38,20 @@ export async function getDegrees(universityId: number): Promise<Degree[]> {
     }
 }
 
-export async function getDegreesByUserId(userId: number): Promise<Student> {
-    let fetchUrl = `/api/students/${userId}/`;
+export async function getMyDegrees(): Promise<Student> {
     try {
-        const response = await apiFetch(fetchUrl);
+        const response = await apiFetch(`/api/students/me/`);
         if (!response.ok) throw new Error("Error al obtener la carrera del usuario");
         return await response.json();
     } catch (error) {
-        console.error("Error en getDegreesByUserId :", error);
+        console.error("Error en getMyDegrees:", error);
         throw error;
     }
 }
 
-export async function saveUserDegree(userId: number, degreeId: number | number[]): Promise<Student> {
-    let fetchUrl = `/api/students/${userId}/`;
+export async function saveUserDegree(degreeId: number | number[]): Promise<Student> {
     try {
-        const response = await apiFetch(fetchUrl, {
+        const response = await apiFetch(`/api/students/me/`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -63,7 +61,7 @@ export async function saveUserDegree(userId: number, degreeId: number | number[]
         if (!response.ok) throw new Error("Error al guardar la carrera del usuario");
         return await response.json();
     } catch (error) {
-        console.error("Error en saveUserDegree :", error);
+        console.error("Error en saveUserDegree:", error);
         throw error;
     }
 }

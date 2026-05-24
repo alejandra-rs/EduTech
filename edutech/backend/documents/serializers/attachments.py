@@ -2,7 +2,6 @@ import urllib.request
 import urllib.parse
 from rest_framework import serializers
 from courses.models import Course
-from users.models import Student
 from ..models import PDFAttachment, YoutubeVideo
 
 
@@ -22,9 +21,6 @@ class PDFUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField()
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(
-        queryset=Student.objects.all(), required=False, allow_null=True
-    )
     file = serializers.FileField()
 
     def validate(self, data):
@@ -37,9 +33,6 @@ class VideoUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField()
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(
-        queryset=Student.objects.all(), required=False, allow_null=True
-    )
     url = serializers.URLField()
 
     def validate_url(self, video):

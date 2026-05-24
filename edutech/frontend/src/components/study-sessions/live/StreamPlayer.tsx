@@ -22,12 +22,13 @@ export default function StreamPlayer({ twitchLink }: Props) {
           frameBorder="0"
           allow="autoplay"
           allowFullScreen
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
           title="Streaming en directo"
           className="w-full h-full"
         />
       ) : (
         <div className="h-full flex items-center justify-center text-gray-500 italic">
-          Conectando con la sesión...
+          Conectando con la sesión…
         </div>
       )}
     </div>

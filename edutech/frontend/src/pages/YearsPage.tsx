@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getDegreeInfo } from "../services/connections-degrees";
 import { getYears } from "../services/connections-courses";
-import { useCurrentUser } from "../services/useCurrentUser";
 import SearchBar from "../components/SearchBar";
 import PostGrid from "../components/PostGrid";
 import YearWidget from "../components/YearWidget";
@@ -15,13 +14,11 @@ const YearsPage = () => {
   const [groupedDegrees, setGroupedDegrees] = useState<GroupedDegrees[]>([]);
   const [searchResults, setSearchResults] = useState<PostPreview[] | null>(null);
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
 
   useEffect(() => {
-    if (!userData?.id) return;
     (async () => {
       try {
-        const years: Year[] = await getYears(userData.id);
+        const years: Year[] = await getYears();
         const degreeIds: number[] = [...new Set(years.map(year=> year.degree))];
 
         const data = await Promise.all(degreeIds.map(async (id) => {
@@ -31,7 +28,7 @@ const YearsPage = () => {
         setGroupedDegrees(data);
       } catch (e) { console.error(e); }
     })();
-  }, [userData?.id]);
+  }, []);
 
   const handlePostClick = (post: PostPreview) => {
     navigate(`/${post.course}/${post.year}/${POST_TYPE_LABELS[post.post_type]}/${post.id}`);
@@ -48,11 +45,11 @@ const YearsPage = () => {
           />
         </div>
 
-        <button
+        <button type="button"
             onClick={() => navigate('/sesiones')}
             className="p-2 rounded-lg bg-slate-400 hover:bg-slate-700 transition-colors shrink-0"
         >
-          <CalendarDaysIcon className="w-8 h-8 text-white" />
+          <CalendarDaysIcon className="size-8 text-white" />
         </button>
       </div>
 
@@ -62,7 +59,7 @@ const YearsPage = () => {
         ) : (
           groupedDegrees.map(({ id, name, universityName, years }) => (
             <section key={id} className="space-y-6">
-              <h2 className="text-3xl font-bold text-gray-800 pb-2">
+              <h2 className="text-3xl font-semibold text-gray-800 pb-2">
                 {name} <span className="text-gray-400 font-normal">({universityName})</span>
               </h2>
               

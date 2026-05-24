@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronLeftIcon, PhoneXMarkIcon } from "@heroicons/react/24/outline";
-import { useCurrentUser } from "../services/useCurrentUser";
+import { useCurrentUser } from "../context/CurrentUserContext";
 import {
   connectToSessionChat,
   connectTwitch,
@@ -27,18 +27,18 @@ const SessionLive = () => {
   const [isTwitchConnected, setIsTwitchConnected] = useState(false);
 
   useEffect(() => {
-    if (!sessionId || !currentUser?.id) return;
+    if (!sessionId) return;
 
     Promise.all([
-      getStudySession(Number(sessionId), currentUser.id),
-      getTwitchStatus(currentUser.id),
+      getStudySession(Number(sessionId)),
+      getTwitchStatus(),
     ]).then(([s, twitchStatus]) => {
         if (s.status !== "en_directo") { navigate(-1); return; }
         setSession(s);
         setIsTwitchConnected(twitchStatus.connected);
       })
       .catch(console.error);
-  }, [sessionId, currentUser?.id]);
+  }, [sessionId]);
 
   useEffect(() => {
     if (!sessionId || !session) return;
@@ -64,9 +64,8 @@ const SessionLive = () => {
   };
 
   const handleConnectTwitch = async () => {
-    if (!currentUser?.id) return;
     try {
-      await connectTwitch(currentUser.id);
+      await connectTwitch();
       setIsTwitchConnected(true);
     } catch (error) {
       console.error("Error al conectar Twitch:", error);
@@ -88,11 +87,11 @@ const SessionLive = () => {
       />
 
       <div className="mb-4 flex items-center gap-3">
-        <button
+        <button type="button"
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-white hover:text-gray-300 font-bold transition-colors"
         >
-          <ChevronLeftIcon className="w-5 h-5" />
+          <ChevronLeftIcon className="size-5" />
           VOLVER
         </button>
         {session && <SessionStatusBadge status={session.status} />}
@@ -103,21 +102,20 @@ const SessionLive = () => {
           {session && <StreamPlayer twitchLink={session.twitch_link} />}
           {isCreator && (
             <div className="flex justify-center">
-              <button
+              <button type="button"
                 onClick={() => setShowConfirmStop(true)}
                 className="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow transition-all active:scale-95"
               >
-                <PhoneXMarkIcon className="w-5 h-5" />
+                <PhoneXMarkIcon className="size-5" />
                 Finalizar sesión
               </button>
             </div>
           )}
         </div>
 
-        {session && currentUser && (
+        {session && (
           <LiveChatPanel
             sessionId={session.id}
-            currentUserId={currentUser.id}
             messages={messages}
             isTwitchConnected={isTwitchConnected}
             onConnectTwitch={handleConnectTwitch}

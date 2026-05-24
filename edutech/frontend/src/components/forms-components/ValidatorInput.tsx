@@ -61,7 +61,7 @@ export default function UrlValidatorInput({
         {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
       </div>
       
-      <button
+      <button type="button"
         onClick={handleConfirm}
         disabled={!url.trim()}
         className="mt-8 w-full bg-blue-600 text-white py-3 rounded-lg font-bold disabled:bg-gray-400 hover:bg-blue-700 transition-colors"

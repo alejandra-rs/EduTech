@@ -5,27 +5,26 @@ import { starStudySession, unstarStudySession } from "../../services/connections
 
 export interface ParticipateButtonProps {
   sessionId: number;
-  currentUserId?: number;
   isStarred?: boolean;
   isCreator?: boolean;
   onStarChange?: (starred: boolean) => void;
   size?: string;
 }
 
-const ParticipateButton = ({ sessionId, currentUserId, isStarred = false, isCreator = false, onStarChange, size = "w-6 h-6" }: ParticipateButtonProps) => {
+const ParticipateButton = ({ sessionId, isStarred = false, isCreator = false, onStarChange, size = "w-6 h-6" }: ParticipateButtonProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (loading || isCreator || !currentUserId) return;
+    if (loading || isCreator) return;
     setLoading(true);
     try {
       if (isStarred) {
-        await unstarStudySession(sessionId, currentUserId);
+        await unstarStudySession(sessionId);
         onStarChange?.(false);
       } else {
-        await starStudySession(sessionId, currentUserId);
+        await starStudySession(sessionId);
         onStarChange?.(true);
       }
     } catch (err) {
@@ -38,7 +37,7 @@ const ParticipateButton = ({ sessionId, currentUserId, isStarred = false, isCrea
   if (isCreator) {
     return (
       <div className="flex p-1 bg-blue-100 rounded-lg">
-        <button disabled title="Eres el creador" className="cursor-default focus:outline-none">
+        <button type="button" disabled title="Eres el creador" className="cursor-default focus:outline-none">
           <StarSolid className={`${size} text-blue-500`} />
         </button>
       </div>
@@ -47,7 +46,7 @@ const ParticipateButton = ({ sessionId, currentUserId, isStarred = false, isCrea
 
   return (
     <div className={`flex p-1 bg-${isStarred ? "green-100" : "gray-100"} rounded-lg`}>
-      <button
+      <button type="button"
         onClick={handleToggle}
         disabled={loading}
         title={isStarred ? "Dejar de participar" : "Participar"}

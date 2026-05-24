@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from courses.models import Course
 from courses.serializers import CourseSerializer
-from users.models import Student
 from ..models import Post
 from .quiz import QuizSerializer
 from .flashcard import FlashCardDeckSerializer
@@ -43,7 +42,6 @@ class DraftQuestionInputSerializer(serializers.Serializer):
 
 
 class DraftCreateSerializer(serializers.Serializer):
-    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
     post_type = serializers.ChoiceField(choices=["QUI", "FLA"])
     title = serializers.CharField(max_length=200)

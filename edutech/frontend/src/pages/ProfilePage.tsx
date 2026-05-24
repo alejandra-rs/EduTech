@@ -7,7 +7,7 @@ import {
   getTwitchStatus,
   disconnectTwitch,
 } from "../services/connections-streaming";
-import { useCurrentUser } from "../services/useCurrentUser";
+import { useCurrentUser } from "../context/CurrentUserContext";
 import { deleteUserAccount } from "../services/connections-students";
 import { TitlePage } from "../components/TitlePage";
 import ConfirmModal from "../components/study-material/ConfirmModal";
@@ -30,9 +30,7 @@ export default function ProfilePage() {
   const [twitchLoaded, setTwitchLoaded] = useState(false);
 
   useEffect(() => {
-    if (!currentUser?.id) return;
-
-    getTwitchStatus(currentUser.id)
+    getTwitchStatus()
       .then((status) => {
         setTwitchData({
           connected: status.connected,
@@ -41,7 +39,7 @@ export default function ProfilePage() {
       })
       .catch((err) => console.error("Error fetching Twitch status:", err))
       .finally(() => setTwitchLoaded(true));
-  }, [currentUser?.id]);
+  }, []);
 
   const logout = () => {
     sessionStorage.clear();
@@ -52,7 +50,7 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
     try {
-      await deleteUserAccount(currentUser!.id);
+      await deleteUserAccount();
       logout();
     } catch (err) {
       console.error("Error al eliminar la cuenta:", err);
@@ -78,7 +76,7 @@ export default function ProfilePage() {
               </h2>
             </div>
             {!isEditingCareer && (
-              <button
+              <button type="button"
                 onClick={() => setIsEditingCareer(true)}
                 className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
               >
@@ -91,11 +89,10 @@ export default function ProfilePage() {
             {isEditingCareer ? (
               <div className="flex flex-col items-center animate-in fade-in duration-300">
                 <SelectUniversity
-                  userId={currentUser.id}
                   title="Actualiza tus estudios"
                   usuarioAceptado={() => setIsEditingCareer(false)}
                 />
-                <button
+                <button type="button"
                   onClick={() => setIsEditingCareer(false)}
                   className="mt-4 text-sm text-gray-500 hover:text-gray-800 underline"
                 >
@@ -121,7 +118,6 @@ export default function ProfilePage() {
           </p>
 
           <TwitchConnectButton
-            userId={currentUser.id}
             twitchData={twitchData}
             setTwitchData={setTwitchData}
             connectTwitch={connectTwitch}
@@ -138,7 +134,7 @@ export default function ProfilePage() {
             asegúrate de estar seguro.
           </p>
 
-          <button
+          <button type="button"
             onClick={()=>setShowPop(true)}
             disabled={isDeleting}
             className="px-5 py-2.5 text-sm font-bold text-red-600 border-2 border-red-200 hover:border-red-600 hover:bg-red-50 rounded-xl transition-all"

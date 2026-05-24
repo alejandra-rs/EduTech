@@ -4,12 +4,10 @@ import { TitlePage } from '../components/TitlePage';
 import { useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { postVideo } from "../services/connections-documents";
-import { useCurrentUser } from "../services/useCurrentUser";
 import SuccessToast from "../components/SuccessToast";
 
 export default function LoadVideoPost() {
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
   const { id, subjectId } = useParams<{ id: string; subjectId: string }>();
   const [selectedFile, setSelectedFile] = useState<string>("");
   const [title, setTitle] = useState("");
@@ -20,8 +18,8 @@ export default function LoadVideoPost() {
 
   const handlePublish = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!userData?.id) return;
-    await postVideo({ post_type: 'VID', courseId: Number(subjectId), studentId: userData.id, title, description, url: selectedFile });
+    if (!selectedFile || !subjectId) return;
+    await postVideo({ post_type: 'VID', courseId: Number(subjectId), title, description, url: selectedFile });
     setPublished(true);
   };
 

@@ -45,7 +45,7 @@ export default function UploadImage({ onFileChange }: UploadImageProps) {
           dragOver ? "border-red-500 bg-red-50" : "border-gray-200 bg-white hover:border-gray-400"
         }`}
       >
-        <PhotoIcon className={`w-8 h-8 mb-2 ${selectedFile ? 'text-green-500' : 'text-gray-300'}`} />
+        <PhotoIcon className={`size-8 mb-2 ${selectedFile ? 'text-green-500' : 'text-gray-300'}`} />
         {selectedFile ? (
           <div className="flex items-center gap-2">
             <p className="text-xs text-gray-700 font-bold">{selectedFile.name}</p>
@@ -54,7 +54,7 @@ export default function UploadImage({ onFileChange }: UploadImageProps) {
               onClick={handleRemove}
               className="text-gray-400 hover:text-red-500 transition-colors"
             >
-              <XMarkIcon className="w-4 h-4" />
+              <XMarkIcon className="size-4" />
             </button>
           </div>
         ) : (

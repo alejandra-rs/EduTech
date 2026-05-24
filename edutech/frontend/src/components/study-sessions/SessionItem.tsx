@@ -20,7 +20,7 @@ const SessionItem = ({ session, currentUserId }: SessionItemProps) => {
   const isCreator = session.creator?.id === currentUserId;
 
   return (
-    <div className="group flex items-center justify-between py-4 bg-gray-100 last:border-none transition-all px-4 rounded-2xl gap-4">
+    <div className="group flex items-center justify-between p-4 bg-gray-100 last:border-none transition-all rounded-2xl gap-4">
       <Link
         to={`/sesiones/${session.id}`}
         className="flex flex-col flex-grow min-w-0 gap-2"
@@ -29,15 +29,14 @@ const SessionItem = ({ session, currentUserId }: SessionItemProps) => {
           <div className="text-md font-semibold italic mb-1"> {session.course?.name || "Divulgativa"} </div>
           <ParticipateButton
             sessionId={session.id}
-            currentUserId={currentUserId}
             isStarred={isStarred}
             isCreator={isCreator}
             onStarChange={setIsStarred}
-            size="w-7 h-7"
+            size="size-7"
           />
         </div>
 
-        <h4 className="text-base text-gray-800 font-bold truncate group-hover:text-black transition-colors">
+        <h4 className="text-base text-gray-800 font-semibold truncate group-hover:text-black transition-colors">
           {session.title || "Sesión sin título"}
         </h4>
 

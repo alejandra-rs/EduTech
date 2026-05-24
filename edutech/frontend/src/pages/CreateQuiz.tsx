@@ -4,7 +4,6 @@ import QuizQuestion from '../components/study-material/quiz/QuizQuestion';
 import { DocumentCheckIcon } from "@heroicons/react/24/solid";
 import { EditorLayout } from '../components/study-material/EditorLayout';
 import { postQuiz, saveDraft, updateDraft, getDraft } from '../services/connections-documents';
-import { useCurrentUser } from '../services/useCurrentUser';
 import { QuizEditorQuestion } from '../models/documents/postsTypesModels/quiz.models';
 import { EditorHeaderData } from '../models/documents/post.model';
 
@@ -13,7 +12,6 @@ const createQuestion = () => ({ id: crypto.randomUUID(), title: '', answers: [cr
 
 const CreateQuiz = () => {
   const { subjectId, draftId } = useParams<{ subjectId: string; draftId: string }>();
-  const { userData } = useCurrentUser();
 
   const [questions, setQuestions] = useState<QuizEditorQuestion[]>([createQuestion()]); 
   const [draftPostId, setDraftPostId] = useState(draftId ? parseInt(draftId) : null);
@@ -53,9 +51,9 @@ const CreateQuiz = () => {
 
   const handlePublish = async (header: EditorHeaderData) => {
     if (draftPostId) {
-      await updateDraft({ draftId: draftPostId, post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, questions: castQuestions(), isDraft: false });
+      await updateDraft({ draftId: draftPostId, post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, questions: castQuestions(), isDraft: false });
     } else {
-      await postQuiz({ post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, questions: castQuestions() });
+      await postQuiz({ post_type: 'QUI', title: header.title, description: header.description, courseId: courseId!, questions: castQuestions() });
     }
   };
 
@@ -79,7 +77,6 @@ const CreateQuiz = () => {
         title: header.title,
         description: header.description,
         courseId: courseId!,
-        studentId: userData!.id,
         questions: questionsBackend
       });
     } else {
@@ -88,7 +85,6 @@ const CreateQuiz = () => {
         title: header.title,
         description: header.description,
         courseId: courseId!,
-        studentId: userData!.id,
         questions: questionsBackend
       });
       setDraftPostId(draft.id);
@@ -110,7 +106,7 @@ const CreateQuiz = () => {
       itemLabel={(q: QuizEditorQuestion) => q.title || "Pregunta sin título"}
       onPublish={handlePublish}
       onSaveDraft={handleSaveDraft}
-      publishIcon={<DocumentCheckIcon className="w-4 h-4" />}
+      publishIcon={<DocumentCheckIcon className="size-4" />}
       publishText="Publicar cuestionario"
       successMessage="¡Cuestionario publicado con éxito!"
       initialHeader={initialHeader}

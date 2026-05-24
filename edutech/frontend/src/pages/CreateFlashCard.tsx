@@ -4,13 +4,11 @@ import FlashCardItem from '../components/study-material/flashcards/FlashCardItem
 import { Square3Stack3DIcon } from "@heroicons/react/24/solid";
 import { EditorLayout } from '../components/study-material/EditorLayout';
 import { postFlashCardDeck, saveDraft, updateDraft, getDraft } from '../services/connections-documents';
-import { useCurrentUser } from '../services/useCurrentUser';
 import { Deck, FlashCardEditorItem } from '../models/documents/postsTypesModels/flashcard.model';
 import { EditorHeaderData } from '../models/documents/post.model';
 
 const CreateFlashCard = () => {
   const { subjectId, draftId } = useParams<{ subjectId: string; draftId: string }>();
-  const { userData } = useCurrentUser();
 
   const [cards, setCards] = useState<FlashCardEditorItem[]>([{ id: `c-${crypto.randomUUID()}`, question: '', answer: '' }]);
   const [draftPostId, setDraftPostId] = useState<number | null>(draftId ? parseInt(draftId) : null);
@@ -47,19 +45,19 @@ const CreateFlashCard = () => {
 
   const handlePublish = async (header: EditorHeaderData) => {
     if (draftPostId) {
-      await updateDraft({ draftId: draftPostId, post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend(), isDraft: false });
+      await updateDraft({ draftId: draftPostId, post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, flashcards: getDeckParaBackend(), isDraft: false });
     } else {
-      await postFlashCardDeck({ post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend() });
+      await postFlashCardDeck({ post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, flashcards: getDeckParaBackend() });
     }
   };
 
   const handleSaveDraft = async (header: EditorHeaderData) => {
-    if (!courseId || !userData?.id) return;
+    if (!courseId) return;
     if (draftPostId) {
-      await updateDraft({draftId: draftPostId, post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend()});
+      await updateDraft({draftId: draftPostId, post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, flashcards: getDeckParaBackend()});
 
     } else {
-      const draft = await saveDraft({post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, studentId: userData!.id, flashcards: getDeckParaBackend()});
+      const draft = await saveDraft({post_type: 'FLA', title: header.title, description: header.description, courseId: courseId!, flashcards: getDeckParaBackend()});
       setDraftPostId(draft.id);
     }
   };
@@ -78,7 +76,7 @@ const CreateFlashCard = () => {
       titleLabel="Título del grupo de tarjetas"
       onPublish={handlePublish}
       onSaveDraft={handleSaveDraft}
-      publishIcon={<Square3Stack3DIcon className="w-4 h-4" />}
+      publishIcon={<Square3Stack3DIcon className="size-4" />}
       publishText="Publicar Flashcards"
       successMessage="Grupo de flashcards publicado!"
       itemLabel={(card: FlashCardEditorItem) => card.question || "Tarjeta sin título"}

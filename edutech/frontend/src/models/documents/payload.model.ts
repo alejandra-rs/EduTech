@@ -7,7 +7,6 @@ export interface CreatePayloadBase<T extends PostType> {
   title: string;
   description: string;
   courseId: number;
-  studentId: number;
 }
 
 export interface CreateDocumentPayload extends CreatePayloadBase<'PDF'> {

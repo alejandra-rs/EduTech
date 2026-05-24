@@ -1,17 +1,17 @@
 import { PostPreview } from '../models/documents/post.model';
-import { getFilteredPosts } from '../services/connections-documents';
+import { getFilteredPosts, getMyFilteredPosts } from '../services/connections-documents';
 import Input from './Input';
 import { useState } from 'react';
 interface SearchBarProps {
   placeholder?: string;
   color?: string;
   courseId?: string | null;
-  studentId?: string | null;
+  mine?: boolean;
   onSearch: (results: PostPreview[] | null) => void;
 }
 
 
-const SearchBar = ({ placeholder = "Search...", color = "bg-blue-600", courseId = null, onSearch, studentId = null }: SearchBarProps) => {
+const SearchBar = ({ placeholder = "Search…", color = "bg-blue-600", courseId = null, onSearch, mine = false }: SearchBarProps) => {
 const [title, setTitle] = useState("");
 
 const filterPosts = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -21,7 +21,9 @@ const filterPosts = async (e: React.FormEvent<HTMLFormElement>) => {
       onSearch(null);
       return;
     }
-    const results: PostPreview[] = await getFilteredPosts(courseId, title, studentId);
+    const results: PostPreview[] = mine
+      ? await getMyFilteredPosts(courseId, title)
+      : await getFilteredPosts(courseId, title);
     onSearch(results);
   };
   
@@ -30,7 +32,7 @@ const filterPosts = async (e: React.FormEvent<HTMLFormElement>) => {
       <label htmlFor="search" className="sr-only">Search</label>
       <div className="relative w-full">
         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <svg className="size-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
           </svg>
         </div>

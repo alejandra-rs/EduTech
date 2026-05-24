@@ -4,12 +4,11 @@ import { ButtonControl } from "./ButtonControl";
 import type { University, Degree } from "../../models/courses/course.model";
 
 export interface SelectUniversityProps {
-  userId: number,
   title: string;
   usuarioAceptado: () => void,
 }
 
-export default function SelectUniversity({ userId, title, usuarioAceptado }: SelectUniversityProps) {
+export default function SelectUniversity({ title, usuarioAceptado }: SelectUniversityProps) {
   const {
     step,
     universities,
@@ -20,13 +19,13 @@ export default function SelectUniversity({ userId, title, usuarioAceptado }: Sel
     handleSaveDegrees,
     handleGoBack,
     isSaveDisabled,
-  } = UseDegreeSelection(userId, usuarioAceptado);
+  } = UseDegreeSelection(usuarioAceptado);
 
   const highlightUniversities = step === 2 ? selectedDegreeIds : [];
 
   return (
     <div className="text-center w-full max-w-2xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-5">{title}</h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-5">{title}</h2>
 
       <div className="text-gray-600 mb-8">
         <SelectionGrid

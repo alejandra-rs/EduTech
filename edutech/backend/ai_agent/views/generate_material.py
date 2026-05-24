@@ -10,7 +10,7 @@ from users.models import Student
 from courses.models import Course
 from django.shortcuts import get_object_or_404 
 
-from edutech.backend.ai_agent.agents_prompts import GENERATE_MATERIAL
+from ai_agent.agents_prompts import GENERATE_MATERIAL
 from ai_agent.agent_setings import find_documents, get_filters, get_vector_store, response_needs_code, send_prompt
 
 class GenerateMaterial(APIView):

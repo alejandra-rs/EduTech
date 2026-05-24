@@ -17,16 +17,16 @@ export function FolderPath({ folderId, currentFolder }: FolderPathProps) {
       <div className="flex items-center px-8 py-3 text-sm text-gray-500 min-w-max">
         {folderId && rootFolder ? (
           <DroppablePath folderId={rootFolder.id} folderName={rootFolder.name} to="/mi-espacio">
-            <HomeIcon className="w-4 h-4" /> Mi Espacio
+            <HomeIcon className="size-4" /> Mi Espacio
           </DroppablePath>
         ) : (
           <Link to="/mi-espacio" className="hover:text-blue-600 flex items-center gap-1 transition-colors px-1 py-0.5">
-            <HomeIcon className="w-4 h-4" /> Mi Espacio
+            <HomeIcon className="size-4" /> Mi Espacio
           </Link>
         )}
         {ancestorFolders.map((folder) => (
           <div key={folder.id} className="flex items-center">
-            <ChevronRightIcon className="w-4 h-4 mx-1 text-gray-400 shrink-0" />
+            <ChevronRightIcon className="size-4 mx-1 text-gray-400 shrink-0" />
             <DroppablePath
               folderId={folder.id}
               folderName={folder.name}
@@ -38,7 +38,7 @@ export function FolderPath({ folderId, currentFolder }: FolderPathProps) {
         ))}
         {folderId && (
           <div className="flex items-center">
-            <ChevronRightIcon className="w-4 h-4 mx-1 text-gray-400 shrink-0" />
+            <ChevronRightIcon className="size-4 mx-1 text-gray-400 shrink-0" />
             <span className="font-semibold text-gray-800 whitespace-nowrap">{currentFolder?.name}</span>
           </div>
         )}

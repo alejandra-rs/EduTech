@@ -1,4 +1,4 @@
-import { PostType } from "../../models/documents/post.model";
+import type { PostType } from "../../models/documents/post.model";
 
 const LabelPDF = () => (
   <div className="w-16 h-12 bg-red-600 rounded-md shadow-md flex items-center justify-center border-2 border-red-700 relative">
@@ -7,7 +7,7 @@ const LabelPDF = () => (
   </div>
 );
 
- const LabelVideo = () => (
+const LabelVideo = () => (
   <div className="w-16 h-12 bg-blue-600 rounded-md shadow-md flex items-center justify-center border-2 border-blue-700 relative">
     <span className="text-xl text-white">▶</span>
     <span className="absolute bottom-1 right-1 bg-white text-blue-700 text-[10px] font-bold px-1 rounded-sm">VIDEO</span>
@@ -28,14 +28,14 @@ const LabelFlashCard = () => (
   </div>
 );
 
-export const LABELS = {
+const LABEL_MAP: Record<string, React.ComponentType> = {
   PDF: LabelPDF,
   VID: LabelVideo,
   QUI: LabelQuiz,
   FLA: LabelFlashCard,
 };
 
-export const PostLabel = ({ type }: { type: PostType }) => {
-  const LabelComponent = LABELS[type];
+export const PostLabel = ({ type }: { type: PostType | string }) => {
+  const LabelComponent = LABEL_MAP[type] ?? LabelPDF;
   return <LabelComponent />;
 };

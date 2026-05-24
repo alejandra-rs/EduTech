@@ -6,19 +6,19 @@ const MENTION_REGEX = /@(\S*)$/;
 const SHARED_TEXT_STYLES =
   "w-full pl-4 pr-12 py-3 text-sm font-sans leading-5 whitespace-pre-wrap break-all overflow-hidden";
 
-export interface ChatBotFooterInputProps {
+export interface ChatbotFooterInputProps {
   onSendMessage: (userQuestion: string, mentionedDocs: number[]) => void;
   isLoading: boolean;
   documents?: DocumentsChat[];
   disableMentions?: boolean;
 }
 
-export function ChatBotFooterInput({
+export function ChatbotFooterInput({
   onSendMessage,
   isLoading,
   documents = [],
   disableMentions = false,
-}: ChatBotFooterInputProps) {
+}: ChatbotFooterInputProps) {
   const [inputValue, setInputValue] = useState("");
   const [showMentions, setShowMentions] = useState(false);
   const [mentionFilter, setMentionFilter] = useState("");
@@ -116,7 +116,7 @@ export function ChatBotFooterInput({
     if (!inputValue) {
       return (
         <span className="text-gray-400">
-          {disableMentions ? "Pregunta sobre este documento..." : "Escribe aquí (usa @ para mencionar un PDF)..."}
+          {disableMentions ? "Pregunta sobre este documento..." : "Escribe aquí (usa @ para mencionar un PDF)…"}
         </span>
       );
     }
@@ -186,7 +186,7 @@ export function ChatBotFooterInput({
           />
         </div>
 
-        <button
+        <button type="button"
           onClick={handleSend}
           disabled={isLoading || !inputValue.trim()}
           className={`absolute right-2 bottom-1.5 p-2 transition-colors z-10 ${
@@ -195,7 +195,7 @@ export function ChatBotFooterInput({
               : "text-blue-600 hover:text-blue-800"
           }`}
         >
-          <PaperAirplaneIcon className="w-5 h-5 -rotate-45" />
+          <PaperAirplaneIcon className="size-5 -rotate-45" />
         </button>
       </div>
     </div>

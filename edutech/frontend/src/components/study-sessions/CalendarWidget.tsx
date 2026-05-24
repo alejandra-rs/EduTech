@@ -49,14 +49,14 @@ const CalendarWidget = ({ daysWithSessions = [], selectedDate, onDateChange }: C
   return (
     <div className="bg-white border border-gray-100 rounded-3xl shadow-sm p-6 w-full max-w-sm mx-auto">
       <div className="flex items-center justify-between mb-6 px-2">
-        <button onClick={() => changeMonth(-1)} className="text-gray-400 hover:text-black">
-          <ChevronLeftIcon className="w-4 h-4 stroke-2" />
+        <button type="button" onClick={() => changeMonth(-1)} className="text-gray-400 hover:text-black">
+          <ChevronLeftIcon className="size-4 stroke-2" />
         </button>
 
         <div className="flex gap-1 font-bold text-gray-700 capitalize"> {monthName} {year} </div>
 
-        <button onClick={() => changeMonth(1)} className="text-gray-400 hover:text-black">
-          <ChevronRightIcon className="w-4 h-4 stroke-2" />
+        <button type="button" onClick={() => changeMonth(1)} className="text-gray-400 hover:text-black">
+          <ChevronRightIcon className="size-4 stroke-2" />
         </button>
       </div>
 
@@ -72,9 +72,9 @@ const CalendarWidget = ({ daysWithSessions = [], selectedDate, onDateChange }: C
           return (
             <div key={day?.fullDate || idx} className="flex justify-center items-center h-10">
               {day && (
-                <button
+                <button type="button"
                   onClick={() => onDateChange(day.fullDate)}
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all font-semibold hover:bg-gray-100
+                  className={`size-9 rounded-xl flex items-center justify-center transition-all font-semibold hover:bg-gray-100
                     ${hasSession ? 'text-blue-500 border border-blue-500' : 'text-gray-600'}
                     ${isSelected ? 'border-2 border-blue-500 bg-blue-100 transition-colors' : ''}
                   `}

@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { NavigationGuardProvider } from "./context/NavigationGuardContext";
+import { CurrentUserProvider, useCurrentUser } from "./context/CurrentUserContext";
 import Layout from "./components/Layout";
 import YearsPage from "./pages/YearsPage";
 import LoadVideoPost from "./pages/LoadVideoPost";
@@ -17,14 +17,10 @@ import ReportsPage from "./pages/ReportsPage";
 import ReportFormPage from "./pages/ReportFormPage";
 import SelectDegree from "./pages/SelectDegree";
 import Drafts from "./pages/Drafts";
-import { syncUser } from "./services/connections-students";
-import { useCurrentUser } from "./services/useCurrentUser";
-import { initializeAuth, initializeCurrentUser } from "./services/api";
-import { loginRequest } from "./services/authConfig";
 import StudySessions from "./pages/StudySessions";
 import MyCourses from "./pages/MyCourses";
 import StudySessionDetail from "./pages/StudySessionDetail";
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, } from "@azure/msal-react";
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
 import UploadWizard from "./pages/UploadDocument";
 import MyDocuments from "./pages/MyDocuments";
 import MySpace from "./pages/MySpace";
@@ -32,86 +28,67 @@ import RevisionPage from "./pages/RevisionPage";
 import SessionLive from "./pages/SessionLive";
 import ProfilePage from "./pages/ProfilePage";
 
-export default function App() {
+function AppRoutes() {
   const { accounts, instance } = useMsal();
-  const { userData, isLoading, refetch } = useCurrentUser();
-  const isDomainValid = accounts.length > 0;
-
-  const refetchRef = useRef(refetch);
-  useEffect(() => { refetchRef.current = refetch; });
-
-  useEffect(() => {
-    if (!isDomainValid) return;
-    initializeAuth(() =>
-      instance.acquireTokenSilent({ ...loginRequest, account: accounts[0] })
-        .then(r => r.accessToken)
-    );
-
-    const init = async () => {
-      try {
-        await syncUser(instance, accounts[0]);
-      } catch (e) {
-        console.error("syncUser failed:", e);
-      }
-      await refetchRef.current();
-    };
-
-    init().catch(console.error);
-  }, [accounts, instance, isDomainValid]);
-
-  useEffect(() => {
-    if (userData?.id) initializeCurrentUser(userData.id);
-  }, [userData?.id]);
+  const { userData, isLoading } = useCurrentUser();
 
   return (
     <>
-      <BrowserRouter>
-        <NavigationGuardProvider>
-        <UnauthenticatedTemplate>
-          <SignIn />
-        </UnauthenticatedTemplate>
-        <AuthenticatedTemplate>
-            {isLoading || !userData ? (
-                <h1>Cargando datos del usuario...</h1>
-            ) : userData?.degree !== null &&
-            userData?.degree !== undefined &&
-            userData?.degree.length !== 0 ? (
-            <Layout accounts={accounts} instance={instance}>
-              <Routes>
-                <Route path="/" element={<YearsPage />} />
-                <Route path="/Profile" element={<ProfilePage  />} />
-                <Route path="/:id/asignaturas" element={<CoursesPage />} />
-                <Route path="/:id/:subjectId/post" element={<CourseDetail />}  />
-                <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />
-                <Route path="/:id/:subjectId/upload/PDF" element={<UploadWizard />} />
-                <Route path="/:id/:subjectId/upload/Video" element={<LoadVideoPost />} />
-                <Route path="/:id/:subjectId/documento/:postId" element={<DocumentPreview />} />
-                <Route path="/:id/:subjectId/video/:postId" element={<VideoPreview />} />
-                <Route path="/:id/:subjectId/upload/quiz" element={<CreateQuiz />} />
-                <Route path="/:id/:subjectId/upload/flashcard" element={<CreateFlashCard />} />
-                <Route path="/:id/:subjectId/quiz/:postId" element={<TakeQuiz />} />
-                <Route path="/:id/:subjectId/flashcard/:postId" element={<TakeFlashCard />} />
-                <Route path="/borradores" element={<Drafts />} />
-                <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
-                <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
-                <Route path="/reports" element={<ReportsPage />} />
-                <Route path="/admin/report-form/:id" element={<ReportFormPage />} />
-                <Route path="/sesiones" element={<StudySessions />} />
-                <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
-                <Route path="/mis-publicaciones/" element={<MyDocuments/>} />
-                <Route path="/suscripciones" element={<MyCourses/>} />
-                <Route path="/stream/live/:sessionId" element={<SessionLive />} />
-                <Route path="/revisiones" element={<RevisionPage />} />
-                <Route path="/mi-espacio" element={<MySpace />} />
-                <Route path="/mi-espacio/directorio/:folderId" element={<MySpace />} />
-              </Routes>
-            </Layout>
-          ) : (
-                <SelectDegree userId={userData.id} />
-         )}
-        </AuthenticatedTemplate>
-        </NavigationGuardProvider>
-      </BrowserRouter>
+      <UnauthenticatedTemplate>
+        <SignIn />
+      </UnauthenticatedTemplate>
+      <AuthenticatedTemplate>
+        {isLoading || !userData ? (
+          <h1>Cargando datos del usuario…</h1>
+        ) : userData.degree !== null &&
+          userData.degree !== undefined &&
+          userData.degree.length !== 0 ? (
+          <Layout accounts={accounts} instance={instance}>
+            <Routes>
+              <Route path="/" element={<YearsPage />} />
+              <Route path="/Profile" element={<ProfilePage />} />
+              <Route path="/:id/asignaturas" element={<CoursesPage />} />
+              <Route path="/:id/:subjectId/post" element={<CourseDetail />} />
+              <Route path="/:id/:subjectId/upload" element={<Navigate to="PDF" replace />} />
+              <Route path="/:id/:subjectId/upload/PDF" element={<UploadWizard />} />
+              <Route path="/:id/:subjectId/upload/Video" element={<LoadVideoPost />} />
+              <Route path="/:id/:subjectId/documento/:postId" element={<DocumentPreview />} />
+              <Route path="/:id/:subjectId/video/:postId" element={<VideoPreview />} />
+              <Route path="/:id/:subjectId/upload/quiz" element={<CreateQuiz />} />
+              <Route path="/:id/:subjectId/upload/flashcard" element={<CreateFlashCard />} />
+              <Route path="/:id/:subjectId/quiz/:postId" element={<TakeQuiz />} />
+              <Route path="/:id/:subjectId/flashcard/:postId" element={<TakeFlashCard />} />
+              <Route path="/borradores" element={<Drafts />} />
+              <Route path="/borradores/flashcard/:draftId" element={<CreateFlashCard />} />
+              <Route path="/borradores/quiz/:draftId" element={<CreateQuiz />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/admin/report-form/:id" element={<ReportFormPage />} />
+              <Route path="/sesiones" element={<StudySessions />} />
+              <Route path="/sesiones/:sessionId" element={<StudySessionDetail />} />
+              <Route path="/mis-publicaciones/" element={<MyDocuments />} />
+              <Route path="/suscripciones" element={<MyCourses />} />
+              <Route path="/stream/live/:sessionId" element={<SessionLive />} />
+              <Route path="/revisiones" element={<RevisionPage />} />
+              <Route path="/mi-espacio" element={<MySpace />} />
+              <Route path="/mi-espacio/directorio/:folderId" element={<MySpace />} />
+            </Routes>
+          </Layout>
+        ) : (
+          <SelectDegree />
+        )}
+      </AuthenticatedTemplate>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <NavigationGuardProvider>
+        <CurrentUserProvider>
+          <AppRoutes />
+        </CurrentUserProvider>
+      </NavigationGuardProvider>
+    </BrowserRouter>
   );
 }

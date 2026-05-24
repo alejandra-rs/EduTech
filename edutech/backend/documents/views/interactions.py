@@ -2,12 +2,12 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
-from users.models import Student
+from users.base_views import AuthStudentView
 from ..models import Post, Like, Dislike, Comment
 from ..serializers import CommentListSerializer, LikeSerializer, DislikeSerializer
 
 
-class CommentView(views.APIView):
+class CommentView(AuthStudentView):
     serializer_class = CommentListSerializer
 
     def get(self, request):
@@ -17,7 +17,7 @@ class CommentView(views.APIView):
 
     def post(self, request):
         post = get_object_or_404(Post, pk=request.query_params.get("post"))
-        user = get_object_or_404(Student, pk=request.query_params.get("user"))
+        user = self.get_student()
         message = request.data.get("message", "").strip()
         if not message:
             return Response(
@@ -30,24 +30,24 @@ class CommentView(views.APIView):
         )
 
 
-class LikeView(views.APIView):
+class LikeView(AuthStudentView):
     serializer_class = LikeSerializer
 
     def get(self, request):
-        user = request.query_params.get("user")
-        post = request.query_params.get("post")
-        like = Like.objects.filter(user=user, post=post).first()
-        count = Like.objects.filter(post=post).count()
+        student = self.get_student()
+        post_id = request.query_params.get("post")
+        like = Like.objects.filter(user=student, post_id=post_id).first()
+        count = Like.objects.filter(post_id=post_id).count()
         return Response({"id": like.id if like else -1, "count": count})
 
     def post(self, request):
-        user = get_object_or_404(Student, pk=request.data.get("user"))
+        student = self.get_student()
         post = get_object_or_404(Post, pk=request.data.get("post"))
-        like = Like.objects.filter(user=user, post=post).first()
+        like = Like.objects.filter(user=student, post=post).first()
         count = Like.objects.filter(post=post).count()
         if like:
             return Response({"id": like.id, "count": count})
-        new_like = Like(user=user, post=post)
+        new_like = Like(user=student, post=post)
         try:
             new_like.full_clean()
         except ValidationError as e:
@@ -68,24 +68,24 @@ class LikeView(views.APIView):
         return Response({"detail": "Like eliminado con éxito"})
 
 
-class DislikeView(views.APIView):
+class DislikeView(AuthStudentView):
     serializer_class = DislikeSerializer
 
     def get(self, request):
-        user = request.query_params.get("user")
-        post = request.query_params.get("post")
-        dislike = Dislike.objects.filter(user=user, post=post).first()
-        count = Dislike.objects.filter(post=post).count()
+        student = self.get_student()
+        post_id = request.query_params.get("post")
+        dislike = Dislike.objects.filter(user=student, post_id=post_id).first()
+        count = Dislike.objects.filter(post_id=post_id).count()
         return Response({"id": dislike.id if dislike else -1, "count": count})
 
     def post(self, request):
-        user = get_object_or_404(Student, pk=request.data.get("user"))
+        student = self.get_student()
         post = get_object_or_404(Post, pk=request.data.get("post"))
-        dislike = Dislike.objects.filter(user=user, post=post).first()
+        dislike = Dislike.objects.filter(user=student, post=post).first()
         count = Dislike.objects.filter(post=post).count()
         if dislike:
             return Response({"id": dislike.id, "count": count})
-        new_dislike = Dislike(user=user, post=post)
+        new_dislike = Dislike(user=student, post=post)
         try:
             new_dislike.full_clean()
         except ValidationError as e:

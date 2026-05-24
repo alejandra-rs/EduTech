@@ -2,7 +2,13 @@ import { PostPreview } from "../../models/documents/post.model";
 
 const PdfPreview = ({ fileUrl }: { fileUrl?: string }) => (
   <div className="w-full h-48 border-b border-gray-200 bg-gray-100 shrink-0">
-    {fileUrl && <iframe src={fileUrl} className="w-full h-full" title="PDF preview" />}
+    {fileUrl && (
+      <iframe 
+        src={fileUrl} 
+        className="w-full h-full pointer-events-none" 
+        title="PDF preview"
+      />
+    )}
   </div>
 );
 
@@ -25,6 +31,7 @@ const VideoPreview = ({ fileUrl }: { fileUrl?: string }) => {
           title="Video preview"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
         />
       )}
     </div>

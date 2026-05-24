@@ -26,8 +26,8 @@ export const SubjectDropdown = ({ label, value, onChange, subjects = [], placeho
   const divulgativaOption: SelectableSubject = { id: "divulgativa", name: "Divulgativa", title: "Divulgativa" };
   const allSubjects: SelectableSubject[] = [divulgativaOption, ...subjects];
 
-  const sortedFiltered = [...allSubjects]
-    .sort((a, b) => {
+  const sortedFiltered = allSubjects
+    .toSorted((a, b) => {
       if (a.id === "divulgativa") return -1;
       if (b.id === "divulgativa") return 1;
       return (currentValues.includes(String(b.id)) ? 1 : 0) - (currentValues.includes(String(a.id)) ? 1 : 0);
@@ -55,7 +55,7 @@ export const SubjectDropdown = ({ label, value, onChange, subjects = [], placeho
     if (open) return search;
     if (multiple) {
       const strValues = (currentValues as Array<string | number>).map(String);
-      return strValues.map(id => allSubjects.find(s => String(s.id) === id)?.name || id).filter(Boolean).join(", ");
+      return strValues.flatMap(id => [allSubjects.find(s => String(s.id) === id)?.name ?? id]).join(", ");
     } else {
       const selected = allSubjects.find(s => String(s.id) === String(value));
       return selected?.name || "";
@@ -82,7 +82,7 @@ export const SubjectDropdown = ({ label, value, onChange, subjects = [], placeho
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
             type="button"
           >
-            <XMarkIcon className="w-4 h-4" />
+            <XMarkIcon className="size-4" />
           </button>
         )}
       </div>
@@ -99,7 +99,7 @@ export const SubjectDropdown = ({ label, value, onChange, subjects = [], placeho
                 className={`flex items-center justify-between px-4 py-2 hover:bg-zinc-50 cursor-pointer group transition-colors ${isSelected ? "bg-zinc-50" : ""} ${isDivulgativa ? "border-b border-gray-100" : ""}`}
               >
                 <div className="flex items-center gap-3">
-                  {multiple && <input type="checkbox" checked={isSelected} readOnly className="accent-zinc-600 h-4 w-4" />}
+                  {multiple && <input type="checkbox" checked={isSelected} readOnly className="accent-zinc-600 size-4" />}
                   <span className={`${isSelected ? "font-bold text-zinc-900" : "text-gray-800"} ${isDivulgativa ? "italic text-gray-500" : ""}`}>
                     {s.name || s.title}
                   </span>

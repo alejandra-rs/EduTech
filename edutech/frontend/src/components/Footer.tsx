@@ -36,10 +36,10 @@ const Footer = ({ tabs = [] }: FooterProps) => {
 
   return (
     <footer className="w-full font-mono pointer-events-none group z-50 relative">
-      <div className="flex ml-8 space-x-1 items-end h-12 bg-transparent overflow-visible transition-transform duration-300 translate-y-[2px] group-hover:translate-y-0">
+      <div className="flex ml-8 gap-x-1 items-end h-12 bg-transparent overflow-visible transition-transform duration-300 translate-y-[2px] group-hover:translate-y-0">
         {tabs.map((tab, index) => (
-          <button
-            key={index}
+          <button type="button"
+            key={tab.path}
             onClick={() => handleTabClick(tab)}
             className={`
               px-6 transition-all duration-300 ease-out pointer-events-auto

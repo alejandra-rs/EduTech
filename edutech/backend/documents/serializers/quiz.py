@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from courses.models import Course
-from users.models import Student
 from ..models import Quiz, Question, Answer
 
 
@@ -59,9 +58,6 @@ class QuizUploadSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200)
     description = serializers.CharField(allow_blank=True)
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
-    student = serializers.PrimaryKeyRelatedField(
-        queryset=Student.objects.all(), required=False, allow_null=True
-    )
     questions = QuestionUploadSerializer(many=True)
 
     def validate_questions(self, questions):

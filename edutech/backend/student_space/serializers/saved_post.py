@@ -14,7 +14,6 @@ class SavedPostSerializer(serializers.ModelSerializer):
 class SavedPostCreateSerializer(serializers.Serializer):
     folder_id = serializers.IntegerField()
     post_id = serializers.IntegerField()
-    student_id = serializers.IntegerField()
 
 
 class SavedPostUpdateSerializer(serializers.Serializer):

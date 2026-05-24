@@ -1,12 +1,16 @@
 from rest_framework import views, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from ..models import Year
 from ..serializers import YearSerializer
+from users.models import Student
 
 
 class YearDetailView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         year = get_object_or_404(Year, pk=pk)
         serializer = YearSerializer(year)
@@ -14,14 +18,11 @@ class YearDetailView(views.APIView):
 
 
 class UserYearListView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        user_id = request.query_params.get("user")
-
-        if user_id not in [None, "undefined", ""]:
-            queryset = Year.objects.filter(degree__student__id=user_id).distinct()
-        else:
-            queryset = Year.objects.all()
-
+        student = get_object_or_404(Student, email=request.user.email)
+        queryset = Year.objects.filter(degree__student=student).distinct()
         serializer = YearSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

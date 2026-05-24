@@ -15,14 +15,14 @@ export function SessionHeader({ session, currentUserId, isStarred, onStarChange 
     <section className="flex w-full justify-between items-start border-b border-gray-100 pb-4">
       <div className="space-y-6 w-full">
         <div className="flex justify-between">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900"> {session.title} </h1>
+          <h1 className="text-4xl md:text-5xl font-semibold text-gray-900"> {session.title} </h1>
           <ParticipateButton
             sessionId={session.id}
             currentUserId={currentUserId}
             isStarred={isStarred}
             isCreator={isCreator}
             onStarChange={onStarChange}
-            size="w-8 h-8"
+            size="size-8"
           />
         </div>
         <div className="flex w-full text-sm justify-between items-center">
@@ -33,7 +33,7 @@ export function SessionHeader({ session, currentUserId, isStarred, onStarChange 
           </div>
           <div className="flex items-center gap-2 text-gray-600 font-medium">
             {session.creator.picture && (
-              <img src={session.creator.picture} alt={session.creator.first_name} className="w-5 h-5 rounded-full object-cover" />
+              <img src={session.creator.picture} alt={session.creator.first_name} className="size-5 rounded-full object-cover" />
             )}
             {isCreator ? "Creador: Tú" : `Creador: ${session.creator.first_name} ${session.creator.last_name}`}
           </div>

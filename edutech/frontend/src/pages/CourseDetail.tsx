@@ -69,12 +69,9 @@ const CourseDetail = () => {
     return activeTabs.includes(TYPE_TO_TAB[post.post_type]);
   });
 
-  const pdfDocuments = posts
-    .filter((post) => post.post_type === "PDF")
-    .map((post) => ({
-      id: post.id,
-      title: post.title,
-    }));
+  const pdfDocuments = posts.flatMap((post) =>
+    post.post_type === "PDF" ? [{ id: post.id, title: post.title }] : []
+  );
   return (
     <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       <div className="shrink-0 bg-white">

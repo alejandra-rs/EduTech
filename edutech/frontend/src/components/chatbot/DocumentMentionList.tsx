@@ -34,7 +34,7 @@ export function DocumentMentionList({
                 : "hover:bg-gray-100"
             }`}
           >
-            <DocumentIcon className="w-4 h-4 opacity-50" />
+            <DocumentIcon className="size-4 opacity-50" />
             <span className="truncate">{doc.title}</span>
           </li>
         ))}

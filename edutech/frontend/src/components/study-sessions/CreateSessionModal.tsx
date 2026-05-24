@@ -25,7 +25,6 @@ export interface CreateSessionModalProps {
   newSession: NewSessionData;
   setNewSession: (session: NewSessionData) => void;
   subjects: Course[];
-  userId?: number;
 }
 
 export const CreateSessionModal = ({
@@ -34,7 +33,6 @@ export const CreateSessionModal = ({
   newSession,
   setNewSession,
   subjects,
-  userId,
 }: CreateSessionModalProps) => {
   const [twitchData, setTwitchData] = useState<{
     connected: boolean;
@@ -56,17 +54,12 @@ export const CreateSessionModal = ({
     });
   };
   useEffect(() => {
-    if (!userId) return;
-
-    getTwitchStatus(Number(userId))
+    getTwitchStatus()
       .then((status) => {
-        handleTwitchUpdate({
-          connected: status.connected,
-          login: status.login,
-        });
+        handleTwitchUpdate({ connected: status.connected, login: status.login });
       })
       .catch((err) => console.error("Error fetching Twitch status:", err));
-  }, [userId]);
+  }, []);
 
   const handleLocalSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,13 +78,13 @@ export const CreateSessionModal = ({
         onClick={() => setIsModalOpen(false)}
       />
       <div className="relative bg-white w-full max-w-lg rounded-[32px] shadow-2xl p-8 animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[90vh]">
-        <button
+        <button type="button"
           onClick={() => setIsModalOpen(false)}
           className="absolute top-6 right-6 text-gray-300 hover:text-black"
         >
-          <XMarkIcon className="w-6 h-6" />
+          <XMarkIcon className="size-6" />
         </button>
-        <h3 className="text-3xl font-bold text-gray-900 mb-5">Nueva Sesión</h3>
+        <h3 className="text-3xl font-semibold text-gray-900 mb-5">Nueva Sesión</h3>
         <form onSubmit={handleLocalSubmit} className="space-y-4">
           <SubjectDropdown
             label="Asignatura"
@@ -103,7 +96,7 @@ export const CreateSessionModal = ({
               })
             }
             subjects={subjects}
-            placeholder="Seleccionar asignatura..."
+            placeholder="Seleccionar asignatura…"
           />
           <Input
             label="Título"
@@ -140,7 +133,6 @@ export const CreateSessionModal = ({
             }
           />
           <TwitchConnectButton
-            userId={userId!}
             twitchData={twitchData}
             setTwitchData={handleTwitchUpdate}
             connectTwitch={connectTwitch}

@@ -22,7 +22,6 @@ export interface PostCardProps {
 
 export function PostCard({ post, onClick, onDelete }: PostCardProps) {
   const [isConfirming, setIsConfirming] = useState(false);
-  console.log("Renderizando PostCard con post:", post);
   const onClickDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isConfirming && onDelete) {
@@ -43,21 +42,21 @@ export function PostCard({ post, onClick, onDelete }: PostCardProps) {
       </div>
 
       {onDelete && (
-        <button
+        <button type="button"
           onClick={(e) => onClickDelete(e)} onMouseLeave={() => setIsConfirming(false)}
           className="absolute top-2 left-2 flex items-center gap-2 rounded-full p-1.5 transition-all duration-200 shadow text-white bg-red-500 hover:bg-red-600"
           title={isConfirming ? "Confirmar eliminación" : "Eliminar"}
         >
           {isConfirming ? (<>
                             <span className="text-xs font-bold uppercase tracking-wider">Eliminar</span>
-                            <TrashIcon className="w-6 h-6" />
+                            <TrashIcon className="size-6" />
                            </>)
-                        : (<TrashIcon className="w-6 h-6" />)}
+                        : (<TrashIcon className="size-6" />)}
         </button>
       )}
 
       <div className="p-5 flex flex-col flex-1">
-        <h5 className="text-xl font-bold text-gray-900 leading-tight line-clamp-2 mb-1">
+        <h5 className="text-xl font-semibold text-gray-900 leading-tight line-clamp-2 mb-1">
           {post.title}
         </h5>
         <div className="flex items-center gap-3 mb-4 justify-between">
@@ -70,13 +69,13 @@ export function PostCard({ post, onClick, onDelete }: PostCardProps) {
         <div className="flex items-center justify-between mt-auto">
           
           <ReactionButton type="views" count={post.views}>
-            <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <EyeIcon className="size-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
           </ReactionButton>
           <ReactionButton type="like" count={post.likes}>
-            <HandThumbUpIcon className="w-4 h-4 text-gray-400" />
+            <HandThumbUpIcon className="size-4 text-gray-400" />
           </ReactionButton>
           <ReactionButton type="dislike" count={post.dislikes}>
-            <HandThumbDownIcon className="w-4 h-4 text-gray-400" />
+            <HandThumbDownIcon className="size-4 text-gray-400" />
           </ReactionButton>
         </div>
       </div>

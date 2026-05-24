@@ -1,5 +1,4 @@
 import { BellIcon } from "@heroicons/react/24/outline";
-import { useCurrentUser } from "../../services/useCurrentUser";
 import React, { useState, useEffect } from "react";
 import {
   checkSubscription,
@@ -13,53 +12,44 @@ export interface BellButtonProps {
 
 const BellButton = ({ courseId }: BellButtonProps) => {
   const [subscriptionId, setSubscriptionId] = useState<number | null>(null);
-  const [userId, setUserId] = useState<number | null>(null);
+  const [pending, setPending] = useState(false);
   const isSubscribed = subscriptionId !== null;
-  const { userData } = useCurrentUser();
 
   useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        setUserId(userData!.id);
-        const subId = await checkSubscription(userData!.id, courseId);
-        setSubscriptionId(subId);
-      } catch (error) {
-        console.error("Error al comprobar suscripción:", error);
-      }
-    };
-
-    if (courseId && userData) {
-      cargarDatos();
-    }
-  }, [courseId, userData]);
+    if (!courseId) return;
+    checkSubscription(courseId)
+      .then(setSubscriptionId)
+      .catch((error) => console.error("Error al comprobar suscripción:", error));
+  }, [courseId]);
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!userId) return;
-    const previousSubscriptionId = subscriptionId;
+    if (pending) return;
+    setPending(true);
 
     try {
-      if (isSubscribed ) {
+      if (isSubscribed) {
+        await unsubscribe(subscriptionId!);
         setSubscriptionId(null);
-        await unsubscribe(previousSubscriptionId!);
       } else {
-        const newSubscription = await subscribeToCourse({ user: userId, course: courseId });
-        if (newSubscription) {
-          setSubscriptionId(newSubscription.id);
-        } else {
-          setSubscriptionId(null);
-        }
+        const newSubscription = await subscribeToCourse({ course: courseId });
+        setSubscriptionId(newSubscription?.id ?? null);
       }
     } catch (error) {
       console.error("Error al hacer toggle:", error);
-      setSubscriptionId(previousSubscriptionId);
+    } finally {
+      setPending(false);
     }
   };
+
   return (
     <button
+      type="button"
       onClick={handleToggle}
+      disabled={pending}
       className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all
+        ${pending ? "opacity-40 cursor-not-allowed" : ""}
         ${
           isSubscribed
             ? "bg-yellow-100 text-yellow-600 shadow-inner"

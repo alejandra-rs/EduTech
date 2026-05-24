@@ -4,28 +4,25 @@ import { TitlePage } from '../components/TitlePage';
 import { CourseWidget } from '../components/CourseWidget';
 import SearchBar from '../components/SearchBar';
 import PostGrid from '../components/PostGrid';
-import { useCurrentUser } from '../services/useCurrentUser';
 import { getSubscriptions } from '../services/connections-courses';
 import { UserSubscription } from '../models/courses/course.model';
 import { POST_TYPE_LABELS, PostPreview } from '../models/documents/post.model';
 
 const MyCourses = () => {
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
 
   const [subscriptions, setSubscriptions] = useState<UserSubscription[]>([]);
   const [searchResults, setSearchResults] = useState<PostPreview[]| null> (null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!userData?.id) return;
-    getSubscriptions(String(userData!.id))
+    getSubscriptions()
       .then(setSubscriptions)
       .catch((err) => console.error("Error cargando suscripciones:", err))
       .finally(() => setLoading(false));
-  }, [userData?.id]);
+  }, []);
 
-  const subscribedCourseIds = new Set(subscriptions.map((sub) => sub.course?.id).filter(Boolean));
+  const subscribedCourseIds = new Set(subscriptions.flatMap((sub) => sub.course?.id ? [sub.course.id] : []));
 
   const handleSearch = (results: PostPreview[]| null) => {
     if (!results) { setSearchResults(null); return; }
@@ -57,7 +54,7 @@ const MyCourses = () => {
         ) : (
           <div className="max-w-2xl mx-auto space-y-4">
             {loading ? (
-              <p className="text-gray-500 italic text-center py-12">Cargando...</p>
+              <p className="text-gray-500 italic text-center py-12">Cargando…</p>
             ) : subscriptions.length === 0 ? (
               <p className="text-gray-400 italic text-center py-12">No estás suscrito a ninguna asignatura.</p>
             ) : (

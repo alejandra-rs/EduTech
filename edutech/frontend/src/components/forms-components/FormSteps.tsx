@@ -16,7 +16,7 @@ export default function FromSteps({ steps }: StepperProps) {
         const isLastStep = index === steps.length - 1;
 
         return (
-          <div key={index} className="flex items-center">
+          <div key={step.path} className="flex items-center">
             
             <NavLink
               to={step.path}

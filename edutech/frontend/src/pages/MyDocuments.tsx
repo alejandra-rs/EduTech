@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { useCurrentUser } from "../services/useCurrentUser.ts";
 import SearchBar from "../components/SearchBar";
 import Tabs from "../components/Tabs";
 import PostGrid from "../components/PostGrid";
 import { TitlePage } from "../components/TitlePage";
-import { getMyPosts, deleteDocument } from "../services/connections-documents.ts";
+import { getMyPosts, deleteDocument, getMyFilteredPosts } from "../services/connections-documents.ts";
 import { PostPreview, PostType } from "../models/documents/post.model.ts";
 
 const TYPE_TO_TAB: Record<PostType, string> = { 
@@ -18,31 +17,23 @@ const TYPE_TO_TAB: Record<PostType, string> = {
 
 const MyDocuments = () => {
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
-
   const [posts, setPosts] = useState<PostPreview[]>([]);
   const [searchResults, setSearchResults] = useState<PostPreview[] | null>(null);
   const [activeTabs, setActiveTabs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!userData?.id) return;
-    getMyPosts(String(userData.id))
+    getMyPosts()
       .then(setPosts)
       .catch((err) => console.error("Error al cargar documentos:", err))
       .finally(() => setLoading(false));
-  }, [userData?.id]);
+  }, []);
 
-  const handlePostClick = (post: PostPreview) =>
-  {
-
-      console.log(post);
-    navigate(`/${post.year}/${post.course}/${post.extendedType}/${post.id}`);
-  }
+  const handlePostClick = (post: PostPreview) => navigate(`/${post.year}/${post.course}/${post.extendedType}/${post.id}`);
 
   const handleDelete = async (post: PostPreview) => {
     try {
-      await deleteDocument(post.id, userData!.id);
+      await deleteDocument(post.id);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       if (searchResults) setSearchResults((prev) => prev!.filter((p) => p.id !== post.id));
     } catch (err) {
@@ -66,7 +57,7 @@ const MyDocuments = () => {
           <SearchBar
             placeholder="Buscar en mis documentos..."
             color="bg-slate-800"
-            studentId={String(userData?.id)}
+            mine
             onSearch={setSearchResults}
           />
         </div>
@@ -76,7 +67,7 @@ const MyDocuments = () => {
         <div className="px-12 py-4 flex-grow">
           <div className="max-w-6xl mx-auto">
             {loading ? (
-              <p className="text-gray-500 italic text-center py-12">Cargando...</p>
+              <p className="text-gray-500 italic text-center py-12">Cargando…</p>
             ) : (
               <>
                 <div className="mb-8 sticky top-0 bg-white/90 backdrop-blur-sm py-2 z-10">

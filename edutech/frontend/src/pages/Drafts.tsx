@@ -1,27 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDrafts, deleteDraft } from '../services/connections-documents';
-import { useCurrentUser } from '../services/useCurrentUser';
 import { TitlePage } from '../components/TitlePage';
 import DraftCard from '../components/DraftCard';
 import type { Draft } from '../models/documents/draft.models';
 
 export default function Drafts() {
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!userData?.id) return;
-    getDrafts(userData.id)
+    getDrafts()
       .then((data: Draft[]) => {
         const filtered = data.filter(d => d.post_type === "FLA" || d.post_type === "QUI");
         setDrafts(filtered);
       })
       .finally(() => setLoading(false));
-  }, [userData?.id]);
+  }, []);
 
   const handleDelete = async (draftId: number) => {
     setDeletingId(draftId);
@@ -38,7 +35,7 @@ export default function Drafts() {
   return (
     <>
       <TitlePage PageName="Mis borradores" backLabel="Inicio" onBack={() => navigate("/")} />
-      <main className="max-w-3xl mx-auto px-6 py-6">
+      <main className="max-w-3xl mx-auto p-6">
         {loading && (
           <p className="text-sm text-gray-400 text-center mt-16">Cargando borradores…</p>
         )}

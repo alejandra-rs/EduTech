@@ -36,11 +36,11 @@ export const UploadMenuButton = ({ id, subjectId }: UploadMenuButtonProps) => {
 
   return (
     <div className="relative" ref={menuRef}>
-      <button
+      <button type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="text-gray-700 hover:text-blue-600 transition-all flex items-center"
       >
-        <PlusCircleIcon className="w-10 h-10" />
+        <PlusCircleIcon className="size-10" />
       </button>
 
       {isOpen && (
@@ -52,7 +52,7 @@ export const UploadMenuButton = ({ id, subjectId }: UploadMenuButtonProps) => {
               onClick={() => setIsOpen(false)}
               className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              <Icon className="w-4 h-4 text-gray-400" />
+              <Icon className="size-4 text-gray-400" />
               {label}
             </Link>
           ))}

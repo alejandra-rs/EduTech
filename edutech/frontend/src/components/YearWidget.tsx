@@ -21,11 +21,11 @@ export const YearWidget = ({
       `}
     >
       <div className="flex items-center gap-5 w-full">
-        <div className="flex-shrink-0 w-14 h-14 bg-black/10 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
-          <AcademicCapIcon className="w-8 h-8 text-black" />
+        <div className="flex-shrink-0 size-14 bg-black/10 rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
+          <AcademicCapIcon className="size-8 text-black" />
         </div>
 
-          <h3 className="text-xl font-black text-black italic leading-tight truncate tracking-tight">
+          <h3 className="text-xl font-semibold text-black italic leading-tight truncate tracking-tight">
             {courseName}
           </h3>
       </div>

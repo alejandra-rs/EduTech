@@ -12,7 +12,7 @@ export function DocumentInfo({ document, showDownload = true }: DocumentInfoProp
   return (
     <section className="flex flex-col bg-transparent">
       <div className="flex justify-between">
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">{document?.title}</h1>
+        <h1 className="text-5xl md:text-6xl font-semibold text-gray-900 mb-8">{document?.title}</h1>
         <time className="text-sm text-gray-500 mb-2" dateTime={document?.created_at}>
           {document?.created_at && new Date(document.created_at).toLocaleDateString()}
         </time>

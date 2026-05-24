@@ -56,11 +56,11 @@ export default function ReportPopup({ isOpen, onClose, entity, onSubmit }: Repor
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="flex flex-col bg-white w-full max-w-lg rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center px-6 py-5 border-b border-gray-100 gap-3">
-          <FlagIcon className="w-5 h-5 text-red-500" />
-          <h3 className="text-lg font-bold text-gray-800">Reportar {entity}</h3>
+          <FlagIcon className="size-5 text-red-500" />
+          <h3 className="text-lg font-semibold text-gray-800">Reportar {entity}</h3>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6 py-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-6">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700">Motivo <span className="text-red-500">*</span></label>
             {loading ? (

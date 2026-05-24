@@ -27,7 +27,7 @@ export const DocumentReport = ({ type, comment, date }: DocumentReportProps) => 
         <p className="text-sm text-gray-600 leading-relaxed break-all whitespace-normal">
           {shouldShowButton ? displayedComment : comment}
           {shouldShowButton && (
-            <button
+            <button type="button"
               onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
               className="ml-2 text-gray-400 hover:underline font-bold text-xs shrink-0"
             >

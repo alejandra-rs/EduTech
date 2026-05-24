@@ -13,11 +13,11 @@ export const CourseWidget = ({ courseName, courseId}: CourseWidgetProps) => {
       className="group relative w-full h-[110px] bg-white rounded-[18px] border-2 border-solid border-black/20 shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-[0.98] overflow-hidden"
     >
       <div className="flex h-full p-4 items-center gap-4">
-        <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-          <AcademicCapIcon className="w-7 h-7 text-gray-700" />
+        <div className="flex-shrink-0 size-12 bg-gray-100 rounded-full flex items-center justify-center">
+          <AcademicCapIcon className="size-7 text-gray-700" />
         </div>
         <div className="flex flex-col flex-grow min-w-0">
-          <h3 className="text-lg font-bold text-black truncate">
+          <h3 className="text-lg font-semibold text-black truncate">
             {courseName}
           </h3>
         </div>

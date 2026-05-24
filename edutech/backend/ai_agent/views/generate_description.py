@@ -1,9 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
 from ai_agent.agent_setings import getDocument, send_prompt
-from edutech.backend.ai_agent.agents_prompts import SYSTEM_PROMPTS
+from ai_agent.agents_prompts import SYSTEM_PROMPTS
 
 
 import fitz 
@@ -11,6 +12,7 @@ from documents.models import PDFAttachment
 
 
 class GenerateDescriptionView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, draft_id):
         try:
             try:

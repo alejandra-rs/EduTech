@@ -19,7 +19,7 @@ export function ReactionButton({ children, count, type, active = false, onClick 
 
   return (
     <div className="flex items-center gap-2 select-none group">
-      <button
+      <button type="button"
         onClick={handleClick}
         className={`
           transition-all duration-200 p-1.5 rounded-full hover:bg-gray-100/50

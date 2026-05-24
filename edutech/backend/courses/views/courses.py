@@ -1,12 +1,14 @@
 from rest_framework import generics, views
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from ..serializers import CourseSerializer
 from ..models import Course, Year
 
 
 class CourseListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     filterset_fields = ["year", "semester"]
@@ -19,6 +21,8 @@ class CourseListCreate(generics.ListCreateAPIView):
 
 
 class CourseDetailView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
         course = get_object_or_404(Course, pk=pk)
         return Response(CourseSerializer(course).data, status=status.HTTP_200_OK)

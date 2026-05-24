@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import views, status
+from rest_framework import status
 from rest_framework.response import Response
-from users.models import Student
+from users.base_views import AuthStudentView
 from ..models import Folder
 from ..serializers import (
     FolderDetailSerializer,
@@ -14,13 +14,9 @@ from ..serializers import (
 MAX_SUBFOLDERS = 100
 
 
-def _get_student(query_params):
-    return get_object_or_404(Student, pk=query_params.get("student"))
-
-
-class FolderRootView(views.APIView):
+class FolderRootView(AuthStudentView):
     def get(self, request):
-        student = _get_student(request.query_params)
+        student = self.get_student()
         root_folder = Folder.objects.filter(student=student, depth=1)
         if root_folder.exists():
             root = root_folder.first()
@@ -34,14 +30,14 @@ class FolderRootView(views.APIView):
         return Response(FolderDetailSerializer(root).data)
 
 
-class FolderCreateView(views.APIView):
+class FolderCreateView(AuthStudentView):
     def post(self, request):
         serializer = FolderCreateSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
-        student = get_object_or_404(Student, pk=data["student_id"])
+        student = self.get_student()
         parent = get_object_or_404(Folder, pk=data["parent_id"], student=student)
 
         if (
@@ -63,12 +59,12 @@ class FolderCreateView(views.APIView):
         return Response(FolderSerializer(folder).data, status=status.HTTP_201_CREATED)
 
 
-class FolderDetailView(views.APIView):
+class FolderDetailView(AuthStudentView):
     def _get_folder_for_student(self, pk, student):
         return get_object_or_404(Folder, pk=pk, student=student)
 
     def get(self, request, pk):
-        student = _get_student(request.query_params)
+        student = self.get_student()
         folder = self._get_folder_for_student(pk, student)
         folder = (
             Folder.objects.prefetch_related("saved_posts__post")
@@ -78,7 +74,7 @@ class FolderDetailView(views.APIView):
         return Response(FolderDetailSerializer(folder).data)
 
     def patch(self, request, pk):
-        student = _get_student(request.query_params)
+        student = self.get_student()
         folder = self._get_folder_for_student(pk, student)
 
         if folder.depth == 1:
@@ -104,7 +100,7 @@ class FolderDetailView(views.APIView):
         return Response(FolderSerializer(folder).data)
 
     def delete(self, request, pk):
-        student = _get_student(request.query_params)
+        student = self.get_student()
         folder = self._get_folder_for_student(pk, student)
 
         if folder.depth == 1:
@@ -117,9 +113,9 @@ class FolderDetailView(views.APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FolderMoveView(views.APIView):
+class FolderMoveView(AuthStudentView):
     def patch(self, request, pk):
-        student = _get_student(request.query_params)
+        student = self.get_student()
         folder = get_object_or_404(Folder, pk=pk, student=student)
 
         if folder.depth == 1:

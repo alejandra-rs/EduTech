@@ -5,7 +5,7 @@ import SessionHeader from '../components/study-sessions/SessionHeader';
 import SessionDescription from '../components/study-sessions/SessionDescription';
 import { getStudySession, starStudySession, unstarStudySession } from '../services/connections-studysessions';
 import { getTwitchStatus, connectToSession } from '../services/connections-streaming';
-import { useCurrentUser } from '../services/useCurrentUser';
+import { useCurrentUser } from '../context/CurrentUserContext';
 import { StreamButton } from '../components/study-sessions/StreamButton';
 import { CommentsSection } from '../components/interactions/CommentsSection';
 import type { StudySession } from '../models/studysessions/studysession.model';
@@ -22,24 +22,24 @@ export default function StudySessionDetail() {
   const [isStarred, setIsStarred] = useState(false);
 
   const refreshSession = useCallback(async () => {
-    if (!sessionId || !currentUser?.id) return;
+    if (!sessionId) return;
     try {
-      const updated = await getStudySession(Number(sessionId), currentUser.id);
+      const updated = await getStudySession(Number(sessionId));
       setSession(updated);
       setIsStarred(updated.is_starred);
     } catch (error) {
       console.error("Error al refrescar la sesión", error);
     }
-  }, [sessionId, currentUser?.id]);
+  }, [sessionId]);
 
   useEffect(() => {
     const loadSessionData = async () => {
-      if (!sessionId || !currentUser?.id) return;
+      if (!sessionId) return;
       try {
         setIsLoading(true);
         const [sessionData, twitchStatus] = await Promise.all([
-          getStudySession(Number(sessionId), currentUser.id),
-          getTwitchStatus(currentUser.id),
+          getStudySession(Number(sessionId)),
+          getTwitchStatus(),
         ]);
         setSession(sessionData);
         setIsStarred(sessionData.is_starred);
@@ -52,7 +52,7 @@ export default function StudySessionDetail() {
     };
 
     loadSessionData();
-  }, [sessionId, currentUser?.id]);
+  }, [sessionId]);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -66,14 +66,14 @@ export default function StudySessionDetail() {
   }, [sessionId, refreshSession]);
 
   const handleToggleStar = async () => {
-    if (!currentUser?.id || !session) return;
+    if (!session) return;
     try {
       if (isStarred) {
         setIsStarred(false);
-        await unstarStudySession(session.id, currentUser.id);
+        await unstarStudySession(session.id);
       } else {
         setIsStarred(true);
-        await starStudySession(session.id, currentUser.id);
+        await starStudySession(session.id);
       }
     } catch (error) {
       console.error("Error al actualizar favoritos:", error);
@@ -82,7 +82,7 @@ export default function StudySessionDetail() {
 
   const isCreator = currentUser?.id === session?.creator.id;
 
-  if (isLoading) return <div className="p-20 text-center font-bold animate-pulse">Cargando sesión...</div>;
+  if (isLoading) return <div className="p-20 text-center font-bold animate-pulse">Cargando sesión…</div>;
   if (!session) return <div className="p-20 text-center font-bold">Sesión no encontrada</div>;
 
   return (
@@ -111,7 +111,6 @@ export default function StudySessionDetail() {
               <StreamButton
                 session={session}
                 isCreator={isCreator}
-                currentUserId={currentUser!.id}
                 twitchData={twitchData}
                 setTwitchData={setTwitchData}
               />

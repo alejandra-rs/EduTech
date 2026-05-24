@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCurrentUser } from "../services/useCurrentUser";
 import UploadDropzone from "../components/forms-components/UploadDropzone";
 import StageList from "../components/forms-components/StageList";
 import ProgressBar from "../components/forms-components/ProgressBar";
@@ -14,7 +13,6 @@ import { PDF_STATES, PDF_STAGES, PDF_STAGES_MAP } from "../models/documents/stat
 export default function UploadDocument() {
   const navigate = useNavigate();
   const { id, subjectId } = useParams();
-  const { userData } = useCurrentUser();
 
   const [file, setFile] = useState<File | null>(null);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
@@ -37,7 +35,7 @@ export default function UploadDocument() {
   }, []);
 
   const handleConfirm = async () => {
-    if (!file || !subjectId || !userData?.id) return;
+    if (!file || !subjectId) return;
     setIsConfirming(true);
 
     const defaultTitle = file.name.replace(/\.[^/.]+$/, "");
@@ -47,14 +45,11 @@ export default function UploadDocument() {
     setProcessingStatus("uploading");
 
     try {
-      
-      const data = await uploadPDFDraft({ post_type: 'PDF', courseId: Number(subjectId), studentId: userData.id, title: defaultTitle, description: defaultDesc, file });
+      const data = await uploadPDFDraft({ post_type: 'PDF', courseId: Number(subjectId), title: defaultTitle, description: defaultDesc, file });
       setDraftId(data.post_id);
       const status = await validatePDF(data.post_id)
-      console.log(status)
-      if (status.status) {
-        setIsConfirmed(true);
-      } else {
+      if (status.status) setIsConfirmed(true);
+      else {
         setIsConfirmed(false);
         setRevisionMessage(status.reason);
       }
@@ -69,7 +64,7 @@ export default function UploadDocument() {
     } catch (error) {
       setProcessingStatus("error");
       setRevisionMessage("Hubo un error de conexión al analizar el documento.");
-    }finally {
+    } finally {
       setIsConfirming(false);
     }
   };

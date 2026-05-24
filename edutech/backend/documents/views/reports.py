@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from users.models import Student
 from ..models import Report, ReportReason, CommentReport
@@ -23,12 +24,15 @@ def _get_admin(request):
 
 
 class ReportReasonListView(views.APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         reasons = ReportReason.objects.all()
         return Response(ReportReasonSerializer(reasons, many=True).data)
 
 
 class ReportListView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         if not _get_admin(request):
             return Response(
@@ -45,17 +49,16 @@ class ReportListView(views.APIView):
     def post(self, request):
         reason_id = request.data.get("reason_id")
         description = request.data.get("description", "").strip()
-        user_id = request.data.get("user_id")
         post_id = request.data.get("post_id")
 
-        if not all([reason_id, description, user_id, post_id]):
+        if not all([reason_id, description, post_id]):
             return Response(
                 {"detail": "Faltan campos requeridos."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         reason = get_object_or_404(ReportReason, pk=reason_id)
-        user = get_object_or_404(Student, pk=user_id)
+        user = get_object_or_404(Student, email=request.user.email)
         post = get_object_or_404(Post, pk=post_id)
 
         if Report.objects.filter(user=user, post=post).exists():
@@ -71,6 +74,8 @@ class ReportListView(views.APIView):
 
 
 class ReportDeleteView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def delete(self, request, pk=None, post_pk=None):
         if not _get_admin(request):
             return Response(
@@ -93,6 +98,7 @@ class ReportDeleteView(views.APIView):
 
 
 class ReportResolveView(views.APIView):
+    permission_classes = [IsAuthenticated]
     """Admin confirms a report: sends email to author, deletes all reports + the post."""
 
     def post(self, request, post_pk):
@@ -124,32 +130,35 @@ class ReportResolveView(views.APIView):
 
 
 class ReportCheckView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        user_id = request.query_params.get("user_id")
         post_id = request.query_params.get("post_id")
-        if not user_id or not post_id:
+        if not post_id:
             return Response(
                 {"detail": "Faltan parámetros."}, status=status.HTTP_400_BAD_REQUEST
             )
-        reported = Report.objects.filter(user_id=user_id, post_id=post_id).exists()
+        student = get_object_or_404(Student, email=request.user.email)
+        reported = Report.objects.filter(user=student, post_id=post_id).exists()
         return Response({"reported": reported})
 
 
 class CommentReportCreateView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         reason_id = request.data.get("reason_id")
         description = request.data.get("description", "").strip()
-        user_id = request.data.get("user_id")
         comment_id = request.data.get("comment_id")
 
-        if not all([reason_id, description, user_id, comment_id]):
+        if not all([reason_id, description, comment_id]):
             return Response(
                 {"detail": "Faltan campos requeridos."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         reason = get_object_or_404(ReportReason, pk=reason_id)
-        user = get_object_or_404(Student, pk=user_id)
+        user = get_object_or_404(Student, email=request.user.email)
         comment = get_object_or_404(Comment, pk=comment_id)
 
         report = CommentReport.objects.create(
@@ -161,6 +170,8 @@ class CommentReportCreateView(views.APIView):
 
 
 class ReportResolutionView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, report_pk):
         report = get_object_or_404(Report, pk=report_pk)
         resolution = getattr(report, "resolution", None)

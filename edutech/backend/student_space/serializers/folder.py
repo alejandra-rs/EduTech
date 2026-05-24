@@ -42,7 +42,6 @@ class FolderDetailSerializer(serializers.ModelSerializer):
 class FolderCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100, trim_whitespace=True)
     parent_id = serializers.IntegerField()
-    student_id = serializers.IntegerField()
 
 
 class FolderRenameSerializer(serializers.Serializer):

@@ -6,7 +6,7 @@ export interface HamburgerButtonProps {
 
 export default function HamburgerButton({ isOpen, onClick, className = '' }: HamburgerButtonProps) {
   return (
-    <button
+    <button type="button"
       onClick={onClick}
       className={`select-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none cursor-pointer transition-all duration-300 ${className}`}
     >

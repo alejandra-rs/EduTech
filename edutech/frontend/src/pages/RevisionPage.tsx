@@ -48,7 +48,7 @@ export default function RevisionPage() {
   if (loading) {
     return (
       <main className="flex items-center justify-center h-screen">
-        <p className="text-gray-400 italic animate-pulse">Cargando revisiones...</p>
+        <p className="text-gray-400 italic animate-pulse">Cargando revisiones…</p>
       </main>
     );
   }

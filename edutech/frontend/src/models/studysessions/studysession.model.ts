@@ -3,7 +3,6 @@ import { Student } from "../student/student.model";
 
 export interface CreateStudySessionPayload {
   courseId: string | null;
-  creatorId: number;
   title: string;
   description: string;
   scheduledAt: string;
@@ -12,7 +11,6 @@ export interface CreateStudySessionPayload {
 
 export interface GetStudySessionsParams {
   courseIds?: (number | string)[];
-  studentId?: number | null;
   starred?: boolean;
 }
 

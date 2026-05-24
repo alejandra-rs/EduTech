@@ -1,5 +1,6 @@
 from .post import (
     PostListView as PostListView,
+    MyPostListView as MyPostListView,
     PostDetailView as PostDetailView,
     PostDeleteView as PostDeleteView,
 )

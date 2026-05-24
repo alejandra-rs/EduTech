@@ -64,7 +64,7 @@ export default function Header({
     <aside className={`h-screen bg-slate-900 flex flex-col py-8 shadow-2xl transition-all duration-500 ${isOpen ? "w-64 px-4" : "w-20 px-4"}`}>
 
       <NavLink key="/" to="/" className={`flex items-center gap-3 mb-6 text-white font-bold text-xl px-2 shrink-0 ${!isOpen && "justify-center"}`}>
-        <RectangleStackIcon className="w-10 h-10 shrink-0" />
+        <RectangleStackIcon className="size-10 shrink-0" />
         {isOpen && <span>Edutech</span>}
       </NavLink>
 
@@ -74,7 +74,7 @@ export default function Header({
       >
         <div className="scale-75 relative shrink-0">
           <UserAvatar imageUrl={userProfilePic} />
-          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full" />
+          <div className="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-slate-900 rounded-full" />
         </div>
         {isOpen && (
           <div className="min-w-0">
@@ -96,7 +96,7 @@ export default function Header({
           <div className="flex flex-col gap-2 mb-4 shrink-0">
              {adminLinks.map(({ to, label, icon: Icon, color }) => (
                 <NavLink key={to} to={to} className={getLinkClass} title={label}>
-                  <Icon className={`w-6 h-6 shrink-0 ${color}`} />
+                  <Icon className={`size-6 shrink-0 ${color}`} />
                   {isOpen && <span className={`text-sm font-bold ${color}`}>{label}</span>}
                 </NavLink>
               ))}
@@ -106,7 +106,7 @@ export default function Header({
 
         {navLinks.map(({ to, label, icon: Icon }) => (
           <NavLink key={to} to={to} className={getLinkClass} title={label}>
-            <Icon className="w-6 h-6 shrink-0" />
+            <Icon className="size-6 shrink-0" />
             {isOpen && (
               <span className="text-sm font-medium whitespace-nowrap">
                 {label}
@@ -117,8 +117,8 @@ export default function Header({
 
         {isOpen && (
           <div className="mt-auto pt-4">
-            <button onClick={handleLogoutRedirect} className={`${baseItemClass} text-red-400 hover:bg-red-500/10`}>
-              <ArrowRightStartOnRectangleIcon className="w-6 h-6 shrink-0" />
+            <button type="button" onClick={handleLogoutRedirect} className={`${baseItemClass} text-red-400 hover:bg-red-500/10`}>
+              <ArrowRightStartOnRectangleIcon className="size-6 shrink-0" />
               <span className="text-sm font-medium">Cerrar sesión</span>
             </button>
           </div>

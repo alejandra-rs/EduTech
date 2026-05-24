@@ -36,12 +36,12 @@ const FlashCardView = ({ card, onResult }: FlashCardViewProps) => {
             Pregunta
           </span>
           <p className="text-xl font-bold text-gray-800 leading-tight">{card.question}</p>
-          <button
+          <button type="button"
             onClick={() => setIsFlipped(true)}
             className="mt-6 flex items-center gap-2 text-purple-600 font-bold text-xs italic
                        hover:bg-purple-50 px-4 py-2 rounded-full transition-colors"
           >
-            <ArrowPathIcon className="w-4 h-4" />
+            <ArrowPathIcon className="size-4" />
             Ver Respuesta
           </button>
         </div>
@@ -57,20 +57,20 @@ const FlashCardView = ({ card, onResult }: FlashCardViewProps) => {
           <p className="text-lg font-medium mb-8">{card.answer}</p>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <button
+            <button type="button"
               onClick={() => handleAnswer(false)}
               className="flex items-center justify-center gap-2 bg-white/10 hover:bg-red-200
                          px-5 py-2 rounded-2xl transition-all font-bold text-xs uppercase"
             >
-              <XMarkIcon className="w-5 h-5" /> Repasar
+              <XMarkIcon className="size-5" /> Repasar
             </button>
-            <button
+            <button type="button"
               onClick={() => handleAnswer(true)}
               className="flex items-center justify-center gap-2 bg-white text-purple-600 hover:bg-green-200
                          px-5 py-2 rounded-2xl transition-all font-bold text-xs
                          uppercase shadow-lg"
             >
-              <CheckIcon className="w-5 h-5 stroke-[3px]" /> Acertado
+              <CheckIcon className="size-5 stroke-[3px]" /> Acertado
             </button>
           </div>
         </div>

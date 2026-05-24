@@ -25,7 +25,7 @@ export const TitlePage = ({ PageName, subtitle = "", onBack, backLabel = "Volver
       </div>
 
       <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center w-full max-w-[60%]">
-        <h1 className="text-3xl font-bold text-gray-800 text-center leading-tight whitespace-normal line-clamp-3">
+        <h1 className="text-3xl font-semibold text-gray-800 text-center leading-tight whitespace-normal line-clamp-3">
           {PageName}
         </h1>
         {subtitle && (

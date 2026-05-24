@@ -3,11 +3,11 @@ import {
   getDegrees,
   getUniversities,
   saveUserDegree,
-  getDegreesByUserId,
+  getMyDegrees,
 } from "../../services/connections-degrees";
 import type { University, Degree } from "../../models/courses/course.model";
 
-export const UseDegreeSelection = (userId: number | undefined, usuarioAceptado?: () => void) => {
+export const UseDegreeSelection = (usuarioAceptado?: () => void) => {
   const [step, setStep] = useState(1);
   const [universities, setUniversities] = useState<University[] | null>(null);
   const [degrees, setDegrees] = useState<Degree[]>([]);
@@ -16,21 +16,20 @@ export const UseDegreeSelection = (userId: number | undefined, usuarioAceptado?:
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      if (!userId) return;
       try {
         const data = await getUniversities();
         setUniversities(data);
 
-        const userDegreeData = await getDegreesByUserId(userId);
-        if (userDegreeData?.degree!.length > 0) {
-          setSelectedDegreeIds(userDegreeData.degree || []);
+        const userDegreeData = await getMyDegrees();
+        if (userDegreeData?.degree && userDegreeData.degree.length > 0) {
+          setSelectedDegreeIds(userDegreeData.degree);
         }
       } catch (error) {
         console.error("Error al obtener datos iniciales:", error);
       }
     };
     fetchInitialData();
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     if (!selectedUniversity) return;
@@ -60,7 +59,7 @@ export const UseDegreeSelection = (userId: number | undefined, usuarioAceptado?:
 
   const handleSaveDegrees = async () => {
     try {
-      await saveUserDegree(userId!, selectedDegreeIds);
+      await saveUserDegree(selectedDegreeIds);
       if (usuarioAceptado) usuarioAceptado();
     } catch (error) {
       console.error("Error al guardar la carrera:", error);

@@ -1,112 +1,66 @@
-import {
-  TwitchChatMessage,
-  TwitchLinkStatus,
-} from "../models/studysessions/twitch.model";
-import { apiFetch } from "./api";
+import { TwitchChatMessage, TwitchLinkStatus } from "../models/studysessions/twitch.model";
+import { apiFetchJson, apiFetchVoid, JSON_HEADERS } from "./api";
 
 const BASE = "/api/study-sessions";
 
-export const getTwitchStatus = async (
-  studentId: number,
-): Promise<TwitchLinkStatus> => {
-  const response = await apiFetch(
-    `${BASE}/twitch/status/?student_id=${studentId}`,
-  );
-  if (!response.ok) throw new Error("Error al verificar el estado de Twitch");
-  return response.json();
+const buildWebSocketUrl = (path: string): string => {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${protocol}//${window.location.host}${path}`;
 };
 
-export const disconnectTwitch = async (studentId: number): Promise<void> => {
-  const response = await apiFetch(
-    `${BASE}/twitch/status/?student_id=${studentId}`,
-    { method: "DELETE" },
-  );
-  if (!response.ok) throw new Error("Error al desconectar Twitch");
-};
+export const getTwitchStatus = (): Promise<TwitchLinkStatus> =>
+  apiFetchJson(`${BASE}/twitch/status/`);
 
-export const connectTwitch = (studentId: number): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const popup = window.open(
-      `${BASE}/twitch/auth/?student_id=${studentId}`,
-      "TwitchOAuth",
-      "width=520,height=700,scrollbars=yes,resizable=yes",
-    );
+export const disconnectTwitch = (): Promise<void> =>
+  apiFetchVoid(`${BASE}/twitch/status/`, { method: "DELETE" });
 
-    let attempted = 0;
-    const maxAttempts = 10;
+export const connectTwitch = (): Promise<string> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const { url } = await apiFetchJson<{ url: string }>(`${BASE}/twitch/auth/`);
+      const popup = window.open(url, "TwitchOAuth", "width=520,height=700,scrollbars=yes,resizable=yes");
 
-    const pollBackend = setInterval(async () => {
-      attempted++;
-      try {
-        const status = await getTwitchStatus(studentId);
-        if (status.connected) {
-          clearInterval(pollBackend);
-          if (popup && !popup.closed) {
-            popup.close();
+      let attempted = 0;
+      const maxAttempts = 10;
+
+      const pollBackend = setInterval(async () => {
+        attempted++;
+        try {
+          const status = await getTwitchStatus();
+          if (status.connected) {
+            clearInterval(pollBackend);
+            if (popup && !popup.closed) popup.close();
+            resolve(status.login ?? "Desconocido");
           }
-          resolve(status.login ?? "Desconocido");
+        } catch (err) {
+          console.error("Error verificando estado de Twitch:", err);
         }
-      } catch (err) {
-        console.error("Error verificando estado de Twitch:", err);
-      }
-      if (attempted >= maxAttempts) {
-        clearInterval(pollBackend);
-        reject(new Error("timeout"));
-      }
-    }, 3000);
+        if (attempted >= maxAttempts) {
+          clearInterval(pollBackend);
+          reject(new Error("timeout"));
+        }
+      }, 3000);
+    } catch (err) {
+      reject(err);
+    }
   });
-};
 
-export const startStream = async (
-  sessionId: number,
-  studentId: number,
-): Promise<{ task_id: string }> => {
-  const response = await apiFetch(`${BASE}/${sessionId}/stream/`, {
+export const startStream = (sessionId: number): Promise<{ task_id: string }> =>
+  apiFetchJson(`${BASE}/${sessionId}/stream/`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ student_id: studentId }),
+    headers: JSON_HEADERS,
+    body: JSON.stringify({}),
   });
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    throw Object.assign(
-      new Error(data.detail ?? "Error al iniciar el stream"),
-      {
-        status: response.status,
-        code: data.code,
-      },
-    );
-  }
-  return response.json();
-};
 
-export const stopStream = async (sessionId: number): Promise<void> => {
-  const response = await apiFetch(`${BASE}/${sessionId}/stream/`, {
-    method: "DELETE",
-  });
-  if (!response.ok) throw new Error("Error al detener el stream");
-};
+export const stopStream = (sessionId: number): Promise<void> =>
+  apiFetchVoid(`${BASE}/${sessionId}/stream/`, { method: "DELETE" });
 
-export const sendTwitchMessage = async (
-  sessionId: number,
-  studentId: number,
-  message: string,
-): Promise<void> => {
-  const response = await apiFetch(`${BASE}/${sessionId}/chat/`, {
+export const sendTwitchMessage = (sessionId: number, message: string): Promise<void> =>
+  apiFetchJson(`${BASE}/${sessionId}/chat/`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ student_id: studentId, message }),
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ message }),
   });
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    throw Object.assign(
-      new Error(data.detail ?? "Error al enviar el mensaje"),
-      {
-        status: response.status,
-        code: data.code,
-      },
-    );
-  }
-};
 
 interface SessionSocketCallbacks {
   onMessage?: (msg: TwitchChatMessage) => void;
@@ -120,14 +74,8 @@ export const connectToSessionChat = (
   onStreamEnded?: () => void,
 ): WebSocket => connectToSession(sessionId, { onMessage, onStreamEnded });
 
-export const connectToSession = (
-  sessionId: number,
-  { onMessage, onStreamStarted, onStreamEnded }: SessionSocketCallbacks,
-): WebSocket => {
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const socket = new WebSocket(
-    `${protocol}//${window.location.host}/ws/study-sessions/${sessionId}/`,
-  );
+export const connectToSession = (sessionId: number, { onMessage, onStreamStarted, onStreamEnded }: SessionSocketCallbacks): WebSocket => {
+  const socket = new WebSocket(buildWebSocketUrl(`/ws/study-sessions/${sessionId}/`));
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data.type === "stream_started") onStreamStarted?.();

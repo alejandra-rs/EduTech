@@ -49,7 +49,7 @@ const TakeQuiz = () => {
       const qId = q.id!;
       if (next[qId] !== undefined) return;
       const selected = selections[qId] || [];
-      const correct = q.answers.filter(a => a.is_correct).map(a => a.id!);
+      const correct = q.answers.flatMap(a => a.is_correct ? [a.id!] : []);
       const isMultiple = correct.length > 1;
       next[qId] = isMultiple
         ? correct.length === selected.length && selected.every(i => correct.includes(i))

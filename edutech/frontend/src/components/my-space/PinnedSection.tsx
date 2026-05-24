@@ -4,7 +4,6 @@ import type { PostPreview } from '../../models/documents/post.model';
 import type { SavedPost } from '../../models/student_space/student_space.model';
 import { SectionTitle } from './SectionTitle';
 import { setPinned } from '../../services/connections-studentspace';
-import { useCurrentUser } from '../../services/useCurrentUser';
 
 interface PinnedSectionProps {
   posts: SavedPost[];
@@ -13,15 +12,12 @@ interface PinnedSectionProps {
 }
 
 export const PinnedSection = ({ posts, onPostClick, onUnpin }: PinnedSectionProps) => {
-  const { userData } = useCurrentUser();
-
   if (!posts || posts.length === 0) return null;
 
   const handleUnpin = async (e: React.MouseEvent, savedPost: SavedPost) => {
     e.stopPropagation();
-    if (!userData) return;
     try {
-      await setPinned(savedPost.id, false, userData.id);
+      await setPinned(savedPost.id, false);
       onUnpin(savedPost);
     } catch (error) {
       console.error("Error al desfijar", error);
@@ -39,12 +35,12 @@ export const PinnedSection = ({ posts, onPostClick, onUnpin }: PinnedSectionProp
                 post={savedPost.post}
                 onClick={() => onPostClick(savedPost.post)}
               />
-              <button
+              <button type="button"
                 onClick={(e) => handleUnpin(e, savedPost)}
                 title="Desfijar"
                 className="absolute top-2 right-2 z-10 p-1.5 bg-white/80 hover:bg-white rounded-full shadow transition-all hover:scale-110 active:scale-95"
               >
-                <MapPinIcon className="w-4 h-4 text-black" />
+                <MapPinIcon className="size-4 text-black" />
               </button>
             </div>
           ))}

@@ -9,7 +9,7 @@ import { CommentsSection } from '../components/interactions/CommentsSection';
 import type { PostPreview } from '../models/documents/post.model';
 import { SaveButton } from '../components/my-space/SaveButton';
 import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
-import { useCurrentUser } from '../services/useCurrentUser';
+import { useCurrentUser } from '../context/CurrentUserContext';
 
 export default function DocumentPreview() {
   const navigate = useNavigate();
@@ -33,12 +33,9 @@ export default function DocumentPreview() {
   }, [postId]);
 
   useEffect(() => {
-    if (document && userData !== null) {
-      console.log(document, userData)
-      if (document.is_draft && !userData.is_admin) {
+      if (document && document.is_draft && userData && !userData.is_admin) {
         navigate(`/${id}/${subjectId}/post`);
       }
-    }
   }, [document, userData]);
 
   return (

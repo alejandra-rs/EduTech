@@ -7,7 +7,6 @@ import type { StudySession } from '../../models/studysessions/studysession.model
 interface StreamButtonProps {
   session: StudySession;
   isCreator: boolean;
-  currentUserId: number;
   twitchData: { connected: boolean; login: string | null };
   setTwitchData: (data: { connected: boolean; login: string | null }) => void;
 }
@@ -17,12 +16,12 @@ function extractLogin(twitchLink: string): string | null {
   return twitchLink.replace(/\/$/, '').split('/').pop()?.toLowerCase() ?? null;
 }
 
-export function StreamButton({ session, isCreator, currentUserId, twitchData, setTwitchData }: StreamButtonProps) {
+export function StreamButton({ session, isCreator, twitchData, setTwitchData }: StreamButtonProps) {
   const navigate = useNavigate();
 
   if (session.status === 'finalizada') {
     return (
-      <button
+      <button type="button"
         disabled
         className="py-3 px-10 bg-gray-200 text-gray-400 font-bold rounded-lg shadow cursor-not-allowed flex items-center justify-center gap-2"
       >
@@ -39,15 +38,15 @@ export function StreamButton({ session, isCreator, currentUserId, twitchData, se
 
   if (!isCreator) {
     return isStreamRunning ? (
-      <button
+      <button type="button"
         onClick={goToStream}
         className="py-3 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow transition-all active:scale-95 flex items-center justify-center gap-2"
       >
-        <PlayCircleIcon className="w-5 h-5" />
+        <PlayCircleIcon className="size-5" />
         Ir al directo
       </button>
     ) : (
-      <button
+      <button type="button"
         disabled
         className="py-3 px-10 bg-gray-200 text-gray-400 font-bold rounded-lg shadow cursor-not-allowed flex items-center justify-center gap-2"
       >
@@ -58,11 +57,11 @@ export function StreamButton({ session, isCreator, currentUserId, twitchData, se
 
   if (isStreamRunning) {
     return (
-      <button
+      <button type="button"
         onClick={goToStream}
         className="py-3 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow transition-all active:scale-95 flex items-center justify-center gap-2"
       >
-        <PlayCircleIcon className="w-5 h-5" />
+        <PlayCircleIcon className="size-5" />
         Ir al directo
       </button>
     );
@@ -70,7 +69,6 @@ export function StreamButton({ session, isCreator, currentUserId, twitchData, se
   if (!twitchData.connected) {
     return (
       <TwitchConnectButton
-        userId={currentUserId}
         twitchData={twitchData}
         setTwitchData={setTwitchData}
         connectTwitch={connectTwitch}
@@ -86,7 +84,6 @@ export function StreamButton({ session, isCreator, currentUserId, twitchData, se
           <span className="font-bold">@{channelLogin}</span>. Vincula la cuenta correcta para iniciar el directo.
         </p>
         <TwitchConnectButton
-          userId={currentUserId}
           twitchData={twitchData}
           setTwitchData={setTwitchData}
           connectTwitch={connectTwitch}
@@ -95,10 +92,10 @@ export function StreamButton({ session, isCreator, currentUserId, twitchData, se
     );
   }
   return (
-    <button
+    <button type="button"
       onClick={async () => {
         try {
-          await startStream(session.id, currentUserId);
+          await startStream(session.id);
           navigate(`/stream/live/${session.id}`);
         } catch (error) {
           console.error("Error al iniciar el stream:", error);

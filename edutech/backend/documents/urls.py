@@ -3,11 +3,8 @@ from . import views
 
 urlpatterns = [
     path("<int:pk>", views.PostDetailView.as_view(), name="view_post"),
-    path(
-        "delete/<int:pk>/<int:student_id>",
-        views.PostDeleteView.as_view(),
-        name="delete_post",
-    ),
+    path("my/", views.MyPostListView.as_view(), name="my_posts"),
+    path("delete/<int:pk>/", views.PostDeleteView.as_view(), name="delete_post"),
     path("upload-draft/", views.UploadPDFDraftView.as_view(), name="upload_pdf_draft"),
     path("upload/pdf/", views.PDFUploadView.as_view(), name="upload_pdf"),
     path("upload/vid/", views.VideoUploadView.as_view(), name="upload_video"),

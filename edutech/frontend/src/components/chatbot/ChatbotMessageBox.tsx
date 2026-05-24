@@ -25,7 +25,7 @@ export function ChatbotMessageBox({
       {isLoading && (
         <div className="flex justify-start">
           <div className="bg-white border border-gray-200 p-3 rounded-lg shadow-sm">
-            <ArrowPathIcon className="w-5 h-5 animate-spin text-blue-600" />
+            <ArrowPathIcon className="size-5 animate-spin text-blue-600" />
           </div>
         </div>
       )}

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { BookmarkIcon as BookmarkOutline } from '@heroicons/react/24/outline';
 import { BookmarkIcon as BookmarkSolid } from '@heroicons/react/24/solid';
 import { getSavedPostId, savePost, deleteSavedPost, getRootFolder } from '../../services/connections-studentspace';
-import { useCurrentUser } from '../../services/useCurrentUser';
 import { DeleteUndoToast } from './DeleteUndoToast';
 
 interface SaveButtonProps {
@@ -13,7 +12,6 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
   const [savedId, setSavedId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
-  const { userData } = useCurrentUser();
 
   useEffect(() => {
     const fetchInitialStatus = async () => {
@@ -26,7 +24,7 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
   }, [postId]);
 
   const handleToggleSave = async () => {
-    if (isLoading || !userData) return;
+    if (isLoading) return;
 
     if (savedId !== null) {
       const idToDelete = savedId;
@@ -35,9 +33,9 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
     } else {
       setIsLoading(true);
       try {
-        const folder = await getRootFolder(userData.id);
+        const folder = await getRootFolder();
         if (folder?.id) {
-          const newSavedPost = await savePost(folder.id, postId, userData.id);
+          const newSavedPost = await savePost(folder.id, postId);
           if (newSavedPost) setSavedId(newSavedPost.id);
         }
       } catch (error) {
@@ -49,11 +47,11 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
   };
 
   const handleConfirmDelete = async () => {
-    if (pendingDeleteId === null || !userData) return;
+    if (pendingDeleteId === null) return;
     const idToDelete = pendingDeleteId;
     setPendingDeleteId(null);
     try {
-      await deleteSavedPost(idToDelete, userData.id);
+      await deleteSavedPost(idToDelete);
     } catch (error) {
       console.error("Error al eliminar guardado", error);
     }
@@ -68,17 +66,14 @@ export const SaveButton = ({ postId }: SaveButtonProps) => {
 
   return (
     <>
-      <button
+      <button type="button"
         onClick={handleToggleSave}
-        disabled={isLoading || !userData}
-        className={`p-2 rounded-full transition-all flex items-center justify-center ${isLoading || !userData ? 'opacity-50' : 'hover:bg-gray-100'}`}
+        disabled={isLoading}
+        className={`p-2 rounded-full transition-all flex items-center justify-center ${isLoading ? 'opacity-50' : 'hover:bg-gray-100'}`}
         title={isSaved ? "Quitar de Mi Espacio" : "Guardar en Mi Espacio"}
       >
-        {isSaved ? (
-          <BookmarkSolid className="w-7 h-7 text-black" />
-        ) : (
-          <BookmarkOutline className="w-7 h-7 text-black hover:scale-110" />
-        )}
+        {isSaved ? (<BookmarkSolid className="size-7 text-black" />) 
+                 : (<BookmarkOutline className="size-7 text-black hover:scale-110" />)}
       </button>
 
       {pendingDeleteId !== null && (

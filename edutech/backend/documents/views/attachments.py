@@ -4,12 +4,15 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, views, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from users.models import Student
 from ..models import Post, PDFAttachment, YoutubeVideo
 from ..serializers import PDFUploadSerializer, VideoUploadSerializer, PostSerializer
 from ai_agent.tasks import vectorize_pdf
 
 
 class PDFUploadView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = PDFUploadSerializer
 
     def post(self, request):
@@ -17,11 +20,12 @@ class PDFUploadView(generics.GenericAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        student = get_object_or_404(Student, email=request.user.email)
         post = Post.objects.create(
             title=serializer.validated_data["title"],
             description=serializer.validated_data["description"],
             course=serializer.validated_data["course"],
-            student=serializer.validated_data["student"],
+            student=student,
             post_type="PDF",
         )
         PDFAttachment.objects.create(post=post, file=serializer.validated_data["file"])
@@ -29,6 +33,7 @@ class PDFUploadView(generics.GenericAPIView):
 
 
 class UploadPDFDraftView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = PDFUploadSerializer
 
     def post(self, request):
@@ -38,12 +43,13 @@ class UploadPDFDraftView(generics.GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
+        student = get_object_or_404(Student, email=request.user.email)
 
         post = Post.objects.create(
             title=data["title"],
             description=data["description"],
             course=data["course"],
-            student=data.get("student"),
+            student=student,
             post_type="PDF",
             is_draft=True,
         )
@@ -64,6 +70,7 @@ class UploadPDFDraftView(generics.GenericAPIView):
 
 
 class VideoUploadView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = VideoUploadSerializer
 
     def post(self, request):
@@ -71,11 +78,12 @@ class VideoUploadView(generics.GenericAPIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        student = get_object_or_404(Student, email=request.user.email)
         post = Post.objects.create(
             title=serializer.validated_data["title"],
             description=serializer.validated_data["description"],
             course=serializer.validated_data["course"],
-            student=serializer.validated_data["student"],
+            student=student,
             post_type="VID",
         )
         YoutubeVideo.objects.create(post=post, vid=serializer.validated_data["url"])
@@ -86,6 +94,8 @@ class VideoUploadView(generics.GenericAPIView):
 
 
 class PDFDownloadView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, post_id):
         post = get_object_or_404(Post, pk=post_id, post_type="PDF")
         key = post.pdf.file.name

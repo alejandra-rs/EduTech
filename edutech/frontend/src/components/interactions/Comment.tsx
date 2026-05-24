@@ -19,7 +19,7 @@ export interface CommentProps {
 
 export default function Comment({ comment, user, currentUser }: CommentProps) {
   const handleReport = async ({ reasonId, description }: { reasonId: string; description: string }) => {
-    await createCommentReport(comment.id, currentUser!.id, Number(reasonId), description);
+    await createCommentReport(comment.id, Number(reasonId), description);
   };
 
   return (

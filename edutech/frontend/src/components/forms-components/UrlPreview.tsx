@@ -4,12 +4,8 @@ interface UrlPreviewProps {
 
 export default function UrlPreview({ url }: UrlPreviewProps) {
   const getEmbedUrl = (rawUrl: string) => {
-    if (rawUrl.includes("youtube.com/watch?v=")) {
-      return rawUrl.replace("watch?v=", "embed/");
-    }
-    if (rawUrl.includes("youtu.be/")) {
-      return rawUrl.replace("youtu.be/", "youtube.com/embed/");
-    }
+    if (rawUrl.includes("youtube.com/watch?v=")) return rawUrl.replace("watch?v=", "embed/");
+    if (rawUrl.includes("youtu.be/")) return rawUrl.replace("youtu.be/", "youtube.com/embed/");
     return rawUrl;
   };
 
@@ -20,6 +16,7 @@ export default function UrlPreview({ url }: UrlPreviewProps) {
          className="absolute inset-0 w-full h-full"
          allowFullScreen
          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+         sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
          title="URL Preview"
        />
     </div>

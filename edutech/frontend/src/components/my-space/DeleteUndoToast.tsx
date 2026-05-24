@@ -33,7 +33,7 @@ export function DeleteUndoToast({ onUndo, onConfirm }: DeleteUndoToastProps) {
       <div className="bg-gray-900 text-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="flex items-center gap-3 px-5 py-4">
           <span className="text-xs text-gray-400 tabular-nums w-5 text-right">{seconds}s</span>
-          <button
+          <button type="button"
             onClick={onUndo}
             className="flex items-center gap-1.5 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors ml-2"
           >

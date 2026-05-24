@@ -70,10 +70,11 @@ export default function UploadDropzone({
               {allowedType === "image" ? (
                 <img src={previewUrl} alt="Preview" className="w-full h-full object-contain rounded-lg shadow-sm bg-white" />
               ) : (
-                <iframe 
+                <iframe
                   src={`${previewUrl}#toolbar=0&navpanes=0`}
-                  className="w-full h-full rounded-lg shadow-sm border border-gray-200 bg-white" 
-                  title="PDF Preview" 
+                  className="w-full h-full rounded-lg shadow-sm border border-gray-200 bg-white"
+                  title="PDF Preview"
+                  sandbox="allow-scripts allow-same-origin allow-forms"
                 />
               )}
             </div>
@@ -87,14 +88,14 @@ export default function UploadDropzone({
                 }}
                 className="absolute top-4 right-4 bg-white/95 hover:bg-white text-gray-800 px-4 py-2 rounded-lg shadow border border-gray-200 flex items-center gap-2 transition-all hover:scale-105 active:scale-95 z-10"
               >
-                <ArrowUpTrayIcon className="w-5 h-5" />
+                <ArrowUpTrayIcon className="size-5" />
                 <span className="text-sm font-bold">Cambiar</span>
               </button>
             )}
           </>
         ) : (
           <div className="text-center px-4 flex flex-col items-center">
-            <ArrowUpTrayIcon className={`w-12 h-12 mb-4 transition-transform ${error ? 'text-red-500' : 'text-gray-400 group-hover:-translate-y-2'}`} />
+            <ArrowUpTrayIcon className={`size-12 mb-4 transition-transform ${error ? 'text-red-500' : 'text-gray-400 group-hover:-translate-y-2'}`} />
             <p className={`text-base font-medium ${error ? 'text-red-600' : 'text-gray-600'}`}>
               Haz clic o arrastra un PDF aquí
             </p>

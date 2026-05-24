@@ -27,6 +27,7 @@ export default function VideoViewer({ videoUrl }: VisorVideoProps) {
             title="Reproductor de Video"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"
             className="absolute top-0 left-0 w-full h-full border-0"
           />
         ) : (

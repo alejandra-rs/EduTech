@@ -26,20 +26,20 @@ const QuizQuestion = ({ question, onUpdate, onDelete, canDelete = true }: QuizQu
           />
         </div>
         <div className="flex items-center gap-2 mt-1 flex-shrink-0">
-          <button
+          <button type="button"
             onClick={addAnswer}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all active:scale-90 font-medium text-xs border border-gray-100"
           >
-            <PlusIcon className="w-4 h-4 stroke-[2.5px]" />
+            <PlusIcon className="size-4 stroke-[2.5px]" />
             Respuesta
           </button>
-          <button
+          <button type="button"
             onClick={onDelete}
             disabled={!canDelete}
             className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-300 disabled:hover:bg-transparent"
             title="Eliminar pregunta"
           >
-            <TrashIcon className="w-4 h-4" />
+            <TrashIcon className="size-4" />
           </button>
         </div>
       </div>

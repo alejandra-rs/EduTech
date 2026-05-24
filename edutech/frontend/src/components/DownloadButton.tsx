@@ -11,7 +11,7 @@ export default function DownloadButton({ postId }: DescargarProps) {
 
   return (
     <div className="w-full">
-      <button
+      <button type="button"
         onClick={handleDownload}
         className="w-full bg-[#2d2d2d] hover:bg-black text-white text-xs py-3 rounded-md transition-colors flex justify-center items-center font-medium uppercase"
       >

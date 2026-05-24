@@ -1,29 +1,12 @@
 import { Comment } from "../../models/documents/interactions/comment.model";
-import { apiFetch } from "../api";
+import { apiFetchJson, JSON_HEADERS } from "../api";
 
-export const getComments = async (documentId: number): Promise<Comment[]> => {
-  try {
-    const response = await apiFetch(`/api/documents/comments/?post=${documentId}`);
-    if (!response.ok) throw new Error("Error al obtener los comentarios");
-    return await response.json() as Comment[];
-  } catch (error) {
-    console.error("Error en getComments:", error);
-    throw error;
-  }
-};
+export const getComments = (documentId: number): Promise<Comment[]> =>
+  apiFetchJson(`/api/documents/comments/?post=${documentId}`);
 
-export const postComment = async (userId: number, postId: number, message: string): Promise<Comment> => {
-  try {
-    const response = await apiFetch(`/api/documents/comments/?user=${userId}&post=${postId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: userId, post: postId, message }),
-    });
-    if (!response.ok) throw new Error("Error al agregar el comentario");
-    return await response.json() as Comment;
-  } catch (error) {
-    console.error("Error en postComment:", error);
-    throw error;
-  }
-};
-
+export const postComment = (postId: number, message: string): Promise<Comment> =>
+  apiFetchJson(`/api/documents/comments/?post=${postId}`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ message }),
+  });

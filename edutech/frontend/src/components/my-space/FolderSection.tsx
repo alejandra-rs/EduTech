@@ -9,17 +9,16 @@ import { Folder } from '../../models/student_space/student_space.model';
 interface FolderSectionProps {
   folders: Folder[];
   currentFolderId: number;
-  studentId: number;
   onFolderAdded: (newFolder: Folder) => void;
 }
 
-export const FolderSection = ({ folders, currentFolderId, studentId, onFolderAdded }: FolderSectionProps) => {
+export const FolderSection = ({ folders, currentFolderId, onFolderAdded }: FolderSectionProps) => {
   const navigate = useNavigate();
   const [isAddingNew, setIsAddingNew] = useState(false);
 
   const handleSaveNewFolder = async (folderName: string) => {
     try {
-      const newFolder = await createFolder(folderName, currentFolderId, studentId);
+      const newFolder = await createFolder(folderName, currentFolderId);
       if (newFolder) {
         onFolderAdded(newFolder);
       }
@@ -35,15 +34,15 @@ export const FolderSection = ({ folders, currentFolderId, studentId, onFolderAdd
   return (
     <section className="mb-10">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
           Carpetas
         </h2>
-        <button
+        <button type="button"
           onClick={() => setIsAddingNew(true)}
           disabled={isAddingNew}
           className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center gap-1 text-sm font-medium"
         >
-          <PlusIcon className="w-4 h-4" />
+          <PlusIcon className="size-4" />
           <span>Nueva</span>
         </button>
       </div>
@@ -52,7 +51,7 @@ export const FolderSection = ({ folders, currentFolderId, studentId, onFolderAdd
         
         {isAddingNew && (
           <div className="flex items-center gap-3 p-4 bg-white border-2 border-dashed border-blue-400 rounded-xl shadow-sm">
-            <FolderIcon className="w-8 h-8 text-blue-400 shrink-0" />
+            <FolderIcon className="size-8 text-blue-400 shrink-0" />
             <FolderInlineEditor
               existingNames={existingFolderNames}
               onSave={handleSaveNewFolder}

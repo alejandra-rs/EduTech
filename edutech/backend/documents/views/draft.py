@@ -2,8 +2,9 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from ..models.quiz import Answer
-from users.models import Student
+from users.base_views import AuthStudentView
 from ..models import Post, FlashCard, FlashCardDeck, Quiz
 from ..serializers import (
     DraftPostSerializer,
@@ -54,9 +55,9 @@ POST_CLEAR_MAP = {
 }
 
 
-class DraftListView(views.APIView):
+class DraftListView(AuthStudentView):
     def get(self, request):
-        student = get_object_or_404(Student, pk=request.query_params.get("student"))
+        student = self.get_student()
         drafts = Post.objects.filter(student=student, is_draft=True).order_by(
             "-updated_at"
         )
@@ -70,7 +71,7 @@ class DraftListView(views.APIView):
 
         data = serializer.validated_data
         post = Post.objects.create(
-            student=data["student"],
+            student=self.get_student(),
             course=data["course"],
             post_type=data["post_type"],
             title=data["title"],
@@ -84,7 +85,7 @@ class DraftListView(views.APIView):
         return Response(DraftPostSerializer(post).data, status=status.HTTP_201_CREATED)
 
 
-class DraftDetailView(views.APIView):
+class DraftDetailView(AuthStudentView):
     def get(self, request, pk):
         post = get_object_or_404(Post, pk=pk, is_draft=True)
         return Response(DraftPostSerializer(post).data)

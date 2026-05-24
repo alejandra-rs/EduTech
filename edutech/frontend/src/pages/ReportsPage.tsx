@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AdminWidget } from '../components/reports/AdminWidget';
 import { TitlePage } from '../components/TitlePage';
 import { DocumentReport } from '../components/reports/DocumentReport';
-import { useCurrentUser } from '../services/useCurrentUser';
+import { useCurrentUser } from '../context/CurrentUserContext';
 import { getReports, rejectPostReports } from '../services/interactions/connections-reports';
 import { TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import type { PostType } from '../models/documents/post.model';

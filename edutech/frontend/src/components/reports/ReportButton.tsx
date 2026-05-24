@@ -25,7 +25,7 @@ export default function ReportButton({ entity = "Publicación", postId, onSubmit
   return (
     <>
       <div className="flex items-center gap-2 select-none group">
-        <button
+        <button type="button"
           onClick={handleOpen}
           title={`Reportar ${entity}`}
           className={`
@@ -35,7 +35,7 @@ export default function ReportButton({ entity = "Publicación", postId, onSubmit
             p-1.5 rounded-full hover:bg-red-50
           `}
         >
-          <FlagIcon className="w-7 h-7" />
+          <FlagIcon className="size-7" />
         </button>
       </div>
 

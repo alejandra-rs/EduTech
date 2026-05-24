@@ -12,7 +12,7 @@ export default function SelectionGrid({ data = [], action, selectedIds = [] }: S
       {data?.map((i: University | Degree) => {
         const isSelected = selectedIds.includes(i.id);
         return (
-          <button
+          <button type="button"
             key={i.id}
             onClick={() => action(i)}
             className={`flex items-center justify-center gap-3 p-4 rounded-full font-bold text-base transition-all duration-200 border-2
@@ -26,11 +26,7 @@ export default function SelectionGrid({ data = [], action, selectedIds = [] }: S
             {i.name}
             {isSelected && <span className="ml-2 text-blue-500">✓</span>}
             {"logo" in i && i.logo && (
-              <img
-                className="w-10 h-10 object-contain rounded-full"
-                src={i.logo}
-                alt={i.name}
-              />
+              <img className="size-10 object-contain rounded-full" src={i.logo} alt={i.name}/>
             )}
           </button>
         );

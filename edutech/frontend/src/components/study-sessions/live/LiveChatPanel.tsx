@@ -5,7 +5,6 @@ import type { TwitchChatMessage } from "../../../models/studysessions/twitch.mod
 
 interface Props {
   sessionId: number;
-  currentUserId: number;
   messages: TwitchChatMessage[];
   isTwitchConnected: boolean;
   onConnectTwitch: () => void;
@@ -22,7 +21,7 @@ function ChatMessageItem({ message }: { message: TwitchChatMessage }) {
   );
 }
 
-export default function LiveChatPanel({ sessionId, currentUserId, messages, isTwitchConnected, onConnectTwitch }: Props) {
+export default function LiveChatPanel({ sessionId, messages, isTwitchConnected, onConnectTwitch }: Props) {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -40,7 +39,7 @@ export default function LiveChatPanel({ sessionId, currentUserId, messages, isTw
     }
 
     try {
-      await sendTwitchMessage(sessionId, currentUserId, input);
+      await sendTwitchMessage(sessionId, input);
       setInput("");
     } catch (error) {
       console.error("Error al enviar mensaje:", error);
@@ -50,7 +49,7 @@ export default function LiveChatPanel({ sessionId, currentUserId, messages, isTw
   return (
     <div className="flex flex-col bg-white rounded-[32px] shadow-xl overflow-hidden border border-gray-100 h-full max-h-[85vh]">
       <div className="p-5 bg-white border-b border-gray-100">
-        <h2 className="font-bold text-gray-900 uppercase tracking-widest text-xs text-center">
+        <h2 className="font-semibold text-gray-900 uppercase tracking-widest text-xs text-center">
           Chat en Vivo
         </h2>
       </div>
@@ -68,7 +67,7 @@ export default function LiveChatPanel({ sessionId, currentUserId, messages, isTw
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={isTwitchConnected ? "Escribe un mensaje..." : "Conéctate a Twitch para chatear..."}
+            placeholder={isTwitchConnected ? "Escribe un mensaje..." : "Conéctate a Twitch para chatear…"}
             className="flex-1 px-4 py-3 bg-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm text-gray-800"
           />
           <button
@@ -77,7 +76,7 @@ export default function LiveChatPanel({ sessionId, currentUserId, messages, isTw
             className="px-4 py-3 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:scale-100"
             disabled={!input.trim()}
           >
-            <PaperAirplaneIcon className="w-5 h-5" />
+            <PaperAirplaneIcon className="size-5" />
           </button>
         </div>
       </form>

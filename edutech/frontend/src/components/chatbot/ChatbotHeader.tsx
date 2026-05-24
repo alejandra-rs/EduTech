@@ -19,24 +19,23 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
   const [menuAbierto, setMenuAbierto] = useState(false);
 
   return (
-<div className="bg-[#130032] text-sm text-white p-4 flex justify-between items-center relative z-50">
-
-      <div className="flex items-center space-x-3">
+    <div className="bg-[#130032] text-sm text-white p-4 flex justify-between items-center relative z-50">
+      <div className="flex items-center gap-x-3">
         
         {!isToolsMode ? (
           <div className="relative flex flex-row gap-4">
-            <button
+            <button type="button"
               onClick={() => setMenuAbierto(!menuAbierto)}
               className="font-semibold flex items-center hover:text-blue-300 transition-colors focus:outline-none"
             >
               {seleccionado.label}
-              <ChevronDownIcon className={`w-4 h-4 ml-1 transition-transform ${menuAbierto ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon className={`size-4 ml-1 transition-transform ${menuAbierto ? 'rotate-180' : ''}`} />
             </button>
 
             {menuAbierto && (
               <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 border border-gray-100 text-gray-800">
                 {lista.map((agente) => (
-                  <button
+                  <button type="button"
                     key={agente.key}
                     onClick={() => { onCambiar(agente); setMenuAbierto(false); }}
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-colors ${
@@ -48,7 +47,7 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
                 ))}
               </div>
             )}
-            <button
+            <button type="button"
                 onClick={() => setIsDeepThinking(!isDeepThinking)}
                 title="Activar Pensamiento Profundo"
                 className={`p-1.5 rounded-full text-lg transition-all duration-300 shadow-sm ${
@@ -62,7 +61,7 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
         ) : (
 
           <div className="flex bg-white/10 rounded-lg p-1 text-xs font-semibold shadow-inner">
-            <button
+            <button type="button"
               onClick={() => setToolType(MATERIAL_MAP.quiz)}
               className={`px-3 py-1.5 rounded-md transition-colors ${
                 toolType === MATERIAL_MAP.quiz ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-300 hover:text-white'
@@ -70,7 +69,7 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
             >
               Quiz
             </button>
-            <button
+            <button type="button"
               onClick={() => setToolType(MATERIAL_MAP.flashcard)}
               className={`px-3 py-1.5 rounded-md transition-colors ${
                 toolType === MATERIAL_MAP.flashcard ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-300 hover:text-white'
@@ -84,17 +83,17 @@ export function ChatbotHeader({lista, seleccionado, onCambiar, onClose, isDeepTh
         
       </div>
 
-      <div className="flex items-center space-x-2">
-        <button
+      <div className="flex items-center gap-x-2">
+        <button type="button"
           onClick={() => setIsToolsMode(!isToolsMode)}
           title="Modo Generador"
           className={`p-1.5 rounded-md transition-colors ${
             isToolsMode ? 'bg-blue-500/30 text-blue-300' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <PuzzlePieceIcon className="w-5 h-5" />
+          <PuzzlePieceIcon className="size-5" />
         </button>
-        <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors ml-2">✕</button>
+        <button type="button" onClick={onClose} className="text-gray-400 hover:text-white transition-colors ml-2">✕</button>
       </div>
     </div>
   );

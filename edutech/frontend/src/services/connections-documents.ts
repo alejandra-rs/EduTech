@@ -1,329 +1,197 @@
 import { PostPreview, PostType, POST_TYPE_LABELS, PostPDF, PostVideo, PostQuiz, PostFlashcard } from "../models/documents/post.model";
-import { apiFetch } from "./api";
+import { apiFetchJson, apiFetchVoid, JSON_HEADERS } from "./api";
 import { Draft } from '../models/documents/draft.models';
 import { QuizCheckResponse } from '../models/documents/postsTypesModels/quiz.models';
 import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDraft } from '../models/documents/payload.model';
+
+export const getLinkDescarga = (postId: number): string => `/api/documents/download/pdf/${postId}`;
 
 export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): PostPreview {
   return { ...post, extendedType: POST_TYPE_LABELS[post.post_type as PostType] } as PostPreview;
 }
 
-export const getLinkDescarga = (postId: number): string => `/api/documents/download/pdf/${postId}`;
-
-export async function getMyPosts(userId: string): Promise<PostPreview[]> {
+async function withLog<T>(label: string, fn: () => Promise<T>): Promise<T> {
   try {
-    const response = await apiFetch(`/api/documents/?student=${userId}`);
-    if (!response.ok) throw new Error("Error al obtener los posts");
-    const data = await response.json();
-    return data.map(_withExtendedType);
+    return await fn();
   } catch (error) {
-    console.error("Error en getMyPosts:", error);
+    console.error(label, error);
     throw error;
   }
 }
 
-
-export async function getPosts(courseId: number): Promise<PostPreview[]> {
-  try {
-    const response = await apiFetch(`/api/documents/?course=${courseId}`);
-    if (!response.ok) throw new Error("Error al obtener los posts");
-    const data = await response.json();
-    return data.map(_withExtendedType);
-  } catch (error) {
-    console.error("Error en getPosts:", error);
-    throw error;
-  }
+function buildDocumentFormData(doc: CreateDocumentPayload): FormData {
+  const form = new FormData();
+  form.append("title", doc.title);
+  form.append("description", doc.description);
+  form.append("course", doc.courseId.toString());
+  form.append("file", doc.file);
+  if (doc.isDraft) form.append("is_draft", "true");
+  return form;
 }
 
-export async function getFilteredPosts(courseId: string | null, title: string, userId: string | null): Promise<PostPreview[]> {
-  try {
-    const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""} ${userId ? `&student=${userId}` : ""}`;
-    const response = await apiFetch(url);
-    if (!response.ok) throw new Error("Error al obtener los posts filtrados");
-    const data = await response.json();
-    return data.map(_withExtendedType);
-  } catch (error) {
-    console.error("Error en getFilteredPosts:", error);
-    throw error;
-  }
+function buildVideoFormData(video: CreateVideoPayload): FormData {
+  const form = new FormData();
+  form.append("title", video.title);
+  form.append("description", video.description);
+  form.append("course", video.courseId.toString());
+  form.append("url", video.url);
+  if (video.isDraft) form.append("is_draft", "true");
+  return form;
 }
-
-export async function getDocument(postId: number): Promise<PostPreview> {
-  try {
-    const response = await apiFetch(`/api/documents/${postId}`);
-    if (!response.ok) throw new Error("Error al obtener el documento");
-    return _withExtendedType(await response.json());
-  } catch (error) {
-    console.error("Error en getDocument:", error);
-    throw error;
-  }
-}
-
-export async function postDocument(document: CreateDocumentPayload): Promise<PostPDF | PostVideo> {
-  try {
-    const formData = new FormData();
-    formData.append("title", document.title);
-    formData.append("description", document.description);
-    formData.append("course", document.courseId.toString());
-    formData.append("student", document.studentId.toString());
-    formData.append("file", document.file);
-    if (document.isDraft) formData.append("is_draft", "true");
-
-    const response = await apiFetch(`/api/documents/upload/pdf/`, { method: "POST", body: formData });
-    if (!response.ok) throw new Error("Error al publicar el documento");
-    return _withExtendedType(await response.json()) as PostPDF;
-  } catch (error) {
-    console.error("Error en postDocument:", error);
-    throw error;
-  }
-}
-
-export async function postVideo(video: CreateVideoPayload): Promise<PostVideo> {
-  try {
-    const formData = new FormData();
-    formData.append("title", video.title);
-    formData.append("description", video.description);
-    formData.append("course", video.courseId.toString());
-    formData.append("student", video.studentId.toString());
-    formData.append("url", video.url);
-    if (video.isDraft) formData.append("is_draft", "true");
-
-    const response = await apiFetch(`/api/documents/upload/vid/`, { method: "POST", body: formData });
-    if (!response.ok) throw new Error("Error al publicar el documento");
-    return _withExtendedType(await response.json()) as PostVideo;
-  } catch (error) {
-    console.error("Error en postDocument:", error);
-    throw error;
-  }
-}
-
-export async function postQuiz(quiz: CreateQuizPayload): Promise<PostQuiz> {
-  try {
-    const response = await apiFetch(`/api/documents/upload/quiz/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: quiz.title,
-        description: quiz.description,
-        course: quiz.courseId,
-        student: quiz.studentId,
-        questions: quiz.questions.map(question => ({
-          title: question.title,
-          answers: question.answers.map(answer => ({ text: answer.text, is_correct: answer.is_correct })),
-        })),
-      }),
-    });
-    if (!response.ok) throw new Error("Error al publicar el cuestionario");
-    return _withExtendedType(await response.json()) as PostQuiz;
-  } catch (error) {
-    console.error("Error en postQuiz:", error);
-    throw error;
-  }
-}
-
-export async function postFlashCardDeck(flashcardDeck: CreateFlashcardPayload): Promise<PostFlashcard> {
-  try {
-    const response = await apiFetch(`/api/documents/upload/flashcards/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: flashcardDeck.title,
-        description: flashcardDeck.description,
-        course: flashcardDeck.courseId,
-        student: flashcardDeck.studentId,
-        cards: flashcardDeck.flashcards.map(card => ({ question: card.question, answer: card.answer })),
-      }),
-    });
-    if (!response.ok) throw new Error("Error al publicar las flashcards");
-    return _withExtendedType(await response.json()) as PostFlashcard;
-  } catch (error) {
-    console.error("Error en postFlashCardDeck:", error);
-    throw error;
-  }
-}
-
-export async function checkQuizAnswers(postId: number, responses: number[]): Promise<QuizCheckResponse> {
-  try {
-    const response = await apiFetch(`/api/documents/${postId}/quiz/check/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ responses }),
-    });
-    if (!response.ok) throw new Error("Error al corregir el cuestionario");
-    return await response.json() as QuizCheckResponse;
-  } catch (error) {
-    console.error("Error en checkQuizAnswers:", error);
-    throw error;
-  }
-}
-
-export async function getDraft(draftId: number): Promise<Draft> {
-  try {
-    const response = await apiFetch(`/api/documents/drafts/${draftId}/`);
-    if (!response.ok) throw new Error("Error al obtener el borrador");
-    return await response.json() as Draft;
-  } catch (error) {
-    console.error("Error en getDraft:", error);
-    throw error;
-  }
-}
-
-export async function getDrafts(userId: number): Promise<Draft[]> {
-  try {
-    const response = await apiFetch(`/api/documents/drafts/?student=${userId}`);
-    if (!response.ok) throw new Error("Error al obtener los borradores");
-    return await response.json() as Draft[];
-  } catch (error) {
-    console.error("Error en getDrafts:", error);
-    throw error;
-  }
-}
-
 
 const PAYLOAD_FORMATTERS: Record<string, (payload: CreateMediaPayload) => any> = {
   QUI: (payload) => {
-    const quiz = payload as CreateQuizPayload; 
+    const quiz = payload as CreateQuizPayload;
     return {
-      questions: quiz.questions.map(question => ({
-        title: question.title,
-        answers: question.answers.map(answer => ({ 
-          text: answer.text, 
-          is_correct: answer.is_correct 
-        })),
-      }))
+      questions: quiz.questions.map(q => ({
+        title: q.title,
+        answers: q.answers.map(a => ({ text: a.text, is_correct: a.is_correct })),
+      })),
     };
   },
-
   FLA: (payload) => {
     const fla = payload as CreateFlashcardPayload;
     return {
-      cards: fla.flashcards.map(card => ({
-        question: card.question,
-        answer: card.answer
-      }))
+      cards: fla.flashcards.map(c => ({ question: c.question, answer: c.answer })),
     };
-  }
+  },
 };
 
-export async function saveDraft(payload: CreateMediaPayload): Promise<Draft> {
-  try {
-    const formatterFunction = PAYLOAD_FORMATTERS[payload.post_type];
-    const specificData = formatterFunction ? formatterFunction(payload) : {};
+function buildDraftBody(payload: CreateMediaPayload): object {
+  const formatter = PAYLOAD_FORMATTERS[payload.post_type];
+  return {
+    post_type: payload.post_type,
+    title: payload.title,
+    description: payload.description,
+    course: payload.courseId,
+    ...(formatter ? formatter(payload) : {}),
+  };
+}
 
-    const bodyContent = {
-      post_type: payload.post_type,
-      title: payload.title,
-      description: payload.description,
-      course: payload.courseId,
-      student: payload.studentId,
-      ...specificData
-    };
+function buildUpdateDraftBody(draft: UploadDraft): object {
+  const formatter = PAYLOAD_FORMATTERS[draft.post_type];
+  return {
+    draftId: draft.draftId,
+    post_type: draft.post_type,
+    title: draft.title,
+    description: draft.description,
+    course: draft.courseId,
+    ...(draft.isDraft !== undefined && { is_draft: draft.isDraft }),
+    ...(formatter ? formatter(draft) : {}),
+  };
+}
 
-    const response = await apiFetch(`/api/documents/drafts/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyContent),
+export const getMyPosts = (): Promise<PostPreview[]> =>
+  withLog("Error en getMyPosts:", async () => {
+    const data = await apiFetchJson<PostPreview[]>(`/api/documents/my/`);
+    return data.map(_withExtendedType);
+  });
+
+export const getPosts = (courseId: number): Promise<PostPreview[]> =>
+  withLog("Error en getPosts:", async () => {
+    const data = await apiFetchJson<PostPreview[]>(`/api/documents/?course=${courseId}`);
+    return data.map(_withExtendedType);
+  });
+
+export const getFilteredPosts = (courseId: string | null, title: string): Promise<PostPreview[]> =>
+  withLog("Error en getFilteredPosts:", async () => {
+    const url = `/api/documents/?search_title=${title}${courseId ? `&course=${courseId}` : ""}`;
+    const data = await apiFetchJson<PostPreview[]>(url);
+    return data.map(_withExtendedType);
+  });
+
+export const getMyFilteredPosts = (courseId: string | null, title: string): Promise<PostPreview[]> =>
+  withLog("Error en getMyFilteredPosts:", async () => {
+    const url = `/api/documents/my/?search_title=${title}${courseId ? `&course=${courseId}` : ""}`;
+    const data = await apiFetchJson<PostPreview[]>(url);
+    return data.map(_withExtendedType);
+  });
+
+export const getDocument = (postId: number): Promise<PostPreview> =>
+  withLog("Error en getDocument:", async () =>
+    _withExtendedType(await apiFetchJson(`/api/documents/${postId}`))
+  );
+
+export const postDocument = (document: CreateDocumentPayload): Promise<PostPDF | PostVideo> =>
+  withLog("Error en postDocument:", async () => {
+    const raw = await apiFetchJson<PostPDF>(`/api/documents/upload/pdf/`, { method: "POST", body: buildDocumentFormData(document) });
+    return _withExtendedType(raw) as PostPDF;
+  });
+
+export const postVideo = (video: CreateVideoPayload): Promise<PostVideo> =>
+  withLog("Error en postDocument:", async () => {
+    const raw = await apiFetchJson<PostVideo>(`/api/documents/upload/vid/`, { method: "POST", body: buildVideoFormData(video) });
+    return _withExtendedType(raw) as PostVideo;
+  });
+
+export const postQuiz = (quiz: CreateQuizPayload): Promise<PostQuiz> =>
+  withLog("Error en postQuiz:", async () => {
+    const body = JSON.stringify({
+      title: quiz.title,
+      description: quiz.description,
+      course: quiz.courseId,
+      questions: quiz.questions.map(q => ({
+        title: q.title,
+        answers: q.answers.map(a => ({ text: a.text, is_correct: a.is_correct })),
+      })),
     });
+    const raw = await apiFetchJson<PostQuiz>(`/api/documents/upload/quiz/`, { method: "POST", headers: JSON_HEADERS, body });
+    return _withExtendedType(raw) as PostQuiz;
+  });
 
-    if (!response.ok) throw new Error("Error al guardar el borrador");
-    
-    return await response.json() as Draft;
-  } catch (error) {
-    console.error("Error en saveDraft:", error);
-    throw error;
-  }
-}
-export async function updateDraft(draft: UploadDraft): Promise<Draft> {
-  try {
-    const formatterFunction = PAYLOAD_FORMATTERS[draft.post_type];
-    const specificData = formatterFunction ? formatterFunction(draft) : {};
-    
-    const bodyContent = {
-      draftId: draft.draftId,
-      post_type: draft.post_type,
-      title: draft.title,
-      description: draft.description,
-      course: draft.courseId,
-      student: draft.studentId,
-      ...(draft.isDraft !== undefined && { is_draft: draft.isDraft }),
-      ...specificData
-    };
-
-    const response = await apiFetch(`/api/documents/drafts/${draft.draftId}/`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyContent),
+export const postFlashCardDeck = (flashcardDeck: CreateFlashcardPayload): Promise<PostFlashcard> =>
+  withLog("Error en postFlashCardDeck:", async () => {
+    const body = JSON.stringify({
+      title: flashcardDeck.title,
+      description: flashcardDeck.description,
+      course: flashcardDeck.courseId,
+      cards: flashcardDeck.flashcards.map(c => ({ question: c.question, answer: c.answer })),
     });
+    const raw = await apiFetchJson<PostFlashcard>(`/api/documents/upload/flashcards/`, { method: "POST", headers: JSON_HEADERS, body });
+    return _withExtendedType(raw) as PostFlashcard;
+  });
 
-    if (!response.ok) throw new Error("Error al actualizar el borrador");
+export const checkQuizAnswers = (postId: number, responses: number[]): Promise<QuizCheckResponse> =>
+  withLog("Error en checkQuizAnswers:", () =>
+    apiFetchJson(`/api/documents/${postId}/quiz/check/`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify({ responses }) })
+  );
 
-    return await response.json() as Draft;
-  } catch (error) {
-    console.error("Error en updateDraft:", error);
-    throw error;
-  }
-}
+export const getDraft = (draftId: number): Promise<Draft> =>
+  withLog("Error en getDraft:", () =>
+    apiFetchJson(`/api/documents/drafts/${draftId}/`)
+  );
 
-export async function uploadPDFDraft(document: CreateDocumentPayload): Promise<{ post_id: number; attachment_id: number; message: string; }> {
-  try {
-    const formData = new FormData();
-    formData.append("title", document.title);
-    formData.append("description", document.description);
-    formData.append("course", document.courseId.toString());
-    formData.append("student", document.studentId.toString());
-    formData.append("file", document.file);
+export const getDrafts = (): Promise<Draft[]> =>
+  withLog("Error en getDrafts:", () =>
+    apiFetchJson(`/api/documents/drafts/`)
+  );
 
-    const response = await apiFetch(`/api/documents/upload-draft/`, {
-      method: "POST",
-      body: formData,
-    });
+export const saveDraft = (payload: CreateMediaPayload): Promise<Draft> =>
+  withLog("Error en saveDraft:", () =>
+    apiFetchJson(`/api/documents/drafts/`, { method: "POST", headers: JSON_HEADERS, body: JSON.stringify(buildDraftBody(payload)) })
+  );
 
-    if (!response.ok) throw new Error("Error al iniciar la vectorización del documento");
-    return await response.json();
-  } catch (error) {
-    console.error("Error en uploadPDFDraft:", error);
-    throw error;
-  }
-}
+export const updateDraft = (draft: UploadDraft): Promise<Draft> =>
+  withLog("Error en updateDraft:", () =>
+    apiFetchJson(`/api/documents/drafts/${draft.draftId}/`, { method: "PATCH", headers: JSON_HEADERS, body: JSON.stringify(buildUpdateDraftBody(draft)) })
+  );
 
-export async function deleteDraft(draftId: number) {
-  try {
-    const response = await apiFetch(`/api/documents/drafts/${draftId}/`, { method: "DELETE" });
-    if (!response.ok) throw new Error("Error al eliminar el borrador");
-  } catch (error) {
-    console.error("Error en deleteDraft:", error);
-    throw error;
-  }
-}
+export const uploadPDFDraft = (document: CreateDocumentPayload): Promise<{ post_id: number; attachment_id: number; message: string }> =>
+  withLog("Error en uploadPDFDraft:", () =>
+    apiFetchJson(`/api/documents/upload-draft/`, { method: "POST", body: buildDocumentFormData(document) })
+  );
 
-export async function deleteDocument(postId: number, studentId: number): Promise<void> {
-  try {
-    const response = await apiFetch(`/api/documents/delete/${postId}/${studentId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!response.ok) throw new Error("Error al eliminar el documento");
-  } catch (error) {
-    console.error("Error en deleteDocument:", error);
-    throw error;
-  }
-}
+export const deleteDraft = (draftId: number): Promise<void> =>
+  withLog("Error en deleteDraft:", () =>
+    apiFetchVoid(`/api/documents/drafts/${draftId}/`, { method: "DELETE" })
+  );
 
-export async function publishPDFDraft(draftId: number, title: string, description: string): Promise<void> {
-  try {
-    const response = await apiFetch(`/api/documents/drafts/${draftId}/`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: title,
-        description: description,
-        is_draft: false,
-      }),
-    });
+export const deleteDocument = (postId: number): Promise<void> =>
+  withLog("Error en deleteDocument:", () =>
+    apiFetchVoid(`/api/documents/delete/${postId}/`, { method: "DELETE", headers: JSON_HEADERS })
+  );
 
-    if (!response.ok) throw new Error("Error al publicar el borrador del documento");
-  } catch (error) {
-    console.error("Error en publishPDFDraft:", error);
-    throw error;
-  }
-}
+export const publishPDFDraft = (draftId: number, title: string, description: string): Promise<void> =>
+  withLog("Error en publishPDFDraft:", () =>
+    apiFetchVoid(`/api/documents/drafts/${draftId}/`, { method: "PATCH", headers: JSON_HEADERS, body: JSON.stringify({ title, description, is_draft: false }) })
+  );

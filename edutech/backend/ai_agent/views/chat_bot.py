@@ -3,14 +3,17 @@ import json
 import fitz
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
 from ai_agent.agent_setings import find_documents, get_filters, get_vector_store, getDocument, response_needs_code, send_prompt
-from edutech.backend.ai_agent.agents_prompts import AGENTS_PROMPTS
+from ai_agent.agents_prompts import AGENTS_PROMPTS
 
 
 import fitz 
 class ChatAcademicoView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         user_query = request.data.get("student_question", "")
         course_id = request.data.get("course", "").strip()

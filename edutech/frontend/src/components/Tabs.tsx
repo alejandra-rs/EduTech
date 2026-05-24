@@ -12,19 +12,15 @@ const Tabs = ({ activeTabs, onTabChange }: TabsProps) => {
   ];
 
   const handleToggle = (tabId: string) => {
-    if (activeTabs.includes(tabId)) {
-      onTabChange(activeTabs.filter(id => id !== tabId));
-    } else {
-      onTabChange([...activeTabs, tabId]);
-    }
-    console.log(activeTabs);
+    if (activeTabs.includes(tabId)) onTabChange(activeTabs.filter(id => id !== tabId));
+    else onTabChange([...activeTabs, tabId]);
   };
 
   return (
     <ul className="flex flex-wrap justify-center text-sm font-medium text-center gap-2 mb-8">
       {tabs.map((tab) => (
         <li key={tab.id}>
-          <button
+          <button type="button"
             onClick={() => handleToggle(tab.id)}
             className={`inline-block px-6 py-2.5 rounded-full transition-all duration-200 shadow-sm
               ${activeTabs.includes(tab.id)

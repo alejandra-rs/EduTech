@@ -5,7 +5,6 @@ import {
   useSensor, useSensors, PointerSensor,
 } from '@dnd-kit/core';
 import { TitlePage } from '../components/TitlePage';
-import { useCurrentUser } from '../services/useCurrentUser';
 import {
   getRootFolder, getFolder, getPinnedPosts,
   moveFolder, moveSavedPost,
@@ -24,7 +23,6 @@ interface PendingDelete { folders: Folder[]; savedPosts: SavedPost[] }
 const MySpace = () => {
   const { folderId } = useParams<{ folderId: string }>();
   const navigate = useNavigate();
-  const { userData } = useCurrentUser();
 
   const [currentFolder, setCurrentFolder] = useState<FolderDetail | null>(null);
   const [pinnedPosts, setPinnedPosts] = useState<SavedPost[]>([]);
@@ -37,17 +35,13 @@ const MySpace = () => {
   );
 
   useEffect(() => {
-    if (!userData?.id) return;
-
     const fetchData = async () => {
       setLoading(true);
       try {
         const [pinned, statsData, folderData] = await Promise.all([
-          getPinnedPosts(userData.id),
-          getSpaceStats(userData.id),
-          folderId
-            ? getFolder(Number(folderId), userData.id)
-            : getRootFolder(userData.id),
+          getPinnedPosts(),
+          getSpaceStats(),
+          folderId ? getFolder(Number(folderId)) : getRootFolder(),
         ]);
         setPinnedPosts(pinned);
         setStats(statsData);
@@ -60,7 +54,7 @@ const MySpace = () => {
     };
 
     fetchData();
-  }, [folderId, userData?.id]);
+  }, [folderId]);
 
   const handlePostClick = (post: PostPreview) => {
     navigate(`/${post.year}/${post.course}/${POST_TYPE_LABELS[post.post_type]}/${post.id}`);
@@ -106,10 +100,10 @@ const MySpace = () => {
     if (overData?.type !== 'folder') return;
     if (activeData?.type === 'folder') {
       if (activeData.folder.id === overData.folder.id) return;
-      await moveFolder(activeData.folder.id, overData.folder.id, userData!.id);
+      await moveFolder(activeData.folder.id, overData.folder.id);
       handleFolderMoved(activeData.folder.id);
     } else if (activeData?.type === 'savedPost') {
-      await moveSavedPost(activeData.savedPost.id, overData.folder.id, userData!.id);
+      await moveSavedPost(activeData.savedPost.id, overData.folder.id);
       handleSavedPostMoved(activeData.savedPost.id);
     }
   };
@@ -145,15 +139,15 @@ const MySpace = () => {
   };
 
   const handleConfirmDelete = async () => {
-    if (!pendingDelete || !userData) return;
+    if (!pendingDelete) return;
     const folderIds = pendingDelete.folders.map(f => f.id);
     const savedPostIds = pendingDelete.savedPosts.map(sp => sp.id);
     setPendingDelete(null);
-    await batchDeleteItems(folderIds, savedPostIds, userData.id);
+    await batchDeleteItems(folderIds, savedPostIds);
   };
 
   if (loading) {
-    return <div className="flex h-screen items-center justify-center text-gray-500">Cargando tu espacio...</div>;
+    return <div className="flex h-screen items-center justify-center text-gray-500">Cargando tu espacio…</div>;
   }
 
   return (
@@ -174,7 +168,7 @@ const MySpace = () => {
           <FolderPath folderId={folderId} currentFolder={currentFolder} />
         </div>
 
-        <div className="flex-grow overflow-y-auto custom-scrollbar px-8 py-8">
+        <div className="flex-grow overflow-y-auto custom-scrollbar p-8">
           <div className="max-w-7xl mx-auto space-y-10">
             {currentFolder?.depth == 1 &&
               <PinnedSection
@@ -189,7 +183,6 @@ const MySpace = () => {
                 folders={currentFolder.children || []}
                 savedPosts={currentFolder.saved_posts}
                 currentFolderId={currentFolder.id}
-                studentId={userData!.id}
                 totalFolderCount={stats?.folder_count ?? 0}
                 pinnedPostIds={new Set(pinnedPosts.map(p => p.id))}
                 onFolderAdded={handleFolderAdded}

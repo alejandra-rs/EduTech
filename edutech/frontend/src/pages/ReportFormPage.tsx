@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useCurrentUser } from '../services/useCurrentUser';
+import { useCurrentUser } from '../context/CurrentUserContext';
 import { resolveReport } from '../services/interactions/connections-reports';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
@@ -45,9 +45,9 @@ export default function ReportFormPage() {
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Material a retirar</label>
-          <div className="bg-red-50 border-l-2 border-red-500 p-3 rounded-r-lg">
+          <div className="bg-red-50 border-red-500 p-3 rounded-r-lg">
             <p className="text-red-900 font-bold text-sm">
-              {contentTitle}{contentSubject && <span className="font-normal"> — {contentSubject}</span>}
+              {contentTitle}{contentSubject && <span className="font-normal"> - {contentSubject}</span>}
             </p>
           </div>
         </div>
@@ -68,17 +68,17 @@ export default function ReportFormPage() {
         <div className="flex gap-6 justify-end pt-4">
           <button
             type="button" onClick={() => navigate(-1)}
-            className="px-3 py-3 rounded-lg font-semibold text-gray-400 hover:bg-gray-100 transition-colors text-md"
+            className="p-3 rounded-lg font-semibold text-gray-400 hover:bg-gray-100 transition-colors text-md"
           >
             Cancelar
           </button>
           <button
             type="submit" disabled={isDeleting}
-            className={`flex items-center justify-center gap-2 px-3 py-3 rounded-lg font-semibold text-white transition-all text-md ${
+            className={`flex items-center justify-center gap-2 p-3 rounded-lg font-semibold text-white transition-all text-md ${
               isDeleting ? 'bg-gray-400' : 'bg-red-600 hover:bg-red-700 shadow-md shadow-red-50'
             }`}
           >
-            {isDeleting ? 'Borrando...' : 'Confirmar y Borrar'}
+            {isDeleting ? 'Borrando…' : 'Confirmar y Borrar'}
           </button>
         </div>
       </form>

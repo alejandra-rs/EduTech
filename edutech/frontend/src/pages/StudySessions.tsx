@@ -4,7 +4,7 @@ import { PlusCircleIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import CalendarWidget from "../components/study-sessions/CalendarWidget";
 import CreateSessionModal from "../components/study-sessions/CreateSessionModal";
 import SessionItem from "../components/study-sessions/SessionItem";
-import { useCurrentUser } from "../services/useCurrentUser";
+import { useCurrentUser } from "../context/CurrentUserContext";
 import {
   getStudySessions,
   createStudySession,
@@ -19,6 +19,15 @@ import type { Course } from "../models/courses/course.model";
 import type { StudySession } from "../models/studysessions/studysession.model";
 import type { NewSessionData } from "../components/study-sessions/CreateSessionModal";
 
+const EMPTY_SESSION = (courseId?: string): NewSessionData => ({
+  title: "", courseId: courseId || "", description: "", scheduledAt: "", twitchUser: "",
+});
+
+const toLocalDateStr = (date: string | Date): string => {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+
 const StudySessions = () => {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
@@ -27,19 +36,13 @@ const StudySessions = () => {
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [subjects, setSubjects] = useState<Course[]>([]);
   const [courseName, setCourseName] = useState(
-    id ? "Cargando..." : "Sesiones de Estudio",
+    id ? "Cargando…" : "Sesiones de Estudio",
   );
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newSession, setNewSession] = useState<NewSessionData>({
-    title: "",
-    courseId: id || "",
-    description: "",
-    scheduledAt: "",
-    twitchUser: "",
-  });
+  const [newSession, setNewSession] = useState<NewSessionData>(() => EMPTY_SESSION(id));
   const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
@@ -50,7 +53,7 @@ const StudySessions = () => {
           const courseData = await getCourse(id);
           setCourseName(courseData?.name || "Asignatura");
         }
-        const years = await getYears(currentUser.id);
+        const years = await getYears();
         const nested = await Promise.all(
           years.map((y: { id: number }) => getCourses(y.id)),
         );
@@ -70,7 +73,7 @@ const StudySessions = () => {
         const courseIds =
           selectedSubjects.length > 0 ? selectedSubjects : id ? [id] : [];
         setSessions(
-          await getStudySessions({ courseIds, studentId: currentUser.id }),
+          await getStudySessions({ courseIds }),
         );
       } catch (err) {
         console.error("Error cargando sesiones:", err);
@@ -91,20 +94,13 @@ const StudySessions = () => {
     try {
       await createStudySession({
         courseId: courseId === "divulgativa" ? null : courseId,
-        creatorId: currentUser!.id,
         title,
         description,
         scheduledAt,
         twitchLink: `https://www.twitch.tv/${newSession.twitchUser}`,
       });
       setIsModalOpen(false);
-      setNewSession({
-        title: "",
-        courseId: id || "",
-        description: "",
-        scheduledAt: "",
-        twitchUser: "",
-      });
+      setNewSession(EMPTY_SESSION(id));
       setRefresh((r) => r + 1);
     } catch (err) {
       console.error("Error al crear la sesión", err);
@@ -114,10 +110,6 @@ const StudySessions = () => {
   const handleDateChange = (day: string) =>
     setSelectedDate((d) => (d === day ? null : day));
 
-  const toLocalDateStr = (dateStr: string | Date): string => {
-    const d = new Date(dateStr);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  };
   const daysWithSessions = sessions.map((s) => toLocalDateStr(s.scheduled_at));
   const displayedSessions = selectedDate
     ? sessions.filter((s) => toLocalDateStr(s.scheduled_at) === selectedDate)
@@ -126,19 +118,19 @@ const StudySessions = () => {
   return (
     <div className="min-h-screen w-full bg-white font-sans relative selection:bg-gray-100">
       <div className="px-8 pt-12 w-full flex justify-between items-center gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">{courseName}</h1>
+        <h1 className="text-3xl font-semibold text-gray-900">{courseName}</h1>
         <div className="flex items-center gap-3">
-          <button
+          <button type="button"
             onClick={() => setIsModalOpen(true)}
             className="hover:scale-110 active:scale-95 transition-all"
           >
-            <PlusCircleIcon className="w-9 h-9 text-gray-800" />
+            <PlusCircleIcon className="size-9 text-gray-800" />
           </button>
-          <button
+          <button type="button"
             onClick={() => navigate("/")}
             className="p-2 rounded-lg bg-slate-400 hover:bg-slate-700 transition-colors shrink-0"
           >
-            <DocumentTextIcon className="w-8 h-8 text-white" />
+            <DocumentTextIcon className="size-8 text-white" />
           </button>
         </div>
       </div>
@@ -162,11 +154,11 @@ const StudySessions = () => {
 
         <section className="md:col-span-8 flex flex-col gap-6 max-h-[90vh] overflow-auto">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-semibold text-gray-900">
               Próximas Sesiones
             </h2>
             {selectedDate && (
-              <button
+              <button type="button"
                 onClick={() => setSelectedDate(null)}
                 className="text-xs text-gray-400 hover:text-gray-700 transition-colors underline"
               >
@@ -176,7 +168,7 @@ const StudySessions = () => {
           </div>
           <div className="space-y-3">
             {loading ? (
-              <p className="text-gray-500 italic">Cargando sesiones...</p>
+              <p className="text-gray-500 italic">Cargando sesiones…</p>
             ) : displayedSessions.length === 0 ? (
               <p className="text-gray-500 italic">No hay sesiones planeadas.</p>
             ) : (
@@ -200,7 +192,6 @@ const StudySessions = () => {
           newSession={newSession}
           setNewSession={setNewSession}
           subjects={subjects}
-          userId={currentUser?.id}
         />
       )}
     </div>

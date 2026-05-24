@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from users.models import Student
 from ..models import PDFRevisionNote
@@ -17,6 +18,7 @@ def _get_admin(request):
 
 
 class RevisionListView(views.APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         if not _get_admin(request):
             return Response({"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN)
@@ -27,6 +29,7 @@ class RevisionListView(views.APIView):
 
 
 class RevisionPublishView(views.APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, pk):
         if not _get_admin(request):
             return Response({"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN)
@@ -44,6 +47,7 @@ class RevisionPublishView(views.APIView):
 
 
 class RevisionDeleteView(views.APIView):
+    permission_classes = [IsAuthenticated]
     def delete(self, request, pk):
         if not _get_admin(request):
             return Response({"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN)

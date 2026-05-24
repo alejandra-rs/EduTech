@@ -1,11 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, views, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from users.models import Student
 from ..models import Post, Quiz, Question
 from ..serializers import QuizUploadSerializer, QuizCheckSerializer, PostSerializer
 
 
 class QuizUploadView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = QuizUploadSerializer
 
     def post(self, request):
@@ -14,11 +17,12 @@ class QuizUploadView(generics.GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.validated_data
+        student = get_object_or_404(Student, email=request.user.email)
         post = Post.objects.create(
             title=data["title"],
             description=data["description"],
             course=data["course"],
-            student=data.get("student"),
+            student=student,
             post_type="QUI",
         )
         quiz = Quiz.objects.create(post=post)
@@ -33,6 +37,8 @@ class QuizUploadView(generics.GenericAPIView):
 
 
 class QuizCheckView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, post_pk):
         post = get_object_or_404(Post, pk=post_pk, post_type="QUI")
         quiz = post.qui

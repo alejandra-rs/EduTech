@@ -15,7 +15,7 @@ export const ViewsDisplay = ({ views = 0 }: ViewsDisplayProps) => {
   };
 
   return (
-    <button
+    <button type="button"
       onClick={() => setShowExact(!showExact)}
       className={`
         flex items-center gap-2.5 px-4 py-2
@@ -25,7 +25,7 @@ export const ViewsDisplay = ({ views = 0 }: ViewsDisplayProps) => {
         group select-none
       `}
     >
-      <EyeIcon className="w-6 h-6 text-gray-400 group-hover:text-gray-600 transition-colors" />
+      <EyeIcon className="size-6 text-gray-400 group-hover:text-gray-600 transition-colors" />
 
       <div className="flex items-baseline gap-1.5">
         <span className="font-extrabold text-2xl text-gray-600 leading-none tabular-nums">

@@ -20,7 +20,7 @@ const FlashCardItem = ({ card, onUpdate, onDelete, canDelete = true }: FlashCard
           label="Pregunta"
           value={card.question}
           onChange={(e) => onUpdate({ ...card, question: (e.target as HTMLTextAreaElement).value })}
-          placeholder="Escribe la pregunta..."
+          placeholder="Escribe la pregunta…"
           className="w-full resize-none overflow-hidden outline-none bg-transparent leading-tight py-1"
         />
       </div>
@@ -33,18 +33,18 @@ const FlashCardItem = ({ card, onUpdate, onDelete, canDelete = true }: FlashCard
           label="Respuesta"
           value={card.answer}
           onChange={(e) => onUpdate({ ...card, answer: (e.target as HTMLTextAreaElement).value })}
-          placeholder="Escribe la respuesta..."
+          placeholder="Escribe la respuesta…"
           className="w-full resize-none overflow-hidden outline-none bg-transparent leading-tight py-1"
         />
       </div>
     </div>
-    <button
+    <button type="button"
       onClick={onDelete}
       disabled={!canDelete}
       className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 active:scale-75 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-gray-300 disabled:hover:bg-transparent"
       title="Eliminar flashcard"
     >
-      <TrashIcon className="w-5 h-5" />
+      <TrashIcon className="size-5" />
     </button>
   </div>
 );
