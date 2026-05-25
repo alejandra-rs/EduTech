@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from django.utils import timezone
 from datetime import timedelta
 from courses.models import StudySession, StudySessionComment
-from ..config import make_student, make_course, make_year
+from ..config import make_student, make_course, make_year, login_student
 
 
 def future(days=1):
@@ -17,14 +17,16 @@ class StudySessionCreateViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
-        self.url = "/courses/study-sessions/"
+        self.url = "/study-sessions/"
         self.valid_payload = {
             "title": "Repaso Kanban",
             "description": "Vamos a repasar Kanban juntos",
             "scheduled_at": future(2),
             "course": self.course.pk,
             "creator": self.student.pk,
+            "twitch_link": "https://www.twitch.tv/teststreamer",
         }
 
     def test_create_session_returns_201(self):
@@ -86,10 +88,10 @@ class StudySessionCreateViewTest(APITestCase):
         response = self.client.post(self.url, payload, format="json")
         self.assertEqual(response.status_code, 404)
 
-    def test_create_session_nonexistent_creator_returns_404(self):
-        payload = {**self.valid_payload, "creator": 99999}
-        response = self.client.post(self.url, payload, format="json")
-        self.assertEqual(response.status_code, 404)
+    def test_create_session_creator_from_auth_user(self):
+        response = self.client.post(self.url, self.valid_payload, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["creator"]["first_name"], self.student.first_name)
 
 
 class StudySessionListViewTest(APITestCase):
@@ -97,9 +99,10 @@ class StudySessionListViewTest(APITestCase):
     def setUp(self):
         self.year = make_year()
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course(year=self.year)
         self.other_course = make_course(name="Otra Asignatura", year=self.year)
-        self.url = "/courses/study-sessions/"
+        self.url = "/study-sessions/"
 
     def _make_session(self, title, days=1, course=None):
         return StudySession.objects.create(
@@ -220,10 +223,9 @@ class StudySessionListViewTest(APITestCase):
         self.assertFalse(response.data[0]["is_starred"])
 
     def test_is_starred_true_for_participant(self):
-        other = make_student(email="other@test.com")
         session = self._make_session("Sesión")
-        session.participants.add(other)
-        response = self.client.get(self.url, {"student_id": other.pk})
+        session.participants.add(self.student)
+        response = self.client.get(self.url)
         self.assertTrue(response.data[0]["is_starred"])
 
 
@@ -231,6 +233,7 @@ class StudySessionDeleteViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _make_session(self):
@@ -243,16 +246,16 @@ class StudySessionDeleteViewTest(APITestCase):
 
     def test_delete_session_returns_204(self):
         session = self._make_session()
-        response = self.client.delete(f"/courses/study-sessions/{session.pk}/")
+        response = self.client.delete(f"/study-sessions/{session.pk}/")
         self.assertEqual(response.status_code, 204)
 
     def test_delete_session_removes_from_db(self):
         session = self._make_session()
-        self.client.delete(f"/courses/study-sessions/{session.pk}/")
+        self.client.delete(f"/study-sessions/{session.pk}/")
         self.assertEqual(StudySession.objects.count(), 0)
 
     def test_delete_nonexistent_session_returns_404(self):
-        response = self.client.delete("/courses/study-sessions/99999/")
+        response = self.client.delete("/study-sessions/99999/")
         self.assertEqual(response.status_code, 404)
 
 
@@ -260,6 +263,7 @@ class StudySessionStarViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.session = StudySession.objects.create(
             title="Sesión",
@@ -267,7 +271,7 @@ class StudySessionStarViewTest(APITestCase):
             course=self.course,
             creator=make_student(email="creator@test.com"),
         )
-        self.star_url = f"/courses/study-sessions/{self.session.pk}/star/"
+        self.star_url = f"/study-sessions/{self.session.pk}/star/"
 
     def test_star_session_returns_200(self):
         response = self.client.post(self.star_url, {"student_id": self.student.pk}, format="json")
@@ -277,16 +281,13 @@ class StudySessionStarViewTest(APITestCase):
         self.client.post(self.star_url, {"student_id": self.student.pk}, format="json")
         self.assertIn(self.student, self.session.participants.all())
 
-    def test_star_session_without_student_id_returns_400(self):
+    def test_star_session_without_student_id_uses_auth_user(self):
         response = self.client.post(self.star_url, {}, format="json")
-        self.assertEqual(response.status_code, 400)
-
-    def test_star_session_nonexistent_student_returns_404(self):
-        response = self.client.post(self.star_url, {"student_id": 99999}, format="json")
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.student, self.session.participants.all())
 
     def test_star_nonexistent_session_returns_404(self):
-        response = self.client.post("/courses/study-sessions/99999/star/", {"student_id": self.student.pk}, format="json")
+        response = self.client.post("/study-sessions/99999/star/", {"student_id": self.student.pk}, format="json")
         self.assertEqual(response.status_code, 404)
 
     def test_unstar_session_returns_204(self):
@@ -299,15 +300,18 @@ class StudySessionStarViewTest(APITestCase):
         self.client.delete(f"{self.star_url}?student_id={self.student.pk}")
         self.assertNotIn(self.student, self.session.participants.all())
 
-    def test_unstar_session_without_student_id_returns_400(self):
+    def test_unstar_session_without_student_id_uses_auth_user(self):
+        self.session.participants.add(self.student)
         response = self.client.delete(self.star_url)
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 204)
+        self.assertNotIn(self.student, self.session.participants.all())
 
 
 class StudySessionCommentViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.session = StudySession.objects.create(
             title="Sesión",
@@ -315,7 +319,7 @@ class StudySessionCommentViewTest(APITestCase):
             course=self.course,
             creator=self.student,
         )
-        self.comments_url = f"/courses/study-sessions/{self.session.pk}/comments/"
+        self.comments_url = f"/study-sessions/{self.session.pk}/comments/"
 
     def test_get_comments_returns_200(self):
         response = self.client.get(self.comments_url)
@@ -350,19 +354,15 @@ class StudySessionCommentViewTest(APITestCase):
         response = self.client.get(self.comments_url)
         self.assertEqual(len(response.data), 2)
 
-    def test_post_comment_without_student_id_returns_400(self):
+    def test_post_comment_without_student_id_uses_auth_user(self):
         response = self.client.post(self.comments_url, {"message": "Hola"}, format="json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)
 
     def test_post_comment_empty_message_returns_400(self):
-        response = self.client.post(self.comments_url, {"student_id": self.student.pk, "message": ""}, format="json")
+        response = self.client.post(self.comments_url, {"message": ""}, format="json")
         self.assertEqual(response.status_code, 400)
         self.assertIn("El mensaje no puede estar vacío.", response.data["detail"])
 
-    def test_post_comment_nonexistent_student_returns_404(self):
-        response = self.client.post(self.comments_url, {"student_id": 99999, "message": "Hola"}, format="json")
-        self.assertEqual(response.status_code, 404)
-
     def test_comments_on_nonexistent_session_returns_404(self):
-        response = self.client.get("/courses/study-sessions/99999/comments/")
+        response = self.client.get("/study-sessions/99999/comments/")
         self.assertEqual(response.status_code, 404)

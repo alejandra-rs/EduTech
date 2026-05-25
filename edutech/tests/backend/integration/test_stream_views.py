@@ -4,7 +4,7 @@ from django.utils import timezone
 from datetime import timedelta
 from study_sessions.models import StudySession, TwitchCredential
 from study_sessions.token_utils import encrypt
-from ..config import make_student, make_course
+from ..config import make_student, make_course, login_student
 
 
 def make_session(course, creator, **kw):
@@ -32,7 +32,6 @@ def make_twitch_credential(student, **kw):
     return TwitchCredential.objects.create(student=student, **defaults)
 
 
-# Replaces async_to_sync so channel layer calls are no-ops in tests
 def _noop_async_to_sync(fn):
     return lambda *args, **kwargs: None
 
@@ -41,6 +40,7 @@ class TwitchStatusViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.url = "/study-sessions/twitch/status/"
 
     def test_get_connected_student_returns_200(self):
@@ -91,6 +91,7 @@ class StreamViewStartTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.session = make_session(self.course, self.student)
         self.credential = make_twitch_credential(self.student)
@@ -168,6 +169,7 @@ class StreamViewEndTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.session = make_session(
             self.course,
@@ -210,6 +212,7 @@ class StudySessionDetailLiveStatusTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def test_detail_live_session_returns_200(self):

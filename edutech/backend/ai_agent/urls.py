@@ -6,7 +6,15 @@ from .views.validate_material import ValidateDocument
 
 urlpatterns = [
     path("chat/", ChatAcademicoView.as_view(), name="chat-academico"),
-    path("documents/<int:draft_id>/generate-description/", GenerateDescriptionView.as_view(), name="generar-descripcion"),
-    path("documents/<int:draft_id>/validate-documet/", ValidateDocument.as_view(), name="validar-documento"),
+    path(
+        "documents/<int:draft_id>/generate-description/",
+        GenerateDescriptionView.as_view(),
+        name="generar-descripcion",
+    ),
+    path(
+        "documents/<int:draft_id>/validate-documet/",
+        ValidateDocument.as_view(),
+        name="validar-documento",
+    ),
     path("generate-material/", GenerateMaterial.as_view(), name="generar-material"),
 ]

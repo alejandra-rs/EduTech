@@ -15,12 +15,10 @@ class Command(BaseCommand):
             self.style.WARNING("Iniciando protocolo de limpieza extrema... 🧹")
         )
 
-        # 1. ELIMINAR LOS VECTORES ANTIGUOS
         self.stdout.write("Borrando la memoria de la IA (Vectores antiguos)...")
         try:
             engine = create_engine(CONNECTION_STRING)
             with engine.connect() as conn:
-                # El comando TRUNCATE vacía la tabla entera al instante
                 conn.execute(text("TRUNCATE TABLE langchain_pg_embedding CASCADE;"))
                 conn.commit()
             self.stdout.write(
@@ -30,9 +28,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"  -> Error limpiando PGVector: {e}"))
             return
 
-        # 2. RESETEAR EL ESTADO DE LOS PDFS
         self.stdout.write("Reseteando el estado de los apuntes...")
-        # Cambiamos todos los estados a 'pendiente' de un solo golpe
         total_actualizados = PDFAttachment.objects.all().update(
             processing_status="pendiente"
         )
@@ -44,7 +40,7 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(self.style.SUCCESS("\n" + "=" * 50))
-        self.stdout.write(self.style.SUCCESS("✨ LIMPIEZA COMPLETADA ✨"))
+        self.stdout.write(self.style.SUCCESS("LIMPIEZA COMPLETADA"))
         self.stdout.write(self.style.SUCCESS("Ya puedes lanzar tu nuevo motor con:"))
         self.stdout.write(self.style.SUCCESS("python manage.py vectorizar_antiguos"))
         self.stdout.write(self.style.SUCCESS("=" * 50 + "\n"))

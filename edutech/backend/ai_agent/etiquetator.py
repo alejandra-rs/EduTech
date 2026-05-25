@@ -9,7 +9,6 @@ def generar_etiquetas(texto):
     y devuelve una lista de etiquetas.
     """
     try:
-        # Usamos la URL correcta del entorno Docker
         cliente_ollama = Client(host=settings.AI_SETTINGS["CODE_DETECT_URL"])
 
         prompt_sistema = (
@@ -36,7 +35,6 @@ def generar_etiquetas(texto):
         )
 
         resultado = json.loads(res["message"]["content"])
-        # Aseguramos que devolvemos una lista limpia en mayúsculas
         etiquetas = resultado.get("tags", [])
         return [str(tag).strip().upper() for tag in etiquetas if tag]
 

@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from documents.models import Post, Quiz, Question, Answer, FlashCardDeck, FlashCard
-from ..config import make_student, make_course
+from ..config import make_student, make_course, login_student
 
 
 VALID_QUIZ_PAYLOAD = {
@@ -31,6 +31,7 @@ class QuizUploadViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _post(self, **overrides):
@@ -123,6 +124,7 @@ class FlashCardDeckUploadViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _post(self, **overrides):
@@ -178,6 +180,7 @@ class QuizCheckViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.post = Post.objects.create(
             course=self.course, student=self.student,

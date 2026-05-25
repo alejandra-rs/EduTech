@@ -1,8 +1,3 @@
-# HU-124 – Gestionar Borradores de Contenido
-# Como estudiante
-# Quiero disponer de una sección de borradores donde guardar cuestionarios y flashcards no publicados
-# Para poder editarlos y completarlos antes de hacerlos visibles a otros usuarios.
-
 Feature: Gestionar borradores de contenido
   Como estudiante
   Quiero disponer de una sección de borradores donde guardar cuestionarios y flashcards no publicados
@@ -13,7 +8,6 @@ Feature: Gestionar borradores de contenido
     And que existe la asignatura "Producción de Software" para ese año
     And que existe el estudiante "Pepe Garcia"
 
-  # Escenario 1: Guardar contenido como borrador
   Scenario: Guardar un cuestionario como borrador no lo publica y lo registra en borradores
     When el estudiante guarda un cuestionario como borrador con título "Borrador Tema 1"
     Then la respuesta tiene el estado 201
@@ -26,7 +20,6 @@ Feature: Gestionar borradores de contenido
     And el borrador no aparece en el listado público de la asignatura
     And el borrador aparece en la sección de borradores del estudiante
 
-  # Escenario 2: Visualizar borradores
   Scenario: Acceder a la sección de borradores muestra los cuestionarios y flashcards no publicados
     Given que el estudiante tiene un borrador de cuestionario guardado
     And que el estudiante tiene un borrador de flashcards guardado
@@ -41,7 +34,6 @@ Feature: Gestionar borradores de contenido
     Then la respuesta tiene el estado 200
     And la respuesta contiene 0 borradores
 
-  # Escenario 3: Editar borrador
   Scenario: Obtener un borrador devuelve su título y contenido para continuar editando
     Given que el estudiante tiene un borrador de cuestionario guardado
     When el estudiante obtiene los datos de ese borrador

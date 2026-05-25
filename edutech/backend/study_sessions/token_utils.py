@@ -32,9 +32,9 @@ def _refresh_credential(credential) -> None:
     resp = httpx.post(
         "https://id.twitch.tv/oauth2/token",
         data={
-            "grant_type":    "refresh_token",
+            "grant_type": "refresh_token",
             "refresh_token": decrypt(credential.refresh_token),
-            "client_id":     settings.TWITCH_CLIENT_ID,
+            "client_id": settings.TWITCH_CLIENT_ID,
             "client_secret": settings.TWITCH_CLIENT_SECRET,
         },
     )

@@ -77,6 +77,7 @@ class FolderModelTest(TestCase):
         root = Folder.add_root(name='root', student=self.student)
         child = root.add_child(name='PS', student=self.student)
         child.delete()
+        root.refresh_from_db()
         recreated = root.add_child(name='PS', student=self.student)
         self.assertEqual(recreated.depth, 2)
         self.assertEqual(recreated.name, 'PS')

@@ -31,6 +31,13 @@ def before_scenario(context, scenario):
     from django.core import mail
     mail.outbox = []
 
+    from django.contrib.auth.models import User
+    default_user, _ = User.objects.get_or_create(
+        username='default@test.com',
+        defaults={'email': 'default@test.com'},
+    )
+    context.client.force_authenticate(user=default_user)
+
 def after_scenario(context, scenario):
     for p in getattr(context, 'patches', []):
         try:

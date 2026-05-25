@@ -17,7 +17,9 @@ class SubscriptionView(views.APIView):
         course_id = request.query_params.get("course")
 
         if course_id:
-            subscription = Subscription.objects.filter(user=student, course=course_id).first()
+            subscription = Subscription.objects.filter(
+                user=student, course=course_id
+            ).first()
             return Response(
                 {"id": subscription.id} if subscription else {},
                 status=status.HTTP_200_OK,

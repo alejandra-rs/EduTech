@@ -7,7 +7,11 @@ from users.models import Student
 from ..models import PDFRevisionNote
 from ..models.attachments import PDFAttachment
 from ..serializers.revision import RevisionNoteSerializer
-from ..notifications import notify_author_of_publication, notify_author_of_discard, notify_subscribers_of_new_post
+from ..notifications import (
+    notify_author_of_publication,
+    notify_author_of_discard,
+    notify_subscribers_of_new_post,
+)
 
 
 def _get_admin(request):
@@ -19,9 +23,12 @@ def _get_admin(request):
 
 class RevisionListView(views.APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         if not _get_admin(request):
-            return Response({"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
+            )
         notes = PDFRevisionNote.objects.select_related(
             "attachment__post__student", "attachment__post__course"
         )
@@ -30,9 +37,12 @@ class RevisionListView(views.APIView):
 
 class RevisionPublishView(views.APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
         if not _get_admin(request):
-            return Response({"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
+            )
         note = get_object_or_404(PDFRevisionNote, pk=pk)
         attachment = note.attachment
         post = attachment.post
@@ -43,14 +53,19 @@ class RevisionPublishView(views.APIView):
         post.save()
         notify_author_of_publication(post.student, post.title)
         notify_subscribers_of_new_post(post)
-        return Response({"detail": "Publicación aprobada y publicada."}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Publicación aprobada y publicada."}, status=status.HTTP_200_OK
+        )
 
 
 class RevisionDeleteView(views.APIView):
     permission_classes = [IsAuthenticated]
+
     def delete(self, request, pk):
         if not _get_admin(request):
-            return Response({"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
+            )
         note = get_object_or_404(PDFRevisionNote, pk=pk)
         post = note.attachment.post
         author = post.student
@@ -58,4 +73,7 @@ class RevisionDeleteView(views.APIView):
         note.delete()
         post.delete()
         notify_author_of_discard(author, post_title)
-        return Response({"detail": "Borrador eliminado y autor notificado."}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Borrador eliminado y autor notificado."},
+            status=status.HTTP_200_OK,
+        )

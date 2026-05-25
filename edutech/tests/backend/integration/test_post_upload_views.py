@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 from rest_framework.test import APITestCase
 from documents.models import Post, PDFAttachment, YoutubeVideo, MAX_PDF_KB
-from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, mock_urlopen, login_student
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -11,6 +11,7 @@ class PDFUploadViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course  = make_course()
 
     def _post(self, file=None, **overrides):
@@ -66,6 +67,7 @@ class VideoUploadViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course  = make_course()
 
     def _post(self, vid='https://www.youtube.com/watch?v=dQw4w9WgXcQ', **overrides):

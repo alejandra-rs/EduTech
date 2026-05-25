@@ -45,7 +45,7 @@ def _get_broadcaster_id_sync(twitch_link: str, access_token: str) -> str:
         "https://api.twitch.tv/helix/users",
         params={"login": login},
         headers={
-            "Client-Id":     settings.TWITCH_CLIENT_ID,
+            "Client-Id": settings.TWITCH_CLIENT_ID,
             "Authorization": f"Bearer {access_token}",
         },
     )
@@ -110,7 +110,7 @@ class StudySessionListCreateView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        course  = get_object_or_404(Course, pk=course_id) if course_id else None
+        course = get_object_or_404(Course, pk=course_id) if course_id else None
         creator = get_object_or_404(Student, email=request.user.email)
 
         session = StudySession(
@@ -122,7 +122,9 @@ class StudySessionListCreateView(views.APIView):
             twitch_link=twitch_link,
         )
         try:
-            session.full_clean(exclude=["participants", "stream_task_id", "broadcaster_twitch_id"])
+            session.full_clean(
+                exclude=["participants", "stream_task_id", "broadcaster_twitch_id"]
+            )
         except Exception as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -172,7 +174,7 @@ class StudySessionCommentView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        session  = get_object_or_404(StudySession, pk=pk)
+        session = get_object_or_404(StudySession, pk=pk)
         comments = session.session_comments.select_related("student")
         return Response(StudySessionCommentSerializer(comments, many=True).data)
 
@@ -180,10 +182,17 @@ class StudySessionCommentView(views.APIView):
         session = get_object_or_404(StudySession, pk=pk)
         message = request.data.get("message", "").strip()
         if not message:
-            return Response({"detail": "El mensaje no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "El mensaje no puede estar vacío."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         student = get_object_or_404(Student, email=request.user.email)
-        comment = StudySessionComment.objects.create(session=session, student=student, message=message)
-        return Response(StudySessionCommentSerializer(comment).data, status=status.HTTP_201_CREATED)
+        comment = StudySessionComment.objects.create(
+            session=session, student=student, message=message
+        )
+        return Response(
+            StudySessionCommentSerializer(comment).data, status=status.HTTP_201_CREATED
+        )
 
 
 class StreamView(views.APIView):
@@ -199,7 +208,10 @@ class StreamView(views.APIView):
             )
         if session.stream_task_id:
             return Response(
-                {"detail": "El stream ya está en marcha.", "task_id": session.stream_task_id},
+                {
+                    "detail": "El stream ya está en marcha.",
+                    "task_id": session.stream_task_id,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -208,15 +220,21 @@ class StreamView(views.APIView):
             credential = TwitchCredential.objects.get(student=student)
         except TwitchCredential.DoesNotExist:
             return Response(
-                {"detail": "Debes conectar tu cuenta de Twitch para iniciar el stream.", "code": "NOT_LINKED"},
+                {
+                    "detail": "Debes conectar tu cuenta de Twitch para iniciar el stream.",
+                    "code": "NOT_LINKED",
+                },
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         from .token_utils import get_valid_access_token
+
         access_token = get_valid_access_token(credential)
 
         if not session.broadcaster_twitch_id:
-            session.broadcaster_twitch_id = _get_broadcaster_id_sync(session.twitch_link, access_token)
+            session.broadcaster_twitch_id = _get_broadcaster_id_sync(
+                session.twitch_link, access_token
+            )
             session.save(update_fields=["broadcaster_twitch_id"])
 
         task = connect_to_twitch_eventsub.delay(
@@ -258,12 +276,13 @@ class TwitchAuthView(views.APIView):
     def get(self, request):
         student = get_object_or_404(Student, email=request.user.email)
         from .oauth import build_auth_url
+
         return Response({"url": build_auth_url(student.pk)})
 
 
 class TwitchCallbackView(views.APIView):
     def get(self, request):
-        code  = request.query_params.get("code")
+        code = request.query_params.get("code")
         state = request.query_params.get("state")
         error = request.query_params.get("error")
 
@@ -278,6 +297,7 @@ class TwitchCallbackView(views.APIView):
 
         try:
             from .oauth import handle_callback
+
             credential = handle_callback(code, state)
             return HttpResponse(
                 _POPUP_HTML.format(
@@ -321,20 +341,29 @@ class TwitchSendMessageView(views.APIView):
         message = request.data.get("message", "").strip()
 
         if not message:
-            return Response({"detail": "Falta el mensaje."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Falta el mensaje."}, status=status.HTTP_400_BAD_REQUEST
+            )
         if not session.twitch_link:
-            return Response({"detail": "Esta sesión no tiene canal de Twitch."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Esta sesión no tiene canal de Twitch."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         student = get_object_or_404(Student, email=request.user.email)
         try:
             credential = TwitchCredential.objects.get(student=student)
         except TwitchCredential.DoesNotExist:
             return Response(
-                {"detail": "Debes conectar tu cuenta de Twitch para chatear.", "code": "NOT_LINKED"},
+                {
+                    "detail": "Debes conectar tu cuenta de Twitch para chatear.",
+                    "code": "NOT_LINKED",
+                },
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         from .token_utils import get_valid_access_token
+
         access_token = get_valid_access_token(credential)
 
         broadcaster_id = session.broadcaster_twitch_id
@@ -346,20 +375,23 @@ class TwitchSendMessageView(views.APIView):
         resp = httpx.post(
             "https://api.twitch.tv/helix/chat/messages",
             headers={
-                "Client-Id":     settings.TWITCH_CLIENT_ID,
+                "Client-Id": settings.TWITCH_CLIENT_ID,
                 "Authorization": f"Bearer {access_token}",
-                "Content-Type":  "application/json",
+                "Content-Type": "application/json",
             },
             json={
                 "broadcaster_id": broadcaster_id,
-                "sender_id":      credential.twitch_user_id,
-                "message":        message,
+                "sender_id": credential.twitch_user_id,
+                "message": message,
             },
         )
 
         if resp.status_code == 401:
             return Response(
-                {"detail": "Token de Twitch inválido. Reconecta tu cuenta.", "code": "INVALID_TOKEN"},
+                {
+                    "detail": "Token de Twitch inválido. Reconecta tu cuenta.",
+                    "code": "INVALID_TOKEN",
+                },
                 status=status.HTTP_401_UNAUTHORIZED,
             )
         resp.raise_for_status()

@@ -5,24 +5,51 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('documents', '0005_add_ai_gen_and_is_revision_to_post'),
+        ("documents", "0005_add_ai_gen_and_is_revision_to_post"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pdfattachment',
-            name='processing_status',
-            field=models.CharField(choices=[('uploading', 'Uploading'), ('pending', 'Pending'), ('extracting_information', 'Extracting Information'), ('vectorizing', 'Vectorizing'), ('labeling', 'Labeling'), ('revision', 'Revision'), ('completed', 'Completed'), ('error', 'Error')], default='pending', max_length=50),
+            model_name="pdfattachment",
+            name="processing_status",
+            field=models.CharField(
+                choices=[
+                    ("uploading", "Uploading"),
+                    ("pending", "Pending"),
+                    ("extracting_information", "Extracting Information"),
+                    ("vectorizing", "Vectorizing"),
+                    ("labeling", "Labeling"),
+                    ("revision", "Revision"),
+                    ("completed", "Completed"),
+                    ("error", "Error"),
+                ],
+                default="pending",
+                max_length=50,
+            ),
         ),
         migrations.CreateModel(
-            name='PDFRevisionNote',
+            name="PDFRevisionNote",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reason', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('attachment', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='revision_note', to='documents.pdfattachment')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("reason", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "attachment",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="revision_note",
+                        to="documents.pdfattachment",
+                    ),
+                ),
             ],
         ),
     ]

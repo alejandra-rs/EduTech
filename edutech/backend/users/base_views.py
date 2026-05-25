@@ -10,5 +10,7 @@ class AuthStudentView(views.APIView):
 
     def get_student(self):
         if not hasattr(self.request, "_student"):
-            self.request._student = get_object_or_404(Student, email=self.request.user.email)
+            self.request._student = get_object_or_404(
+                Student, email=self.request.user.email
+            )
         return self.request._student

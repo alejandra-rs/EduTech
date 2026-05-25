@@ -25,6 +25,7 @@ def _get_admin(request):
 
 class ReportReasonListView(views.APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         reasons = ReportReason.objects.all()
         return Response(ReportReasonSerializer(reasons, many=True).data)

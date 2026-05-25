@@ -1,12 +1,13 @@
 from rest_framework.test import APITestCase
 from courses.models import Subscription
-from ..config import make_student, make_course
+from ..config import make_student, make_course, login_student
 
 
 class SubscriptionViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course  = make_course()
 
     def test_subscribe_returns_201(self):
@@ -47,12 +48,6 @@ class SubscriptionViewTest(APITestCase):
 
     def test_subscribe_to_nonexistent_course_returns_404(self):
         response = self.client.post('/courses/sub/', {
-            'user': self.student.pk, 'course': 99999,
-        }, format='json')
-        self.assertEqual(response.status_code, 404)
-
-    def test_subscribe_with_nonexistent_user_returns_404(self):
-        response = self.client.post('/courses/sub/', {
-            'user': 99999, 'course': self.course.pk,
+            'course': 99999,
         }, format='json')
         self.assertEqual(response.status_code, 404)

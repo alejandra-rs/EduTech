@@ -16,7 +16,6 @@ import study_sessions.routing
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.edutech.settings")
 
-# 1. INICIALIZAR DJANGO PRIMERO (OBLIGATORIO)
 django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter(

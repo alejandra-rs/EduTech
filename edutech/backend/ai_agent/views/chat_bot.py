@@ -6,11 +6,17 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 
-from ai_agent.agent_setings import find_documents, get_filters, get_vector_store, getDocument, response_needs_code, send_prompt
+from ai_agent.agent_setings import (
+    find_documents,
+    get_filters,
+    get_vector_store,
+    getDocument,
+    response_needs_code,
+    send_prompt,
+)
 from ai_agent.agents_prompts import AGENTS_PROMPTS
 
 
-import fitz 
 class ChatAcademicoView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -39,23 +45,23 @@ class ChatAcademicoView(APIView):
 
         return self.generar_respuesta_llm(docs, user_query, modo_chat)
 
-
     def sources_map(self, docs):
         """Asigna un ID [Ref: X] a cada documento y extrae su info clave."""
         mapa_vectores = {}
         contexto_estructurado = []
-        
+
         for i, d in enumerate(docs):
             ref = str(i + 1)
             mapa_vectores[ref] = d
-            contexto_estructurado.append({
-                "id_referencia": ref,
-                "texto": d.page_content,
-                "doc_id": d.metadata.get("doc_id"),
-                "pagina": d.metadata.get("p"),
-                "titulo": d.metadata.get("titulo", "Documento"),
-            }
-        )
+            contexto_estructurado.append(
+                {
+                    "id_referencia": ref,
+                    "texto": d.page_content,
+                    "doc_id": d.metadata.get("doc_id"),
+                    "pagina": d.metadata.get("p"),
+                    "titulo": d.metadata.get("titulo", "Documento"),
+                }
+            )
         return mapa_vectores, contexto_estructurado
 
     def extract_sources(self, texto_respuesta, mapa_vectores):
@@ -77,7 +83,7 @@ class ChatAcademicoView(APIView):
                 )
 
         return fuentes
-  
+
     def ejecutar_analisis_vlm_guiado(self, docs, user_query, modo):
         """
         Toma las 4 páginas más relevantes, las renderiza completas,
@@ -174,11 +180,8 @@ class ChatAcademicoView(APIView):
         )
 
         ia_response = send_prompt(
-                                    system_content=prompt_sistema_final,
-                                    user_content=user_query,
-                                    model="CHAT"
-                                )
+            system_content=prompt_sistema_final, user_content=user_query, model="CHAT"
+        )
         sources = self.extract_sources(ia_response, mapa_vectores)
 
         return Response({"respuesta": ia_response, "fuentes": sources})
-

@@ -21,11 +21,17 @@ def step_course_exists(context, name):
 @given('que existe el estudiante "{full_name}"')
 def step_student_exists(context, full_name):
     from users.models import Student
+    from django.contrib.auth.models import User
     first, last = full_name.split(' ', 1)
     context.student = Student.objects.get_or_create(
         first_name=first, last_name=last,
         defaults={'email': 'test@test.com'},
     )[0]
+    auth_user, _ = User.objects.get_or_create(
+        email=context.student.email,
+        defaults={'username': context.student.email},
+    )
+    context.client.force_authenticate(user=auth_user)
 
 
 

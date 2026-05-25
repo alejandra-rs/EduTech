@@ -4,24 +4,23 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('courses', '0003_create_missing_tables'),
+        ("courses", "0003_create_missing_tables"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='studysessioncomment',
-            name='session',
+            model_name="studysessioncomment",
+            name="session",
         ),
         migrations.RemoveField(
-            model_name='studysessioncomment',
-            name='student',
+            model_name="studysessioncomment",
+            name="student",
         ),
         migrations.DeleteModel(
-            name='StudySession',
+            name="StudySession",
         ),
         migrations.DeleteModel(
-            name='StudySessionComment',
+            name="StudySessionComment",
         ),
     ]

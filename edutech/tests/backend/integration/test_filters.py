@@ -2,7 +2,7 @@ from django.test import override_settings
 from rest_framework.test import APITestCase
 
 from documents.models import Post, PDFAttachment, YoutubeVideo
-from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, login_student
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -10,6 +10,7 @@ class PostFilterTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course  = make_course()
 
     def _make_pdf(self, title='PDFPost'):

@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework.test import APITestCase
 from student_space.models import Folder, SavedPost
-from ..config import make_student, make_course, make_post, make_root_folder, make_saved_post
+from ..config import make_student, make_course, make_post, make_root_folder, make_saved_post, login_student
 
 
 ROOT_URL = '/student-space/folders/root/'
@@ -19,6 +19,7 @@ class FolderRootViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
 
     def test_get_creates_root(self):
         response = self.client.get(ROOT_URL, {'student': self.student.pk})
@@ -36,9 +37,9 @@ class FolderRootViewTest(APITestCase):
         for field in ('id', 'name', 'depth', 'path', 'children', 'saved_posts'):
             self.assertIn(field, response.data)
 
-    def test_get_nonexistent_student_returns_404(self):
-        response = self.client.get(ROOT_URL, {'student': 99999})
-        self.assertEqual(response.status_code, 404)
+    def test_get_returns_200_for_authenticated_user(self):
+        response = self.client.get(ROOT_URL)
+        self.assertEqual(response.status_code, 200)
 
     def test_get_includes_saved_posts(self):
         root = make_root_folder(self.student)
@@ -59,6 +60,7 @@ class FolderCreateViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.root = make_root_folder(self.student)
 
     def test_create_subfolder_returns_201(self):
@@ -126,6 +128,7 @@ class FolderDetailViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.root = make_root_folder(self.student)
         self.child = self.root.add_child(name='PS', student=self.student)
@@ -147,9 +150,11 @@ class FolderDetailViewTest(APITestCase):
         response = self.client.get(_folder_url(self.root.pk), {'student': self.student.pk})
         self.assertEqual(response.data['path'], [])
 
-    def test_get_wrong_student_returns_404(self):
+    def test_get_other_students_folder_returns_404(self):
         other = make_student(email='other@test.com')
-        response = self.client.get(_folder_url(self.child.pk), {'student': other.pk})
+        other_root = make_root_folder(other)
+        other_child = other_root.add_child(name='OtherFolder', student=other)
+        response = self.client.get(_folder_url(other_child.pk))
         self.assertEqual(response.status_code, 404)
 
     def test_patch_renames_folder(self):
@@ -210,6 +215,7 @@ class FolderMoveViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.root = make_root_folder(self.student)
         self.folder_a = self.root.add_child(name='PS', student=self.student)
         self.folder_b = self.root.add_child(name='Scrum', student=self.student)
@@ -260,6 +266,7 @@ class SavedPostViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.post = make_post(student=self.student, course=self.course)
         self.root = make_root_folder(self.student)
@@ -301,12 +308,12 @@ class SavedPostViewTest(APITestCase):
         self.assertEqual(response.status_code, 204)
         self.assertEqual(SavedPost.objects.count(), 0)
 
-    def test_delete_other_student_saved_post_returns_403(self):
+    def test_delete_other_student_saved_post_returns_404(self):
         other = make_student(email='other@test.com')
         other_root = make_root_folder(other)
         saved = SavedPost.objects.create(folder=other_root, post=self.post)
-        response = self.client.delete(_post_url(saved.pk) + f'?student={self.student.pk}')
-        self.assertEqual(response.status_code, 403)
+        response = self.client.delete(_post_url(saved.pk))
+        self.assertEqual(response.status_code, 404)
         self.assertTrue(SavedPost.objects.filter(pk=saved.pk).exists())
 
     def test_patch_pin_sets_is_pinned_true(self):
@@ -338,6 +345,7 @@ class SavedPostMoveViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.post = make_post(student=self.student, course=self.course)
         self.root = make_root_folder(self.student)
@@ -383,6 +391,7 @@ class PinnedPostViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.root = make_root_folder(self.student)
 
@@ -413,9 +422,9 @@ class PinnedPostViewTest(APITestCase):
         self.assertEqual(response.data[0]['post']['id'], post_b.pk)
         self.assertEqual(response.data[1]['post']['id'], post_a.pk)
 
-    def test_get_nonexistent_student_returns_404(self):
-        response = self.client.get(PINNED_URL, {'student': 99999})
-        self.assertEqual(response.status_code, 404)
+    def test_get_returns_200_for_authenticated_user(self):
+        response = self.client.get(PINNED_URL)
+        self.assertEqual(response.status_code, 200)
 
     def test_pinned_posts_from_other_student_not_returned(self):
         other = make_student(email='other@test.com')
@@ -424,3 +433,124 @@ class PinnedPostViewTest(APITestCase):
         SavedPost.objects.create(folder=other_root, post=post, is_pinned=True, pinned_at=timezone.now())
         response = self.client.get(PINNED_URL, {'student': self.student.pk})
         self.assertEqual(response.data, [])
+
+
+STATS_URL = '/student-space/stats/'
+ITEMS_URL = '/student-space/items/'
+
+
+class SpaceStatsViewTest(APITestCase):
+
+    def setUp(self):
+        self.student = make_student()
+        login_student(self.client, self.student)
+        self.course = make_course()
+        self.root = make_root_folder(self.student)
+
+    def test_get_returns_200(self):
+        response = self.client.get(STATS_URL)
+        self.assertEqual(response.status_code, 200)
+
+    def test_returns_zero_counts_initially(self):
+        response = self.client.get(STATS_URL)
+        self.assertEqual(response.data['folder_count'], 0)
+        self.assertEqual(response.data['saved_post_count'], 0)
+
+    def test_folder_count_excludes_root(self):
+        self.root.add_child(name='Sub', student=self.student)
+        response = self.client.get(STATS_URL)
+        self.assertEqual(response.data['folder_count'], 1)
+
+    def test_saved_post_count_reflects_saved_posts(self):
+        post = make_post(student=self.student, course=self.course)
+        SavedPost.objects.create(folder=self.root, post=post)
+        response = self.client.get(STATS_URL)
+        self.assertEqual(response.data['saved_post_count'], 1)
+
+    def test_excludes_other_students_data(self):
+        other = make_student(email='other@test.com')
+        other_root = make_root_folder(other)
+        post = make_post(student=other, course=self.course)
+        SavedPost.objects.create(folder=other_root, post=post)
+        response = self.client.get(STATS_URL)
+        self.assertEqual(response.data['saved_post_count'], 0)
+
+
+class BatchDeleteViewTest(APITestCase):
+
+    def setUp(self):
+        self.student = make_student()
+        login_student(self.client, self.student)
+        self.course = make_course()
+        self.root = make_root_folder(self.student)
+
+    def test_delete_returns_204(self):
+        response = self.client.delete(ITEMS_URL, {}, format='json')
+        self.assertEqual(response.status_code, 204)
+
+    def test_delete_removes_specified_folders(self):
+        child = self.root.add_child(name='ToDelete', student=self.student)
+        self.client.delete(ITEMS_URL, {'folder_ids': [child.pk], 'saved_post_ids': []}, format='json')
+        from student_space.models import Folder
+        self.assertFalse(Folder.objects.filter(pk=child.pk).exists())
+
+    def test_delete_removes_specified_saved_posts(self):
+        post = make_post(student=self.student, course=self.course)
+        saved = SavedPost.objects.create(folder=self.root, post=post)
+        self.client.delete(ITEMS_URL, {'folder_ids': [], 'saved_post_ids': [saved.pk]}, format='json')
+        self.assertFalse(SavedPost.objects.filter(pk=saved.pk).exists())
+
+    def test_delete_does_not_touch_other_students_folders(self):
+        other = make_student(email='other@test.com')
+        other_root = make_root_folder(other)
+        child = other_root.add_child(name='OtherFolder', student=other)
+        self.client.delete(ITEMS_URL, {'folder_ids': [child.pk], 'saved_post_ids': []}, format='json')
+        from student_space.models import Folder
+        self.assertTrue(Folder.objects.filter(pk=child.pk).exists())
+
+    def test_delete_cannot_remove_root_folder(self):
+        self.client.delete(ITEMS_URL, {'folder_ids': [self.root.pk], 'saved_post_ids': []}, format='json')
+        from student_space.models import Folder
+        self.assertTrue(Folder.objects.filter(pk=self.root.pk).exists())
+
+    def test_delete_with_empty_payload_returns_204(self):
+        response = self.client.delete(ITEMS_URL, {'folder_ids': [], 'saved_post_ids': []}, format='json')
+        self.assertEqual(response.status_code, 204)
+
+
+class CheckSavedPostViewTest(APITestCase):
+
+    def setUp(self):
+        self.student = make_student()
+        login_student(self.client, self.student)
+        self.course = make_course()
+        self.root = make_root_folder(self.student)
+
+    def _check_url(self, post_id):
+        return f'/student-space/posts/check/{post_id}/'
+
+    def test_returns_200(self):
+        post = make_post(student=self.student, course=self.course)
+        response = self.client.get(self._check_url(post.pk))
+        self.assertEqual(response.status_code, 200)
+
+    def test_returns_is_saved_false_when_not_saved(self):
+        post = make_post(student=self.student, course=self.course)
+        response = self.client.get(self._check_url(post.pk))
+        self.assertFalse(response.data['is_saved'])
+        self.assertIsNone(response.data['saved_post_id'])
+
+    def test_returns_is_saved_true_when_saved(self):
+        post = make_post(student=self.student, course=self.course)
+        saved = SavedPost.objects.create(folder=self.root, post=post)
+        response = self.client.get(self._check_url(post.pk))
+        self.assertTrue(response.data['is_saved'])
+        self.assertEqual(response.data['saved_post_id'], saved.pk)
+
+    def test_other_students_saved_post_not_visible(self):
+        other = make_student(email='other@test.com')
+        other_root = make_root_folder(other)
+        post = make_post(student=self.student, course=self.course)
+        SavedPost.objects.create(folder=other_root, post=post)
+        response = self.client.get(self._check_url(post.pk))
+        self.assertFalse(response.data['is_saved'])

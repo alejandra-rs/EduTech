@@ -6,57 +6,130 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('courses', '0004_remove_studysessioncomment_session_and_more'),
-        ('users', '0001_initial'),
+        ("courses", "0004_remove_studysessioncomment_session_and_more"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='StudySession',
+            name="StudySession",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('description', models.TextField(blank=True)),
-                ('scheduled_at', models.DateTimeField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('twitch_link', models.URLField(blank=True, validators=[study_sessions.validators.validate_twitch_url])),
-                ('stream_task_id', models.CharField(blank=True, max_length=255)),
-                ('broadcaster_twitch_id', models.CharField(blank=True, max_length=50)),
-                ('course', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='study_sessions', to='courses.course')),
-                ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='created_study_sessions', to='users.student')),
-                ('participants', models.ManyToManyField(blank=True, related_name='participating_study_sessions', to='users.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("description", models.TextField(blank=True)),
+                ("scheduled_at", models.DateTimeField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "twitch_link",
+                    models.URLField(
+                        blank=True,
+                        validators=[study_sessions.validators.validate_twitch_url],
+                    ),
+                ),
+                ("stream_task_id", models.CharField(blank=True, max_length=255)),
+                ("broadcaster_twitch_id", models.CharField(blank=True, max_length=50)),
+                (
+                    "course",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="study_sessions",
+                        to="courses.course",
+                    ),
+                ),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="created_study_sessions",
+                        to="users.student",
+                    ),
+                ),
+                (
+                    "participants",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="participating_study_sessions",
+                        to="users.student",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['scheduled_at'],
+                "ordering": ["scheduled_at"],
             },
         ),
         migrations.CreateModel(
-            name='StudySessionComment',
+            name="StudySessionComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('message', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='session_comments', to='study_sessions.studysession')),
-                ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='study_session_comments', to='users.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("message", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "session",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="session_comments",
+                        to="study_sessions.studysession",
+                    ),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="study_session_comments",
+                        to="users.student",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['created_at'],
+                "ordering": ["created_at"],
             },
         ),
         migrations.CreateModel(
-            name='TwitchCredential',
+            name="TwitchCredential",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('twitch_user_id', models.CharField(max_length=50)),
-                ('twitch_login', models.CharField(max_length=50)),
-                ('access_token', models.TextField()),
-                ('refresh_token', models.TextField()),
-                ('token_expires_at', models.DateTimeField()),
-                ('student', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='twitch_credential', to='users.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("twitch_user_id", models.CharField(max_length=50)),
+                ("twitch_login", models.CharField(max_length=50)),
+                ("access_token", models.TextField()),
+                ("refresh_token", models.TextField()),
+                ("token_expires_at", models.DateTimeField()),
+                (
+                    "student",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="twitch_credential",
+                        to="users.student",
+                    ),
+                ),
             ],
         ),
     ]

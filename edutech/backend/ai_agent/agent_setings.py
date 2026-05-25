@@ -96,17 +96,17 @@ def get_filters(user_query, course_id, mentions=None):
     return user_query, filtros
 
 
-
-
 def response_needs_code(user_query):
     """Pregunta al modelo si la consulta requiere código"""
     try:
-        return json.loads(send_prompt(
-                    system_content='Responde estrictamente JSON: {"code_required": bool}, el booleano será true o false en función de si el usuario pregunta o no por código',
-                    user_content = user_query,
-                    model="CODE_DETECT",
-                    format="json"
-                   )).get("code_required", False)
+        return json.loads(
+            send_prompt(
+                system_content='Responde estrictamente JSON: {"code_required": bool}, el booleano será true o false en función de si el usuario pregunta o no por código',
+                user_content=user_query,
+                model="CODE_DETECT",
+                format="json",
+            )
+        ).get("code_required", False)
     except Exception as e:
         print(f"Error detectando código: {e}")
         return False

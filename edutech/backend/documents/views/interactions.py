@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from rest_framework import views, status
+from rest_framework import status
 from rest_framework.response import Response
 from users.base_views import AuthStudentView
 from ..models import Post, Like, Dislike, Comment

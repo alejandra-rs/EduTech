@@ -18,7 +18,6 @@ class Command(BaseCommand):
                 )
             )
 
-            # CORRECCIÓN 1: Pedimos la columna 'document' en lugar de 'page_content'
             rows = conn.execute(
                 text("SELECT id, document, cmetadata FROM langchain_pg_embedding")
             ).fetchall()
@@ -37,28 +36,20 @@ class Command(BaseCommand):
             )
 
             for index, row in enumerate(rows, 1):
-                # 1. Recuperar el diccionario de metadatos actual
                 meta = dict(row.cmetadata) if row.cmetadata else {}
-
-                # 2. LIMPIEZA DE RASTROS ANTIGUOS
                 if "tipo_contenido" in meta:
                     del meta["tipo_contenido"]
                 if "lenguaje" in meta:
                     del meta["lenguaje"]
 
-                # 3. GENERAR NUEVAS ETIQUETAS
-                # CORRECCIÓN 2: Leemos row.document
                 nuevas_etiquetas = generar_etiquetas(row.document)
-
-                # Usamos un Set para no tener etiquetas duplicadas si ya existían
                 tags_actuales = set(meta.get("tags", []))
+
                 for tag in nuevas_etiquetas:
                     tags_actuales.add(tag)
 
-                # Guardamos la lista en el metadato
                 meta["tags"] = list(tags_actuales)
 
-                # 4. ACTUALIZAR EN BASE DE DATOS
                 conn.execute(
                     text(
                         "UPDATE langchain_pg_embedding SET cmetadata = CAST(:meta AS jsonb) WHERE id = :id"
@@ -70,7 +61,6 @@ class Command(BaseCommand):
                     f"[{index}/{total}] ID: {row.id[:8]}... | Tags: {meta['tags']}"
                 )
 
-            # Guardamos los cambios
             conn.commit()
 
         self.stdout.write(

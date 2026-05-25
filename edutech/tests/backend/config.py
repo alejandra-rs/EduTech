@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import MagicMock
 from users.models import Student
@@ -12,7 +13,16 @@ def make_student(**kw):
     defaults = {'first_name': 'Pepe', 'last_name': 'Garcia',
                 'email': 'pepe@test.com', }
     defaults.update(kw)
-    return Student.objects.create(**defaults)
+    student = Student.objects.create(**defaults)
+    auth_user, _ = User.objects.get_or_create(
+        email=student.email,
+        defaults={'username': student.email},
+    )
+    student._auth_user = auth_user
+    return student
+
+def login_student(client, student):
+    client.force_authenticate(user=student._auth_user)
 
 def make_university(name="ULPGC", location="Las Palmas"):
     return University.objects.create(name=name, location=location)

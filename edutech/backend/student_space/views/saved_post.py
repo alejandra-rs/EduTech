@@ -80,7 +80,9 @@ class SavedPostMoveView(AuthStudentView):
 
         if SavedPost.objects.filter(folder=new_folder, post=saved.post).exists():
             return Response(
-                {"detail": "Esta publicación ya está guardada en la carpeta de destino."},
+                {
+                    "detail": "Esta publicación ya está guardada en la carpeta de destino."
+                },
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -106,10 +108,16 @@ class CheckSavedPostView(AuthStudentView):
 class SpaceStatsView(AuthStudentView):
     def get(self, request):
         student = self.get_student()
-        return Response({
-            "folder_count": Folder.objects.filter(student=student, depth__gt=1).count(),
-            "saved_post_count": SavedPost.objects.filter(folder__student=student).count(),
-        })
+        return Response(
+            {
+                "folder_count": Folder.objects.filter(
+                    student=student, depth__gt=1
+                ).count(),
+                "saved_post_count": SavedPost.objects.filter(
+                    folder__student=student
+                ).count(),
+            }
+        )
 
 
 class BatchDeleteView(AuthStudentView):
@@ -118,5 +126,7 @@ class BatchDeleteView(AuthStudentView):
         folder_ids = request.data.get("folder_ids", [])
         saved_post_ids = request.data.get("saved_post_ids", [])
         Folder.objects.filter(pk__in=folder_ids, student=student, depth__gt=1).delete()
-        SavedPost.objects.filter(pk__in=saved_post_ids, folder__student=student).delete()
+        SavedPost.objects.filter(
+            pk__in=saved_post_ids, folder__student=student
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

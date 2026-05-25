@@ -5,11 +5,17 @@ from behave import given, when, then
 def step_student_without_degree(context):
     from users.models import Student
     from courses.models import University
+    from django.contrib.auth.models import User
     University.objects.get_or_create(name="Universidad de Prueba", location="Las Palmas")
     context.student = Student.objects.create(
         first_name="Ana", last_name="Sin Titulacion",
         email="sin_titulacion@test.com",
     )
+    auth_user, _ = User.objects.get_or_create(
+        email=context.student.email,
+        defaults={'username': context.student.email},
+    )
+    context.client.force_authenticate(user=auth_user)
 
 
 @given('que el estudiante tiene la titulación asociada a su perfil')
@@ -26,7 +32,7 @@ def step_get_universities(context):
 @when('el estudiante asocia la titulación a su perfil')
 def step_associate_degree_to_profile(context):
     context.response = context.client.patch(
-        f'/students/{context.student.pk}/',
+        '/students/me/',
         {'degree': [context.degree.pk]},
         format='json',
     )
@@ -34,7 +40,7 @@ def step_associate_degree_to_profile(context):
 
 @when('consulto el perfil del estudiante')
 def step_get_student_profile(context):
-    context.response = context.client.get(f'/students/{context.student.pk}/')
+    context.response = context.client.get('/students/me/')
 
 
 

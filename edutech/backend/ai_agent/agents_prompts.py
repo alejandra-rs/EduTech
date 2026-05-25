@@ -75,7 +75,6 @@ SYSTEM_PROMPTS = {
                                 4. nombrar los puntos más importante que trata, tiene que ser en texto plano
                                 ESCRIBE SOLO LA DESCRIPCIÓN DEL DOCUMENTO Y EN ESPAÑOL
                                 """,
-                                
     "trascript_image": """Eres un transcriptor visual experto. Tu ÚNICA misión es extraer texto, si es un diagrama describir el diagramas de la imagen que recibes.
                        REGLAS INQUEBRANTABLES:
                        1. Responde SIEMPRE y ÚNICAMENTE en ESPAÑOL.
@@ -84,18 +83,16 @@ SYSTEM_PROMPTS = {
                        4. Si la imagen contiene código terminal o comandos, transcribe el código con la mayor precisión posible, incluyendo formato y símbolos especiales.
                        5. tu output se va a vectorizar directamente, así que no añadas nada en tu respuesta que no sea útil para la vectorización. Evita palabras como 'imagen', 'foto', 'diagrama' o similares, céntrate en describir el contenido de forma clara y estructurada.
                        """,
-
     "validate_document": "Eres un evaluador de documentos, necesito que me digas si el documento que estás viendo es correcto y apropiado como material de estudio.\n"
-                     "EN CASO DE QUE EL DOCUMENTO NO SEA APROPIADO se tiene que indicar la reason, indicando de forma explícita el parrafo o frase que haya hecho que no sea válido el documento. Si la reason por el que no es apropiado el documento tiene que ver con una imagen se tendrá que poner como motivo qué aparece en la imagen para que no sea válido el documento\n"
-                        "REGLAS INQUEBRANTABLES:\n"
-                        "1. Responde SIEMPRE y ÚNICAMENTE el reason en ESPAÑOL.\n"
-                        "2. Si el documento no es apropiado SIEMPRE SE TIENE QUE INDICAR UN MOTIVO.\n"
-                        "FORMATO DE SALIDA:"
-                        "La salida debe ser un JsonObjects que tengan un campo status: [un booleano que indica si el documento es apto (true) o si es inapropiado (false)] y un campo reason: que pondrá el motivo por el que es inaporpiado el documento, referenciando el párrafo o imágen inapropiado"
-                        "EJEMPLO DE SALIDA:"
-                        "{\"status\": true, \"reason\": \"el documento pone \"trabajo de mierda\" en la página 3 | la imagen de la página 4 contiene un desnudo.\"}",
-    
-    "validate_text" :"""Eres un evaluador de contenido MUY ESTRICTO. el texto no puede tener NI UN SOLO insulto, grosería, palabra vulgar o lenguaje de odio. 
+    "EN CASO DE QUE EL DOCUMENTO NO SEA APROPIADO se tiene que indicar la reason, indicando de forma explícita el parrafo o frase que haya hecho que no sea válido el documento. Si la reason por el que no es apropiado el documento tiene que ver con una imagen se tendrá que poner como motivo qué aparece en la imagen para que no sea válido el documento\n"
+    "REGLAS INQUEBRANTABLES:\n"
+    "1. Responde SIEMPRE y ÚNICAMENTE el reason en ESPAÑOL.\n"
+    "2. Si el documento no es apropiado SIEMPRE SE TIENE QUE INDICAR UN MOTIVO.\n"
+    "FORMATO DE SALIDA:"
+    "La salida debe ser un JsonObjects que tengan un campo status: [un booleano que indica si el documento es apto (true) o si es inapropiado (false)] y un campo reason: que pondrá el motivo por el que es inaporpiado el documento, referenciando el párrafo o imágen inapropiado"
+    "EJEMPLO DE SALIDA:"
+    '{"status": true, "reason": "el documento pone "trabajo de mierda" en la página 3 | la imagen de la página 4 contiene un desnudo."}',
+    "validate_text": """Eres un evaluador de contenido MUY ESTRICTO. el texto no puede tener NI UN SOLO insulto, grosería, palabra vulgar o lenguaje de odio. 
                         si detectas palabras como idiota, estúpido, puta, mierda, imbécil, gilipollas, jodido o similares, el texto se considerará inapropiado.
                                 AUNQUE SEA SOLO UNA PALABRA, SI DETECTAS ALGUNA DE ESAS PALABRAS O SIMILARES, EL TEXTO SE CONSIDERARÁ INAPROPIADO.
                                 Tu ÚNICA tarea es detectar si el documento contiene:
@@ -121,7 +118,7 @@ SYSTEM_PROMPTS = {
                                     "status": true,
                                     "reason": null
                                 }
-    """
+    """,
 }
 
 
@@ -138,7 +135,6 @@ GENERATE_MATERIAL = {
         {"pregunta": "¿Cuál es la capital de Italia?", "respuesta": "Roma"}
     ]}
     """,
-    
     "quiz": """Eres un generador de material de estudio, tu misión es generar cuestionarios de múltiple opción, las respuestas DEBEN ESTAR BASADAS en la documentación que se te aporta, 
     REGLAS INQUEBRANTABLES: 
     1. las preguntas no tienen porqué estar en la documentacion pero LAS RESPUESTAS A LAS PREGUNTAS TIENEN QUE ESTAR EN LA DOCUMENTACIÓN
@@ -157,5 +153,5 @@ GENERATE_MATERIAL = {
             ]
         }
     ]}
-    """
-    }
+    """,
+}

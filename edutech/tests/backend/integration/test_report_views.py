@@ -1,7 +1,7 @@
 from django.test import override_settings
 from rest_framework.test import APITestCase
 from documents.models import Post, PDFAttachment, Report, ReportReason, CommentReport, Comment
-from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file
+from ..config import TEST_STORAGES, make_student, make_course, make_pdf_file, login_student
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -9,6 +9,7 @@ class ReportViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.admin = make_student(email='admin@test.com', first_name='Admin', last_name='User', is_admin=True)
         self.course = make_course()
         self.post = Post.objects.create(
@@ -18,14 +19,14 @@ class ReportViewTest(APITestCase):
         PDFAttachment.objects.create(post=self.post, file=make_pdf_file())
         self.reason = ReportReason.objects.create(reason='Contenido ofensivo')
 
-    # --- Report reasons ---
+
 
     def test_get_report_reasons_returns_200(self):
         response = self.client.get('/documents/reports/reasons/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
 
-    # --- Create report (post) ---
+
 
     def test_create_report_returns_201(self):
         response = self.client.post('/documents/reports/', {
@@ -64,7 +65,7 @@ class ReportViewTest(APITestCase):
         }, format='json')
         self.assertEqual(response.status_code, 404)
 
-    # --- Get reports (admin) ---
+
 
     def test_get_reports_as_admin_returns_200(self):
         Report.objects.create(reason=self.reason, description='Test', user=self.student, post=self.post)
@@ -80,7 +81,7 @@ class ReportViewTest(APITestCase):
         response = self.client.get(f'/documents/reports/?admin_id={self.student.pk}')
         self.assertEqual(response.status_code, 403)
 
-    # --- Reject reports ---
+
 
     def test_reject_post_reports_as_admin_returns_200(self):
         Report.objects.create(reason=self.reason, description='Test', user=self.student, post=self.post)
@@ -96,7 +97,7 @@ class ReportViewTest(APITestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Report.objects.count(), 1)
 
-    # --- Resolve report (delete post + email) ---
+
 
     def test_resolve_report_deletes_post_and_returns_200(self):
         Report.objects.create(reason=self.reason, description='Test', user=self.student, post=self.post)
@@ -158,6 +159,7 @@ class CommentReportViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.post = Post.objects.create(
             course=self.course, student=self.student,

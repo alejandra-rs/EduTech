@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 from documents.models import Post, FlashCardDeck, FlashCard, Quiz, Question, Answer
-from ..config import make_student, make_course
+from ..config import make_student, make_course, login_student
 
 
 DRAFT_FLA_PAYLOAD = {
@@ -33,6 +33,7 @@ class DraftCreateFlashcardTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _post(self, **overrides):
@@ -92,10 +93,10 @@ class DraftCreateFlashcardTest(APITestCase):
         response = self.client.post("/documents/drafts/", payload, format="json")
         self.assertEqual(response.status_code, 400)
 
-    def test_flashcard_draft_missing_student_returns_400(self):
+    def test_flashcard_draft_without_student_uses_auth_user(self):
         payload = {**DRAFT_FLA_PAYLOAD, "course": self.course.pk}
         response = self.client.post("/documents/drafts/", payload, format="json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)
 
     def test_invalid_post_type_returns_400(self):
         response = self._post(post_type="PDF")
@@ -110,6 +111,7 @@ class DraftCreateQuizTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _post(self, **overrides):
@@ -163,6 +165,7 @@ class DraftListViewTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _make_fla_draft(self, student=None, title="Borrador FLA"):
@@ -229,9 +232,10 @@ class DraftListViewTest(APITestCase):
         response = self.client.get(f"/documents/drafts/?student={self.student.pk}")
         self.assertIn("updated_at", response.data[0])
 
-    def test_nonexistent_student_returns_404(self):
-        response = self.client.get("/documents/drafts/?student=9999")
-        self.assertEqual(response.status_code, 404)
+    def test_no_drafts_returns_empty_list(self):
+        response = self.client.get("/documents/drafts/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])
 
     def test_drafts_ordered_by_updated_at_descending(self):
         first = self._make_fla_draft(title="Primero")
@@ -246,6 +250,7 @@ class DraftDetailGetTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.draft = Post.objects.create(
             course=self.course, student=self.student,
@@ -287,6 +292,7 @@ class DraftDetailPatchTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.draft = Post.objects.create(
             course=self.course, student=self.student,
@@ -365,6 +371,7 @@ class DraftDetailPatchQuizTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.draft = Post.objects.create(
             course=self.course, student=self.student,
@@ -411,6 +418,7 @@ class DraftDeleteTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
         self.draft = Post.objects.create(
             course=self.course, student=self.student,
@@ -450,6 +458,7 @@ class PostListExcludesDraftsTest(APITestCase):
 
     def setUp(self):
         self.student = make_student()
+        login_student(self.client, self.student)
         self.course = make_course()
 
     def _make_published_fla(self):

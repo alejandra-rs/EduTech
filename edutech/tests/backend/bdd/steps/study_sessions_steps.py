@@ -39,13 +39,14 @@ def step_fill_session_form(context, title, description, date):
         "scheduled_at": date,
         "course": context.course.pk,
         "creator": context.student.pk,
+        "twitch_link": "https://www.twitch.tv/teststreamer",
     }
 
 
 @when('hago clic en el botón "Publicar"')
 def step_click_publish(context):
     context.response = context.client.post(
-        "/courses/study-sessions/",
+        "/study-sessions/",
         context.session_payload,
         format="json",
     )
@@ -54,13 +55,14 @@ def step_click_publish(context):
 @when('hago clic en "Publicar" sin escribir un título para la sesión')
 def step_publish_without_title(context):
     context.response = context.client.post(
-        "/courses/study-sessions/",
+        "/study-sessions/",
         {
             "title": "",
             "description": "Sin título",
             "scheduled_at": FUTURE_DATE,
             "course": context.course.pk,
             "creator": context.student.pk,
+            "twitch_link": "https://www.twitch.tv/teststreamer",
         },
         format="json",
     )
@@ -69,13 +71,14 @@ def step_publish_without_title(context):
 @when('hago clic en "Publicar" sin indicar una fecha para la sesión')
 def step_publish_without_date(context):
     context.response = context.client.post(
-        "/courses/study-sessions/",
+        "/study-sessions/",
         {
             "title": "Sesión sin fecha",
             "description": "",
             "scheduled_at": "",
             "course": context.course.pk,
             "creator": context.student.pk,
+            "twitch_link": "https://www.twitch.tv/teststreamer",
         },
         format="json",
     )
@@ -84,7 +87,7 @@ def step_publish_without_date(context):
 @when('accedo a las sesiones de estudio de una asignatura')
 def step_access_sessions(context):
     context.response = context.client.get(
-        f"/courses/study-sessions/?course={context.course.pk}"
+        f"/study-sessions/?courses={context.course.pk}"
     )
 
 

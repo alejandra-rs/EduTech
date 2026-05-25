@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('documents', '0004_alter_pdfattachment_processing_status'),
+        ("documents", "0004_alter_pdfattachment_processing_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='ai_gen',
+            model_name="post",
+            name="ai_gen",
             field=models.BooleanField(default=False),
         ),
     ]

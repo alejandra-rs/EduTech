@@ -105,15 +105,9 @@ ASGI_APPLICATION = "backend.edutech.asgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    # MicrosoftAuthentication reads the Bearer token sent by MSAL on the frontend,
-    # calls Microsoft Graph to verify it, and sets request.user.
-    # Returns None (anonymous) if no token is present, so unauthenticated endpoints
-    # keep working. Raises 401 if a token IS present but invalid/expired.
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "users.authentication.MicrosoftAuthentication",
     ],
-    # AllowAny globally — existing views work without a token.
-    # Add permission_classes = [IsAuthenticated] to individual views that need it.
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
@@ -217,16 +211,9 @@ AI_SETTINGS = {
     "VECTOR_DB_COLLECTION": "apuntes_universidad",
 }
 
-# ==========================================
-# CONFIGURACIÓN DE CELERY Y REDIS
-# ==========================================
-# Dónde está el mensajero (Redis) que guarda la cola de tareas
+# CELERY AND REDIS
 CELERY_BROKER_URL = env("REDIS_URL", default="redis://redis:6379/0")
-
-# Dónde guarda Celery el resultado de la tarea cuando termina
 CELERY_RESULT_BACKEND = env("REDIS_URL", default="redis://redis:6379/0")
-
-# Forzamos a que Celery acepte formato JSON al comunicarse
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
@@ -244,17 +231,12 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [
                 ("redis", 6379)
-            ],  # Apunta al servicio 'redis' de tu docker-compose
+            ],
         },
     },
 }
 
-# ==========================================
 # TWITCH EVENTSUB + OAUTH
-# ==========================================
-# Register your app at https://dev.twitch.tv/console to get these values.
-# TWITCH_CLIENT_SECRET must NEVER be sent to the frontend or committed to git.
-# Per-user access tokens are stored encrypted in the TwitchCredential model.
 TWITCH_CLIENT_ID = env("TWITCH_CLIENT_ID", default="")
 TWITCH_CLIENT_SECRET = env("TWITCH_CLIENT_SECRET", default="")
 TWITCH_REDIRECT_URI = env(
