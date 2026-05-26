@@ -1,12 +1,13 @@
-import { getLinkDescarga } from '../services/connections-documents';
+import { getDownloadUrl } from '../services/connections-documents';
 
 export interface DescargarProps {
   postId?: number;
 }
 
 export default function DownloadButton({ postId }: DescargarProps) {
-  const handleDownload = () => {
-    window.open(getLinkDescarga(postId!), '_blank');
+  const handleDownload = async () => {
+    const { url } = await getDownloadUrl(postId!);
+    window.open(url, '_blank');
   };
 
   return (

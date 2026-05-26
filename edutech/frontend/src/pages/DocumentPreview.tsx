@@ -1,11 +1,13 @@
 import PDFViewer from '../components/PDFViewer';
 import { TitlePage } from '../components/TitlePage';
-import { getDocument } from '../services/connections-documents';
-import { getCourse } from '../services/connections-courses';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { getDocument } from '../services/connections-documents';
+import { getCourse } from '../services/connections-courses';
 import { DocumentInfo } from '../components/DocumentInfo';
 import { CommentsSection } from '../components/interactions/CommentsSection';
+import { getComments } from '../services/interactions/connections-comments';
+import ReactionsContainer from '../components/interactions/ReactionsContainer';
 import type { PostPreview } from '../models/documents/post.model';
 import { SaveButton } from '../components/my-space/SaveButton';
 import { ChatbotWidget } from '../components/chatbot/ChatbotWidget';
@@ -19,23 +21,26 @@ export default function DocumentPreview() {
   const [courseName, setCourseName] = useState("Asignatura");
 
   useEffect(() => {
-    const cargarDocumento = async () => {
+    if (!postId) return;
+    const load = async () => {
       try {
-        const courseData = await getCourse(String(subjectId));
+        const [courseData, data] = await Promise.all([
+          getCourse(String(subjectId)),
+          getDocument(Number(postId)),
+        ]);
         setCourseName(courseData?.name || "Asignatura");
-        const data = await getDocument(Number(postId));
         setDocument(data);
       } catch (error) {
         console.error("Error al cargar el documento", error);
       }
     };
-    if (postId) cargarDocumento();
-  }, [postId]);
+    load();
+  }, [postId, subjectId]);
 
   useEffect(() => {
-      if (document && document.is_draft && userData && !userData.is_admin) {
-        navigate(`/${id}/${subjectId}/post`);
-      }
+    if (document && document.is_draft && userData && !userData.is_admin) {
+      navigate(`/${id}/${subjectId}/post`);
+    }
   }, [document, userData]);
 
   return (
@@ -43,7 +48,7 @@ export default function DocumentPreview() {
       <div className="flex-1 flex flex-col h-full bg-transparent">
         <div className="w-full shrink-0">
           <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)}>
-            <SaveButton postId={Number(postId)}/>
+            <SaveButton postId={Number(postId)} />
           </TitlePage>
         </div>
         <div className="flex-1 flex flex-col lg:flex-row w-full h-[calc(100vh-100px)]">
@@ -53,9 +58,11 @@ export default function DocumentPreview() {
             </div>
           </div>
           <div className="flex-1 w-full h-full overflow-y-auto custom-scrollbar bg-transparent pb-2">
-            <div className="p-8 md:p-12 lg:pl-2 lg:pr-16 space-y-12 bg-transparent">
+            <div className="p-8 md:p-12 lg:pl-2 lg:pr-16 space-y-8 bg-transparent">
               <DocumentInfo document={document} />
-              <CommentsSection id={postId} />
+              <hr className="border-gray-200" />
+              <ReactionsContainer postId={document?.id ?? 0} />
+              <CommentsSection id={postId} fetchComments={getComments} />
             </div>
           </div>
         </div>

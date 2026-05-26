@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { TitlePage } from '../components/TitlePage';
 import SessionHeader from '../components/study-sessions/SessionHeader';
 import SessionDescription from '../components/study-sessions/SessionDescription';
-import { getStudySession, starStudySession, unstarStudySession } from '../services/connections-studysessions';
+import { getStudySession, starStudySession, unstarStudySession, getStudySessionComments } from '../services/connections-studysessions';
 import { getTwitchStatus, connectToSession } from '../services/connections-streaming';
 import { useCurrentUser } from '../context/CurrentUserContext';
 import { StreamButton } from '../components/study-sessions/StreamButton';
@@ -115,7 +115,7 @@ export default function StudySessionDetail() {
                 setTwitchData={setTwitchData}
               />
             </div>
-            <CommentsSection id={sessionId} isSession />
+            <CommentsSection id={sessionId} fetchComments={getStudySessionComments} isSession />
           </div>
         </main>
       </div>

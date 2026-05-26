@@ -229,15 +229,16 @@ def step_include_titles(context, title1, title2):
     assert title1 in titulos, f'"{title1}" no está en {titulos}'
     assert title2 in titulos, f'"{title2}" no está en {titulos}'
 
-@then('la respuesta redirige con un código 302')
-def step_redirect(context):
-    assert context.response.status_code == 302, f'Se esperaba 302, se obtuvo {context.response.status_code}'
+@then('la respuesta devuelve un código 200')
+def step_ok(context):
+    assert context.response.status_code == 200, f'Se esperaba 200, se obtuvo {context.response.status_code}'
 
-@then('la cabecera Location contiene la URL')
-def step_location_url(context):
-    assert context.response['Location'] == FAKE_PRESIGNED_URL, (
+@then('el cuerpo contiene la URL de descarga')
+def step_body_url(context):
+    data = context.response.json()
+    assert data.get('url') == FAKE_PRESIGNED_URL, (
         f'Se esperaba {FAKE_PRESIGNED_URL}, '
-        f'se obtuvo {context.response.get("Location")}'
+        f'se obtuvo {data.get("url")}'
     )
 
 @then('el error hace referencia al campo "title"')

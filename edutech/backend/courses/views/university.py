@@ -11,5 +11,6 @@ class UniversityListCreate(generics.ListCreateAPIView):
 
 
 class UniversityDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = University.objects.all()
     serializer_class = UniversitySerializer

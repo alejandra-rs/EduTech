@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Square3Stack3DIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 import FlashCardView from '../components/study-material/flashcards/FlashCardView';
 import ConfirmModal from '../components/study-material/ConfirmModal';
 import StudySidebar from '../components/study-material/StudySidebar';
@@ -88,7 +88,7 @@ const TakeFlashCard = () => {
       <main className={`flex-1 transition-all duration-300 ${showSidebar ? "pr-72" : "pr-0"}`}>
         <div className="max-w-3xl mx-auto p-12">
 
-          <StudyHeader onBack={() => navigate(`/${id}/${subjectId}/post`)} backLabel="Volver a la asignatura" typeIcon={Square3Stack3DIcon} typeLabel="Sesión de Flashcards" title={flashData?.title} description={flashData?.description} />
+          <StudyHeader onBack={() => navigate(`/${id}/${subjectId}/post`)} backLabel="Volver a la asignatura" title={flashData?.title} description={flashData?.description} />
 
           <StudyProgressBar current={currentIndex + 1} total={cards.length} correct={stats.correct} incorrect={stats.incorrect} unanswered={stats.total - stats.answered} />
 
@@ -100,11 +100,10 @@ const TakeFlashCard = () => {
 
           {stats.answered === stats.total && stats.total > 0 && <CompletionBanner variant="flashcard" stats={stats} onRestart={() => setConfirmReset(true)} />}
 
-          <hr className="mt-10 mb-5 border-gray-200"></hr>
-          <div className="flex justify-between">
-            <SaveButton postId={Number(postId)}/>
-            <ReactionsContainer postId={Number(postId)} />
-          </div>
+          <hr className="mt-10 mb-5 border-gray-200" />
+          <ReactionsContainer postId={Number(postId)}>
+            <SaveButton postId={Number(postId)} />
+          </ReactionsContainer>
         </div>
       </main>
     </div>

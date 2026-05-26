@@ -47,7 +47,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://edutech-app.tail6b7334.ts.net",
 ] + env.list("CORS_EXTRA_ORIGINS", default=[])
 CORS_ALLOW_ALL_ORIGINS = DEBUG
-X_FRAME_OPTIONS = "ALLOWALL"
+X_FRAME_OPTIONS = "SAMEORIGIN"
 CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
@@ -109,7 +109,7 @@ REST_FRAMEWORK = {
         "users.authentication.MicrosoftAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",
     ],
 }
 
@@ -229,9 +229,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [
-                ("redis", 6379)
-            ],
+            "hosts": [("redis", 6379)],
         },
     },
 }

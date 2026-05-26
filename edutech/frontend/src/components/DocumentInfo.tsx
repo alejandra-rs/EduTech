@@ -1,7 +1,7 @@
 import DownloadButton from './DownloadButton';
 import { ViewsDisplay } from './interactions/Views';
-import ReactionsContainer from './interactions/ReactionsContainer';
 import type { PostPreview } from '../models/documents/post.model';
+import { formatDate } from '../formatters/dates';
 
 export interface DocumentInfoProps {
   document: PostPreview | null;
@@ -14,7 +14,7 @@ export function DocumentInfo({ document, showDownload = true }: DocumentInfoProp
       <div className="flex justify-between">
         <h1 className="text-5xl md:text-6xl font-semibold text-gray-900 mb-8">{document?.title}</h1>
         <time className="text-sm text-gray-500 mb-2" dateTime={document?.created_at}>
-          {document?.created_at && new Date(document.created_at).toLocaleDateString()}
+          {formatDate(document?.created_at)}
         </time>
       </div>
       <p className="text-2xl font-semibold text-gray-800 leading-relaxed mb-4">
@@ -25,9 +25,8 @@ export function DocumentInfo({ document, showDownload = true }: DocumentInfoProp
           <DownloadButton postId={document?.id} />
         </div>
       )}
-      <div className="flex items-center justify-between w-full pt-8 border-t border-gray-100">
+      <div className="pt-8 border-t border-gray-100">
         <ViewsDisplay views={document?.views} />
-        <ReactionsContainer postId={document?.id ?? 0} />
       </div>
     </section>
   );

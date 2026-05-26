@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import Comment from "./Comment";
 import CommentModal from "./CommentModal";
-import { getComments } from "../../services/interactions/connections-comments";
-import { getStudySessionComments } from "../../services/connections-studysessions";
 import { useCurrentUser } from "../../context/CurrentUserContext";
 import type { Comment as CommentModel } from "../../models/documents/interactions/comment.model";
 import type { StudySessionComment } from "../../models/studysessions/studysession.model";
 
+type AnyComment = CommentModel | StudySessionComment;
+
 export interface CommentsSectionProps {
   id?: string | number;
+  fetchComments: (id: number) => Promise<AnyComment[]>;
   isSession?: boolean;
 }
 
-type AnyComment = CommentModel | StudySessionComment;
-
-export function CommentsSection({ id, isSession = false }: CommentsSectionProps) {
+export function CommentsSection({ id, fetchComments, isSession = false }: CommentsSectionProps) {
   const [comments, setComments] = useState<AnyComment[]>([]);
   const [loading, setLoading] = useState(true);
   const { userData } = useCurrentUser();
@@ -22,7 +21,7 @@ export function CommentsSection({ id, isSession = false }: CommentsSectionProps)
   const loadComments = async () => {
     try {
       setLoading(true);
-      const data = isSession ? await getStudySessionComments(Number(id)) : await getComments(Number(id));
+      const data = await fetchComments(Number(id));
       setComments(data);
     } catch (error) {
       console.error("Error al cargar los comentarios", error);
@@ -31,7 +30,7 @@ export function CommentsSection({ id, isSession = false }: CommentsSectionProps)
     }
   };
 
-  useEffect(() => { if (id) loadComments(); }, [id, isSession]);
+  useEffect(() => { if (id) loadComments(); }, [id]);
 
   return (
     <section className="w-full max-h-[70vh] flex flex-col overflow-hidden">

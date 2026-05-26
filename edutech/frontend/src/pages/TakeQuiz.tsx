@@ -9,7 +9,16 @@ import CompletionBanner from '../components/study-material/CompletionBanner';
 import ReactionsContainer from '../components/interactions/ReactionsContainer';
 import { getDocument } from '../services/connections-documents';
 import { PostQuiz } from '../models/documents/post.model';
+import type { QuizQuestion } from '../models/documents/postsTypesModels/quiz.models';
 import { SaveButton } from '../components/my-space/SaveButton';
+
+function gradeQuestion(question: QuizQuestion, selectedIds: number[]): boolean {
+  const correctIds = question.answers.flatMap(a => a.is_correct ? [a.id!] : []);
+  if (correctIds.length > 1) {
+    return correctIds.length === selectedIds.length && selectedIds.every(id => correctIds.includes(id));
+  }
+  return question.answers.find(a => a.id === selectedIds[0])?.is_correct ?? false;
+}
 
 
 const TakeQuiz = () => {
@@ -48,12 +57,7 @@ const TakeQuiz = () => {
     questions.forEach(q => {
       const qId = q.id!;
       if (next[qId] !== undefined) return;
-      const selected = selections[qId] || [];
-      const correct = q.answers.flatMap(a => a.is_correct ? [a.id!] : []);
-      const isMultiple = correct.length > 1;
-      next[qId] = isMultiple
-        ? correct.length === selected.length && selected.every(i => correct.includes(i))
-        : q.answers.find(a => a.id === selected[0])?.is_correct || false;
+      next[qId] = gradeQuestion(q, selections[qId] || []);
     });
     setResults(next);
   };
@@ -118,11 +122,10 @@ const TakeQuiz = () => {
 
           {stats.answered === stats.total && stats.total > 0 && <CompletionBanner variant="quiz" stats={stats} onRestart={() => setConfirmReset(true)} />}
 
-          <hr className="mt-10 mb-5 border-gray-200"></hr>
-          <div className="flex justify-between">
-            <SaveButton postId={Number(postId)}/>
-            <ReactionsContainer postId={Number(postId)} />
-          </div>
+          <hr className="mt-10 mb-5 border-gray-200" />
+          <ReactionsContainer postId={Number(postId)}>
+            <SaveButton postId={Number(postId)} />
+          </ReactionsContainer>
         </div>
       </main>
     </div>

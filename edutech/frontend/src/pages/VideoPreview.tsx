@@ -5,8 +5,9 @@ import { getCourse } from '../services/connections-courses';
 import { TitlePage } from '../components/TitlePage';
 import { DocumentInfo } from '../components/DocumentInfo';
 import { CommentsSection } from '../components/interactions/CommentsSection';
+import { getComments } from '../services/interactions/connections-comments';
+import ReactionsContainer from '../components/interactions/ReactionsContainer';
 import VideoViewer from '../components/VideoViewer';
-import PDFViewer from '../components/PDFViewer';
 import type { PostPreview } from '../models/documents/post.model';
 import { SaveButton } from '../components/my-space/SaveButton';
 
@@ -17,25 +18,28 @@ export default function VideoPreview() {
   const [courseName, setCourseName] = useState("Asignatura");
 
   useEffect(() => {
-    const cargarDocumento = async () => {
+    if (!postId) return;
+    const load = async () => {
       try {
-        const courseData = await getCourse(String(subjectId));
+        const [courseData, data] = await Promise.all([
+          getCourse(String(subjectId)),
+          getDocument(Number(postId)),
+        ]);
         setCourseName(courseData?.name || "Asignatura");
-        const data = await getDocument(Number(postId));
         setDocument(data);
       } catch (error) {
         console.error("Error al cargar el documento", error);
       }
     };
-    if (postId) cargarDocumento();
-  }, [postId]);
+    load();
+  }, [postId, subjectId]);
 
   return (
     <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden font-sans">
 
       <header className="w-full shrink-0 bg-white shadow-sm z-10">
         <TitlePage PageName={courseName} onBack={() => navigate(`/${id}/${subjectId}/post`)}>
-          <SaveButton postId={Number(postId)}/>
+          <SaveButton postId={Number(postId)} />
         </TitlePage>
       </header>
 
@@ -43,20 +47,18 @@ export default function VideoPreview() {
 
         <div className="flex-[7] flex flex-col overflow-y-auto custom-scrollbar pb-10">
           <div className="w-full aspect-video bg-black rounded-3xl shadow-2xl mb-6">
-            {document?.post_type === 'VID' || (document as { vid?: unknown } | null)?.vid ? (
-              <VideoViewer videoUrl={(document as { vid?: { vid?: string } } | null)?.vid?.vid} />
-            ) : (
-              <PDFViewer pdfUrl={(document as { pdf?: { file?: string } } | null)?.pdf?.file} />
-            )}
+            <VideoViewer videoUrl={(document as { vid?: { vid?: string } } | null)?.vid?.vid} />
           </div>
 
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <DocumentInfo document={document} showDownload={false} />
+            <hr className="border-gray-100" />
+            <ReactionsContainer postId={document?.id ?? 0} />
           </div>
         </div>
 
         <aside className="lg:w-[350px] xl:w-[450px] shrink-0 bg-white p-6 rounded-3xl shadow-sm border border-gray-100 self-start">
-          <CommentsSection id={postId} />
+          <CommentsSection id={postId} fetchComments={getComments} />
         </aside>
 
       </main>

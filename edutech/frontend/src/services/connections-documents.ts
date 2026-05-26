@@ -4,7 +4,8 @@ import { Draft } from '../models/documents/draft.models';
 import { QuizCheckResponse } from '../models/documents/postsTypesModels/quiz.models';
 import { CreateDocumentPayload, CreateFlashcardPayload, CreateMediaPayload, CreateQuizPayload, CreateVideoPayload, UploadDraft } from '../models/documents/payload.model';
 
-export const getLinkDescarga = (postId: number): string => `/api/documents/download/pdf/${postId}`;
+export const getDownloadUrl = (postId: number): Promise<{ url: string }> =>
+  apiFetchJson(`/api/documents/download/pdf/${postId}`);
 
 export function _withExtendedType(post: Omit<PostPreview, 'extendedType'>): PostPreview {
   return { ...post, extendedType: POST_TYPE_LABELS[post.post_type as PostType] } as PostPreview;

@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import views, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -281,6 +281,8 @@ class TwitchAuthView(views.APIView):
 
 
 class TwitchCallbackView(views.APIView):
+    permission_classes = [AllowAny]
+
     def get(self, request):
         code = request.query_params.get("code")
         state = request.query_params.get("state")

@@ -1,6 +1,5 @@
 import boto3
 from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, views, status
 from rest_framework.response import Response
@@ -118,4 +117,4 @@ class PDFDownloadView(views.APIView):
             },
             ExpiresIn=300,
         )
-        return HttpResponseRedirect(url)
+        return Response({"url": url})

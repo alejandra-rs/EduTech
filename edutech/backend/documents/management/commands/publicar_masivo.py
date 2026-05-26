@@ -6,7 +6,9 @@ class Command(BaseCommand):
     help = "Convierte publicaciones en estado borrador a públicas (is_draft=False) basándose en su tipo (post_type)."
 
     def add_arguments(self, parser):
-        parser.add_argument("tipo_post", type=str, help="El tipo de post a publicar (ej: PDF, VID, FLA)")
+        parser.add_argument(
+            "tipo_post", type=str, help="El tipo de post a publicar (ej: PDF, VID, FLA)"
+        )
 
     def handle(self, *args, **options):
         tipo_post = options["tipo_post"].upper()
@@ -15,16 +17,30 @@ class Command(BaseCommand):
         total = posts_borradores.count()
 
         if total == 0:
-            self.stdout.write(self.style.SUCCESS(f'No se han encontrado borradores del tipo "{tipo_post}".'))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'No se han encontrado borradores del tipo "{tipo_post}".'
+                )
+            )
             return
 
-        self.stdout.write(self.style.WARNING(f'ATENCIÓN: Se han encontrado {total} posts en borrador del tipo "{tipo_post}".'))
+        self.stdout.write(
+            self.style.WARNING(
+                f'ATENCIÓN: Se han encontrado {total} posts en borrador del tipo "{tipo_post}".'
+            )
+        )
 
-        respuesta = input(f"¿Estás seguro de que quieres publicar {total} borradores? (y/N): ")
+        respuesta = input(
+            f"¿Estás seguro de que quieres publicar {total} borradores? (y/N): "
+        )
         if respuesta.lower() != "y":
             self.stdout.write(self.style.ERROR("Operación cancelada por el usuario."))
             return
 
         posts_borradores.update(is_draft=False)
 
-        self.stdout.write(self.style.SUCCESS(f'¡Éxito! Se han publicado {total} posts del tipo "{tipo_post}".'))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f'¡Éxito! Se han publicado {total} posts del tipo "{tipo_post}".'
+            )
+        )

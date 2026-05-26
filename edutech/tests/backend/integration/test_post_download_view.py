@@ -30,12 +30,12 @@ class PDFDownloadViewTest(APITestCase):
         return post
 
     @patch('documents.views.attachments.boto3.client')
-    def test_returns_302_redirect_to_url(self, mock_boto3):
+    def test_returns_200_with_url(self, mock_boto3):
         self._mock_s3(mock_boto3)
         post = self._create_pdf_post()
         response = self.client.get(f'/documents/download/pdf/{post.pk}')
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], self.FAKE_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['url'], self.FAKE_URL)
 
     @patch('documents.views.attachments.boto3.client')
     def test_boto3_client_called_with_s3_and_credentials(self, mock_boto3):

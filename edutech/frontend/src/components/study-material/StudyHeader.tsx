@@ -3,8 +3,6 @@ import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 export interface StudyHeaderProps {
   onBack: () => void;
   backLabel: string;
-  typeIcon?: React.ComponentType<{ className?: string }>;
-  typeLabel?: string;
   title?: string;
   description?: string;
   titleSize?: string;

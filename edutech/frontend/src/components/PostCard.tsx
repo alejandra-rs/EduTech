@@ -5,14 +5,7 @@ import { PostPreview } from "../models/documents/post.model";
 import { PostPreviewVisual } from "./post-preview/preview";
 import { PostLabel } from "./post-preview/labels";
 import { IAtag } from "./IAtag";
-
-const formatDate = (date: string | Date) => {
-  return new Date(date).toLocaleDateString("es-ES", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};
+import { formatDate } from '../formatters/dates';
 
 export interface PostCardProps {
   post: PostPreview;
@@ -68,13 +61,13 @@ export function PostCard({ post, onClick, onDelete }: PostCardProps) {
         
         <div className="flex items-center justify-between mt-auto">
           
-          <ReactionButton type="views" count={post.views}>
+          <ReactionButton count={post.views}>
             <EyeIcon className="size-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
           </ReactionButton>
-          <ReactionButton type="like" count={post.likes}>
+          <ReactionButton count={post.likes}>
             <HandThumbUpIcon className="size-4 text-gray-400" />
           </ReactionButton>
-          <ReactionButton type="dislike" count={post.dislikes}>
+          <ReactionButton count={post.dislikes}>
             <HandThumbDownIcon className="size-4 text-gray-400" />
           </ReactionButton>
         </div>

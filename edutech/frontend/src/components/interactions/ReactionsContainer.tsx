@@ -8,15 +8,57 @@ import type { ReportSubmitData } from '../reports/ReportPopup';
 
 export interface ReactionsContainerProps {
   postId: number;
+  children?: React.ReactNode;
 }
 
-const ReactionsContainer = ({ postId }: ReactionsContainerProps) => {
+type ReactionSide = {
+  recordId: number | string | null;
+  count: number;
+  setRecordId: (v: number | string | null) => void;
+  setCount: (v: number) => void;
+};
+
+async function toggleReaction(
+  postId: number,
+  self: ReactionSide,
+  isActive: boolean,
+  other: ReactionSide & { isActive: boolean; remove: (id: number) => Promise<void> },
+  add: (postId: number) => Promise<{ id: number }>,
+  remove: (id: number) => Promise<void>,
+) {
+  const prev = {
+    selfId: self.recordId, selfCount: self.count,
+    otherId: other.recordId, otherCount: other.count,
+  };
+  try {
+    if (isActive) {
+      self.setRecordId(null);
+      self.setCount(self.count - 1);
+      await remove(Number(self.recordId));
+    } else {
+      self.setRecordId('temp');
+      self.setCount(self.count + 1);
+      if (other.isActive) {
+        other.setRecordId(null);
+        other.setCount(other.count - 1);
+        await other.remove(Number(other.recordId));
+      }
+      const rec = await add(postId);
+      self.setRecordId(rec.id);
+    }
+  } catch {
+    self.setRecordId(prev.selfId);
+    self.setCount(prev.selfCount);
+    other.setRecordId(prev.otherId);
+    other.setCount(prev.otherCount);
+  }
+}
+
+const ReactionsContainer = ({ postId, children }: ReactionsContainerProps) => {
   const [likes, setLikes] = useState(0);
   const [likeRecordId, setLikeRecordId] = useState<number | string | null>(null);
-
   const [dislikes, setDislikes] = useState(0);
   const [dislikeRecordId, setDislikeRecordId] = useState<number | string | null>(null);
-
   const [isReported, setIsReported] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportAnimate, setReportAnimate] = useState(false);
@@ -45,58 +87,28 @@ const ReactionsContainer = ({ postId }: ReactionsContainerProps) => {
     load();
   }, [postId]);
 
-  const handleLike = async () => {
+  const handleLike = () => {
     if (!postId) return;
-    const prev = { likes, likeRecordId, dislikes, dislikeRecordId };
-    try {
-      if (isLiked) {
-        setLikeRecordId(null);
-        setLikes(prev.likes - 1);
-        await removeLike(Number(prev.likeRecordId));
-      } else {
-        setLikeRecordId('temp');
-        setLikes(prev.likes + 1);
-        if (isDisliked) {
-          setDislikeRecordId(null);
-          setDislikes(prev.dislikes - 1);
-          await removeDislike(Number(prev.dislikeRecordId));
-        }
-        const newLike = await addLike(postId);
-        setLikeRecordId(newLike.id);
-      }
-    } catch {
-      setLikeRecordId(prev.likeRecordId);
-      setLikes(prev.likes);
-      setDislikeRecordId(prev.dislikeRecordId);
-      setDislikes(prev.dislikes);
-    }
+    toggleReaction(
+      postId,
+      { recordId: likeRecordId, count: likes, setRecordId: setLikeRecordId, setCount: setLikes },
+      isLiked,
+      { recordId: dislikeRecordId, count: dislikes, setRecordId: setDislikeRecordId, setCount: setDislikes, isActive: isDisliked, remove: removeDislike },
+      addLike,
+      removeLike,
+    );
   };
 
-  const handleDislike = async () => {
+  const handleDislike = () => {
     if (!postId) return;
-    const prev = { likes, likeRecordId, dislikes, dislikeRecordId };
-    try {
-      if (isDisliked) {
-        setDislikeRecordId(null);
-        setDislikes(prev.dislikes - 1);
-        await removeDislike(Number(prev.dislikeRecordId));
-      } else {
-        setDislikeRecordId('temp');
-        setDislikes(prev.dislikes + 1);
-        if (isLiked) {
-          setLikeRecordId(null);
-          setLikes(prev.likes - 1);
-          await removeLike(Number(prev.likeRecordId));
-        }
-        const newDislike = await addDislike(postId);
-        setDislikeRecordId(newDislike.id);
-      }
-    } catch {
-      setDislikeRecordId(prev.dislikeRecordId);
-      setDislikes(prev.dislikes);
-      setLikeRecordId(prev.likeRecordId);
-      setLikes(prev.likes);
-    }
+    toggleReaction(
+      postId,
+      { recordId: dislikeRecordId, count: dislikes, setRecordId: setDislikeRecordId, setCount: setDislikes },
+      isDisliked,
+      { recordId: likeRecordId, count: likes, setRecordId: setLikeRecordId, setCount: setLikes, isActive: isLiked, remove: removeLike },
+      addDislike,
+      removeDislike,
+    );
   };
 
   const handleFlagClick = () => {
@@ -113,7 +125,7 @@ const ReactionsContainer = ({ postId }: ReactionsContainerProps) => {
 
   if (!postId) return null;
 
-  return (
+  const reactions = (
     <div className="flex items-center gap-6">
       <ReactionButton active={isLiked} count={likes} onClick={handleLike}>
         <HandThumbUpIcon className="size-7" />
@@ -147,6 +159,17 @@ const ReactionsContainer = ({ postId }: ReactionsContainerProps) => {
       />
     </div>
   );
+
+  if (children) {
+    return (
+      <div className="flex items-center justify-between w-full">
+        {children}
+        {reactions}
+      </div>
+    );
+  }
+
+  return reactions;
 };
 
 export default ReactionsContainer;

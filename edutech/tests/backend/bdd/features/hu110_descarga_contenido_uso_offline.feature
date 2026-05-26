@@ -12,8 +12,8 @@ Feature: Descarga de Contenido para Uso Offline
     Given que existe un post PDF con título "Scrum"
     And que el servicio de almacenamiento devuelve una URL
     When solicito descargar el PDF del post
-    Then la respuesta redirige con un código 302
-    And la cabecera Location contiene la URL
+    Then la respuesta devuelve un código 200
+    And el cuerpo contiene la URL de descarga
 
   Scenario: Intentar descargar un post que es un vídeo
     Given que existe un post de tipo vídeo con título "Vídeo Kanban"

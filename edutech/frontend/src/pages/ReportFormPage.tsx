@@ -4,7 +4,7 @@ import { useCurrentUser } from '../context/CurrentUserContext';
 import { resolveReport } from '../services/interactions/connections-reports';
 import { TitlePage } from '../components/TitlePage';
 import Input from '../components/Input';
-import UploadImage from '../components/UploadImage';
+import UploadDropzone from '../components/forms-components/UploadDropzone';
 
 export default function ReportFormPage() {
   const { id } = useParams<{ id: string }>();
@@ -60,7 +60,9 @@ export default function ReportFormPage() {
         />
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Adjuntar imágenes (Opcional)</label>
-          <UploadImage onFileChange={setImage} />
+          <div className="h-48">
+            <UploadDropzone allowedType="image" maxSizeKB={200} selectedFile={image} onFileSelect={setImage} />
+          </div>
         </div>
 
         {error && <p className="text-sm text-red-600 font-semibold">{error}</p>}

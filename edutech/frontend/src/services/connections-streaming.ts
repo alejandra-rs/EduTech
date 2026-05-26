@@ -56,7 +56,7 @@ export const stopStream = (sessionId: number): Promise<void> =>
   apiFetchVoid(`${BASE}/${sessionId}/stream/`, { method: "DELETE" });
 
 export const sendTwitchMessage = (sessionId: number, message: string): Promise<void> =>
-  apiFetchJson(`${BASE}/${sessionId}/chat/`, {
+  apiFetchVoid(`${BASE}/${sessionId}/chat/`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify({ message }),

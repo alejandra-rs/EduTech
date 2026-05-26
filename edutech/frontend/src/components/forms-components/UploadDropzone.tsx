@@ -9,6 +9,21 @@ interface UploadDropzoneProps {
   isConfirmed?: boolean;
 }
 
+const ACCEPT: Record<UploadDropzoneProps["allowedType"], string> = {
+  pdf: "application/pdf",
+  image: "image/jpeg,image/png,image/webp",
+};
+
+const VALID_MIME: Record<UploadDropzoneProps["allowedType"], string[]> = {
+  pdf: ["application/pdf"],
+  image: ["image/jpeg", "image/png", "image/webp"],
+};
+
+const PLACEHOLDER: Record<UploadDropzoneProps["allowedType"], string> = {
+  pdf: "Haz clic o arrastra un PDF aquí",
+  image: "Haz clic o arrastra una imagen aquí",
+};
+
 export default function UploadDropzone({
   allowedType,
   maxSizeKB,
@@ -33,6 +48,11 @@ export default function UploadDropzone({
 
   const validateAndSetFile = (file: File | null) => {
     if (!file) return;
+    if (!VALID_MIME[allowedType].includes(file.type)) {
+      setError(`Formato no permitido. Se esperaba: ${allowedType === "pdf" ? "PDF" : "JPG, PNG o WEBP"}.`);
+      onFileSelect(null);
+      return;
+    }
     if (file.size > maxSizeKB * 1024) {
       setError(`Supera el tamaño máximo de ${maxSizeKB} KB.`);
       onFileSelect(null);
@@ -74,11 +94,11 @@ export default function UploadDropzone({
                   src={`${previewUrl}#toolbar=0&navpanes=0`}
                   className="w-full h-full rounded-lg shadow-sm border border-gray-200 bg-white"
                   title="PDF Preview"
-                  sandbox="allow-scripts allow-same-origin allow-forms"
+                  sandbox="allow-scripts allow-same-origin"
                 />
               )}
             </div>
-            
+
             {!isConfirmed && (
               <button
                 type="button"
@@ -97,7 +117,7 @@ export default function UploadDropzone({
           <div className="text-center px-4 flex flex-col items-center">
             <ArrowUpTrayIcon className={`size-12 mb-4 transition-transform ${error ? 'text-red-500' : 'text-gray-400 group-hover:-translate-y-2'}`} />
             <p className={`text-base font-medium ${error ? 'text-red-600' : 'text-gray-600'}`}>
-              Haz clic o arrastra un PDF aquí
+              {error || PLACEHOLDER[allowedType]}
             </p>
           </div>
         )}
@@ -106,11 +126,11 @@ export default function UploadDropzone({
       <input
         ref={fileInputRef}
         type="file"
-        accept="application/pdf"
+        accept={ACCEPT[allowedType]}
         className="hidden"
         onChange={(e) => {
           if (e.target.files) validateAndSetFile(e.target.files[0]);
-          e.target.value = ''; 
+          e.target.value = '';
         }}
       />
     </div>
