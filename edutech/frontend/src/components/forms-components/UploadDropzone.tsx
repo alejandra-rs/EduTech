@@ -94,7 +94,6 @@ export default function UploadDropzone({
                   src={`${previewUrl}#toolbar=0&navpanes=0`}
                   className="w-full h-full rounded-lg shadow-sm border border-gray-200 bg-white"
                   title="PDF Preview"
-                  sandbox="allow-scripts allow-same-origin"
                 />
               )}
             </div>
