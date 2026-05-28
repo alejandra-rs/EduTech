@@ -103,7 +103,7 @@ export default function UploadDocument() {
   return (
     <div className="flex flex-col items-center w-full mx-auto p-4 md:p-8 bg-white min-h-screen relative">
       <div className="w-full shrink-0">
-        <TitlePage PageName="Cargar Publicación" onBack={() => navigate(`/${id}/${subjectId}/post`)} />
+        <TitlePage PageName="Cargar Documento" onBack={() => navigate(`/${id}/${subjectId}/post`)} />
       </div>
 
       {published && (

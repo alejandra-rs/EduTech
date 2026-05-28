@@ -33,7 +33,7 @@ export default function LoadVideoPost() {
       )}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         <div className="w-full shrink-0 bg-transparent">
-          <TitlePage PageName="Cargar Publicación" onBack={handleBack} />
+          <TitlePage PageName="Cargar Vídeo" onBack={handleBack} />
         </div>
         <main className="flex-1 p-6 md:p-10 lg:p-14 overflow-y-auto">
           <form
