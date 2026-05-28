@@ -19,7 +19,7 @@ export function Quarter({ quarter, title, yearId }: QuarterProps) {
   }, [yearId, quarter] );
 
   return (
-    <div className="bg-gray-200/70 rounded-[40px] p-6 w-full max-w-md h-full flex flex-col shadow-inner border border-black/5">
+    <div className="bg-gray-200/70 rounded-[40px] p-6 w-full max-w-[70vw] lg:max-w-[30vw] h-fit flex flex-col shadow-inner border border-black/5">
       <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center shrink-0">
         {title}
       </h2>

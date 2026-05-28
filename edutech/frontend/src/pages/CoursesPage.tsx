@@ -31,7 +31,8 @@ const CoursesPage = () => {
 
 
   return (
-      <div className="w-full h-auto min-h-screen overflow-y-auto lg:h-[calc(100vh-2px)] flex flex-col lg:overflow-hidden bg-slate-50">  <TitlePage
+      <div className="w-full h-auto min-h-screen overflow-y-auto lg:h-[calc(100vh-2px)] flex flex-col lg:overflow-hidden bg-slate-50">  
+      <TitlePage
           PageName={`${yearData ? yearData.year : id}º Curso - ${degreeInfo?.name}`}
           subtitle={degreeInfo?.universityName}
           backLabel="Cursos"
