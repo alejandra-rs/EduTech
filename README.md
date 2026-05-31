@@ -7,7 +7,7 @@
         <img src="doc/sprint-2/images/thumbnail.png" style="width:100%;">
      </a>
 </div>
-<sub>*[Acceder a la presentación en YouTube ↑](https://www.youtube.com/watch?v=TSjU3uns65I)*</sub>
+<sub><em><a href="https://www.youtube.com/watch?v=TSjU3uns65I">Acceder a la presentación en YouTube ↑</a></em></sub>
 <br></br>
 
 > **Tu carrera, organizada. Tus apuntes, centralizados. Tus dudas, resueltas. EduTech es la plataforma académica que necesitas para optimizar tu aprendizaje.**
