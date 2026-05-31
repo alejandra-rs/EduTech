@@ -18,7 +18,7 @@ EduTech es una web que nace para resolver los siguientes problemas:
 
 ---
 
-## _Sprint Dos
+## _Sprint Dos_
 
 ### Objetivos
 

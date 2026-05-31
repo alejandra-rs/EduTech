@@ -1,10 +1,14 @@
 # EduTech
 
-### Equipo _D-MACH_
+### Equipo _D-MACH_ — Marcial Galván - Houyame Liazidi - Alejandra Rodríguez - Cristina Santana - Dácil Santana
 
-### Marcial Galván - Houyame Liazidi - Alejandra Rodríguez - Cristina Santana - Dácil Santana
-
-![Ver vídeo en YouTube]
+<div align="left">
+      <a href="https://www.youtube.com/watch?v=TSjU3uns65I">
+        <img src="doc/sprint-2/images/thumbnail.png" style="width:100%;">
+     </a>
+</div>
+<sub>*[Acceder a la presentación en YouTube ↑](https://www.youtube.com/watch?v=TSjU3uns65I)*</sub>
+<br></br>
 
 > **Tu carrera, organizada. Tus apuntes, centralizados. Tus dudas, resueltas. EduTech es la plataforma académica que necesitas para optimizar tu aprendizaje.**
 

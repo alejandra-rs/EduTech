@@ -62,7 +62,6 @@ A continuación, se detallan todos los componentes implementados en el desarroll
 | [StageList](../../edutech/frontend/src/components/forms-components/StageList.tsx) | Listado de las etapas del formulario de publicación de PDF | ![stagelist.png](./components/stagelist.png) |
 | [ProgressBar](../../edutech/frontend/src/components/forms-components/ProgressBar.tsx) | Barra de progreso para las tareas en la publicación de un PDF | ![progressbar.png](./components/progressbar.png) |
 | [UploadDropzone](../../edutech/frontend/src/components/forms-components/UploadDropzone.tsx) | Zona para subir un PDF o imagen, previsualizándolo | ![uploaddropzone.png](./components/uploaddropzone.png) |
-| [UploadUrl](../../edutech/frontend/src/components/forms-components/UploadUrl.tsx) | Campo para introducir la URL del vídeo a publicar | ![uploadurl.png](./components/uploadurl.png) |
 | [UrlPreview](../../edutech/frontend/src/components/forms-components/UrlPreview.tsx) | Vista previa del vídeo a partir de la URL introducida | ![urlpreview.png](./components/urlpreview.png) |
 | [UploadMenuButton](../../edutech/frontend/src/components/UploadMenuButton.tsx) | Desplegable para seleccionar la publicación de un contenido | ![uploadmenubutton.png](./components/uploadmenubutton.png) |
 
@@ -89,7 +88,6 @@ A continuación, se detallan todos los componentes implementados en el desarroll
 | [SelectUniversity](../../edutech/frontend/src/components/degree-selection/SelectUniversity.tsx) | Desplegable para elegir la universidad del estudiante | ![selectuniversity.png](./components/selectuniversity.png) |
 | [SelectionGrid](../../edutech/frontend/src/components/degree-selection/SelectionGrid.tsx) | Cuadrícula para seleccionar la carrera dentro de una universidad | ![selectiongrid.png](./components/selectiongrid.png) |
 | [ButtonControl](../../edutech/frontend/src/components/degree-selection/ButtonControl.tsx) | Controles de navegación (atrás / guardar) del flujo de selección de titulación | ![buttoncontrol.png](./components/buttoncontrol.png) |
-| [UseDegreeSelection](../../edutech/frontend/src/components/degree-selection/UseDegreeSelection.tsx) | Hook que gestiona el estado y la lógica del flujo de selección de titulación | ![usedegreeselection.png](./components/usedegreeselection.png) |
 
 ## Editor de Material de Estudio
 
@@ -150,7 +148,7 @@ Componentes del espacio personal del estudiante para organizar y guardar publica
 | [SavedPreview](../../edutech/frontend/src/components/my-space/SavedPreview.tsx) | Tarjeta de vista previa de una publicación guardada | ![savedpreview.png](./components/savedpreview.png) |
 | [FolderCard](../../edutech/frontend/src/components/my-space/FolderCard.tsx) | Tarjeta que representa una carpeta con su nombre y acciones asociadas | ![foldercard.png](./components/foldercard.png) |
 | [FolderSection](../../edutech/frontend/src/components/my-space/FolderSection.tsx) | Sección que lista las carpetas del usuario | ![foldersection.png](./components/foldersection.png) |
-| [FolderPath](../../edutech/frontend/src/components/my-space/FolderPath.tsx) | Migas de pan que muestran la ruta de navegación dentro de las carpetas | ![folderpath.png](./components/folderpath.png) |
+| [FolderPath](../../edutech/frontend/src/components/my-space/FolderPath.tsx) | Ruta de navegación dentro de las carpetas | ![folderpath.png](./components/folderpath.png) |
 | [DroppablePath](../../edutech/frontend/src/components/my-space/DroppablePath.tsx) | Segmento de la ruta de carpeta que acepta elementos arrastrados para moverlos | ![droppablepath.png](./components/droppablepath.png) |
 | [FolderInlineEditor](../../edutech/frontend/src/components/my-space/FolderInlineEditor.tsx) | Editor en línea para renombrar una carpeta directamente desde la tarjeta | ![folderinlineeditor.png](./components/folderinlineeditor.png) |
 | [FolderEditorCell](../../edutech/frontend/src/components/my-space/FolderEditorCell.tsx) | Celda editable dentro del editor de carpetas | ![foldereditor.png](./components/foldereditor.png) |
@@ -182,7 +180,7 @@ Componentes del espacio personal del estudiante para organizar y guardar publica
 | [SessionStatusBadge](../../edutech/frontend/src/components/study-sessions/SessionStatusBadge.tsx) | Indicador de estado de una sesión (próxima, en curso, finalizada) | ![sessionstatusbadge.png](./components/sessionstatusbadge.png) |
 | [ParticipateButton](../../edutech/frontend/src/components/study-sessions/ParticipateButton.tsx) | Botón para unirse o abandonar una sesión de estudio | ![participatebutton.png](./components/participatebutton.png) |
 | [CreateSessionModal](../../edutech/frontend/src/components/study-sessions/CreateSessionModal.tsx) | Modal para crear una nueva sesión de estudio con fecha, asignatura y descripción | ![createsessionmodal.png](./components/createsessionmodal.png) |
-| [CalendarWidget](../../edutech/frontend/src/components/study-sessions/CalendarWidget.tsx) | Selector de fecha para programar sesiones de estudio | ![calendarwidget.png](./components/calendarwidget.png) |
+| [CalendarWidget](../../edutech/frontend/src/components/study-sessions/CalendarWidget.tsx) | Selector de fecha para filtrar sesiones de estudio | ![calendarwidget.png](./components/calendarwidget.png) |
 | [SubjectDropdown](../../edutech/frontend/src/components/study-sessions/SubjectDropdown.tsx) | Desplegable para filtrar sesiones o seleccionar asignatura al crear una sesión | ![subjectdropdown.png](./components/subjectdropdown.png) |
 | [StreamButton](../../edutech/frontend/src/components/study-sessions/StreamButton.tsx) | Botón para iniciar o detener la emisión en vivo de una sesión | ![streambutton.png](./components/streambutton.png) |
 | [StreamPlayer](../../edutech/frontend/src/components/study-sessions/live/StreamPlayer.tsx) | Reproductor embebido del stream de Twitch activo en una sesión | ![streamplayer.png](./components/streamplayer.png) |

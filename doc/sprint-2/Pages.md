@@ -10,7 +10,6 @@ A continuación, se detallan todas las páginas implementadas en el desarrollo d
 | --- | --- | --- |
 | [SignIn](../../edutech/frontend/src/pages/SignIn.tsx) | Pantalla de inicio de sesión con autenticación de Microsoft | ![signin.png](./pages/signin.png) |
 | [SelectDegree](../../edutech/frontend/src/pages/SelectDegree.tsx) | Selección  de universidad y carrera tras registrarse por primera vez | ![selectdegree.png](./pages/selectdegree.png) |
-| [ChangeDegree](../../edutech/frontend/src/pages/ChangeDegree.tsx) | Permite al estudiante cambiar su carrera desde su perfil | ![changedegree.png](./pages/changedegree.png) |
 
 ---
 
