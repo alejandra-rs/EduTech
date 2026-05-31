@@ -21,7 +21,7 @@ A continuación detallamos los servicios implementados. Todos los archivos menci
 | [`getFilteredPosts`](../../edutech/frontend/src/services/connections-documents.ts#L38-L55) | Obtiene los recursos de una asignatura filtrados por título y tipo |
 | [`getMyFilteredPosts`](../../edutech/frontend/src/services/connections-documents.ts#L104-L109) | Obtiene los recursos de un usuario filtrados por título y tipo |
 | [`getDocument`](../../edutech/frontend/src/services/connections-documents.ts#L111-L114) | Obtiene el detalle de una publicación individual a partir de su identificador |
-| [`getLinkDescarga`](../../edutech/frontend/src/services/connections-documents.ts#L11) | Devuelve la URL de descarga de un documento PDF |
+| [`getDownloadUrl`](../../edutech/frontend/src/services/connections-documents.ts#L7-L9) | Devuelve la URL de descarga de un documento PDF |
 | [`postDocument`](../../edutech/frontend/src/services/connections-documents.ts#L57-L98) | Publica un nuevo documento PDF en una asignatura |
 | [`postVideo`](../../edutech/frontend/src/services/connections-documents.ts#L122-L126) | Publica un nuevo vídeo de YouTube en una asignatura |
 | [`postQuiz`](../../edutech/frontend/src/services/connections-documents.ts#L100-L122) | Publica un nuevo cuestionario en una asignatura |
@@ -45,19 +45,19 @@ A continuación detallamos los servicios implementados. Todos los archivos menci
 
 | Función | Descripción |
 | --- | --- |
-| [`askChatbot`](../../edutech/frontend/src/services/connections-ia.ts#L6-L29) | Permite al estudiante realizar una consulta al chatbot |
-| [`generateDocumentDescription`](../../edutech/frontend/src/services/connections-ia.ts#L31-L51) | Genera automáticamente una descripción para un borrador de documento |
-| [`validatePDF`](../../edutech/frontend/src/services/connections-ia.ts#L28-L32) | Valida el contenido de un borrador de documento PDF antes de su publicación |
-| [`generateMaterial`](../../edutech/frontend/src/services/connections-ia.ts#L42-L51) | Genera material de estudio (flashcards o cuestionario) a partir de una consulta |
-| [`connectToDocumentStatus`](../../edutech/frontend/src/services/connections-ia.ts#L53-L63) | Establece una conexión _WebSocket_ para monitorizar el estado de vectorización de un archivo |
+| [`askChatbot`](../../edutech/frontend/src/services/connections-ia.ts#L7-L20) | Permite al estudiante realizar una consulta al chatbot |
+| [`generateDocumentDescription`](../../edutech/frontend/src/services/connections-ia.ts#L21-L25) | Genera automáticamente una descripción para un borrador de documento |
+| [`validatePDF`](../../edutech/frontend/src/services/connections-ia.ts#L27-L29) | Valida el contenido de un borrador de documento PDF antes de su publicación |
+| [`connectToDocumentStatus`](../../edutech/frontend/src/services/connections-ia.ts#L31-L47) | Establece una conexión _WebSocket_ para monitorizar el estado de vectorización de un archivo |
+| [`generateMaterial`](../../edutech/frontend/src/services/connections-ia.ts#L49-L59) | Genera material de estudio (flashcards o cuestionario) a partir de una consulta |
 
 ### Revisión de Contenido
 
 | Función | Descripción |
 | --- | --- |
-| [`getRevisionQueue`](../../edutech/frontend/src/services/connections-revision.ts#L4-L13) | Obtiene la lista de documentos PDF revisados por la IA pendientes de aprobación por el administrador |
-| [`publishRevision`](../../edutech/frontend/src/services/connections-revision.ts#L15-L27) | Aprueba y publica un documento pendiente de revisión |
-| [`discardRevision`](../../edutech/frontend/src/services/connections-revision.ts#L29-L39) | Rechaza y descarta un documento pendiente de revisión |
+| [`getRevisionQueue`](../../edutech/frontend/src/services/connections-revision.ts#L4-L12) | Obtiene la lista de documentos PDF revisados por la IA pendientes de aprobación por el administrador |
+| [`publishRevision`](../../edutech/frontend/src/services/connections-revision.ts#L15-L25) | Aprueba y publica un documento pendiente de revisión |
+| [`discardRevision`](../../edutech/frontend/src/services/connections-revision.ts#L29-L37) | Rechaza y descarta un documento pendiente de revisión |
 
 ### Reportes y Moderación
 
